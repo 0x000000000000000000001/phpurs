@@ -1,0 +1,128 @@
+import fs from 'fs';
+import path from 'path';
+
+function getScanDirs(mbFfiDir) {
+    const rootDir = process.cwd();
+    const scanDirs = [];
+    
+    const spagoDirs = [
+        path.join(rootDir, '.spago'),
+        path.join(rootDir, 'spago.d'),
+        path.join(rootDir, 'bak/spago.d/php/p')
+    ];
+    
+    for (const spagoDir of spagoDirs) {
+        if (fs.existsSync(spagoDir) && fs.statSync(spagoDir).isDirectory()) {
+            const packages = fs.readdirSync(spagoDir);
+            for (const pkg of packages) {
+                const pkgDir = path.join(spagoDir, pkg);
+                if (fs.statSync(pkgDir).isDirectory()) {
+                    let hasVersion = false;
+                    const subdirs = fs.readdirSync(pkgDir);
+                    for (const subdir of subdirs) {
+                        const versionDir = path.join(pkgDir, subdir);
+                        if (subdir.startsWith('v') && fs.statSync(versionDir).isDirectory()) {
+                            scanDirs.push(versionDir);
+                            hasVersion = true;
+                        }
+                    }
+                    if (!hasVersion) {
+                        scanDirs.push(pkgDir);
+                    }
+                }
+            }
+        }
+    }
+    
+    if (mbFfiDir) {
+        scanDirs.push(path.join(rootDir, mbFfiDir));
+    }
+    
+    return scanDirs;
+}
+
+export const mergeComposersImpl = function(mbFfiDir) {
+    return function() {
+        const rootDir = process.cwd();
+        let rootComposer = {};
+        const rootComposerPath = path.join(rootDir, 'composer.json');
+        if (fs.existsSync(rootComposerPath)) {
+            try {
+                rootComposer = JSON.parse(fs.readFileSync(rootComposerPath, 'utf8'));
+            } catch (e) {
+                // ignore
+            }
+        }
+        
+        let merged = Object.assign({}, rootComposer);
+        merged.require = merged.require || {};
+        merged['require-dev'] = merged['require-dev'] || {};
+        
+        const scanDirs = getScanDirs(mbFfiDir);
+        
+        for (const dir of scanDirs) {
+            const compPath = path.join(dir, 'composer.json');
+            if (fs.existsSync(compPath)) {
+                try {
+                    const comp = JSON.parse(fs.readFileSync(compPath, 'utf8'));
+                    if (comp.require) {
+                        for (const pkg of Object.keys(comp.require)) {
+                            merged.require[pkg] = comp.require[pkg];
+                        }
+                    }
+                    if (comp['require-dev']) {
+                        for (const pkg of Object.keys(comp['require-dev'])) {
+                            merged['require-dev'][pkg] = comp['require-dev'][pkg];
+                        }
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+        }
+        
+        if (Object.keys(merged.require).length === 0) {
+            merged.require = new Object();
+        }
+        if (Object.keys(merged['require-dev']).length === 0) {
+            merged['require-dev'] = new Object();
+        }
+        
+        const outPath = path.join(rootDir, 'output', 'composer.json');
+        fs.writeFileSync(outPath, JSON.stringify(merged, null, 4));
+        
+        console.log("phpurs: Generated output/composer.json with merged dependencies.");
+    };
+};
+
+export const findFfiFileImpl = function(mbFfiDir) {
+    return function(modNameStr) {
+        return function(mbModulePath) {
+            return function() {
+                if (mbModulePath) {
+                    const phpPath = mbModulePath.replace(/\.purs$/, '.php');
+                    if (fs.existsSync(phpPath)) {
+                        return phpPath;
+                    }
+                }
+                
+                const scanDirs = getScanDirs(mbFfiDir);
+                for (const dir of scanDirs) {
+                    // Search in dir/src and dir/
+                    const searchPaths = [
+                        path.join(dir, 'src', ...modNameStr.split('.')) + '.php',
+                        path.join(dir, 'src', modNameStr + '.php'),
+                        path.join(dir, modNameStr + '.php')
+                    ];
+                    for (const p of searchPaths) {
+                        if (fs.existsSync(p)) {
+                            return p;
+                        }
+                    }
+                }
+                return null;
+            };
+        };
+    };
+};
+

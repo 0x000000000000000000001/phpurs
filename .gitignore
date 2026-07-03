@@ -1,0 +1,7 @@
+.agents
+/node_modules
+/output
+/.spago
+/output.php
+/.psc-ide-port
+/.purs-repl

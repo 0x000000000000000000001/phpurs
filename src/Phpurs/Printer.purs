@@ -103,12 +103,6 @@ printExpr = case _ of
       evalParams = joinWith "" (map (\x -> ", " <> printExpr x.u.value) mapped)
     in
       "(function($__e" <> updateParams <> ") { $__obj = clone $__e; " <> updateStmts <> " return $__obj; })(" <> printExpr expr <> evalParams <> ")"
-  PhpClosure captures stmts ->
-    let
-      useClause = if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else ""
-      body = joinWith ";\n" (map printExpr stmts) <> ";"
-    in
-      "(function()" <> useClause <> " {\n" <> body <> "\n})()"
   PhpAssign ident expr -> "$" <> sanitize ident <> " = " <> printExpr expr
   PhpIf cond thenStmts elseStmts ->
     let
@@ -122,13 +116,6 @@ printExpr = case _ of
   PhpBinOp op left right -> "(" <> printExpr left <> " " <> op <> " " <> printExpr right <> ")"
   PhpWhile cond stmts -> "while (" <> printExpr cond <> ") {\n" <> joinWith ";\n" (map printExpr stmts) <> ";\n}"
   PhpContinue -> "continue"
-  PhpTcoLoop fvs args stmts ->
-    let
-      useClause = if length fvs > 0 then " use (" <> joinWith ", " fvs <> ")" else ""
-      params = joinWith ", " (map (\a -> "$" <> sanitize a) args)
-      body = "while (true) {\n" <> joinWith ";\n" (map printExpr stmts) <> ";\n}"
-    in
-      "(function(" <> params <> ")" <> useClause <> " {\n" <> body <> "\n})(" <> params <> ")"
   PhpRaw raw -> raw
 
 printDecl :: PhpDecl -> String

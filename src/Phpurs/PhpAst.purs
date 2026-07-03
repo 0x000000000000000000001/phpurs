@@ -15,7 +15,6 @@ data PhpExpr
   | PhpArray (Array PhpExpr)
   | PhpAssocArray (Array { key :: String, value :: PhpExpr })
   | PhpPropertyAccess PhpExpr String
-  | PhpClosure (Array String) (Array PhpExpr) -- captures, statements
   | PhpAssign String PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
   | PhpThrow String
@@ -24,7 +23,6 @@ data PhpExpr
   | PhpBinOp String PhpExpr PhpExpr
   | PhpWhile PhpExpr (Array PhpExpr)
   | PhpContinue
-  | PhpTcoLoop (Array String) (Array String) (Array PhpExpr)
   | PhpRaw String
   | PhpObjectUpdate PhpExpr (Array { key :: String, value :: PhpExpr })
 

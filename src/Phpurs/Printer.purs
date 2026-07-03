@@ -49,12 +49,7 @@ genCurry args captures stmts =
           { setupStr: ""
           , returnStr: 
               initStr <>
-              "    $__res = " <> exprStr <> ";\n" <>
-              "    if ($__num > " <> nStr <> ") {\n" <>
-              "      $__args = func_get_args();\n" <>
-              "      return $__res(...array_slice($__args, " <> nStr <> "));\n" <>
-              "    }\n" <>
-              "    return $__res;\n"
+              "    $__res = " <> exprStr <> ";\n"
           , usesBody: false
           }
       else
@@ -67,24 +62,15 @@ genCurry args captures stmts =
               "    " <> joinWith ";\n    " (map printExpr stmts) <> ";\n" <>
               "  };\n"
           , returnStr:
-              "    if ($__num > " <> nStr <> ") {\n" <>
-              "      $__res = $__body(" <> argNames <> ");\n" <>
-              "      $__args = func_get_args();\n" <>
-              "      return $__res(...array_slice($__args, " <> nStr <> "));\n" <>
-              "    }\n" <>
-              "    return $__body(" <> argNames <> ");\n"
+              "    $__res = $__body(" <> argNames <> ");\n"
           , usesBody: true
           }
 
       fnBody = 
         "  $__num = func_num_args();\n" <>
-        "  if ($__num < " <> nStr <> ") {\n" <>
-        "    $__args = func_get_args();\n" <>
-        "    return function(...$__more) use ($__args, &$__fn) {\n" <>
-        "      return $__fn(...array_merge($__args, $__more));\n" <>
-        "    };\n" <>
-        "  }\n" <>
-        parts.returnStr
+        "  if ($__num < " <> nStr <> ") return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
+        parts.returnStr <>
+        "  return $__num > " <> nStr <> " ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
 
       innerCaps = captures <> (if parts.usesBody then ["$__body", "&$__fn"] else ["&$__fn"])
       innerUseClause = " use (" <> joinWith ", " innerCaps <> ")"
@@ -100,6 +86,7 @@ printExpr = case _ of
   PhpFunction captures args stmts ->
     genCurry args captures stmts
   PhpVar ident -> "$" <> sanitize ident
+  PhpGlobalVar ident -> "$GLOBALS['" <> sanitize ident <> "']"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
   PhpNumber n -> show n
@@ -162,5 +149,6 @@ printPhpFile ffiString file =
       file.imports
     imps = joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
     decls = joinWith "\n" $ map printDecl file.decls
+    fallback = "if (!function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n  function phpurs_curry_fallback($fn, $args, $expected) {\n    return function(...$more) use ($fn, $args, $expected) {\n      $merged = array_merge($args, $more);\n      if (count($merged) >= $expected) {\n        $res = $fn(...$merged);\n        return count($merged) > $expected ? $res(...array_slice($merged, $expected)) : $res;\n      }\n      return phpurs_curry_fallback($fn, $merged, $expected);\n    };\n  }\n}\n"
   in
-    "<?php\n\nnamespace " <> ns <> ";\n\n" <> imps <> "\n\n$Prim_undefined = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"
+    "<?php\n\nnamespace " <> ns <> ";\n\n" <> imps <> "\n\n" <> fallback <> "$Prim_undefined = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"

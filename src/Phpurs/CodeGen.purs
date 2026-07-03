@@ -42,11 +42,9 @@ freeVars :: Expr -> Array String
 freeVars = case _ of
   Lambda arg body -> filter (_ /= arg) (freeVars body)
   Variable mbMod ident ->
-    let
-      prefix = case mbMod of
-        Just mod -> joinWith "_" mod <> "_"
-        Nothing -> ""
-    in [prefix <> ident]
+    case mbMod of
+      Just mod -> []
+      Nothing -> [ident]
   Call abs arg -> nub (freeVars abs <> freeVars arg)
   Literal lit -> case lit of
     ArrayLiteral arr -> nub (concatMap freeVars arr)
@@ -211,11 +209,9 @@ translateExprImpl recVars tcoCtx expr = case expr of
       in PhpTcoLoop formattedFvs ctx.args loopBody
     Nothing -> case expr of
       Variable mbMod ident ->
-        let
-          prefix = case mbMod of
-            Just mod -> joinWith "_" mod <> "_"
-            Nothing -> ""
-        in PhpVar (prefix <> ident)
+        case mbMod of
+          Just mod -> PhpGlobalVar (joinWith "_" mod <> "_" <> ident)
+          Nothing -> PhpVar ident
       Call _ _ -> 
         let
           collectCall (Call f x) =

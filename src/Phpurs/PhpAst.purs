@@ -6,6 +6,7 @@ import Prelude
 data PhpExpr
   = PhpFunction (Array String) (Array String) (Array PhpExpr)
   | PhpVar String
+  | PhpGlobalVar String
   | PhpCall PhpExpr (Array PhpExpr)
   | PhpInt Int
   | PhpNumber Number

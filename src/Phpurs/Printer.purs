@@ -244,22 +244,31 @@ printExpr expr = case expr of
       elseBody = joinWith ";\n" (map printExpr elseStmts) <> ";"
       
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: String, body :: String }, defaultBody :: String }
-      extractSwitch (PhpIf (PhpBinOp "===" subj (PhpString val)) tBody [eBody@(PhpIf _ _ _)]) =
+      extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [PhpIf (PhpBoolean true) tDefault eDefault]) | isLiteral litExpr =
+        Just { subject: subj, cases: [{ val: printExpr litExpr, body: joinWith ";\n" (map printExpr tBody) <> ";" }], defaultBody: joinWith ";\n" (map printExpr tDefault) <> ";" }
+      extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [eBody@(PhpIf _ _ _)]) | isLiteral litExpr =
         case extractSwitch eBody of
           Just rest -> 
             if printExpr subj == printExpr rest.subject then
-              Just { subject: subj, cases: [{ val: val, body: joinWith ";\n" (map printExpr tBody) <> ";" }] <> rest.cases, defaultBody: rest.defaultBody }
+              Just { subject: subj, cases: [{ val: printExpr litExpr, body: joinWith ";\n" (map printExpr tBody) <> ";" }] <> rest.cases, defaultBody: rest.defaultBody }
             else Nothing
           Nothing -> Nothing
-      extractSwitch (PhpIf (PhpBinOp "===" subj (PhpString val)) tBody eBodyArray) =
-        Just { subject: subj, cases: [{ val: val, body: joinWith ";\n" (map printExpr tBody) <> ";" }], defaultBody: joinWith ";\n" (map printExpr eBodyArray) <> ";" }
+      extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody eBodyArray) | isLiteral litExpr =
+        Just { subject: subj, cases: [{ val: printExpr litExpr, body: joinWith ";\n" (map printExpr tBody) <> ";" }], defaultBody: joinWith ";\n" (map printExpr eBodyArray) <> ";" }
       extractSwitch _ = Nothing
+      
+      isLiteral :: PhpExpr -> Boolean
+      isLiteral (PhpString _) = true
+      isLiteral (PhpInt _) = true
+      isLiteral (PhpNumber _) = true
+      isLiteral (PhpBoolean _) = true
+      isLiteral _ = false
       
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
       Just sw ->
         let
-          caseStmts = joinWith "\n" (map (\c -> "case \"" <> c.val <> "\":\n" <> replaceAll (Pattern "continue;") (Replacement "continue 2;") c.body <> "\nbreak;") sw.cases)
-          defaultStmt = "default:\n" <> replaceAll (Pattern "continue;") (Replacement "continue 2;") sw.defaultBody <> "\nbreak;"
+          caseStmts = joinWith "\n" (map (\c -> "case " <> c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") c.body <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") sw.defaultBody <> "\nbreak;"
         in
           "switch (" <> printExpr sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
       Nothing ->
@@ -271,12 +280,31 @@ printExpr expr = case expr of
   PhpReturn expr -> "return " <> printExpr expr
   PhpBinOp op left right -> "(" <> printExpr left <> " " <> op <> " " <> printExpr right <> ")"
   PhpWhile cond stmts -> "while (" <> printExpr cond <> ") {\n" <> joinWith ";\n" (map printExpr stmts) <> ";\n}"
-  PhpContinue -> "continue"
+  PhpContinue -> "continue /*__LVL__*/"
   PhpRaw raw -> raw
   PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map printExpr args) <> ")"
+  PhpSwitch subject cases defaultStmts ->
+    let
+      printCase c = joinWith "\n" (map (\m -> "case " <> printExpr m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.stmts) <> ";") <> "\nbreak;"
+      casesStr = joinWith "\n" (map printCase cases)
+      defaultStr = case defaultStmts of
+        Just stmts -> "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr stmts) <> ";") <> "\nbreak;"
+        Nothing -> ""
+    in "switch (" <> printExpr subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
+
+resolveContinues :: String -> String
+resolveContinues str =
+  let
+    r0 = replaceAll (Pattern "/*__LVL__*/") (Replacement "") str
+    r1 = replaceAll (Pattern "continue I;") (Replacement "continue 2;") r0
+    r2 = replaceAll (Pattern "continue II;") (Replacement "continue 3;") r1
+    r3 = replaceAll (Pattern "continue III;") (Replacement "continue 4;") r2
+    r4 = replaceAll (Pattern "continue IIII;") (Replacement "continue 5;") r3
+    r5 = replaceAll (Pattern "continue IIIII;") (Replacement "continue 6;") r4
+  in r5
 
 printDecl :: PhpDecl -> String
-printDecl decl = case decl.expression of
+printDecl decl = resolveContinues $ case decl.expression of
   PhpNativeFunction name args stmts ->
     "// " <> decl.identifier <> "\n" <>
     genNativeCurry (sanitize name) args stmts <> "\n" <>

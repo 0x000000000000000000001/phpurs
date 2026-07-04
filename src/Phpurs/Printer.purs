@@ -136,14 +136,7 @@ printExpr = case _ of
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
   PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> item.key <> "\" => " <> printExpr item.value) arr) <> "]"
   PhpPropertyAccess expr prop -> "(" <> printExpr expr <> ")->" <> sanitize prop
-  PhpObjectUpdate expr updates ->
-    let
-      mapped = mapWithIndex (\i u -> { i: i, u: u }) updates
-      updateParams = joinWith "" (map (\x -> ", $__v" <> show x.i) mapped)
-      updateStmts = joinWith " " (map (\x -> "$__obj->" <> sanitize x.u.key <> " = $__v" <> show x.i <> ";") mapped)
-      evalParams = joinWith "" (map (\x -> ", " <> printExpr x.u.value) mapped)
-    in
-      "(function($__e" <> updateParams <> ") { $__obj = clone $__e; " <> updateStmts <> " return $__obj; })(" <> printExpr expr <> evalParams <> ")"
+  PhpClone obj -> "clone " <> printExpr obj
   PhpAssign ident expr -> "$" <> sanitize ident <> " = " <> printExpr expr
   PhpIf cond thenStmts elseStmts ->
     let

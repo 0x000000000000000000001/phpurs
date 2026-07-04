@@ -301,7 +301,12 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
             in { stmts: acc.stmts <> res.stmts, updates: acc.updates <> [{ key: u.key, value: res.expr }], nextId: res.nextId }
             
           updatesRes = foldl processUpdate { stmts: [], updates: [], nextId: resE.nextId } updates
-        in { stmts: resE.stmts <> updatesRes.stmts, expr: PhpObjectUpdate resE.expr updatesRes.updates, nextId: updatesRes.nextId }
+          
+          tmpVar = "__update_tmp_" <> show updatesRes.nextId
+          cloneStmt = PhpAssign tmpVar (PhpClone resE.expr)
+          updateStmts = map (\u -> PhpAssign (tmpVar <> "->" <> u.key) u.value) updatesRes.updates
+          
+        in { stmts: resE.stmts <> updatesRes.stmts <> [cloneStmt] <> updateStmts, expr: PhpVar tmpVar, nextId: updatesRes.nextId + 1 }
       Unsupported t -> { stmts: [], expr: PhpRaw $ "\"/* Unsupported: " <> t <> " */\"", nextId }
       _ -> { stmts: [], expr: PhpRaw "/* Unknown */", nextId }
 

@@ -25,7 +25,7 @@ data PhpExpr
   | PhpContinue
   | PhpRaw String
   | PhpNew String (Array PhpExpr)
-  | PhpObjectUpdate PhpExpr (Array { key :: String, value :: PhpExpr })
+  | PhpClone PhpExpr
 
 type PhpDecl =
   { identifier :: String

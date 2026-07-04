@@ -27,34 +27,36 @@ import Phpurs.CodeGen as CodeGen
 import Phpurs.Printer as Printer
 import Phpurs.ComposerMerge as ComposerMerge
 
-processModule :: Maybe String -> String -> Aff Unit
-processModule mbFfiDir dir = do
+readModule :: String -> Aff (Maybe CF.Module)
+readModule dir = do
   let path = "output/" <> dir <> "/corefn.json"
-  -- use `try` to catch ENOENT if file doesn't exist
   result <- try (readTextFile UTF8 path)
   case result of
-    Left _ -> pure unit
+    Left _ -> pure Nothing
     Right content -> case jsonParser content of
       Left err -> do
         liftEffect $ log $ "Parse error in " <> dir <> ": " <> err
-        pure unit
+        pure Nothing
       Right json -> case decodeJson json of
         Left err -> do
           liftEffect $ log $ "Decode error in " <> dir <> ": " <> show err
-          pure unit
-        Right (mod :: CF.Module) -> do
-          let modNameStr = joinWith "." (unwrap mod).moduleName
-          ffiPathMb <- liftEffect $ ComposerMerge.findFfiFile mbFfiDir modNameStr (unwrap mod).modulePath
-          ffiCode <- case ffiPathMb of
-            Nothing -> pure ""
-            Just ffiPath -> do
-              res <- try (readTextFile UTF8 ffiPath)
-              case res of
-                Left _ -> pure ""
-                Right content -> pure (String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") content)))
-          let phpAst = CodeGen.translate mod
-          let phpStr = Printer.printPhpFile ffiCode phpAst
-          writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpStr
+          pure Nothing
+        Right (mod :: CF.Module) -> pure (Just mod)
+
+generateModule :: CodeGen.GlobalEnv -> Maybe String -> CF.Module -> Aff Unit
+generateModule env mbFfiDir mod = do
+  let modNameStr = joinWith "." (unwrap mod).moduleName
+  ffiPathMb <- liftEffect $ ComposerMerge.findFfiFile mbFfiDir modNameStr (unwrap mod).modulePath
+  ffiCode <- case ffiPathMb of
+    Nothing -> pure ""
+    Just ffiPath -> do
+      res <- try (readTextFile UTF8 ffiPath)
+      case res of
+        Left _ -> pure ""
+        Right content -> pure (String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") content)))
+  let phpAst = CodeGen.translate env mod
+  let phpStr = Printer.printPhpFile ffiCode phpAst
+  writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpStr
 
 main :: Effect Unit
 main = launchAff_ do
@@ -85,12 +87,20 @@ main = launchAff_ do
         pure $ isDirectory s
       ) files
       
+      -- read all modules
+      mbModules <- for validDirs readModule
+      let modules = Array.mapMaybe identity mbModules
+      
+      let globalEnv = CodeGen.buildGlobalEnv modules
+      
       -- translate each module
-      _ <- for validDirs (processModule mbFfiDir)
+      _ <- for modules (generateModule globalEnv mbFfiDir)
       
       case mbMainModule of
         Just mainMod -> do
-          let entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n$" <> mainMod <> "_main();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+          let
+            ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+            entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
           writeTextFile UTF8 "output/main.php" entryPoint
           liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
         Nothing -> do

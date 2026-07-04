@@ -6,6 +6,10 @@ import Phpurs.CoreFn (Expr(..), Bind(..), Module(..), Literal(..), CaseAlternati
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 import Data.Maybe (Maybe(..))
 import Data.String (joinWith)
+import Data.Array as Array
+import Data.Foldable (find)
+import Foreign.Object (Object)
+import Foreign.Object as Object
 import Data.Array (nub, concatMap, filter, mapWithIndex, foldl, foldr, index, length, sortBy)
 import Data.Foldable (elem)
 import Phpurs.Pattern as P
@@ -208,7 +212,7 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
     Nothing -> case expr of
       Variable mbMod ident ->
         case mbMod of
-          Just mod -> { stmts: [], expr: PhpGlobalVar (joinWith "_" mod <> "_" <> ident), nextId }
+          Just mod -> { stmts: [], expr: PhpGlobalVar (Just mod) ident, nextId }
           Nothing -> { stmts: [], expr: PhpVar ident, nextId }
       Call _ _ -> 
         let
@@ -332,28 +336,173 @@ translateLiteral lit nextId = case lit of
       arrRes = foldl processItem { stmts: [], exprs: [], nextId } arr
     in { stmts: arrRes.stmts, expr: PhpAssocArray arrRes.exprs, nextId: arrRes.nextId }
 
-translateDecl :: Array String -> Bind -> Array PhpDecl
-translateDecl moduleName bind = case bind of
+translateDecl :: GlobalEnv -> String -> Array String -> Bind -> Array PhpDecl
+translateDecl env currentModStr moduleName bind = case bind of
   NonRec ident expr ->
     let 
       prefix = joinWith "_" moduleName <> "_"
-      res = translateExprImpl [] Nothing 0 expr
-    in [{ identifier: prefix <> ident, expression: if length res.stmts > 0 then PhpCall (PhpFunction [] [] (res.stmts <> [PhpReturn res.expr])) [] else res.expr }]
+      res = translateExprImpl [] Nothing 0 (simplify env currentModStr expr)
+    in [{ identifier: prefix <> ident
+        , expression: case res.expr of
+                        PhpFunction _ args stmts | length res.stmts == 0 -> PhpNativeFunction (prefix <> ident) args stmts
+                        _ -> PhpValueThunk (prefix <> ident) (if length res.stmts > 0 then PhpCall (PhpFunction [] [] (res.stmts <> [PhpReturn res.expr])) [] else res.expr)
+        }]
   Rec rBinds ->
     map (\rb -> 
       let
         prefix = joinWith "_" moduleName <> "_"
         extracted = getArgs rb.expression
         res = if length extracted.args > 0 then
-                translateExprImpl [] (Just { ident: rb.identifier, args: extracted.args }) 0 rb.expression
+                translateExprImpl [] (Just { ident: rb.identifier, args: extracted.args }) 0 (simplify env currentModStr rb.expression)
               else
-                translateExprImpl [] Nothing 0 rb.expression
-      in { identifier: prefix <> rb.identifier, expression: if length res.stmts > 0 then PhpCall (PhpFunction [] [] (res.stmts <> [PhpReturn res.expr])) [] else res.expr }
+                translateExprImpl [] Nothing 0 (simplify env currentModStr rb.expression)
+      in { identifier: prefix <> rb.identifier
+         , expression: case res.expr of
+                         PhpFunction _ args stmts | length res.stmts == 0 -> PhpNativeFunction (prefix <> rb.identifier) args stmts
+                         _ -> PhpValueThunk (prefix <> rb.identifier) (if length res.stmts > 0 then PhpCall (PhpFunction [] [] (res.stmts <> [PhpReturn res.expr])) [] else res.expr)
+         }
     ) (sortRecBinds rBinds)
 
-translate :: Module -> PhpFile
-translate (Module mod) =
+
+type GlobalEnv = Object Expr
+
+buildGlobalEnv :: Array Module -> GlobalEnv
+buildGlobalEnv mods =
+  let
+    processDecl env modName decl = case decl of
+      NonRec ident expr -> Object.insert (modName <> "." <> ident) expr env
+      Rec binds -> foldl (\acc b -> Object.insert (modName <> "." <> b.identifier) b.expression acc) env binds
+      
+    processMod env (Module m) =
+      let modNameStr = joinWith "." m.moduleName
+      in foldl (\acc d -> processDecl acc modNameStr d) env m.decls
+  in foldl processMod Object.empty mods
+
+simplify :: GlobalEnv -> String -> Expr -> Expr
+simplify env currentMod expr = case expr of
+  Call f arg ->
+    let
+      f' = simplify env currentMod f
+      arg' = simplify env currentMod arg
+    in case f' of
+      Variable mbMod ident ->
+        let
+          modPrefix = case mbMod of
+            Just m -> joinWith "." m
+            Nothing -> currentMod
+          globalKey = modPrefix <> "." <> ident
+        in case Object.lookup globalKey env of
+          Just (Lambda param (Case [Variable Nothing p2] [CaseAlternative ca])) | param == p2 ->
+            case ca.binders of
+              [ConstructorBinder _ _ _ [VarBinder v]] ->
+                case ca.expression of
+                  Accessor prop (Variable Nothing p3) | v == p3 ->
+                    case arg' of
+                      Variable argMbMod argIdent ->
+                        let
+                          argModPrefix = case argMbMod of
+                            Just m -> joinWith "." m
+                            Nothing -> currentMod
+                          argGlobalKey = argModPrefix <> "." <> argIdent
+                        in case Object.lookup argGlobalKey env of
+                          Just (Literal (ObjectLiteral fields)) ->
+                            case find (\item -> item.key == prop) fields of
+                              Just item -> item.value
+                              Nothing -> Call f' arg'
+                          Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
+                            case find (\item -> item.key == prop) fields of
+                              Just item -> item.value
+                              Nothing -> Call f' arg'
+                          _ -> Call f' arg'
+                      Literal (ObjectLiteral fields) ->
+                        case find (\item -> item.key == prop) fields of
+                          Just item -> item.value
+                          Nothing -> Call f' arg'
+                      Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
+                        case find (\item -> item.key == prop) fields of
+                          Just item -> item.value
+                          Nothing -> Call f' arg'
+                      _ -> Call f' arg'
+                  _ -> Call f' arg'
+              _ -> Call f' arg'
+          Just (Lambda param (Accessor prop (Variable Nothing p2))) | param == p2 ->
+            case arg' of
+              Variable argMbMod argIdent ->
+                let
+                  argModPrefix = case argMbMod of
+                    Just m -> joinWith "." m
+                    Nothing -> currentMod
+                  argGlobalKey = argModPrefix <> "." <> argIdent
+                in case Object.lookup argGlobalKey env of
+                  Just (Literal (ObjectLiteral fields)) ->
+                    case find (\item -> item.key == prop) fields of
+                      Just item -> item.value
+                      Nothing -> Call f' arg'
+                  Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
+                    case find (\item -> item.key == prop) fields of
+                      Just item -> item.value
+                      Nothing -> Call f' arg'
+                  _ -> Call f' arg'
+              Literal (ObjectLiteral fields) ->
+                case find (\item -> item.key == prop) fields of
+                  Just item -> item.value
+                  Nothing -> Call f' arg'
+              Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
+                case find (\item -> item.key == prop) fields of
+                  Just item -> item.value
+                  Nothing -> Call f' arg'
+              _ -> Call f' arg'
+          _ -> Call f' arg'
+      _ -> Call f' arg'
+      
+  Accessor prop arg ->
+    let arg' = simplify env currentMod arg
+    in case arg' of
+      Variable argMbMod argIdent ->
+        let
+          argModPrefix = case argMbMod of
+            Just m -> joinWith "." m
+            Nothing -> currentMod
+          argGlobalKey = argModPrefix <> "." <> argIdent
+        in case Object.lookup argGlobalKey env of
+          Just (Literal (ObjectLiteral fields)) ->
+            case find (\item -> item.key == prop) fields of
+              Just item -> item.value
+              Nothing -> Accessor prop arg'
+          Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
+            case find (\item -> item.key == prop) fields of
+              Just item -> item.value
+              Nothing -> Accessor prop arg'
+          _ -> Accessor prop arg'
+      Literal (ObjectLiteral fields) ->
+        case find (\item -> item.key == prop) fields of
+          Just item -> item.value
+          Nothing -> Accessor prop arg'
+      Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
+        case find (\item -> item.key == prop) fields of
+          Just item -> item.value
+          Nothing -> Accessor prop arg'
+      _ -> Accessor prop arg'
+      
+  Let binds body -> Let (map (\b -> case b of
+    NonRec ident val -> NonRec ident (simplify env currentMod val)
+    Rec arr -> Rec (map (\a -> a { expression = simplify env currentMod a.expression }) arr)
+    ) binds) (simplify env currentMod body)
+    
+  Lambda arg body -> Lambda arg (simplify env currentMod body)
+  Case binders alts -> Case (map (simplify env currentMod) binders) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expression = simplify env currentMod ca.expression })) alts)
+  Constructor t c n -> Constructor t c n
+  Literal lit -> case lit of
+    ArrayLiteral arr -> Literal (ArrayLiteral (map (simplify env currentMod) arr))
+    ObjectLiteral arr -> Literal (ObjectLiteral (map (\item -> item { value = simplify env currentMod item.value }) arr))
+    _ -> Literal lit
+  ObjectUpdate obj updates -> ObjectUpdate (simplify env currentMod obj) (map (\u -> u { value = simplify env currentMod u.value }) updates)
+  Variable mbMod ident -> Variable mbMod ident
+  Unsupported s -> Unsupported s
+
+translate :: GlobalEnv -> Module -> PhpFile
+translate env (Module mod) =
   { namespace: mod.moduleName
-  , decls: concatMap (translateDecl mod.moduleName) mod.decls
+  , decls: concatMap (translateDecl env (joinWith "." mod.moduleName) mod.moduleName) mod.decls
   , imports: mod.imports
   }

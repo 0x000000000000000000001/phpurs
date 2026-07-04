@@ -1,12 +1,15 @@
 module Phpurs.PhpAst where
 
 import Prelude
+import Data.Maybe (Maybe(..))
 
 -- Abstract Syntax Tree for PHP
 data PhpExpr
   = PhpFunction (Array String) (Array String) (Array PhpExpr)
+  | PhpNativeFunction String (Array String) (Array PhpExpr)
+  | PhpValueThunk String PhpExpr
   | PhpVar String
-  | PhpGlobalVar String
+  | PhpGlobalVar (Maybe (Array String)) String
   | PhpCall PhpExpr (Array PhpExpr)
   | PhpInt Int
   | PhpNumber Number

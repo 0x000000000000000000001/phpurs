@@ -524,7 +524,7 @@ translateDecl env currentModStr moduleName bind = case bind of
          , expression: case res.expr of
                          PhpFunction _ args stmts | length res.stmts == 0 -> PhpNativeFunction (prefix <> rb.identifier) args stmts
                          _ -> PhpValueThunk (prefix <> rb.identifier) (if length res.stmts > 0 then PhpCall (PhpFunction [] [] (res.stmts <> [PhpReturn res.expr])) [] else res.expr)
-         }
+                    }
     ) (sortRecBinds rBinds)
 
 
@@ -551,6 +551,7 @@ simplify env currentMod expr = simplify' [] expr
         f' = simplify' visited f
         arg' = simplify' visited arg
       in case f' of
+        Lambda param (Variable Nothing v) | param == v -> arg'
         Variable mbMod ident ->
           let
             modPrefix = case mbMod of
@@ -558,6 +559,7 @@ simplify env currentMod expr = simplify' [] expr
               Nothing -> currentMod
             globalKey = modPrefix <> "." <> ident
           in case Object.lookup globalKey env of
+            Just (Lambda param (Variable Nothing v)) | param == v -> arg'
             Just (Lambda param (Case [Variable Nothing p2] [CaseAlternative ca])) | param == p2 ->
               case ca.binders of
                 [ConstructorBinder _ _ _ [VarBinder v]] ->

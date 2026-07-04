@@ -650,6 +650,13 @@ simplify env currentMod expr = simplify' [] expr
              let simplified = simplify' (visited <> [globalKey]) exprToInline
              in case simplified of
                Variable _ _ -> simplified
+               Literal lit -> case lit of
+                 IntLiteral _ -> Literal lit
+                 NumberLiteral _ -> Literal lit
+                 StringLiteral _ -> Literal lit
+                 CharLiteral _ -> Literal lit
+                 BooleanLiteral _ -> Literal lit
+                 _ -> Variable mbMod ident
                _ -> Variable mbMod ident
            Nothing -> Variable mbMod ident
            

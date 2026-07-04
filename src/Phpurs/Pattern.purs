@@ -39,7 +39,7 @@ bindBinder subj = case _ of
     else
       let
         tagCond = PhpBinOp "===" (PhpPropertyAccess subj "tag") (PhpString ctorName)
-        bindResults = mapWithIndex (\i b -> bindBinder (PhpPropertyAccess subj ("values[" <> show i <> "]")) b) bs
+        bindResults = mapWithIndex (\i b -> bindBinder (PhpPropertyAccess subj ("v" <> show i)) b) bs
         combined = foldl combineResult { cond: tagCond, assigns: [] } bindResults
       in combined
 

@@ -24,6 +24,7 @@ data PhpExpr
   | PhpWhile PhpExpr (Array PhpExpr)
   | PhpContinue
   | PhpRaw String
+  | PhpNew String (Array PhpExpr)
   | PhpObjectUpdate PhpExpr (Array { key :: String, value :: PhpExpr })
 
 type PhpDecl =

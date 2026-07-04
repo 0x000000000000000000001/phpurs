@@ -283,13 +283,11 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
           
           bodyRes = translateExprImpl nextRecVars Nothing bindRes.nextId body
         in { stmts: bindRes.stmts <> bodyRes.stmts, expr: bodyRes.expr, nextId: bodyRes.nextId }
-      Constructor typeName constructorName fieldNames ->
+      Constructor _ constructorName fieldNames ->
         let
-          body = PhpAssocArray
-            [ { key: "tag", value: PhpString constructorName }
-            , { key: "values", value: PhpArray (map PhpVar fieldNames) }
-            ]
-        in if length fieldNames == 0 then { stmts: [], expr: body, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
+          numFields = length fieldNames
+          body = PhpNew ("Phpurs_Data" <> show numFields) ([PhpString constructorName] <> map PhpVar fieldNames)
+        in if numFields == 0 then { stmts: [], expr: body, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
       Accessor field e -> 
         let res = translateExprImpl recVars Nothing nextId e
         in { stmts: res.stmts, expr: PhpPropertyAccess res.expr field, nextId: res.nextId }

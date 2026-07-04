@@ -149,8 +149,30 @@ printExpr = case _ of
     let
       thenBody = joinWith ";\n" (map printExpr thenStmts) <> ";"
       elseBody = joinWith ";\n" (map printExpr elseStmts) <> ";"
-    in
-      "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n} else {\n" <> elseBody <> "\n}"
+      
+      extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: String, body :: String }, defaultBody :: String }
+      extractSwitch (PhpIf (PhpBinOp "===" subj (PhpString val)) tBody [eBody@(PhpIf _ _ _)]) =
+        case extractSwitch eBody of
+          Just rest -> 
+            if printExpr subj == printExpr rest.subject then
+              Just { subject: subj, cases: [{ val: val, body: joinWith ";\n" (map printExpr tBody) <> ";" }] <> rest.cases, defaultBody: rest.defaultBody }
+            else Nothing
+          Nothing -> Nothing
+      extractSwitch (PhpIf (PhpBinOp "===" subj (PhpString val)) tBody eBodyArray) =
+        Just { subject: subj, cases: [{ val: val, body: joinWith ";\n" (map printExpr tBody) <> ";" }], defaultBody: joinWith ";\n" (map printExpr eBodyArray) <> ";" }
+      extractSwitch _ = Nothing
+      
+    in case extractSwitch (PhpIf cond thenStmts elseStmts) of
+      Just sw ->
+        let
+          caseStmts = joinWith "\n" (map (\c -> "case \"" <> c.val <> "\":\n" <> replaceAll (Pattern "continue;") (Replacement "continue 2;") c.body <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> replaceAll (Pattern "continue;") (Replacement "continue 2;") sw.defaultBody <> "\nbreak;"
+        in
+          "switch (" <> printExpr sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
+      Nothing ->
+        "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n} else {\n" <> elseBody <> "\n}"
+
+
   PhpThrow msg -> "throw new \\Exception(\"" <> replaceAll (Pattern "\"") (Replacement "\\\"") msg <> "\")"
   PhpTernary cond t e -> "(" <> printExpr cond <> " ? " <> printExpr t <> " : " <> printExpr e <> ")"
   PhpReturn expr -> "return " <> printExpr expr

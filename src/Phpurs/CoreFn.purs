@@ -210,6 +210,7 @@ newtype Module = Module
   { moduleName :: Array String
   , decls :: Array Bind
   , imports :: Array (Array String)
+  , foreign :: Array String
   , modulePath :: Maybe String
   }
 
@@ -223,8 +224,9 @@ instance decodeJsonModule :: DecodeJson Module where
     binds <- traverse decodeBind declsJson
     importsJson <- obj .: "imports"
     imports <- traverse decodeImport importsJson
+    foreigns <- obj .: "foreign"
     modulePath <- obj .:? "modulePath"
-    pure $ Module { moduleName: name, decls: concat binds, imports: imports, modulePath: modulePath }
+    pure $ Module { moduleName: name, decls: concat binds, imports: imports, foreign: foreigns, modulePath: modulePath }
     where
       decodeImport j = do
         o <- decodeJson j

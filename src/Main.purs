@@ -26,6 +26,7 @@ import Phpurs.CoreFn as CF
 import Phpurs.CodeGen as CodeGen
 import Phpurs.Printer as Printer
 import Phpurs.ComposerMerge as ComposerMerge
+import Phpurs.Dce as Dce
 
 readModule :: String -> Aff (Maybe CF.Module)
 readModule dir = do
@@ -91,10 +92,19 @@ main = launchAff_ do
       mbModules <- for validDirs readModule
       let modules = Array.mapMaybe identity mbModules
       
-      let globalEnv = CodeGen.buildGlobalEnv modules
+      let dceModules = case mbMainModule of
+            Just mainMod ->
+              let
+                entryPoint = mainMod <> ".main"
+                depGraph = Dce.buildDepGraph modules
+                reachable = Dce.computeReachable entryPoint depGraph
+              in Dce.filterModules reachable modules
+            Nothing -> modules
+      
+      let globalEnv = CodeGen.buildGlobalEnv dceModules
       
       -- translate each module
-      _ <- for modules (generateModule globalEnv mbFfiDir)
+      _ <- for dceModules (generateModule globalEnv mbFfiDir)
       
       case mbMainModule of
         Just mainMod -> do

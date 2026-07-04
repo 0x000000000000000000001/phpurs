@@ -3,8 +3,8 @@ module Phpurs.Printer where
 import Prelude
 
 import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take)
-import Data.Maybe (isNothing, Maybe(..))
-import Data.Array (filter, length, mapWithIndex)
+import Data.Maybe (fromMaybe, isNothing, Maybe(..))
+import Data.Array (filter, length, mapWithIndex, index)
 import Data.Array as Array
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
@@ -66,9 +66,50 @@ genCurry args captures stmts =
           , usesBody: true
           }
 
+      fastPathStr = 
+        let
+          aNames = map sanitize args
+          nArgs = length args
+          arg idx = fromMaybe "" (index aNames idx)
+        in
+          if nArgs == 2 then
+            "    if ($__num === 1) return function($" <> arg 1 <> ") use ($" <> arg 0 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> "); };\n"
+          else if nArgs == 3 then
+            "    if ($__num === 2) return function($" <> arg 2 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> "); };\n" <>
+            "    if ($__num === 1) return function($" <> arg 1 <> ", $" <> arg 2 <> " = null) use ($" <> arg 0 <> ", &$__fn) {\n" <>
+            "      $__num2 = func_num_args();\n" <>
+            "      if ($__num2 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ");\n" <>
+            "      if ($__num2 === 1) return function($" <> arg 2 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> "); };\n" <>
+            "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> "], 3);\n" <>
+            "    };\n"
+          else if nArgs == 4 then
+            "    if ($__num === 3) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
+            "    if ($__num === 2) return function($" <> arg 2 <> ", $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) {\n" <>
+            "      $__num2 = func_num_args();\n" <>
+            "      if ($__num2 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
+            "      if ($__num2 === 1) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
+            "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> ", $" <> arg 1 <> "], 4);\n" <>
+            "    };\n" <>
+            "    if ($__num === 1) return function($" <> arg 1 <> ", $" <> arg 2 <> " = null, $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", &$__fn) {\n" <>
+            "      $__num2 = func_num_args();\n" <>
+            "      if ($__num2 === 3) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
+            "      if ($__num2 === 2) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
+            "      if ($__num2 === 1) return function($" <> arg 2 <> ", $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) {\n" <>
+            "        $__num3 = func_num_args();\n" <>
+            "        if ($__num3 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
+            "        if ($__num3 === 1) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
+            "        return phpurs_curry_fallback($__fn, [$" <> arg 0 <> ", $" <> arg 1 <> "], 4);\n" <>
+            "      };\n" <>
+            "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> "], 4);\n" <>
+            "    };\n"
+          else ""
+
       fnBody = 
         "  $__num = func_num_args();\n" <>
-        "  if ($__num < " <> nStr <> ") return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
+        "  if ($__num < " <> nStr <> ") {\n" <>
+        fastPathStr <>
+        "    return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
+        "  }\n" <>
         parts.returnStr <>
         "  return $__num > " <> nStr <> " ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
 

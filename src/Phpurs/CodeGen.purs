@@ -287,7 +287,8 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
         let
           numFields = length fieldNames
           body = PhpNew ("Phpurs_Data" <> show numFields) ([PhpString constructorName] <> map PhpVar fieldNames)
-        in if numFields == 0 then { stmts: [], expr: body, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
+          singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> constructorName <> "']")) body
+        in if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
       Accessor field e -> 
         let res = translateExprImpl recVars Nothing nextId e
         in { stmts: res.stmts, expr: PhpPropertyAccess res.expr field, nextId: res.nextId }

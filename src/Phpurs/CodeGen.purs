@@ -75,6 +75,61 @@ freeVars = case _ of
   ObjectUpdate expr updates -> nub (freeVars expr <> concatMap (\u -> freeVars u.value) updates)
   Unsupported _ -> []
 
+type GlobalRef = { mod :: Array String, ident :: String }
+
+collectGlobals :: Expr -> Array GlobalRef
+collectGlobals = case _ of
+  Lambda _ body -> collectGlobals body
+  Variable (Just mod) ident -> [{ mod, ident }]
+  Call abs arg -> nub (collectGlobals abs <> collectGlobals arg)
+  Literal lit -> case lit of
+    ArrayLiteral arr -> nub (concatMap collectGlobals arr)
+    ObjectLiteral arr -> nub (concatMap (\item -> collectGlobals item.value) arr)
+    _ -> []
+  Case exprs alts -> 
+    let 
+      exprVars = concatMap collectGlobals exprs
+      altVars = concatMap collectGlobalsAlt alts
+    in nub (exprVars <> altVars)
+  Let binds expr ->
+    let
+      bodyVars = concatMap (\b -> case b of
+        NonRec _ e -> collectGlobals e
+        Rec rBinds -> concatMap (\rb -> collectGlobals rb.expression) rBinds
+      ) binds <> collectGlobals expr
+    in nub bodyVars
+  Constructor _ _ _ -> []
+  Accessor _ expr -> collectGlobals expr
+  ObjectUpdate expr updates -> nub (collectGlobals expr <> concatMap (\u -> collectGlobals u.value) updates)
+  Unsupported _ -> []
+  _ -> []
+
+collectGlobalsAlt :: CaseAlternative -> Array GlobalRef
+collectGlobalsAlt (CaseAlternative { expression }) = collectGlobals expression
+
+replaceGlobals :: Array GlobalRef -> Expr -> Expr
+replaceGlobals globals = case _ of
+  Lambda arg body -> Lambda arg (replaceGlobals globals body)
+  Variable (Just mod) ident -> 
+    case Array.find (\g -> g.mod == mod && g.ident == ident) globals of
+      Just _ -> Variable Nothing ("__global_" <> joinWith "_" mod <> "_" <> ident)
+      Nothing -> Variable (Just mod) ident
+  Variable Nothing ident -> Variable Nothing ident
+  Call abs arg -> Call (replaceGlobals globals abs) (replaceGlobals globals arg)
+  Literal lit -> case lit of
+    ArrayLiteral arr -> Literal (ArrayLiteral (map (replaceGlobals globals) arr))
+    ObjectLiteral arr -> Literal (ObjectLiteral (map (\item -> item { value = replaceGlobals globals item.value }) arr))
+    _ -> Literal lit
+  Case exprs alts -> Case (map (replaceGlobals globals) exprs) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expression = replaceGlobals globals ca.expression })) alts)
+  Let binds expr -> Let (map (\b -> case b of
+    NonRec i e -> NonRec i (replaceGlobals globals e)
+    Rec rBinds -> Rec (map (\rb -> rb { expression = replaceGlobals globals rb.expression }) rBinds)
+  ) binds) (replaceGlobals globals expr)
+  Constructor t c n -> Constructor t c n
+  Accessor prop expr -> Accessor prop (replaceGlobals globals expr)
+  ObjectUpdate expr updates -> ObjectUpdate (replaceGlobals globals expr) (map (\u -> u { value = replaceGlobals globals u.value }) updates)
+  Unsupported s -> Unsupported s
+
 freeVarsAlt :: CaseAlternative -> Array String
 freeVarsAlt (CaseAlternative { binders, expression }) =
   let
@@ -233,12 +288,61 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
       fvs = nub (freeVars expr)
       formattedFvs = map (formatFv recVars) fvs
     in case tcoCtx of
-      Just _ -> 
-        let bodyRes = translateExprImpl recVars tcoCtx nextId extracted.body
-        in { stmts: [], expr: PhpFunction formattedFvs extracted.args (bodyRes.stmts <> [PhpReturn bodyRes.expr]), nextId: bodyRes.nextId }
+      Just ctx -> 
+        let
+          -- Optimization: Hoist global thunks outside the TCO while(true) loop
+          isIntrinsic h = case h.mod, h.ident of
+            ["Data", "Semiring"], "intAdd" -> true
+            ["Data", "Semiring"], "numAdd" -> true
+            ["Data", "Semiring"], "intMul" -> true
+            ["Data", "Semiring"], "numMul" -> true
+            ["Data", "Ring"], "intSub" -> true
+            ["Data", "Ring"], "numSub" -> true
+            ["Data", "EuclideanRing"], "intDiv" -> true
+            ["Data", "EuclideanRing"], "numDiv" -> true
+            ["Data", "Eq"], "eqIntImpl" -> true
+            ["Data", "Eq"], "eqNumberImpl" -> true
+            ["Data", "Eq"], "eqStringImpl" -> true
+            ["Data", "Eq"], "eqBooleanImpl" -> true
+            ["Data", "Eq"], "eqCharImpl" -> true
+            ["Data", "HeytingAlgebra"], "boolAnd" -> true
+            ["Data", "HeytingAlgebra"], "boolOr" -> true
+            ["Data", "Semigroup"], "concatString" -> true
+            _, _ -> false
+          isRec h = h.ident == ctx.ident || h.ident `elem` recVars || isIntrinsic h
+          hoisted = filter (not <<< isRec) (collectGlobals extracted.body)
+          hoistStmts = map (\h -> PhpAssign ("__global_" <> joinWith "_" h.mod <> "_" <> h.ident) (PhpGlobalVar (Just h.mod) h.ident)) hoisted
+          rewrittenBody = replaceGlobals hoisted extracted.body
+          
+          bodyRes = translateExprImpl recVars tcoCtx nextId rewrittenBody
+        in { stmts: [], expr: PhpFunction formattedFvs extracted.args (hoistStmts <> bodyRes.stmts <> [PhpReturn bodyRes.expr]), nextId: bodyRes.nextId }
       Nothing -> 
-        let bodyRes = translateTailCall recVars "" [] nextId extracted.body -- Just use normal flatten for body
-        in { stmts: [], expr: PhpFunction formattedFvs extracted.args bodyRes.stmts, nextId: bodyRes.nextId }
+        let
+          isIntrinsic h = case h.mod, h.ident of
+            ["Data", "Semiring"], "intAdd" -> true
+            ["Data", "Semiring"], "numAdd" -> true
+            ["Data", "Semiring"], "intMul" -> true
+            ["Data", "Semiring"], "numMul" -> true
+            ["Data", "Ring"], "intSub" -> true
+            ["Data", "Ring"], "numSub" -> true
+            ["Data", "EuclideanRing"], "intDiv" -> true
+            ["Data", "EuclideanRing"], "numDiv" -> true
+            ["Data", "Eq"], "eqIntImpl" -> true
+            ["Data", "Eq"], "eqNumberImpl" -> true
+            ["Data", "Eq"], "eqStringImpl" -> true
+            ["Data", "Eq"], "eqBooleanImpl" -> true
+            ["Data", "Eq"], "eqCharImpl" -> true
+            ["Data", "HeytingAlgebra"], "boolAnd" -> true
+            ["Data", "HeytingAlgebra"], "boolOr" -> true
+            ["Data", "Semigroup"], "concatString" -> true
+            _, _ -> false
+          isRec h = h.ident `elem` recVars || isIntrinsic h
+          hoisted = filter (not <<< isRec) (collectGlobals extracted.body)
+          hoistStmts = map (\h -> PhpAssign ("__global_" <> joinWith "_" h.mod <> "_" <> h.ident) (PhpGlobalVar (Just h.mod) h.ident)) hoisted
+          rewrittenBody = replaceGlobals hoisted extracted.body
+          
+          bodyRes = translateTailCall recVars "" [] nextId rewrittenBody -- Just use normal flatten for body
+        in { stmts: [], expr: PhpFunction formattedFvs extracted.args (hoistStmts <> bodyRes.stmts), nextId: bodyRes.nextId }
         
   _ -> case tcoCtx of
     Just ctx ->
@@ -439,126 +543,117 @@ buildGlobalEnv mods =
   in foldl processMod Object.empty mods
 
 simplify :: GlobalEnv -> String -> Expr -> Expr
-simplify env currentMod expr = case expr of
-  Call f arg ->
-    let
-      f' = simplify env currentMod f
-      arg' = simplify env currentMod arg
-    in case f' of
-      Variable mbMod ident ->
-        let
-          modPrefix = case mbMod of
-            Just m -> joinWith "." m
-            Nothing -> currentMod
-          globalKey = modPrefix <> "." <> ident
-        in case Object.lookup globalKey env of
-          Just (Lambda param (Case [Variable Nothing p2] [CaseAlternative ca])) | param == p2 ->
-            case ca.binders of
-              [ConstructorBinder _ _ _ [VarBinder v]] ->
-                case ca.expression of
-                  Accessor prop (Variable Nothing p3) | v == p3 ->
-                    case arg' of
-                      Variable argMbMod argIdent ->
-                        let
-                          argModPrefix = case argMbMod of
-                            Just m -> joinWith "." m
-                            Nothing -> currentMod
-                          argGlobalKey = argModPrefix <> "." <> argIdent
-                        in case Object.lookup argGlobalKey env of
-                          Just (Literal (ObjectLiteral fields)) ->
-                            case find (\item -> item.key == prop) fields of
-                              Just item -> item.value
-                              Nothing -> Call f' arg'
-                          Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
-                            case find (\item -> item.key == prop) fields of
-                              Just item -> item.value
-                              Nothing -> Call f' arg'
-                          _ -> Call f' arg'
-                      Literal (ObjectLiteral fields) ->
-                        case find (\item -> item.key == prop) fields of
-                          Just item -> item.value
-                          Nothing -> Call f' arg'
-                      Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
-                        case find (\item -> item.key == prop) fields of
-                          Just item -> item.value
-                          Nothing -> Call f' arg'
-                      _ -> Call f' arg'
-                  _ -> Call f' arg'
-              _ -> Call f' arg'
-          Just (Lambda param (Accessor prop (Variable Nothing p2))) | param == p2 ->
-            case arg' of
-              Variable argMbMod argIdent ->
-                let
-                  argModPrefix = case argMbMod of
-                    Just m -> joinWith "." m
-                    Nothing -> currentMod
-                  argGlobalKey = argModPrefix <> "." <> argIdent
-                in case Object.lookup argGlobalKey env of
-                  Just (Literal (ObjectLiteral fields)) ->
-                    case find (\item -> item.key == prop) fields of
-                      Just item -> item.value
-                      Nothing -> Call f' arg'
-                  Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
-                    case find (\item -> item.key == prop) fields of
-                      Just item -> item.value
-                      Nothing -> Call f' arg'
-                  _ -> Call f' arg'
-              Literal (ObjectLiteral fields) ->
-                case find (\item -> item.key == prop) fields of
-                  Just item -> item.value
-                  Nothing -> Call f' arg'
-              Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
-                case find (\item -> item.key == prop) fields of
-                  Just item -> item.value
-                  Nothing -> Call f' arg'
-              _ -> Call f' arg'
-          _ -> Call f' arg'
-      _ -> Call f' arg'
+simplify env currentMod expr = simplify' [] expr
+  where
+  simplify' visited e = case e of
+    Call f arg ->
+      let
+        f' = simplify' visited f
+        arg' = simplify' visited arg
+      in case f' of
+        Variable mbMod ident ->
+          let
+            modPrefix = case mbMod of
+              Just m -> joinWith "." m
+              Nothing -> currentMod
+            globalKey = modPrefix <> "." <> ident
+          in case Object.lookup globalKey env of
+            Just (Lambda param (Case [Variable Nothing p2] [CaseAlternative ca])) | param == p2 ->
+              case ca.binders of
+                [ConstructorBinder _ _ _ [VarBinder v]] ->
+                  case ca.expression of
+                    Accessor prop (Variable Nothing p3) | v == p3 ->
+                      case arg' of
+                        Variable argMbMod argIdent ->
+                          let
+                            argModPrefix = case argMbMod of
+                              Just m -> joinWith "." m
+                              Nothing -> currentMod
+                            argGlobalKey = argModPrefix <> "." <> argIdent
+                          in case Object.lookup argGlobalKey env of
+                            Just (Literal (ObjectLiteral fields)) ->
+                              case find (\item -> item.key == prop) fields of
+                                Just item -> item.value
+                                Nothing -> Accessor prop arg'
+                            Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
+                              case find (\item -> item.key == prop) fields of
+                                Just item -> item.value
+                                Nothing -> Accessor prop arg'
+                            _ -> Accessor prop arg'
+                        Literal (ObjectLiteral fields) ->
+                          case find (\item -> item.key == prop) fields of
+                            Just item -> item.value
+                            Nothing -> Accessor prop arg'
+                        Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
+                          case find (\item -> item.key == prop) fields of
+                            Just item -> item.value
+                            Nothing -> Accessor prop arg'
+                        _ -> Accessor prop arg'
+                    _ -> Call f' arg'
+                _ -> Call f' arg'
+            _ -> Call f' arg'
+        _ -> Call f' arg'
+        
+    Accessor prop arg ->
+      let arg' = simplify' visited arg
+      in case arg' of
+        Variable argMbMod argIdent ->
+          let
+            argModPrefix = case argMbMod of
+              Just m -> joinWith "." m
+              Nothing -> currentMod
+            argGlobalKey = argModPrefix <> "." <> argIdent
+          in case Object.lookup argGlobalKey env of
+            Just (Literal (ObjectLiteral fields)) ->
+              case find (\item -> item.key == prop) fields of
+                Just item -> item.value
+                Nothing -> Accessor prop arg'
+            Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
+              case find (\item -> item.key == prop) fields of
+                Just item -> item.value
+                Nothing -> Accessor prop arg'
+            _ -> Accessor prop arg'
+        Literal (ObjectLiteral fields) ->
+          case find (\item -> item.key == prop) fields of
+            Just item -> item.value
+            Nothing -> Accessor prop arg'
+        Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
+          case find (\item -> item.key == prop) fields of
+            Just item -> item.value
+            Nothing -> Accessor prop arg'
+        _ -> Accessor prop arg'
+        
+    Let binds body -> Let (map (\b -> case b of
+      NonRec ident val -> NonRec ident (simplify' visited val)
+      Rec arr -> Rec (map (\a -> a { expression = simplify' visited a.expression }) arr)
+      ) binds) (simplify' visited body)
       
-  Accessor prop arg ->
-    let arg' = simplify env currentMod arg
-    in case arg' of
-      Variable argMbMod argIdent ->
-        let
-          argModPrefix = case argMbMod of
-            Just m -> joinWith "." m
-            Nothing -> currentMod
-          argGlobalKey = argModPrefix <> "." <> argIdent
-        in case Object.lookup argGlobalKey env of
-          Just (Literal (ObjectLiteral fields)) ->
-            case find (\item -> item.key == prop) fields of
-              Just item -> item.value
-              Nothing -> Accessor prop arg'
-          Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
-            case find (\item -> item.key == prop) fields of
-              Just item -> item.value
-              Nothing -> Accessor prop arg'
-          _ -> Accessor prop arg'
-      Literal (ObjectLiteral fields) ->
-        case find (\item -> item.key == prop) fields of
-          Just item -> item.value
-          Nothing -> Accessor prop arg'
-      Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
-        case find (\item -> item.key == prop) fields of
-          Just item -> item.value
-          Nothing -> Accessor prop arg'
-      _ -> Accessor prop arg'
-      
-  Let binds body -> Let (map (\b -> case b of
-    NonRec ident val -> NonRec ident (simplify env currentMod val)
-    Rec arr -> Rec (map (\a -> a { expression = simplify env currentMod a.expression }) arr)
-    ) binds) (simplify env currentMod body)
+    Lambda arg body -> Lambda arg (simplify' visited body)
+    Case binders alts -> Case (map (simplify' visited) binders) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expression = simplify' visited ca.expression })) alts)
+    Constructor t c n -> Constructor t c n
+    Literal lit -> case lit of
+      ArrayLiteral arr -> Literal (ArrayLiteral (map (simplify' visited) arr))
+      ObjectLiteral arr -> Literal (ObjectLiteral (map (\item -> item { value = simplify' visited item.value }) arr))
+      _ -> Literal lit
+    ObjectUpdate obj updates -> ObjectUpdate (simplify' visited obj) (map (\u -> u { value = simplify' visited u.value }) updates)
     
-  Lambda arg body -> Lambda arg (simplify env currentMod body)
-  Case binders alts -> Case (map (simplify env currentMod) binders) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expression = simplify env currentMod ca.expression })) alts)
-  Constructor t c n -> Constructor t c n
-  Literal lit -> case lit of
-    ArrayLiteral arr -> Literal (ArrayLiteral (map (simplify env currentMod) arr))
-    ObjectLiteral arr -> Literal (ObjectLiteral (map (\item -> item { value = simplify env currentMod item.value }) arr))
-    _ -> Literal lit
-  ObjectUpdate obj updates -> ObjectUpdate (simplify env currentMod obj) (map (\u -> u { value = simplify env currentMod u.value }) updates)
-  Variable mbMod ident -> Variable mbMod ident
-  Unsupported s -> Unsupported s
+    Variable mbMod ident -> 
+      let
+        modPrefix = case mbMod of
+          Just m -> joinWith "." m
+          Nothing -> currentMod
+        globalKey = modPrefix <> "." <> ident
+      in if Array.elem globalKey visited then
+           Variable mbMod ident
+         else case Object.lookup globalKey env of
+           Just exprToInline ->
+             let simplified = simplify' (visited <> [globalKey]) exprToInline
+             in case simplified of
+               Variable _ _ -> simplified
+               _ -> Variable mbMod ident
+           Nothing -> Variable mbMod ident
+           
+    Unsupported s -> Unsupported s
 
 translate :: GlobalEnv -> Module -> PhpFile
 translate env (Module mod) =

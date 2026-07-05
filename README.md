@@ -30,15 +30,36 @@ Currently supported AST nodes: `Abs` (Lambdas), `Var` (Variables), `App` (Functi
 
 ## How to use
 
-`phpurs` acts as a drop-in backend for the Spago build system.
+The easiest way to bootstrap a new PureScript-to-PHP project is by using our official starter template. It comes pre-configured with the necessary core library overrides (FFI mapped to native PHP) via Git dependencies.
 
-1. **Install the backend (e.g. link it locally):**
+1. **Clone the Starter Template:**
    ```bash
+   git clone git@github.com:0x000000000000000000001/phpurs-starter.git my-php-project
+   cd my-php-project
+   ```
+
+2. **Install the `phpurs` backend compiler globally (or locally):**
+   *(Assuming you have cloned this `phpurs` repository)*
+   ```bash
+   cd path/to/phpurs
    npm link
    ```
 
-2. **Configure your project to use the backend:**
-   In your target PureScript project (`spago.yaml`), specify `phpurs` as the backend:
+3. **Build and Run:**
+   Back in your project directory, Spago will automatically resolve the PHP core packages and compile your `Main.purs` into PHP.
+   ```bash
+   npm run build  # Compiles to output/
+   npm start      # Compiles and executes output/run.php
+   ```
+
+### Manual Configuration
+
+If you wish to configure an existing project manually, `phpurs` acts as a drop-in backend for the Spago build system.
+
+1. **Override Core Libraries (`spago.yaml`):**
+   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts using Git dependencies in your `workspace.extraPackages`. See the [starter template's spago.yaml](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) for the full list of required overrides.
+
+2. **Specify Backend (`spago.yaml`):**
    ```yaml
    workspace:
      backend:

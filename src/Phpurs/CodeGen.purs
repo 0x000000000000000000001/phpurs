@@ -257,10 +257,12 @@ matchIntrinsicOperator (Variable (Just mod) ident) argCount = case mod, ident, a
   ["Data", "Eq"], "eqIntImpl", 2 -> Just "==="
   ["Data", "Eq"], "eqNumberImpl", 2 -> Just "==="
   ["Data", "Eq"], "eqStringImpl", 2 -> Just "==="
-  ["Data", "Eq"], "eqBooleanImpl", 2 -> Just "==="
   ["Data", "Eq"], "eqCharImpl", 2 -> Just "==="
+  ["Data", "Eq"], "eqBooleanImpl", 2 -> Just "==="
   ["Data", "HeytingAlgebra"], "boolAnd", 2 -> Just "&&"
   ["Data", "HeytingAlgebra"], "boolOr", 2 -> Just "||"
+  ["Data", "HeytingAlgebra"], "boolConj", 2 -> Just "&&"
+  ["Data", "HeytingAlgebra"], "boolDisj", 2 -> Just "||"
   ["Data", "Semigroup"], "concatString", 2 -> Just "."
   _, _, _ -> Nothing
 matchIntrinsicOperator _ _ = Nothing
@@ -568,6 +570,11 @@ simplify env currentMod expr = simplify' [] expr
                 ["Data", "Eq"], "eqNumberImpl", NumberLiteral a, NumberLiteral b -> Literal (BooleanLiteral (a == b))
                 ["Data", "Eq"], "eqStringImpl", StringLiteral a, StringLiteral b -> Literal (BooleanLiteral (a == b))
                 ["Data", "Eq"], "eqCharImpl", CharLiteral a, CharLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Semigroup"], "concatString", StringLiteral a, StringLiteral b -> Literal (StringLiteral (a <> b))
+                ["Data", "HeytingAlgebra"], "boolConj", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a && b))
+                ["Data", "HeytingAlgebra"], "boolDisj", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a || b))
+                ["Data", "HeytingAlgebra"], "boolAnd", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a && b))
+                ["Data", "HeytingAlgebra"], "boolOr", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a || b))
                 ["Data", "Eq"], "eqBooleanImpl", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a == b))
                 _, _, _, _ -> Call f' arg'
             _ -> Call f' arg'

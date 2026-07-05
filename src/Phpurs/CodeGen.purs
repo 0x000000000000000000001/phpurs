@@ -552,6 +552,25 @@ simplify env currentMod expr = simplify' [] expr
         arg' = simplify' visited arg
       in case f' of
         Lambda param (Variable Nothing v) | param == v -> arg'
+        Call (Variable (Just mod) ident) (Literal litA) ->
+          case arg' of
+            Literal litB ->
+              case mod, ident, litA, litB of
+                ["Data", "Semiring"], "intAdd", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a + b))
+                ["Data", "Semiring"], "intMul", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a * b))
+                ["Data", "Ring"], "intSub", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a - b))
+                ["Data", "EuclideanRing"], "intDiv", IntLiteral a, IntLiteral b -> if b /= 0 then Literal (IntLiteral (a / b)) else Call f' arg'
+                ["Data", "Semiring"], "numAdd", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a + b))
+                ["Data", "Semiring"], "numMul", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a * b))
+                ["Data", "Ring"], "numSub", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a - b))
+                ["Data", "EuclideanRing"], "numDiv", NumberLiteral a, NumberLiteral b -> if b /= 0.0 then Literal (NumberLiteral (a / b)) else Call f' arg'
+                ["Data", "Eq"], "eqIntImpl", IntLiteral a, IntLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqNumberImpl", NumberLiteral a, NumberLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqStringImpl", StringLiteral a, StringLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqCharImpl", CharLiteral a, CharLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqBooleanImpl", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a == b))
+                _, _, _, _ -> Call f' arg'
+            _ -> Call f' arg'
         Variable mbMod ident ->
           let
             modPrefix = case mbMod of

@@ -313,8 +313,8 @@ printDecl decl = resolveContinues $ case decl.expression of
   expr ->
     "// " <> decl.identifier <> "\n$" <> sanitize decl.identifier <> " = " <> printExpr expr <> ";\n"
 
-printPhpFile :: String -> PhpFile -> String
-printPhpFile ffiString file =
+printPhpFile :: Boolean -> String -> PhpFile -> String
+printPhpFile isBundle ffiString file =
   let
     ns = joinWith "\\" file.namespace
     importsToRequire = filter
@@ -325,7 +325,7 @@ printPhpFile ffiString file =
             m /= "Prim" && isNothing (indexOf (Pattern "Prim.") m)
       )
       file.imports
-    imps = joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
+    imps = if isBundle then "" else joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
     decls = joinWith "\n" $ map printDecl file.decls
     thunks = filter (\d -> case d.expression of
       PhpValueThunk _ _ -> true
@@ -415,5 +415,6 @@ printPhpFile ffiString file =
       "  }\n" <>
       "}\n"
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $v0; public function __construct($t, $v0) { $this->tag = $t; $this->v0 = $v0; } }\n  class Phpurs_Data2 { public $tag; public $v0, $v1; public function __construct($t, $v0, $v1) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; } }\n  class Phpurs_Data3 { public $tag; public $v0, $v1, $v2; public function __construct($t, $v0, $v1, $v2) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; } }\n  class Phpurs_Data4 { public $tag; public $v0, $v1, $v2, $v3; public function __construct($t, $v0, $v1, $v2, $v3) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; } }\n  class Phpurs_Data5 { public $tag; public $v0, $v1, $v2, $v3, $v4; public function __construct($t, $v0, $v1, $v2, $v3, $v4) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; } }\n  class Phpurs_Data6 { public $tag; public $v0, $v1, $v2, $v3, $v4, $v5; public function __construct($t, $v0, $v1, $v2, $v3, $v4, $v5) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; $this->v5 = $v5; } }\n}\n"
+    prefix = if isBundle then "namespace " else "<?php\n\nnamespace "
   in
-    "<?php\n\nnamespace " <> ns <> ";\n\n" <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$Prim_undefined = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"
+    prefix <> ns <> ";\n\n" <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$Prim_undefined = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"

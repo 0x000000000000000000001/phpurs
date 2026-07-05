@@ -21,7 +21,7 @@ globalDeps = case _ of
   Call f arg -> globalDeps f <> globalDeps arg
   Case exprs alts -> concatMap globalDeps exprs <> concatMap (globalDepsAlt) alts
   Let binds body -> concatMap globalDepsBind binds <> globalDeps body
-  Constructor _ _ _ -> []
+  Constructor typeName _ _ -> [typeName]
   Accessor _ expr -> globalDeps expr
   ObjectUpdate expr updates -> globalDeps expr <> concatMap (\u -> globalDeps u.value) updates
   Literal lit -> case lit of

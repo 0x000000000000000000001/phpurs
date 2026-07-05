@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (unwrap)
 import Effect (Effect)
 import Effect.Class (liftEffect)
@@ -44,8 +44,8 @@ readModule dir = do
           pure Nothing
         Right (mod :: CF.Module) -> pure (Just mod)
 
-generateModule :: CodeGen.GlobalEnv -> Maybe String -> CF.Module -> Aff Unit
-generateModule env mbFfiDir mod = do
+generateModule :: CodeGen.GlobalEnv -> Maybe String -> Boolean -> CF.Module -> Aff String
+generateModule env mbFfiDir isBundle mod = do
   let modNameStr = joinWith "." (unwrap mod).moduleName
   ffiPathMb <- liftEffect $ ComposerMerge.findFfiFile mbFfiDir modNameStr (unwrap mod).modulePath
   ffiCode <- case ffiPathMb of
@@ -56,8 +56,12 @@ generateModule env mbFfiDir mod = do
         Left _ -> pure ""
         Right content -> pure (String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") content)))
   let phpAst = CodeGen.translate env mod
-  let phpStr = Printer.printPhpFile ffiCode phpAst
-  writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpStr
+  let phpStr = Printer.printPhpFile isBundle ffiCode phpAst
+  if isBundle then
+    pure phpStr
+  else do
+    writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpStr
+    pure ""
 
 main :: Effect Unit
 main = launchAff_ do
@@ -74,6 +78,8 @@ main = launchAff_ do
   let mbFfiDir = case mbFfiIndex of
         Just i -> args !! (i + 1)
         Nothing -> Nothing
+
+  let mbBundle = isJust (elemIndex "--bundle" args)
 
   liftEffect $ log "phpurs: Scanning output directory..."
   
@@ -104,17 +110,32 @@ main = launchAff_ do
       let globalEnv = CodeGen.buildGlobalEnv dceModules
       
       -- translate each module
-      _ <- for dceModules (generateModule globalEnv mbFfiDir)
-      
-      case mbMainModule of
-        Just mainMod -> do
-          let
-            ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-            entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
-          writeTextFile UTF8 "output/main.php" entryPoint
-          liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
-        Nothing -> do
-          liftEffect $ log "phpurs: Successfully compiled all modules."
+      if mbBundle then do
+        strs <- for dceModules (generateModule globalEnv mbFfiDir true)
+        let bundleContent = "<?php\n\n" <> joinWith "\n" strs
+        
+        case mbMainModule of
+          Just mainMod -> do
+            let
+              ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+              entryPoint = "($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+            writeTextFile UTF8 "output/bundle.php" (bundleContent <> "\n" <> entryPoint)
+            liftEffect $ log $ "phpurs: Successfully bundled all modules into output/bundle.php for " <> mainMod
+          Nothing -> do
+            writeTextFile UTF8 "output/bundle.php" bundleContent
+            liftEffect $ log "phpurs: Successfully bundled all modules into output/bundle.php"
+      else do
+        _ <- for dceModules (generateModule globalEnv mbFfiDir false)
+        
+        case mbMainModule of
+          Just mainMod -> do
+            let
+              ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+              entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+            writeTextFile UTF8 "output/main.php" entryPoint
+            liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
+          Nothing -> do
+            liftEffect $ log "phpurs: Successfully compiled all modules."
 
       case mbFfiDir of
         Just dir -> liftEffect $ ComposerMerge.mergeComposers dir

@@ -2,16 +2,16 @@ module Phpurs.CodeGen where
 
 import Prelude
 
-import Phpurs.CoreFn (Expr(..), Bind(..), Module(..), Literal(..), CaseAlternative(..), Binder(..))
+import Phpurs.CoreFn (Expr(..), Bind(..), Module(..), Literal(..), CaseAlternative(..), Binder(..), Decl)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 import Data.Maybe (Maybe(..))
 import Data.String (joinWith)
 import Data.Array as Array
+import Data.Foldable (find)
 import Foreign.Object (Object)
 import Foreign.Object as Object
-import Data.Array (nub, concatMap, filter, mapWithIndex, foldl, foldr, index, length, sortBy, zip)
-import Data.Foldable (find, elem, all, sum)
-import Data.Tuple (Tuple(..))
+import Data.Array (nub, concatMap, filter, mapWithIndex, foldl, foldr, index, length, sortBy)
+import Data.Foldable (elem)
 import Phpurs.Pattern as P
 import Phpurs.Printer as Printer
 
@@ -544,77 +544,6 @@ buildGlobalEnv mods =
       in foldl (\acc d -> processDecl acc modNameStr d) env m.decls
   in foldl processMod Object.empty mods
 
-countUsages :: String -> Expr -> Int
-countUsages param = case _ of
-  Variable Nothing v | v == param -> 1
-  Variable _ _ -> 0
-  Call f arg -> countUsages param f + countUsages param arg
-  Lambda p body -> if p == param then 0 else countUsages param body
-  Case exprs alts -> sum (map (countUsages param) exprs) + sum (map (\(CaseAlternative ca) -> countUsages param ca.expression) alts)
-  Let binds body -> 
-    let 
-      bindsUsage = sum (map (\b -> case b of
-        NonRec _ e -> countUsages param e
-        Rec rBinds -> sum (map (\rb -> countUsages param rb.expression) rBinds)) binds)
-      bodyUsage = countUsages param body
-    in bindsUsage + bodyUsage
-  Constructor _ _ _ -> 0
-  Accessor _ expr -> countUsages param expr
-  ObjectUpdate expr updates -> countUsages param expr + sum (map (\u -> countUsages param u.value) updates)
-  Literal lit -> case lit of
-    ArrayLiteral arr -> sum (map (countUsages param) arr)
-    ObjectLiteral arr -> sum (map (\u -> countUsages param u.value) arr)
-    _ -> 0
-  Unsupported _ -> 0
-
-astWeight :: Expr -> Int
-astWeight = case _ of
-  Variable _ _ -> 1
-  Call f arg -> 1 + astWeight f + astWeight arg
-  Lambda _ body -> 1 + astWeight body
-  Case exprs alts -> 1 + sum (map astWeight exprs) + sum (map (\(CaseAlternative ca) -> astWeight ca.expression) alts)
-  Let binds body -> 1 + sum (map (\b -> case b of
-    NonRec _ e -> astWeight e
-    Rec rBinds -> sum (map (\rb -> astWeight rb.expression) rBinds)) binds) + astWeight body
-  Constructor _ _ _ -> 1
-  Accessor _ expr -> 1 + astWeight expr
-  ObjectUpdate expr updates -> 1 + astWeight expr + sum (map (\u -> astWeight u.value) updates)
-  Literal lit -> case lit of
-    ArrayLiteral arr -> 1 + sum (map astWeight arr)
-    ObjectLiteral arr -> 1 + sum (map (\u -> astWeight u.value) arr)
-    _ -> 1
-  Unsupported _ -> 1
-
-hasNoBindings :: Expr -> Boolean
-hasNoBindings = case _ of
-  Lambda _ _ -> false
-  Let _ _ -> false
-  Case _ _ -> false
-  Call f arg -> hasNoBindings f && hasNoBindings arg
-  Variable _ _ -> true
-  Constructor _ _ _ -> true
-  Accessor _ expr -> hasNoBindings expr
-  ObjectUpdate expr updates -> hasNoBindings expr && all (\u -> hasNoBindings u.value) updates
-  Literal lit -> case lit of
-    ArrayLiteral arr -> all hasNoBindings arr
-    ObjectLiteral arr -> all (\u -> hasNoBindings u.value) arr
-    _ -> true
-  Unsupported _ -> true
-
-substitute :: String -> Expr -> Expr -> Expr
-substitute param argExpr = case _ of
-  Variable Nothing v | v == param -> argExpr
-  Variable mbMod v -> Variable mbMod v
-  Call f arg -> Call (substitute param argExpr f) (substitute param argExpr arg)
-  Constructor t c f -> Constructor t c f
-  Accessor prop expr -> Accessor prop (substitute param argExpr expr)
-  ObjectUpdate expr updates -> ObjectUpdate (substitute param argExpr expr) (map (\u -> u { value = substitute param argExpr u.value }) updates)
-  Literal lit -> case lit of
-    ArrayLiteral arr -> Literal (ArrayLiteral (map (substitute param argExpr) arr))
-    ObjectLiteral arr -> Literal (ObjectLiteral (map (\u -> u { value = substitute param argExpr u.value }) arr))
-    other -> Literal other
-  other -> other
-
 simplify :: GlobalEnv -> String -> Expr -> Expr
 simplify env currentMod expr = simplify' [] expr
   where
@@ -623,74 +552,75 @@ simplify env currentMod expr = simplify' [] expr
       let
         f' = simplify' visited f
         arg' = simplify' visited arg
-        callExpr = Call f' arg'
-        
-        collectArgs :: Expr -> { fn :: Expr, args :: Array Expr }
-        collectArgs (Call innerF innerX) = let c' = collectArgs innerF in { fn: c'.fn, args: c'.args <> [innerX] }
-        collectArgs e' = { fn: e', args: [] }
-        
-        c = collectArgs callExpr
-        
-        tryInline :: Expr -> Array Expr -> Maybe Expr
-        tryInline def args =
-          let
-            extractParams (Lambda p b) = let res = extractParams b in { params: [p] <> res.params, body: res.body }
-            extractParams e' = { params: [], body: e' }
-            extractedDef = extractParams def
-          in if length extractedDef.params > 0 && length extractedDef.params == length args then
-               if astWeight extractedDef.body < 10 && hasNoBindings extractedDef.body then
-                 let usagesOk = all (\p -> countUsages p extractedDef.body == 1) extractedDef.params
-                 in if usagesOk then
-                      Just (foldl (\b (Tuple p a) -> substitute p a b) extractedDef.body (zip extractedDef.params args))
-                    else Nothing
-               else Nothing
-             else Nothing
-             
-        fallbackCall fnExpr argExpr = case fnExpr of
-          Lambda param (Variable Nothing v) | param == v -> argExpr
-          Call (Variable (Just mod) ident) (Literal litA) ->
-            case argExpr of
-              Literal litB ->
-                case mod, ident, litA, litB of
-                  ["Data", "Semiring"], "intAdd", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a + b))
-                  ["Data", "Semiring"], "intMul", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a * b))
-                  ["Data", "Ring"], "intSub", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a - b))
-                  ["Data", "EuclideanRing"], "intDiv", IntLiteral a, IntLiteral b -> if b /= 0 then Literal (IntLiteral (a / b)) else Call fnExpr argExpr
-                  ["Data", "Semiring"], "numAdd", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a + b))
-                  ["Data", "Semiring"], "numMul", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a * b))
-                  ["Data", "Ring"], "numSub", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a - b))
-                  ["Data", "EuclideanRing"], "numDiv", NumberLiteral a, NumberLiteral b -> if b /= 0.0 then Literal (NumberLiteral (a / b)) else Call fnExpr argExpr
-                  ["Data", "Eq"], "eqIntImpl", IntLiteral a, IntLiteral b -> Literal (BooleanLiteral (a == b))
-                  ["Data", "Eq"], "eqNumberImpl", NumberLiteral a, NumberLiteral b -> Literal (BooleanLiteral (a == b))
-                  ["Data", "Eq"], "eqStringImpl", StringLiteral a, StringLiteral b -> Literal (BooleanLiteral (a == b))
-                  ["Data", "Eq"], "eqCharImpl", CharLiteral a, CharLiteral b -> Literal (BooleanLiteral (a == b))
-                  ["Data", "Semigroup"], "concatString", StringLiteral a, StringLiteral b -> Literal (StringLiteral (a <> b))
-                  ["Data", "HeytingAlgebra"], "boolConj", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a && b))
-                  ["Data", "HeytingAlgebra"], "boolDisj", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a || b))
-                  ["Data", "HeytingAlgebra"], "boolAnd", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a && b))
-                  ["Data", "HeytingAlgebra"], "boolOr", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a || b))
-                  ["Data", "Eq"], "eqBooleanImpl", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a == b))
-                  _, _, _, _ -> Call fnExpr argExpr
-              _ -> Call fnExpr argExpr
-          _ -> Call fnExpr argExpr
-          
-      in case c.fn of
+      in case f' of
+        Lambda param (Variable Nothing v) | param == v -> arg'
+        Call (Variable (Just mod) ident) (Literal litA) ->
+          case arg' of
+            Literal litB ->
+              case mod, ident, litA, litB of
+                ["Data", "Semiring"], "intAdd", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a + b))
+                ["Data", "Semiring"], "intMul", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a * b))
+                ["Data", "Ring"], "intSub", IntLiteral a, IntLiteral b -> Literal (IntLiteral (a - b))
+                ["Data", "EuclideanRing"], "intDiv", IntLiteral a, IntLiteral b -> if b /= 0 then Literal (IntLiteral (a / b)) else Call f' arg'
+                ["Data", "Semiring"], "numAdd", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a + b))
+                ["Data", "Semiring"], "numMul", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a * b))
+                ["Data", "Ring"], "numSub", NumberLiteral a, NumberLiteral b -> Literal (NumberLiteral (a - b))
+                ["Data", "EuclideanRing"], "numDiv", NumberLiteral a, NumberLiteral b -> if b /= 0.0 then Literal (NumberLiteral (a / b)) else Call f' arg'
+                ["Data", "Eq"], "eqIntImpl", IntLiteral a, IntLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqNumberImpl", NumberLiteral a, NumberLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqStringImpl", StringLiteral a, StringLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Eq"], "eqCharImpl", CharLiteral a, CharLiteral b -> Literal (BooleanLiteral (a == b))
+                ["Data", "Semigroup"], "concatString", StringLiteral a, StringLiteral b -> Literal (StringLiteral (a <> b))
+                ["Data", "HeytingAlgebra"], "boolConj", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a && b))
+                ["Data", "HeytingAlgebra"], "boolDisj", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a || b))
+                ["Data", "HeytingAlgebra"], "boolAnd", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a && b))
+                ["Data", "HeytingAlgebra"], "boolOr", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a || b))
+                ["Data", "Eq"], "eqBooleanImpl", BooleanLiteral a, BooleanLiteral b -> Literal (BooleanLiteral (a == b))
+                _, _, _, _ -> Call f' arg'
+            _ -> Call f' arg'
         Variable mbMod ident ->
           let
             modPrefix = case mbMod of
               Just m -> joinWith "." m
               Nothing -> currentMod
             globalKey = modPrefix <> "." <> ident
-          in if elem globalKey visited then
-               fallbackCall f' arg'
-             else
-               case Object.lookup globalKey env of
-                 Just def ->
-                   case tryInline def c.args of
-                     Just inlined -> simplify' (visited <> [globalKey]) inlined
-                     Nothing -> fallbackCall f' arg'
-                 Nothing -> fallbackCall f' arg'
-        _ -> fallbackCall f' arg'
+          in case Object.lookup globalKey env of
+            Just (Lambda param (Variable Nothing v)) | param == v -> arg'
+            Just (Lambda param (Case [Variable Nothing p2] [CaseAlternative ca])) | param == p2 ->
+              case ca.binders of
+                [ConstructorBinder _ _ _ [VarBinder v]] ->
+                  case ca.expression of
+                    Accessor prop (Variable Nothing p3) | v == p3 ->
+                      case arg' of
+                        Variable argMbMod argIdent ->
+                          let
+                            argModPrefix = case argMbMod of
+                              Just m -> joinWith "." m
+                              Nothing -> currentMod
+                            argGlobalKey = argModPrefix <> "." <> argIdent
+                          in case Object.lookup argGlobalKey env of
+                            Just (Literal (ObjectLiteral fields)) ->
+                              case find (\item -> item.key == prop) fields of
+                                Just item -> item.value
+                                Nothing -> Accessor prop arg'
+                            Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
+                              case find (\item -> item.key == prop) fields of
+                                Just item -> item.value
+                                Nothing -> Accessor prop arg'
+                            _ -> Accessor prop arg'
+                        Literal (ObjectLiteral fields) ->
+                          case find (\item -> item.key == prop) fields of
+                            Just item -> item.value
+                            Nothing -> Accessor prop arg'
+                        Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
+                          case find (\item -> item.key == prop) fields of
+                            Just item -> item.value
+                            Nothing -> Accessor prop arg'
+                        _ -> Accessor prop arg'
+                    _ -> Call f' arg'
+                _ -> Call f' arg'
+            _ -> Call f' arg'
+        _ -> Call f' arg'
         
     Accessor prop arg ->
       let arg' = simplify' visited arg

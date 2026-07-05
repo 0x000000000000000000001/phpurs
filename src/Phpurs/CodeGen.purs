@@ -585,45 +585,38 @@ simplify env currentMod expr = simplify' [] expr
               Nothing -> currentMod
             globalKey = modPrefix <> "." <> ident
           in case Object.lookup globalKey env of
-            Just (Lambda param (Variable Nothing v)) | param == v -> arg'
-            Just (Lambda param (Case [Variable Nothing p2] [CaseAlternative ca])) | param == p2 ->
-              case ca.binders of
-                [ConstructorBinder _ _ _ [VarBinder v]] ->
-                  case ca.expression of
-                    Accessor prop (Variable Nothing p3) | v == p3 ->
-                      case arg' of
-                        Variable argMbMod argIdent ->
-                          let
-                            argModPrefix = case argMbMod of
-                              Just m -> joinWith "." m
-                              Nothing -> currentMod
-                            argGlobalKey = argModPrefix <> "." <> argIdent
-                          in case Object.lookup argGlobalKey env of
-                            Just (Literal (ObjectLiteral fields)) ->
-                              case find (\item -> item.key == prop) fields of
-                                Just item -> item.value
-                                Nothing -> Accessor prop arg'
-                            Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
-                              case find (\item -> item.key == prop) fields of
-                                Just item -> item.value
-                                Nothing -> Accessor prop arg'
-                            _ -> Accessor prop arg'
-                        Literal (ObjectLiteral fields) ->
-                          case find (\item -> item.key == prop) fields of
-                            Just item -> item.value
-                            Nothing -> Accessor prop arg'
-                        Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
-                          case find (\item -> item.key == prop) fields of
-                            Just item -> item.value
-                            Nothing -> Accessor prop arg'
-                        _ -> Accessor prop arg'
-                    _ -> Call f' arg'
-                _ -> Call f' arg'
-            _ -> Call f' arg'
+            Just def ->
+              let
+                tryInlineDictionaryExtractor fnExpr argExpr = case fnExpr of
+                  Lambda param (Variable Nothing v) | param == v -> Just argExpr
+                  Lambda param (Case [Variable Nothing p2] [CaseAlternative ca]) | param == p2 ->
+                    case ca.binders of
+                      [ConstructorBinder _ _ _ [VarBinder v]] ->
+                        case ca.expression of
+                          Accessor prop (Variable Nothing p3) | v == p3 -> Just (Accessor prop argExpr)
+                          _ -> Nothing
+                      _ -> Nothing
+                  Lambda param (Accessor prop (Variable Nothing v)) | param == v -> Just (Accessor prop argExpr)
+                  _ -> Nothing
+              in case tryInlineDictionaryExtractor def arg' of
+                Just inlined -> simplify' visited inlined
+                Nothing -> Call f' arg'
+            Nothing -> Call f' arg'
         _ -> Call f' arg'
         
     Accessor prop arg ->
-      let arg' = simplify' visited arg
+      let
+        arg' = simplify' visited arg
+        isSafeToInline e = case e of
+          Variable _ _ -> true
+          Literal (IntLiteral _) -> true
+          Literal (NumberLiteral _) -> true
+          Literal (StringLiteral _) -> true
+          Literal (BooleanLiteral _) -> true
+          Literal (CharLiteral _) -> true
+          Accessor _ _ -> true
+          _ -> false
+        extractSafe item = if isSafeToInline item.value then item.value else Accessor prop arg'
       in case arg' of
         Variable argMbMod argIdent ->
           let
@@ -634,20 +627,20 @@ simplify env currentMod expr = simplify' [] expr
           in case Object.lookup argGlobalKey env of
             Just (Literal (ObjectLiteral fields)) ->
               case find (\item -> item.key == prop) fields of
-                Just item -> item.value
+                Just item -> extractSafe item
                 Nothing -> Accessor prop arg'
             Just (Call (Variable _ _) (Literal (ObjectLiteral fields))) ->
               case find (\item -> item.key == prop) fields of
-                Just item -> item.value
+                Just item -> extractSafe item
                 Nothing -> Accessor prop arg'
             _ -> Accessor prop arg'
         Literal (ObjectLiteral fields) ->
           case find (\item -> item.key == prop) fields of
-            Just item -> item.value
+            Just item -> extractSafe item
             Nothing -> Accessor prop arg'
         Call (Variable _ _) (Literal (ObjectLiteral fields)) ->
           case find (\item -> item.key == prop) fields of
-            Just item -> item.value
+            Just item -> extractSafe item
             Nothing -> Accessor prop arg'
         _ -> Accessor prop arg'
         
@@ -679,7 +672,11 @@ simplify env currentMod expr = simplify' [] expr
              in case simplified of
                Constructor typeName constructorName fieldNames -> Constructor typeName constructorName fieldNames
                Variable _ _ -> simplified
-               Literal lit -> Literal lit
+               Literal (IntLiteral _) -> simplified
+               Literal (NumberLiteral _) -> simplified
+               Literal (StringLiteral _) -> simplified
+               Literal (BooleanLiteral _) -> simplified
+               Literal (CharLiteral _) -> simplified
                _ -> Variable mbMod ident
            Nothing -> Variable mbMod ident
            

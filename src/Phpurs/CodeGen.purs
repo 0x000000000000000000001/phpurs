@@ -677,14 +677,9 @@ simplify env currentMod expr = simplify' [] expr
            Just exprToInline ->
              let simplified = simplify' (visited <> [globalKey]) exprToInline
              in case simplified of
+               Constructor typeName constructorName fieldNames -> Constructor typeName constructorName fieldNames
                Variable _ _ -> simplified
-               Literal lit -> case lit of
-                 IntLiteral _ -> Literal lit
-                 NumberLiteral _ -> Literal lit
-                 StringLiteral _ -> Literal lit
-                 CharLiteral _ -> Literal lit
-                 BooleanLiteral _ -> Literal lit
-                 _ -> Variable mbMod ident
+               Literal lit -> Literal lit
                _ -> Variable mbMod ident
            Nothing -> Variable mbMod ident
            

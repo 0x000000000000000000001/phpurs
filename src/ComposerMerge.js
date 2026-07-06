@@ -47,9 +47,9 @@ export const mergeComposersImpl = function(mbFfiDir) {
         let rootComposer = {};
         
         const possibleBasePaths = [
-            path.join(rootDir, 'run', 'bak', 'php', 'composer.template.json'),
             path.join(rootDir, 'composer.template.json'),
-            path.join(rootDir, 'composer.json')
+            path.join(rootDir, 'composer.json'),
+            path.join(rootDir, 'run', 'bak', 'php', 'composer.template.json')
         ];
         
         for (const p of possibleBasePaths) {

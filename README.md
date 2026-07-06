@@ -43,7 +43,9 @@ The easiest way to bootstrap a new PureScript-to-PHP project is by using our off
    *(Assuming you have cloned this `phpurs` repository)*
    ```bash
    cd path/to/phpurs
-   npm link
+   npm install    # Install dependencies
+   npm run build  # Compile the compiler itself
+   npm link       # Link the binary globally
    ```
 
 3. **Build and Run:**

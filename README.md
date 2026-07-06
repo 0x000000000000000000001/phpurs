@@ -13,9 +13,35 @@ For the PureScript ecosystem, this represents a strategic opportunity to gain vi
 
 ## Current Status & Optimizations
 
-This project is evolving rapidly. To prove the viability of the concept, it successfully compiles and executes a universal multi-runtime pedagogical benchmark suite (`altbak.pub`), which runs identical PureScript code across Node.js, Arista ES, Chez Scheme, Erlang BEAM… and natively on PHP. The tested features include Tail-Call Optimization (TCO) via `while(true)` loops, purely recursive algorithms (Fibonacci, Ackermann, Red-Black Trees), deep record updates, heavy polymorphism (Type Class dictionary lookups), as well as State Monad operations and Lazy Evaluation.
+This project is evolving rapidly. To prove the viability of the concept, it successfully compiles and executes a universal multi-runtime pedagogical benchmark suite ([altbak.pub](https://github.com/0x000000000000000000001/altbak.pub)), demonstrating how PureScript changes the game for the ideal of **"Write Once, Run Everywhere"**. The identical PureScript code runs seamlessly across Node.js (V8), Arista ES, Chez Scheme, Erlang BEAM… and natively on PHP!
 
-While initially an unoptimized proof-of-concept, we have recently implemented several key performance optimizations tailored specifically for the PHP runtime:
+### Write Once, Run Everywhere (Benchmarks)
+
+The initial unoptimized benchmark gave 1m30s. After dozens of compiler optimizations, the exact same tests are now successful after a run of **~1.7s**. This is a massive step forward. 
+
+Standard benchmarks often show Node (V8) to be 2 to 5 times faster than PHP 8 for heavy computational tasks, and our results reflect this reality fairly accurately (PHP is about x3 slower than V8, and only x2 slower than `purerl`). The compiler has therefore likely reached its peak performance area.
+
+In our specific context, this x3 difference is **not a problem**:
+- We are targeting a segment of the web that, while certainly the majority, is focused on factors other than pure performance (presence, visibility, significantly lower hosting costs, zero-config deployments). For highly advanced projects requiring containerized stacks and full DevOps control, JS, Go, or Erlang will naturally remain better compiler backends.
+- In the vast majority of real-world PHP applications, the main bottleneck remains I/O (Database, Network, Filesystem). As a result, the difference in raw execution performance is entirely unnoticeable in practice.
+
+### Asynchronous Operations (Aff)
+Support for `Aff` has also been natively added, backed by the **Revolt event loop** and **PHP 8.1+ Fibers**. The behavior of the event loop in the compiled PHP code perfectly mirrors its Node.js counterpart: asynchronous operations are handled transparently without blocking the OS thread, and the main process will automatically wait for all pending `Aff` tasks to complete before exiting.
+
+### Project Structure & Ecosystem
+
+In parallel, the project structure has been fully reorganized to align with the standard conventions of other alternate backends (like `purerl`, `purescm`, or `purescript-go`). We now have:
+- A dedicated **FFI ecosystem** based on standard forks (`prelude`, `effect`, `aff`, etc.).
+- A standalone compiler repository (`phpurs`).
+- A ready-to-use **[starter template](https://github.com/0x000000000000000000001/phpurs-starter)** to easily bootstrap new projects.
+
+The compiler itself is now at a very advanced stage in terms of features and performance. My next immediate priorities are to clean up and refactor the codebase to make it truly maintainable, and then move on to the next phase: improving the Developer Experience (DX, e.g., seamless `npm install`) and building a real-world Proof of Concept to thoroughly battle-test the implementation.
+
+---
+
+### Internal Compiler Optimizations
+
+While initially an unoptimized proof-of-concept, we have implemented several key performance optimizations tailored specifically for the PHP runtime:
 - **Native ADT Representation:** PureScript Algebraic Data Types (ADTs) are now represented using lightweight, statically-defined native PHP classes (`Phpurs_DataN`) instead of generic structures, drastically reducing memory footprint and instantiation overhead.
 - **IIFE Flattening & Native TCO:** To accommodate PHP's execution model and avoid call stack exhaustion, nested Immediately Invoked Function Expressions (IIFEs) are flattened into linear statements. This paves the way for our robust Tail-Call Optimization (TCO), implemented via native `while(true)` loops.
 - **Inline Static Uncurrying:** To address the performance hit inherent to curried functions and partial application in PHP, we employ an inline static uncurrying strategy. By statically generating partial application closure wrappers (up to arity 4) directly inside the function body, we bypass expensive generic variadic fallbacks (`array_merge`/`array_slice`). This achieves a massive 40% speedup on partial applications, maintains near-zero overhead on fully applied functions, and ensures 100% backward compatibility with FFI closures.

@@ -93,14 +93,19 @@ genNativeCurry name args stmts =
 
 genCurry :: Array String -> Array String -> Array PhpExpr -> String
 genCurry args captures stmts =
-  if length args == 0 then joinWith "\n" (map printExpr stmts)
+  if length args == 0 then "function() use (&$__fn) {\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
   else
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> sanitize a <> (if i > 0 then " = null" else "")) args)
       argNames = joinWith ", " (map (\a -> "$" <> sanitize a) args)
       nStr = show (length args)
       
-      useClause = if length captures > 0 then " use (" <> joinWith ", " captures <> ", &$__fn)" else " use (&$__fn)"
+      nArgs = length args
+      
+      useClause = if nArgs == 1 then
+                    (if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else "")
+                  else
+                    (if length captures > 0 then " use (" <> joinWith ", " captures <> ", &$__fn)" else " use (&$__fn)")
       
       rewrittenStmts = replaceReturn stmts
 
@@ -144,19 +149,23 @@ genCurry args captures stmts =
 
       fnBody = 
         "  $__num = func_num_args();\n" <>
+        (if nArgs == 1 then "" else
         "  if ($__num < " <> nStr <> ") {\n" <>
         fastPathStr <>
         "    return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
-        "  }\n" <>
+        "  }\n") <>
         (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
         "  __end:\n" <>
         "  return $__num > " <> nStr <> " ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
 
     in 
-      "(function()" <> useClause <> " {\n" <>
-      "  $__fn = function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "  };\n" <>
-      "  return $__fn;\n" <>
-      "})()"
+      if nArgs == 1 then
+        "function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "}"
+      else
+        "(function()" <> useClause <> " {\n" <>
+        "  $__fn = function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "  };\n" <>
+        "  return $__fn;\n" <>
+        "})()"
 
 printExpr :: PhpExpr -> String
 printExpr expr = case expr of

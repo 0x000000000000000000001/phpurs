@@ -6,6 +6,7 @@
     "phpurs": "bin/index.js"
   },
   "scripts": {
-    "build": "spago build"
+    "build": "spago build",
+    "prepare": "spago build"
   }
 }

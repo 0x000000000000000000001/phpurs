@@ -52,8 +52,10 @@ export const mergeComposersImpl = function(mbFfiDir) {
             path.join(rootDir, 'run', 'bak', 'php', 'composer.template.json')
         ];
         
+        let foundPath = null;
         for (const p of possibleBasePaths) {
             if (fs.existsSync(p)) {
+                foundPath = p;
                 try {
                     rootComposer = JSON.parse(fs.readFileSync(p, 'utf8'));
                 } catch (e) {

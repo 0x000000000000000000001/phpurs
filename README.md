@@ -39,13 +39,10 @@ The easiest way to bootstrap a new PureScript-to-PHP project is by using our off
    cd my-php-project
    ```
 
-2. **Install the `phpurs` backend compiler globally (or locally):**
-   *(Assuming you have cloned this `phpurs` repository)*
+2. **Install the `phpurs` backend compiler:**
+   You can install the compiler directly from GitHub. NPM will automatically compile it in the background during installation.
    ```bash
-   cd path/to/phpurs
-   npm install    # Install dependencies
-   npm run build  # Compile the compiler itself
-   npm link       # Link the binary globally
+   npm install --save-dev github:0x000000000000000000001/phpurs
    ```
 
 3. **Build and Run:**

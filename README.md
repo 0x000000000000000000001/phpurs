@@ -119,6 +119,8 @@ composer install --no-dev --optimize-autoloader
 ```
 Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
+> **Note on Custom Directory Structures:** If you prefer to keep your PHP environment isolated in a subdirectory (e.g., `run/bak/php/composer.json`) rather than the root, simply adjust the `url` to be relative to the location of the `composer.json` file (e.g., `"../../../output"`).
+
 ## Architecture
 
 The compilation pipeline is functionally decoupled. First, `Phpurs.CoreFn` decodes `corefn.json` into a PureScript Algebraic Data Type. Then, `Phpurs.CodeGen` maps the PureScript CoreFn AST to the `PhpAst`, and `Phpurs.Printer` formats it into valid PHP syntax. Finally, `Main` orchestrates the CLI, reading the `output/` directory and writing the generated `.php` files to their respective module directories.

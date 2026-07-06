@@ -55,8 +55,19 @@ generateModule env mbFfiDir isBundle mod = do
       case res of
         Left _ -> pure ""
         Right content -> pure (String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") content)))
+  let
+    phpModName = String.replaceAll (Pattern ".") (Replacement "_") modNameStr
+    wrappedFfiCode = if String.length ffiCode > 0 then
+      let
+        closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n"
+        closureEnd = "\n});\n"
+        mappings = joinWith "\n" (map (\f -> "$GLOBALS['" <> phpModName <> "_" <> f <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? null;") (unwrap mod).foreign)
+      in
+        closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
+    else
+      ""
   let phpAst = CodeGen.translate env mod
-  let phpStr = Printer.printPhpFile isBundle ffiCode phpAst
+  let phpStr = Printer.printPhpFile isBundle wrappedFfiCode phpAst
   if isBundle then
     pure phpStr
   else do

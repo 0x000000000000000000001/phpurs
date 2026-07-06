@@ -99,3 +99,32 @@ filterModules reachable modules =
       let modPrefix = joinWith "." m.moduleName <> "."
           foreignReachable = filter (\f -> Set.member (modPrefix <> f) reachable) m.foreign
       in length m.decls > 0 || length foreignReachable > 0
+
+-- | Compute the transitive closure of dirty modules (reverse dependency graph)
+computeTransitiveDirty :: Array String -> Array Module -> Set.Set String
+computeTransitiveDirty initiallyDirty modules =
+  let
+    -- build reverse dependency graph: imported -> array of importers
+    -- Each module imports several others.
+    edges = concatMap (\(Module m) ->
+      let importer = joinWith "." m.moduleName
+      in map (\imp -> Tuple (joinWith "." imp) importer) m.imports
+    ) modules
+    
+    -- group by imported
+    reverseGraph = foldl (\acc (Tuple imported importer) ->
+      let current = case Object.lookup imported acc of
+            Just arr -> arr
+            Nothing -> []
+      in Object.insert imported (current <> [importer]) acc
+    ) Object.empty edges
+    
+    dfs visited node
+      | Set.member node visited = visited
+      | otherwise =
+          let visited' = Set.insert node visited
+          in case Object.lookup node reverseGraph of
+               Nothing -> visited'
+               Just dependents -> foldl dfs visited' dependents
+               
+  in foldl dfs Set.empty initiallyDirty

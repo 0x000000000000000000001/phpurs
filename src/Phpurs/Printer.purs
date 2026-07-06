@@ -4,7 +4,7 @@ import Prelude
 
 import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take)
 import Data.Maybe (fromMaybe, isNothing, Maybe(..))
-import Data.Array (filter, length, mapWithIndex, index)
+import Data.Array (filter, length, mapWithIndex, index, concatMap)
 import Data.Array as Array
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
@@ -19,6 +19,17 @@ isUppercase s =
   in
     c >= "A" && c <= "Z"
 
+replaceReturn :: Array PhpExpr -> Array PhpExpr
+replaceReturn = concatMap replaceExpr
+  where
+    replaceExpr :: PhpExpr -> Array PhpExpr
+    replaceExpr (PhpReturn e) = [PhpAssign "__res" e, PhpGoto "__end"]
+    replaceExpr (PhpIf cond t e) = [PhpIf cond (replaceReturn t) (replaceReturn e)]
+    replaceExpr (PhpWhile cond body) = [PhpWhile cond (replaceReturn body)]
+    replaceExpr (PhpSwitch cond cases def) = 
+      [PhpSwitch cond (map (\c -> c { stmts = replaceReturn c.stmts }) cases) (map replaceReturn def)]
+    replaceExpr other = [other]
+
 genNativeCurry :: String -> Array String -> Array PhpExpr -> String
 genNativeCurry name args stmts =
   let
@@ -26,35 +37,7 @@ genNativeCurry name args stmts =
     argNames = joinWith ", " (map (\a -> "$" <> sanitize a) args)
     nStr = show (length args)
     
-    initStmts = Array.init stmts
-    lastStmt = Array.last stmts
-    
-    isSimple = case lastStmt of
-      Just (PhpReturn _) -> true
-      _ -> false
-
-    parts = if isSimple then
-      let
-        exprStr = case lastStmt of
-          Just (PhpReturn e) -> printExpr e
-          _ -> "null"
-        initStr = case initStmts of
-          Just is -> if length is > 0 then joinWith ";\n" (map printExpr is) <> ";\n" else ""
-          Nothing -> ""
-      in
-        { setupStr: ""
-        , returnStr: 
-            initStr <>
-            "    $__res = " <> exprStr <> ";\n"
-        }
-    else
-      { setupStr:
-            "  $__body = function(" <> argNames <> ") {\n" <>
-            "    " <> joinWith ";\n    " (map printExpr stmts) <> ";\n" <>
-            "  };\n"
-        , returnStr:
-            "    $__res = $__body(" <> argNames <> ");\n"
-        }
+    rewrittenStmts = replaceReturn stmts
 
     fastPathStr = 
       let
@@ -101,59 +84,25 @@ genNativeCurry name args stmts =
       fastPathStr <>
       "    return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
       "  }\n" <>
-      parts.setupStr <>
-      parts.returnStr <>
-      "    return " <> nStr <> " < $__num ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
+      (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
+      "  __end:\n" <>
+      "  return " <> nStr <> " < $__num ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
 
   in
     "function " <> name <> "(" <> argStr <> ") {\n" <> fnBody <> "}"
 
 genCurry :: Array String -> Array String -> Array PhpExpr -> String
 genCurry args captures stmts =
-  if length args == 0 then joinWith ";\n" (map printExpr stmts) <> ";"
+  if length args == 0 then joinWith "\n" (map printExpr stmts)
   else
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> sanitize a <> (if i > 0 then " = null" else "")) args)
       argNames = joinWith ", " (map (\a -> "$" <> sanitize a) args)
       nStr = show (length args)
       
-      useClause = if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else ""
+      useClause = if length captures > 0 then " use (" <> joinWith ", " captures <> ", &$__fn)" else " use (&$__fn)"
       
-      initStmts = Array.init stmts
-      lastStmt = Array.last stmts
-      
-      isSimple = case lastStmt of
-        Just (PhpReturn _) -> true
-        _ -> false
-
-      parts = if isSimple then
-        let
-          exprStr = case lastStmt of
-            Just (PhpReturn e) -> printExpr e
-            _ -> "null"
-          initStr = case initStmts of
-            Just is -> if length is > 0 then joinWith ";\n" (map printExpr is) <> ";\n" else ""
-            Nothing -> ""
-        in
-          { setupStr: ""
-          , returnStr: 
-              initStr <>
-              "    $__res = " <> exprStr <> ";\n"
-          , usesBody: false
-          }
-      else
-        let
-          bodyCaps = captures
-          bodyUse = if length bodyCaps > 0 then " use (" <> joinWith ", " bodyCaps <> ")" else ""
-        in
-          { setupStr:
-              "  $__body = function(" <> argNames <> ")" <> bodyUse <> " {\n" <>
-              "    " <> joinWith ";\n    " (map printExpr stmts) <> ";\n" <>
-              "  };\n"
-          , returnStr:
-              "    $__res = $__body(" <> argNames <> ");\n"
-          , usesBody: true
-          }
+      rewrittenStmts = replaceReturn stmts
 
       fastPathStr = 
         let
@@ -199,15 +148,13 @@ genCurry args captures stmts =
         fastPathStr <>
         "    return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
         "  }\n" <>
-        parts.returnStr <>
+        (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
+        "  __end:\n" <>
         "  return $__num > " <> nStr <> " ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
 
-      innerCaps = captures <> (if parts.usesBody then ["$__body", "&$__fn"] else ["&$__fn"])
-      innerUseClause = " use (" <> joinWith ", " innerCaps <> ")"
     in 
       "(function()" <> useClause <> " {\n" <>
-      parts.setupStr <>
-      "  $__fn = function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "  };\n" <>
+      "  $__fn = function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "  };\n" <>
       "  return $__fn;\n" <>
       "})()"
 
@@ -284,6 +231,8 @@ printExpr expr = case expr of
   PhpContinue -> "continue /*__LVL__*/"
   PhpRaw raw -> raw
   PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map printExpr args) <> ")"
+  PhpGoto lbl -> "goto " <> sanitize lbl <> ";"
+  PhpLabel lbl -> sanitize lbl <> ":"
   PhpSwitch subject cases defaultStmts ->
     let
       printCase c = joinWith "\n" (map (\m -> "case " <> printExpr m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.stmts) <> ";") <> "\nbreak;"

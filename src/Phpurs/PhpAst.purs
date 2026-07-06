@@ -30,6 +30,8 @@ data PhpExpr
   | PhpNew String (Array PhpExpr)
   | PhpClone PhpExpr
   | PhpSwitch PhpExpr (Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr }) (Maybe (Array PhpExpr))
+  | PhpGoto String
+  | PhpLabel String
 
 type PhpDecl =
   { identifier :: String

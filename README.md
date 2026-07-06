@@ -84,7 +84,7 @@ spago build --backend phpurs --backend-args "--main App.Main --bundle"
 | Option | Description |
 |---|---|
 | `--main <Module>` | Specifies the entry point. The compiler will perform Dead Code Elimination (DCE) keeping only the code reachable from this module, and generate an executable `output/main.php`. |
-| `--bundle` | Concatenates all generated PHP code into a single file (`output/bundle.php`) instead of emitting individual files per module. Excellent for minimal deployments. |
+| `--bundle` | Concatenates all generated PHP code into a single file (`output/bundle.php`). Excellent for minimal deployments, but **not necessarily more performant**. Depending on your PHP OPcache configuration, relying on multiple lazy-loaded files (`require_once`) might actually yield better startup times. |
 | `--composer-in <Path>` | Overrides the default `composer.json` location (used for merging FFI dependencies). |
 | `--composer-out <Path>` | Overrides the default `composer.final.json` output location. |
 

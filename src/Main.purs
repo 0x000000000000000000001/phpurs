@@ -25,6 +25,7 @@ import Control.Parallel (parTraverse)
 import Data.Set as Set
 
 import Phpurs.Mtime as Mtime
+import Phpurs.FastDeps as FastDeps
 import Phpurs.CoreFn as CF
 import Phpurs.CodeGen as CodeGen
 import Phpurs.Printer as Printer
@@ -108,26 +109,20 @@ main = launchAff_ do
         pure $ isDirectory s
       ) files
       
-      -- read all modules concurrently
-      mbModules <- parTraverse readModule validDirs
-      let modules = Array.mapMaybe identity mbModules
-      
-      let dceModules = case mbMainModule of
-            Just mainMod ->
-              let
-                entryPoint = mainMod <> ".main"
-                depGraph = Dce.buildDepGraph modules
-                reachable = Dce.computeReachable entryPoint depGraph
-              in Dce.filterModules reachable modules
-            Nothing -> modules
-      
-      let globalEnv = CodeGen.buildGlobalEnv dceModules
-      
-      -- translate each module
       if mbBundle then do
+        mbModules <- parTraverse readModule validDirs
+        let modules = Array.mapMaybe identity mbModules
+        let dceModules = case mbMainModule of
+              Just mainMod ->
+                let
+                  entryPoint = mainMod <> ".main"
+                  depGraph = Dce.buildDepGraph modules
+                  reachable = Dce.computeReachable entryPoint depGraph
+                in Dce.filterModules reachable modules
+              Nothing -> modules
+        let globalEnv = CodeGen.buildGlobalEnv dceModules
         strs <- parTraverse (generateModule globalEnv mbFfiDir true) dceModules
         let bundleContent = "<?php\n\n" <> joinWith "\n" strs
-        
         case mbMainModule of
           Just mainMod -> do
             let
@@ -139,23 +134,49 @@ main = launchAff_ do
             writeTextFile UTF8 "output/bundle.php" bundleContent
             liftEffect $ log "phpurs: Successfully bundled all modules into output/bundle.php"
       else do
-        directlyDirty <- liftEffect $ filterA (\(CF.Module m) -> do
-          let modName = joinWith "." m.moduleName
+        liftEffect $ log "phpurs: FastDeps parsing started"
+        let corefnFiles = map (\dir -> "output/" <> dir <> "/corefn.json") validDirs
+        moduleDepsList <- liftEffect $ FastDeps.parseAllImports corefnFiles
+        liftEffect $ log "phpurs: FastDeps parsing finished"
+        
+        let reachableDepsList = case mbMainModule of
+              Just mainMod ->
+                let reachable = Dce.computeReachableModulesFast mainMod moduleDepsList
+                in Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) reachable) moduleDepsList
+              Nothing -> moduleDepsList
+        
+        liftEffect $ log "phpurs: Mtime checking started"
+        directlyDirty <- liftEffect $ filterA (\deps -> do
+          let modName = joinWith "." deps.moduleName
           corefnMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/corefn.json")
           phpMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/index.php")
-          pure (phpMtime == 0.0 || corefnMtime > phpMtime)
-        ) dceModules
+          pure (corefnMtime > 0.0 && (phpMtime == 0.0 || corefnMtime > phpMtime))
+        ) reachableDepsList
+        liftEffect $ log "phpurs: Mtime checking finished"
         
-        let directlyDirtyNames = map (\(CF.Module m) -> joinWith "." m.moduleName) directlyDirty
-        let transitivelyDirtySet = Dce.computeTransitiveDirty directlyDirtyNames dceModules
-        let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) dceModules
-        let dirtyCount = Array.length dirtyModules
-        let totalCount = Array.length dceModules
+        let directlyDirtyNames = map (\deps -> joinWith "." deps.moduleName) directlyDirty
+        liftEffect $ log $ "Directly dirty count: " <> show (Array.length directlyDirtyNames)
+        liftEffect $ log $ "Directly dirty sample: " <> joinWith ", " (Array.take 10 directlyDirtyNames)
+        let transitivelyDirtySet = Dce.computeTransitiveDirtyFast directlyDirtyNames reachableDepsList
+        let dirtyNames = Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) transitivelyDirtySet) reachableDepsList
+        
+        let dirtyCount = Array.length dirtyNames
+        let totalCount = Array.length reachableDepsList
         
         if dirtyCount == 0 then do
           liftEffect $ log $ "phpurs: 0/" <> show totalCount <> " modules modified. Up to date."
         else do
           liftEffect $ log $ "phpurs: Recompiling " <> show dirtyCount <> "/" <> show totalCount <> " modules (incremental)..."
+          
+          -- We must read ALL reachable modules to build a complete globalEnv for cross-module inlining
+          let reachableNames = map (\deps -> joinWith "." deps.moduleName) reachableDepsList
+          mbReachableModules <- parTraverse readModule reachableNames
+          let reachableModules = Array.mapMaybe identity mbReachableModules
+          
+          let globalEnv = CodeGen.buildGlobalEnv reachableModules
+          
+          -- But we only generate PHP for the dirty subset
+          let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) reachableModules
           _ <- parTraverse (generateModule globalEnv mbFfiDir false) dirtyModules
           pure unit
         
@@ -166,9 +187,10 @@ main = launchAff_ do
               entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
             writeTextFile UTF8 "output/main.php" entryPoint
             liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
-          Nothing -> do
-            liftEffect $ log "phpurs: Successfully compiled all modules."
-
-      case mbFfiDir of
-        Just dir -> liftEffect $ ComposerMerge.mergeComposers dir
-        Nothing -> liftEffect $ ComposerMerge.mergeComposers ""
+          Nothing -> pure unit
+        
+        if dirtyCount > 0 then do
+          case mbFfiDir of
+            Just dir -> liftEffect $ ComposerMerge.mergeComposers dir
+            Nothing -> liftEffect $ ComposerMerge.mergeComposers ""
+        else pure unit

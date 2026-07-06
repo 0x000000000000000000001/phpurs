@@ -128,3 +128,13 @@ computeTransitiveDirty initiallyDirty modules =
                Just dependents -> foldl dfs visited' dependents
                
   in foldl dfs Set.empty initiallyDirty
+
+foreign import computeTransitiveDirtyFastImpl :: Array String -> Array { moduleName :: Array String, imports :: Array (Array String) } -> Array String
+
+computeTransitiveDirtyFast :: Array String -> Array { moduleName :: Array String, imports :: Array (Array String) } -> Set.Set String
+computeTransitiveDirtyFast initiallyDirty modules = Set.fromFoldable $ computeTransitiveDirtyFastImpl initiallyDirty modules
+
+foreign import computeReachableModulesFastImpl :: String -> Array { moduleName :: Array String, imports :: Array (Array String) } -> Array String
+
+computeReachableModulesFast :: String -> Array { moduleName :: Array String, imports :: Array (Array String) } -> Set.Set String
+computeReachableModulesFast root modules = Set.fromFoldable $ computeReachableModulesFastImpl root modules

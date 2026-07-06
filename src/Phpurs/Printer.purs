@@ -8,8 +8,10 @@ import Data.Array (filter, length, mapWithIndex, index, concatMap)
 import Data.Array as Array
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
+foreign import sanitizeImpl :: String -> String
+
 sanitize :: String -> String
-sanitize = replaceAll (Pattern "$") (Replacement "__dollar__")
+sanitize = sanitizeImpl
   <<< replaceAll (Pattern "'") (Replacement "__prime__")
 
 isUppercase :: String -> Boolean
@@ -188,18 +190,21 @@ printExpr expr = case expr of
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
   PhpNumber n -> show n
-  PhpString s -> "\"" <> replaceAll (Pattern "\"") (Replacement "\\\"") s <> "\""
+  PhpString s -> 
+    let
+      s0 = replaceAll (Pattern "\\") (Replacement "\\\\") s
+      s1 = replaceAll (Pattern "$") (Replacement "\\$") s0
+      s2 = replaceAll (Pattern "\"") (Replacement "\\\"") s1
+    in "\"" <> s2 <> "\""
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
-  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> item.key <> "\" => " <> printExpr item.value) arr) <> "]"
+  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> sanitize item.key <> "\" => " <> printExpr item.value) arr) <> "]"
   PhpPropertyAccess expr prop -> "(" <> printExpr expr <> ")->" <> sanitize prop
+  PhpArrayIndex expr idx -> "(" <> printExpr expr <> ")[" <> show idx <> "]"
   PhpClone obj -> "clone " <> printExpr obj
   PhpAssign ident expr -> "$" <> sanitize ident <> " = " <> printExpr expr
   PhpIf cond thenStmts elseStmts ->
     let
-      thenBody = joinWith ";\n" (map printExpr thenStmts) <> ";"
-      elseBody = joinWith ";\n" (map printExpr elseStmts) <> ";"
-      
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
       extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [PhpIf (PhpBoolean true) tDefault eDefault]) | isLiteral litExpr =
         Just { subject: subj, cases: [{ val: litExpr, body: tBody }], defaultBody: tDefault }
@@ -224,13 +229,16 @@ printExpr expr = case expr of
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
       Just sw ->
         let
-          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.body) <> ";") <> "\nbreak;") sw.cases)
-          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr sw.defaultBody) <> ";") <> "\nbreak;"
+          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr c.val <> ":\n" <> (joinWith ";\n" (map printExpr c.body) <> ";") <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> (joinWith ";\n" (map printExpr sw.defaultBody) <> ";") <> "\nbreak;"
         in
           "switch (" <> printExpr sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
       Nothing ->
-        "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n} else {\n" <> elseBody <> "\n}"
-
+        let
+          thenBody = joinWith ";\n" (map printExpr thenStmts) <> ";"
+        in
+          "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n}" <> 
+          (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map printExpr elseStmts) <> ";") <> "\n}" else "")
 
   PhpThrow msg -> "throw new \\Exception(\"" <> replaceAll (Pattern "\"") (Replacement "\\\"") msg <> "\")"
   PhpTernary cond t e -> "(" <> printExpr cond <> " ? " <> printExpr t <> " : " <> printExpr e <> ")"
@@ -291,7 +299,7 @@ printPhpFile isBundle ffiString file =
       _ -> false
     ) file.decls
     thunkCases = joinWith "\n" $ map (\d -> case d.expression of
-      PhpValueThunk name expr -> "      case '" <> sanitize name <> "': $v = " <> printExpr expr <> "; break;"
+      PhpValueThunk name expr -> "      case '" <> sanitize name <> "': $v = " <> resolveContinues (printExpr expr) <> "; break;"
       _ -> ""
     ) thunks
     evalThunkStr = "if (!function_exists(__NAMESPACE__ . '\\\\phpurs_eval_thunk')) {\n" <>

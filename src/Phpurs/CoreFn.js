@@ -61,7 +61,8 @@ function parseExpr(obj) {
     case "Let": {
       let binds = [];
       for (const b of obj.binds) {
-        binds = binds.concat(parseBind(b));
+        const parsed = parseBind(b);
+        for (const p of parsed) { binds.push(p); }
       }
       return new CoreFn.Let(binds, parseExpr(obj.expression));
     }
@@ -80,7 +81,8 @@ export const parseModuleImpl = function(jsonStr) {
       const obj = JSON.parse(jsonStr);
       let binds = [];
       for (const b of obj.decls) {
-        binds = binds.concat(parseBind(b));
+        const parsed = parseBind(b);
+        for (const p of parsed) { binds.push(p); }
       }
       const imports = (obj.imports || []).map(function(i) { return i.moduleName || []; });
       return new Just(CoreFn.Module({

@@ -28,6 +28,13 @@ bindBinder subj = case _ of
         bindResults = map (\item -> bindBinder (PhpPropertyAccess subj item.key) item.value) arr
         combined = foldl combineResult { cond: isObj, assigns: [] } bindResults
       in combined
+    ArrayLiteral arr ->
+      let
+        isArray = PhpCall (PhpRaw "is_array") [subj]
+        lenCond = PhpBinOp "===" (PhpCall (PhpRaw "count") [subj]) (PhpInt (length arr))
+        bindResults = mapWithIndex (\i b -> bindBinder (PhpArrayIndex subj i) b) arr
+        combined = foldl combineResult { cond: PhpBinOp "&&" isArray lenCond, assigns: [] } bindResults
+      in combined
     _ -> { cond: PhpBinOp "===" subj (translateLiteral lit), assigns: [] }
   ConstructorBinder isNewtype _ ctorName bs ->
     if isNewtype then

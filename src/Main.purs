@@ -16,12 +16,12 @@ import Data.Argonaut.Decode (decodeJson)
 import Data.Array (filterA, mapMaybe, elemIndex, (!!))
 import Data.Array as Array
 import Node.Process as Process
-import Data.Traversable (for)
+import Data.Traversable (traverse, for)
 import Control.Monad.Error.Class (try)
 import Data.String (joinWith, trim)
 import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
-import Control.Parallel (parTraverse)
+import Data.Traversable (traverse)
 import Data.Set as Set
 
 import Phpurs.Mtime as Mtime
@@ -102,7 +102,7 @@ main = launchAff_ do
       ) files
       
       if mbBundle then do
-        mbModules <- parTraverse readModule validDirs
+        mbModules <- traverse readModule validDirs
         let modules = Array.mapMaybe identity mbModules
         let dceModules = case mbMainModule of
               Just mainMod ->
@@ -113,7 +113,7 @@ main = launchAff_ do
                 in Dce.filterModules reachable modules
               Nothing -> modules
         let globalEnv = CodeGen.buildGlobalEnv dceModules
-        strs <- parTraverse (generateModule globalEnv mbFfiDir true) dceModules
+        strs <- traverse (generateModule globalEnv mbFfiDir true) dceModules
         let bundleContent = "<?php\n\n" <> joinWith "\n" strs
         case mbMainModule of
           Just mainMod -> do
@@ -162,21 +162,26 @@ main = launchAff_ do
           
           -- We must read ALL reachable modules to build a complete globalEnv for cross-module inlining
           let reachableNames = map (\deps -> joinWith "." deps.moduleName) reachableDepsList
-          mbReachableModules <- parTraverse readModule reachableNames
+          mbReachableModules <- traverse readModule reachableNames
           let reachableModules = Array.mapMaybe identity mbReachableModules
           
           let globalEnv = CodeGen.buildGlobalEnv reachableModules
           
           -- But we only generate PHP for the dirty subset
           let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) reachableModules
-          _ <- parTraverse (generateModule globalEnv mbFfiDir false) dirtyModules
+          _ <- traverse (\m -> do
+            liftEffect $ log $ "Generating " <> joinWith "." (unwrap m).moduleName
+            res <- generateModule globalEnv mbFfiDir false m
+            pure res
+          ) dirtyModules
           pure unit
         
         case mbMainModule of
           Just mainMod -> do
             let
               ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-              entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+              sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
+              entryPoint = "<?php\nrequire_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
             writeTextFile UTF8 "output/main.php" entryPoint
             liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
           Nothing -> pure unit

@@ -18,6 +18,7 @@ data PhpExpr
   | PhpArray (Array PhpExpr)
   | PhpAssocArray (Array { key :: String, value :: PhpExpr })
   | PhpPropertyAccess PhpExpr String
+  | PhpArrayIndex PhpExpr Int
   | PhpAssign String PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
   | PhpThrow String

@@ -55,23 +55,39 @@ export const mergeComposersImpl = function(mbFfiDir) {
         
         const scanDirsSet = new Set(getScanDirs(mbFfiDir));
         const outDir = path.join(rootDir, 'output');
+        
+        let cache = null;
+        try {
+            if (fs.existsSync(path.join(outDir, '.phpurs-cache.json'))) {
+                cache = JSON.parse(fs.readFileSync(path.join(outDir, '.phpurs-cache.json'), 'utf8'));
+            }
+        } catch (e) {}
+
         if (fs.existsSync(outDir)) {
             const mods = fs.readdirSync(outDir);
             for (const m of mods) {
-                const corefnPath = path.join(outDir, m, 'corefn.json');
-                if (fs.existsSync(corefnPath)) {
-                    try {
-                        const corefn = JSON.parse(fs.readFileSync(corefnPath, 'utf8'));
-                        if (corefn.modulePath) {
-                            const match = corefn.modulePath.match(/^(.*?)\/(?:src|test)\//);
-                            if (match) {
-                                scanDirsSet.add(path.resolve(rootDir, match[1]));
-                            } else {
-                                // Fallback if no src/ or test/ directory
-                                scanDirsSet.add(path.resolve(rootDir, path.dirname(corefn.modulePath)));
-                            }
-                        }
-                    } catch (e) {}
+                if (m.startsWith('.')) continue; // ignore hidden files like .phpurs-cache.json
+                
+                let modulePath = null;
+                if (cache && cache.modules && cache.modules[m] && cache.modules[m].modulePath) {
+                    modulePath = cache.modules[m].modulePath;
+                } else {
+                    const corefnPath = path.join(outDir, m, 'corefn.json');
+                    if (fs.existsSync(corefnPath)) {
+                        try {
+                            const corefn = JSON.parse(fs.readFileSync(corefnPath, 'utf8'));
+                            modulePath = corefn.modulePath;
+                        } catch (e) {}
+                    }
+                }
+                
+                if (modulePath) {
+                    const match = modulePath.match(/^(.*?)\/(?:src|test)\//);
+                    if (match) {
+                        scanDirsSet.add(path.resolve(rootDir, match[1]));
+                    } else {
+                        scanDirsSet.add(path.resolve(rootDir, path.dirname(modulePath)));
+                    }
                 }
             }
         }

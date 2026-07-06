@@ -162,8 +162,8 @@ formatFv recVars f = if f `elem` recVars || Printer.isUppercase f then "&$" <> P
 
 type CompileResult = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: Int }
 
-translateTailCall :: Array String -> String -> Array String -> Int -> Expr -> { stmts :: Array PhpExpr, nextId :: Int }
-translateTailCall recVars ident args nextId expr = case expr of
+translateTailCall :: GlobalEnv -> String -> Array String -> Array String -> String -> Array String -> Int -> Expr -> { stmts :: Array PhpExpr, nextId :: Int }
+translateTailCall env currentModStr moduleName recVars ident args nextId expr = case expr of
   Let binds body ->
     let
       newRecVars = concatMap (\bind -> case bind of
@@ -174,15 +174,15 @@ translateTailCall recVars ident args nextId expr = case expr of
       
       processBind nextId' bind = case bind of
         NonRec id e -> 
-          let res = translateExprImpl nextRecVars Nothing nextId' e
+          let res = translateExprImpl env currentModStr moduleName nextRecVars Nothing nextId' e
           in { stmts: res.stmts <> [PhpAssign id res.expr], nextId: res.nextId }
         Rec rbs -> 
           foldl (\acc rb -> 
             let extracted = getArgs rb.expression
                 res = if length extracted.args > 0 then
-                        translateExprImpl nextRecVars (Just { ident: rb.identifier, args: extracted.args }) acc.nextId rb.expression
+                        translateExprImpl env currentModStr moduleName nextRecVars (Just { ident: rb.identifier, args: extracted.args }) acc.nextId rb.expression
                       else
-                        translateExprImpl nextRecVars Nothing acc.nextId rb.expression
+                        translateExprImpl env currentModStr moduleName nextRecVars Nothing acc.nextId rb.expression
             in { stmts: acc.stmts <> res.stmts <> [PhpAssign rb.identifier res.expr], nextId: res.nextId }
           ) { stmts: [], nextId: nextId' } (sortRecBinds rbs)
           
@@ -191,13 +191,13 @@ translateTailCall recVars ident args nextId expr = case expr of
         in { stmts: acc.stmts <> br.stmts, nextId: br.nextId }
       ) { stmts: [], nextId } binds
       
-      bodyRes = translateTailCall nextRecVars ident args bindRes.nextId body
+      bodyRes = translateTailCall env currentModStr moduleName nextRecVars ident args bindRes.nextId body
     in { stmts: bindRes.stmts <> bodyRes.stmts, nextId: bodyRes.nextId }
     
   Case caseExprs alts ->
       let
         processCaseExpr acc e =
-          let res = translateExprImpl recVars Nothing acc.nextId e
+          let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId e
           in { assigns: acc.assigns <> res.stmts <> [PhpAssign ("__case_" <> show acc.i) res.expr]
              , vars: acc.vars <> [PhpVar ("__case_" <> show acc.i)]
              , nextId: res.nextId
@@ -209,7 +209,7 @@ translateTailCall recVars ident args nextId expr = case expr of
           let
             bindResults = mapWithIndex (\i b -> P.bindBinder (caseRes.vars `unsafeIndex` i) b) alt.binders
             combined = foldl P.combineResult { cond: PhpBoolean true, assigns: [] } bindResults
-            altBodyRes = translateTailCall recVars ident args acc.nextId alt.expression
+            altBodyRes = translateTailCall env currentModStr moduleName recVars ident args acc.nextId alt.expression
           in { stmts: [PhpIf combined.cond (combined.assigns <> altBodyRes.stmts) acc.stmts], nextId: altBodyRes.nextId }
              
         altRes = foldr processAlt { stmts: [PhpThrow "Pattern match failure"], nextId: caseRes.nextId } alts
@@ -220,7 +220,7 @@ translateTailCall recVars ident args nextId expr = case expr of
       Just callArgs ->
         let
           processArg acc argExpr =
-            let res = translateExprImpl recVars Nothing acc.nextId argExpr
+            let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId argExpr
             in { assigns: acc.assigns <> res.stmts <> [PhpAssign ("__tco_tmp_" <> show acc.i) res.expr]
                , nextId: res.nextId
                , i: acc.i + 1
@@ -229,7 +229,7 @@ translateTailCall recVars ident args nextId expr = case expr of
           reassigns = mapWithIndex (\i argName -> PhpAssign argName (PhpVar ("__tco_tmp_" <> show i))) args
         in { stmts: argRes.assigns <> reassigns <> [PhpContinue], nextId: argRes.nextId }
       Nothing ->
-        let res = translateExprImpl recVars Nothing nextId expr
+        let res = translateExprImpl env currentModStr moduleName recVars Nothing nextId expr
         in { stmts: res.stmts <> [PhpReturn res.expr], nextId: res.nextId }
 
 isTailCall :: String -> Int -> Expr -> Maybe (Array Expr)
@@ -282,8 +282,8 @@ matchInlineFunction (Variable (Just mod) ident) argCount = case mod, ident, argC
   _, _, _ -> Nothing
 matchInlineFunction _ _ = Nothing
 
-translateExprImpl :: Array String -> Maybe { ident :: String, args :: Array String } -> Int -> Expr -> CompileResult
-translateExprImpl recVars tcoCtx nextId expr = case expr of
+translateExprImpl :: GlobalEnv -> String -> Array String -> Array String -> Maybe { ident :: String, args :: Array String } -> Int -> Expr -> CompileResult
+translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case expr of
   Lambda _ _ -> 
     let
       extracted = getArgs expr
@@ -316,7 +316,7 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
           hoistStmts = map (\h -> PhpAssign ("__global_" <> joinWith "_" h.mod <> "_" <> h.ident) (PhpGlobalVar (Just h.mod) h.ident)) hoisted
           rewrittenBody = replaceGlobals hoisted extracted.body
           
-          bodyRes = translateExprImpl recVars tcoCtx nextId rewrittenBody
+          bodyRes = translateExprImpl env currentModStr moduleName recVars tcoCtx nextId rewrittenBody
         in { stmts: [], expr: PhpFunction formattedFvs extracted.args (hoistStmts <> bodyRes.stmts <> [PhpReturn bodyRes.expr]), nextId: bodyRes.nextId }
       Nothing -> 
         let
@@ -343,19 +343,32 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
           hoistStmts = map (\h -> PhpAssign ("__global_" <> joinWith "_" h.mod <> "_" <> h.ident) (PhpGlobalVar (Just h.mod) h.ident)) hoisted
           rewrittenBody = replaceGlobals hoisted extracted.body
           
-          bodyRes = translateTailCall recVars "" [] nextId rewrittenBody -- Just use normal flatten for body
+          bodyRes = translateTailCall env currentModStr moduleName recVars "" [] nextId rewrittenBody -- Just use normal flatten for body
         in { stmts: [], expr: PhpFunction formattedFvs extracted.args (hoistStmts <> bodyRes.stmts), nextId: bodyRes.nextId }
         
   _ -> case tcoCtx of
     Just ctx ->
       let
-        loopBody = translateTailCall recVars ctx.ident ctx.args nextId expr
+        loopBody = translateTailCall env currentModStr moduleName recVars ctx.ident ctx.args nextId expr
       in { stmts: [PhpWhile (PhpBoolean true) loopBody.stmts], expr: PhpRaw "null", nextId: loopBody.nextId }
     Nothing -> case expr of
       Variable mbMod ident ->
-        case mbMod of
-          Just mod -> { stmts: [], expr: PhpGlobalVar (Just mod) ident, nextId }
-          Nothing -> { stmts: [], expr: PhpVar ident, nextId }
+        let
+          modPrefix = case mbMod of
+            Just m -> joinWith "." m
+            Nothing -> currentModStr
+          globalKey = modPrefix <> "." <> ident
+        in case Object.lookup globalKey env of
+          Just (Lambda _ _) ->
+            let
+              targetMod = case mbMod of 
+                Just m -> m
+                Nothing -> moduleName
+              fqn = "\\\\" <> joinWith "\\\\" targetMod <> "\\\\" <> Printer.sanitize (joinWith "_" targetMod <> "_" <> ident)
+            in { stmts: [], expr: PhpString fqn, nextId }
+          _ -> case mbMod of
+            Just mod -> { stmts: [], expr: PhpGlobalVar (Just mod) ident, nextId }
+            Nothing -> { stmts: [], expr: PhpVar ident, nextId }
       Call _ _ -> 
         let
           collectCall (Call f x) =
@@ -366,26 +379,26 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
           
         in case matchInlineFunction extracted.fn (length extracted.args) of
           Just InlineIdentity ->
-            translateExprImpl recVars Nothing nextId (extracted.args `unsafeIndex` 1)
+            translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 1)
           Just InlineConst ->
-            translateExprImpl recVars Nothing nextId (extracted.args `unsafeIndex` 0)
+            translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
           Just InlineApply ->
             let 
-              fnRes = translateExprImpl recVars Nothing nextId (extracted.args `unsafeIndex` 0)
-              argRes = translateExprImpl recVars Nothing fnRes.nextId (extracted.args `unsafeIndex` 1)
+              fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
+              argRes = translateExprImpl env currentModStr moduleName recVars Nothing fnRes.nextId (extracted.args `unsafeIndex` 1)
             in { stmts: fnRes.stmts <> argRes.stmts, expr: PhpCall fnRes.expr [argRes.expr], nextId: argRes.nextId }
           Just InlineFlip ->
             let
-              fnRes = translateExprImpl recVars Nothing nextId (extracted.args `unsafeIndex` 0)
-              argYRes = translateExprImpl recVars Nothing fnRes.nextId (extracted.args `unsafeIndex` 2)
-              argXRes = translateExprImpl recVars Nothing argYRes.nextId (extracted.args `unsafeIndex` 1)
+              fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
+              argYRes = translateExprImpl env currentModStr moduleName recVars Nothing fnRes.nextId (extracted.args `unsafeIndex` 2)
+              argXRes = translateExprImpl env currentModStr moduleName recVars Nothing argYRes.nextId (extracted.args `unsafeIndex` 1)
             in { stmts: fnRes.stmts <> argYRes.stmts <> argXRes.stmts, expr: PhpCall fnRes.expr [argYRes.expr, argXRes.expr], nextId: argXRes.nextId }
           Nothing ->
             case extracted.fn of
               Constructor _ constructorName fieldNames | length fieldNames == length extracted.args ->
                 let
                   processArg acc argExpr =
-                    let res = translateExprImpl recVars Nothing acc.nextId argExpr
+                    let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId argExpr
                     in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
                   argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
                 in { stmts: argsRes.stmts
@@ -397,23 +410,46 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
                   Just op -> 
                     let
                       processArg acc argExpr =
-                        let res = translateExprImpl recVars Nothing acc.nextId argExpr
+                        let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId argExpr
                         in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
                       argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
                     in { stmts: argsRes.stmts, expr: PhpBinOp op (argsRes.exprs `unsafeIndex` 0) (argsRes.exprs `unsafeIndex` 1), nextId: argsRes.nextId }
                   Nothing ->
                     let
-                      fnRes = translateExprImpl recVars Nothing nextId extracted.fn
                       processArg acc argExpr =
-                        let res = translateExprImpl recVars Nothing acc.nextId argExpr
+                        let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId argExpr
                         in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
-                      argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
-                    in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
-      Literal lit -> translateLiteral lit nextId
+                    in case extracted.fn of
+                      Variable fnMbMod fnIdent ->
+                        let
+                          fnModPrefix = case fnMbMod of
+                            Just m -> joinWith "." m
+                            Nothing -> currentModStr
+                          fnGlobalKey = fnModPrefix <> "." <> fnIdent
+                        in case Object.lookup fnGlobalKey env of
+                          Just (Lambda _ _) ->
+                            let
+                              targetMod = case fnMbMod of 
+                                Just m -> m
+                                Nothing -> moduleName
+                              fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.sanitize (joinWith "_" targetMod <> "_" <> fnIdent)
+                              argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
+                            in { stmts: argsRes.stmts, expr: PhpCall (PhpRaw fqn) argsRes.exprs, nextId: argsRes.nextId }
+                          _ -> 
+                            let
+                              fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId extracted.fn
+                              argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
+                            in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
+                      _ ->
+                        let
+                          fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId extracted.fn
+                          argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
+                        in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
+      Literal lit -> translateLiteral env currentModStr moduleName lit nextId
       Case exprs alts -> 
         let
           processCaseExpr acc e =
-            let res = translateExprImpl recVars Nothing acc.nextId e
+            let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId e
             in { assigns: acc.assigns <> res.stmts <> [PhpAssign ("__case_" <> show acc.i) res.expr]
                , vars: acc.vars <> [PhpVar ("__case_" <> show acc.i)]
                , nextId: res.nextId
@@ -428,7 +464,7 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
             let
               bindResults = mapWithIndex (\i b -> P.bindBinder (caseRes.vars `unsafeIndex` i) b) alt.binders
               combined = foldl P.combineResult { cond: PhpBoolean true, assigns: [] } bindResults
-              altBodyRes = translateExprImpl recVars Nothing acc.nextId alt.expression
+              altBodyRes = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId alt.expression
             in { stmts: [PhpIf combined.cond (combined.assigns <> altBodyRes.stmts <> [PhpAssign resultVar altBodyRes.expr]) acc.stmts], nextId: altBodyRes.nextId }
                
           altRes = foldr processAlt { stmts: [PhpThrow "Pattern match failure"], nextId: nextIdAfterVar } alts
@@ -446,15 +482,15 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
           
           processBind nextId' bind = case bind of
             NonRec ident e -> 
-              let res = translateExprImpl nextRecVars Nothing nextId' e
+              let res = translateExprImpl env currentModStr moduleName nextRecVars Nothing nextId' e
               in { stmts: res.stmts <> [PhpAssign ident res.expr], nextId: res.nextId }
             Rec rbs -> 
               foldl (\acc rb -> 
                 let extracted = getArgs rb.expression
                     res = if length extracted.args > 0 then
-                            translateExprImpl nextRecVars (Just { ident: rb.identifier, args: extracted.args }) acc.nextId rb.expression
+                            translateExprImpl env currentModStr moduleName nextRecVars (Just { ident: rb.identifier, args: extracted.args }) acc.nextId rb.expression
                           else
-                            translateExprImpl nextRecVars Nothing acc.nextId rb.expression
+                            translateExprImpl env currentModStr moduleName nextRecVars Nothing acc.nextId rb.expression
                 in { stmts: acc.stmts <> res.stmts <> [PhpAssign rb.identifier res.expr], nextId: res.nextId }
               ) { stmts: [], nextId: nextId' } (sortRecBinds rbs)
               
@@ -463,7 +499,7 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
             in { stmts: acc.stmts <> br.stmts, nextId: br.nextId }
           ) { stmts: [], nextId } binds
           
-          bodyRes = translateExprImpl nextRecVars Nothing bindRes.nextId body
+          bodyRes = translateExprImpl env currentModStr moduleName nextRecVars Nothing bindRes.nextId body
         in { stmts: bindRes.stmts <> bodyRes.stmts, expr: bodyRes.expr, nextId: bodyRes.nextId }
       Constructor _ constructorName fieldNames ->
         let
@@ -472,14 +508,14 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
           singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> constructorName <> "']")) body
         in if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
       Accessor field e -> 
-        let res = translateExprImpl recVars Nothing nextId e
+        let res = translateExprImpl env currentModStr moduleName recVars Nothing nextId e
         in { stmts: res.stmts, expr: PhpPropertyAccess res.expr field, nextId: res.nextId }
       ObjectUpdate e updates ->
         let
-          resE = translateExprImpl recVars Nothing nextId e
+          resE = translateExprImpl env currentModStr moduleName recVars Nothing nextId e
           
           processUpdate acc u =
-            let res = translateExprImpl recVars Nothing acc.nextId u.value
+            let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId u.value
             in { stmts: acc.stmts <> res.stmts, updates: acc.updates <> [{ key: u.key, value: res.expr }], nextId: res.nextId }
             
           updatesRes = foldl processUpdate { stmts: [], updates: [], nextId: resE.nextId } updates
@@ -492,8 +528,8 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
       Unsupported t -> { stmts: [], expr: PhpRaw $ "\"/* Unsupported: " <> t <> " */\"", nextId }
       _ -> { stmts: [], expr: PhpRaw "/* Unknown */", nextId }
 
-translateLiteral :: Literal Expr -> Int -> CompileResult
-translateLiteral lit nextId = case lit of
+translateLiteral :: GlobalEnv -> String -> Array String -> Literal Expr -> Int -> CompileResult
+translateLiteral env currentModStr moduleName lit nextId = case lit of
   IntLiteral i -> { stmts: [], expr: PhpInt i, nextId }
   NumberLiteral n -> { stmts: [], expr: PhpNumber n, nextId }
   StringLiteral s -> { stmts: [], expr: PhpString s, nextId }
@@ -502,14 +538,14 @@ translateLiteral lit nextId = case lit of
   ArrayLiteral arr -> 
     let
       processItem acc item =
-        let res = translateExprImpl [] Nothing acc.nextId item
+        let res = translateExprImpl env currentModStr moduleName [] Nothing acc.nextId item
         in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
       arrRes = foldl processItem { stmts: [], exprs: [], nextId } arr
     in { stmts: arrRes.stmts, expr: PhpArray arrRes.exprs, nextId: arrRes.nextId }
   ObjectLiteral arr -> 
     let
       processItem acc item =
-        let res = translateExprImpl [] Nothing acc.nextId item.value
+        let res = translateExprImpl env currentModStr moduleName [] Nothing acc.nextId item.value
         in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [{ key: item.key, value: res.expr }], nextId: res.nextId }
       arrRes = foldl processItem { stmts: [], exprs: [], nextId } arr
     in { stmts: arrRes.stmts, expr: PhpAssocArray arrRes.exprs, nextId: arrRes.nextId }
@@ -519,7 +555,7 @@ translateDecl env currentModStr moduleName bind = case bind of
   NonRec ident expr ->
     let 
       prefix = joinWith "_" moduleName <> "_"
-      res = translateExprImpl [] Nothing 0 (simplify env currentModStr expr)
+      res = translateExprImpl env currentModStr moduleName [] Nothing 0 (simplify env currentModStr expr)
     in [{ identifier: prefix <> ident
         , expression: case res.expr of
                         PhpFunction _ args stmts | length res.stmts == 0 -> PhpNativeFunction (prefix <> ident) args stmts
@@ -531,9 +567,9 @@ translateDecl env currentModStr moduleName bind = case bind of
         prefix = joinWith "_" moduleName <> "_"
         extracted = getArgs rb.expression
         res = if length extracted.args > 0 then
-                translateExprImpl [] (Just { ident: rb.identifier, args: extracted.args }) 0 (simplify env currentModStr rb.expression)
+                translateExprImpl env currentModStr moduleName [] (Just { ident: rb.identifier, args: extracted.args }) 0 (simplify env currentModStr rb.expression)
               else
-                translateExprImpl [] Nothing 0 (simplify env currentModStr rb.expression)
+                translateExprImpl env currentModStr moduleName [] Nothing 0 (simplify env currentModStr rb.expression)
       in { identifier: prefix <> rb.identifier
          , expression: case res.expr of
                          PhpFunction _ args stmts | length res.stmts == 0 -> PhpNativeFunction (prefix <> rb.identifier) args stmts

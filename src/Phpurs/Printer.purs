@@ -228,6 +228,7 @@ printExpr expr = case expr of
         Just mod -> "\\" <> joinWith "\\" mod <> "\\phpurs_eval_thunk('" <> idStr <> "')"
         Nothing -> "phpurs_eval_thunk('" <> idStr <> "')"
     in "($GLOBALS['" <> idStr <> "'] ?? " <> pathStr <> ")"
+  PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
   PhpNumber n -> show n

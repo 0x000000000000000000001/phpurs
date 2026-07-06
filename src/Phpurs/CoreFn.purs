@@ -1,5 +1,7 @@
 module Phpurs.CoreFn where
 
+import Effect (Effect)
+
 import Prelude
 
 import Data.Argonaut.Decode (class DecodeJson, decodeJson, (.:), (.:?))
@@ -251,3 +253,5 @@ instance decodeJsonModule :: DecodeJson Module where
         ident <- o .: "identifier"
         expr <- o .: "expression"
         pure { identifier: ident, expression: expr }
+
+foreign import parseModuleImpl :: String -> Effect (Maybe Module)

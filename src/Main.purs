@@ -38,15 +38,7 @@ readModule dir = do
   result <- try (readTextFile UTF8 path)
   case result of
     Left _ -> pure Nothing
-    Right content -> case jsonParser content of
-      Left err -> do
-        liftEffect $ log $ "Parse error in " <> dir <> ": " <> err
-        pure Nothing
-      Right json -> case decodeJson json of
-        Left err -> do
-          liftEffect $ log $ "Decode error in " <> dir <> ": " <> show err
-          pure Nothing
-        Right (mod :: CF.Module) -> pure (Just mod)
+    Right content -> liftEffect (CF.parseModuleImpl content)
 
 generateModule :: CodeGen.GlobalEnv -> Maybe String -> Boolean -> CF.Module -> Aff String
 generateModule env mbFfiDir isBundle mod = do

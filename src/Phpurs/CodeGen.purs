@@ -381,22 +381,34 @@ translateExprImpl recVars tcoCtx nextId expr = case expr of
               argXRes = translateExprImpl recVars Nothing argYRes.nextId (extracted.args `unsafeIndex` 1)
             in { stmts: fnRes.stmts <> argYRes.stmts <> argXRes.stmts, expr: PhpCall fnRes.expr [argYRes.expr, argXRes.expr], nextId: argXRes.nextId }
           Nothing ->
-            case matchIntrinsicOperator extracted.fn (length extracted.args) of
-              Just op -> 
+            case extracted.fn of
+              Constructor _ constructorName fieldNames | length fieldNames == length extracted.args ->
                 let
                   processArg acc argExpr =
                     let res = translateExprImpl recVars Nothing acc.nextId argExpr
                     in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
                   argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
-                in { stmts: argsRes.stmts, expr: PhpBinOp op (argsRes.exprs `unsafeIndex` 0) (argsRes.exprs `unsafeIndex` 1), nextId: argsRes.nextId }
-              Nothing ->
-                let
-                  fnRes = translateExprImpl recVars Nothing nextId extracted.fn
-                  processArg acc argExpr =
-                    let res = translateExprImpl recVars Nothing acc.nextId argExpr
-                    in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
-                  argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
-                in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
+                in { stmts: argsRes.stmts
+                   , expr: PhpNew ("Phpurs_Data" <> show (length fieldNames)) ([PhpString constructorName] <> argsRes.exprs)
+                   , nextId: argsRes.nextId
+                   }
+              _ ->
+                case matchIntrinsicOperator extracted.fn (length extracted.args) of
+                  Just op -> 
+                    let
+                      processArg acc argExpr =
+                        let res = translateExprImpl recVars Nothing acc.nextId argExpr
+                        in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
+                      argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
+                    in { stmts: argsRes.stmts, expr: PhpBinOp op (argsRes.exprs `unsafeIndex` 0) (argsRes.exprs `unsafeIndex` 1), nextId: argsRes.nextId }
+                  Nothing ->
+                    let
+                      fnRes = translateExprImpl recVars Nothing nextId extracted.fn
+                      processArg acc argExpr =
+                        let res = translateExprImpl recVars Nothing acc.nextId argExpr
+                        in { stmts: acc.stmts <> res.stmts, exprs: acc.exprs <> [res.expr], nextId: res.nextId }
+                      argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
+                    in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
       Literal lit -> translateLiteral lit nextId
       Case exprs alts -> 
         let

@@ -1,7 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 
+let cachedScanDirs = null;
+
 function getScanDirs(mbFfiDir) {
+    if (cachedScanDirs !== null) return cachedScanDirs;
+    
     const rootDir = process.cwd();
     const scanDirs = [];
     
@@ -38,6 +42,7 @@ function getScanDirs(mbFfiDir) {
         scanDirs.push(path.join(rootDir, mbFfiDir));
     }
     
+    cachedScanDirs = scanDirs;
     return scanDirs;
 }
 
@@ -109,6 +114,34 @@ export const mergeComposersImpl = function(mbFfiDir) {
     };
 };
 
+let phpFileIndex = null;
+
+function buildPhpFileIndex(scanDirs) {
+    if (phpFileIndex !== null) return;
+    phpFileIndex = new Set();
+    
+    function walk(dir) {
+        let entries;
+        try {
+            entries = fs.readdirSync(dir, { withFileTypes: true });
+        } catch (e) {
+            return;
+        }
+        for (const entry of entries) {
+            const res = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                walk(res);
+            } else if (entry.name.endsWith('.php')) {
+                phpFileIndex.add(res);
+            }
+        }
+    }
+    
+    for (const d of scanDirs) {
+        walk(d);
+    }
+}
+
 export const findFfiFileImpl = function(mbFfiDir) {
     return function(modNameStr) {
         return function(mbModulePath) {
@@ -121,6 +154,8 @@ export const findFfiFileImpl = function(mbFfiDir) {
                 }
                 
                 const scanDirs = getScanDirs(mbFfiDir);
+                buildPhpFileIndex(scanDirs);
+                
                 for (const dir of scanDirs) {
                     // Search in dir/src and dir/
                     const searchPaths = [
@@ -129,7 +164,7 @@ export const findFfiFileImpl = function(mbFfiDir) {
                         path.join(dir, modNameStr + '.php')
                     ];
                     for (const p of searchPaths) {
-                        if (fs.existsSync(p)) {
+                        if (phpFileIndex.has(p)) {
                             return p;
                         }
                     }

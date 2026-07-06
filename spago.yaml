@@ -13,6 +13,7 @@ package:
     - node-buffer
     - node-fs
     - node-process
+    - parallel
     - prelude
     - strings
   test:

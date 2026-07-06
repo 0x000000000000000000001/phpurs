@@ -42,33 +42,28 @@ type DepGraph = Object.Object (Array String)
 
 -- | Build the dependency graph for all modules
 buildDepGraph :: Array Module -> DepGraph
-buildDepGraph modules = foldl processModule Object.empty modules
+buildDepGraph modules = Object.fromFoldable $ concatMap processModule modules
   where
-    processModule acc (Module m) =
+    processModule (Module m) =
       let modPrefix = joinWith "." m.moduleName <> "."
-      in foldl (processDecl modPrefix) acc m.decls
+      in concatMap (processDecl modPrefix) m.decls
 
-    processDecl prefix acc (NonRec ident expr) =
-      Object.insert (prefix <> ident) (globalDeps expr) acc
-    processDecl prefix acc (Rec binds) =
-      foldl (\a b -> Object.insert (prefix <> b.identifier) (globalDeps b.expression) a) acc binds
+    processDecl prefix (NonRec ident expr) =
+      [Tuple (prefix <> ident) (globalDeps expr)]
+    processDecl prefix (Rec binds) =
+      map (\b -> Tuple (prefix <> b.identifier) (globalDeps b.expression)) binds
 
--- | Compute the reachable set using BFS
+-- | Compute the reachable set using DFS
 computeReachable :: String -> DepGraph -> Set.Set String
-computeReachable root graph = bfs (Set.singleton root) [root]
+computeReachable root graph = dfs Set.empty root
   where
-    bfs visited [] = visited
-    bfs visited queue =
-      let
-        processNode { v, q } node =
-          case Object.lookup node graph of
-            Just deps ->
-              let
-                newDeps = filter (\d -> not (Set.member d v)) deps
-              in { v: foldl (flip Set.insert) v newDeps, q: q <> newDeps }
-            Nothing -> { v, q }
-        res = foldl processNode { v: visited, q: [] } queue
-      in bfs res.v res.q
+    dfs visited node
+      | Set.member node visited = visited
+      | otherwise =
+          let visited' = Set.insert node visited
+          in case Object.lookup node graph of
+               Nothing -> visited'
+               Just deps -> foldl dfs visited' deps
 
 -- | Filter out dead code based on the reachable set
 filterModules :: Set.Set String -> Array Module -> Array Module
@@ -77,7 +72,7 @@ filterModules reachable modules =
     aliveDeclsOnly = map processModule modules
     aliveModules = filter hasContent aliveDeclsOnly
     
-    aliveMap = foldl (\acc (Module m) -> Object.insert (joinWith "." m.moduleName) true acc) Object.empty aliveModules
+    aliveMap = Object.fromFoldable $ map (\(Module m) -> Tuple (joinWith "." m.moduleName) true) aliveModules
     
     filterImports (Module m) =
       let newImports = filter (\imp -> Object.member (joinWith "." imp) aliveMap) m.imports

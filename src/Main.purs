@@ -21,6 +21,7 @@ import Control.Monad.Error.Class (try)
 import Data.String (joinWith, trim)
 import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
+import Control.Parallel (parTraverse)
 
 import Phpurs.CoreFn as CF
 import Phpurs.CodeGen as CodeGen
@@ -105,8 +106,8 @@ main = launchAff_ do
         pure $ isDirectory s
       ) files
       
-      -- read all modules
-      mbModules <- for validDirs readModule
+      -- read all modules concurrently
+      mbModules <- parTraverse readModule validDirs
       let modules = Array.mapMaybe identity mbModules
       
       let dceModules = case mbMainModule of
@@ -122,7 +123,7 @@ main = launchAff_ do
       
       -- translate each module
       if mbBundle then do
-        strs <- for dceModules (generateModule globalEnv mbFfiDir true)
+        strs <- parTraverse (generateModule globalEnv mbFfiDir true) dceModules
         let bundleContent = "<?php\n\n" <> joinWith "\n" strs
         
         case mbMainModule of
@@ -136,7 +137,7 @@ main = launchAff_ do
             writeTextFile UTF8 "output/bundle.php" bundleContent
             liftEffect $ log "phpurs: Successfully bundled all modules into output/bundle.php"
       else do
-        _ <- for dceModules (generateModule globalEnv mbFfiDir false)
+        _ <- parTraverse (generateModule globalEnv mbFfiDir false) dceModules
         
         case mbMainModule of
           Just mainMod -> do

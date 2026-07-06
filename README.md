@@ -85,8 +85,6 @@ spago build --backend phpurs --backend-args "--main App.Main --bundle"
 |---|---|
 | `--main <Module>` | Specifies the entry point. The compiler will perform Dead Code Elimination (DCE) keeping only the code reachable from this module, and generate an executable `output/main.php`. |
 | `--bundle` | Concatenates all generated PHP code into a single file (`output/bundle.php`). Excellent for minimal deployments, but **not necessarily more performant**. Depending on your PHP OPcache configuration, relying on multiple lazy-loaded files (`require_once`) might actually yield better startup times. |
-| `--composer-in <Path>` | Overrides the default `composer.json` location (used for merging FFI dependencies). |
-| `--composer-out <Path>` | Overrides the default `composer.final.json` output location. |
 
 ## PHP Dependencies
 
@@ -95,27 +93,31 @@ You should manage your own PHP dependencies using the standard `composer.json` f
 composer require mpdf/mpdf
 ```
 
-When you build your project with `phpurs`, the compiler will automatically scan your `composer.json` and merge any PHP libraries required by your PureScript dependencies (such as `revolt/event-loop` required by `purescript-aff`).
+Some PureScript dependencies (such as `purescript-aff`) rely on underlying PHP libraries via FFI (like `revolt/event-loop`). When you build your project with `phpurs`, the compiler will automatically scan your `.spago` dependencies for any PHP requirements and generate an isolated, internal package definition containing them at **`output/composer.json`**.
 
-It will output the final merged dependencies into **`composer.final.json`**. 
+To seamlessly merge these FFI dependencies into your project without any friction, you should add `output/` as a local Path Repository in your project's root `composer.json` file:
 
-**In Development:**
-Run an update to resolve dependencies and generate a `composer.final.lock` file. **You should commit this lockfile to your repository** to guarantee reproducible builds.
-```bash
-COMPOSER=composer.final.json composer update
+```json
+{
+    "require": {
+        "phpurs/ffi-dependencies": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "output"
+        }
+    ]
+}
 ```
 
-**In Production (CI/CD):**
-Just like `npm ci`, use the `install` command to exactly replicate the locked dependencies:
-```bash
-COMPOSER=composer.final.json composer install --no-dev --optimize-autoloader
-```
+Once this is set up, you can run standard Composer commands normally without any special environment variables:
 
-### Custom Composer Paths
-If you use a non-standard directory structure, you can pass custom paths to `phpurs` via `spago build --backend-args`:
 ```bash
-spago build --backend phpurs --backend-args "--composer-in run/bak/php/composer.json --composer-out run/bak/php/composer.final.json"
+composer update
+composer install --no-dev --optimize-autoloader
 ```
+Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
 ## Architecture
 

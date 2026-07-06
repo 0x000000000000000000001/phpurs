@@ -2,13 +2,13 @@ module Phpurs.ComposerMerge where
 
 import Prelude
 import Effect (Effect)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toNullable)
 
-foreign import mergeComposersImpl :: Nullable String -> Nullable String -> Nullable String -> Effect Unit
+foreign import mergeComposersImpl :: Nullable String -> Effect Unit
 
-mergeComposers :: String -> Maybe String -> Maybe String -> Effect Unit
-mergeComposers dir mbIn mbOut = mergeComposersImpl (toNullable (pure dir)) (toNullable mbIn) (toNullable mbOut)
+mergeComposers :: String -> Effect Unit
+mergeComposers dir = mergeComposersImpl (toNullable (if dir == "" then Nothing else Just dir))
 
 foreign import findFfiFileImpl :: Nullable String -> String -> Nullable String -> Effect String
 

@@ -118,10 +118,14 @@ export const mergeComposersImpl = function(mbFfiDir) {
             merged['require-dev'] = new Object();
         }
         
-        const outPath = path.join(rootDir, 'output', 'composer.json');
+        let outPath = path.join(rootDir, 'output', 'composer.json');
+        if (foundPath) {
+            outPath = path.join(path.dirname(foundPath), 'composer.json');
+        }
+        
         fs.writeFileSync(outPath, JSON.stringify(merged, null, 4));
         
-        console.log("phpurs: Generated output/composer.json with merged dependencies.");
+        console.log(`phpurs: Generated ${path.relative(rootDir, outPath)} with merged dependencies.`);
     };
 };
 

@@ -25,6 +25,7 @@ While initially an unoptimized proof-of-concept, we have recently implemented se
 - **Global Thunk Hoisting:** By analyzing variable dependencies during the compilation of tail-recursive functions, global thunk evaluations (`$GLOBALS['...'] ?? phpurs_eval_thunk(...)`) are hoisted strictly outside of the `while(true)` loop. This eliminates redundant dictionary lookups and closure evaluations on every iteration.
 - **Zero-Cost Lazy Initialization:** Traditional JavaScript-inspired approaches in PHP involve allocating thousands of file-level closures (`function() use (...)`) during `require_once` to handle currying constraints and recursive bindings. This previously caused massive startup overhead (~5.2s). We completely re-architected the initialization phase to utilize a centralized, lazy-loading mechanism powered by PHP's highly optimized null-coalescing operator (`??`) and static `switch` statement thunks. This ensures variables are only evaluated when first accessed, bringing startup initialization time effectively down to near zero.
 - **Zero-Cost ADT Singletons:** 0-arity constructors (such as `Nil` or `Nothing`) are statically compiled as global singletons utilizing PHP's null coalescing assignment operator (`??=`). This fundamentally eradicates garbage collection pressure and instantiation overhead when generating or traversing massive functional data structures (e.g. linked lists or trees).
+- **Native Asynchronous Effects (`Aff`):** Leveraging PHP 8.1+ Fibers and the Revolt event loop, asynchronous operations (`Aff`) are executed concurrently without blocking the main OS thread. This allows the compiled PHP code to elegantly mirror the non-blocking I/O behavior traditionally seen in Node.js.
 
 Currently supported AST nodes: `Abs` (Lambdas), `Var` (Variables), `App` (Function application), `Let` (Bindings), `Case` (Pattern Matching), `Constructor`, `Literal`, `Accessor` and `Update` (Records).
 
@@ -79,4 +80,4 @@ The compilation pipeline is functionally decoupled. First, `Phpurs.CoreFn` decod
 
 ## Future Roadmap
 
-Our future roadmap includes advanced optimizations such as aggressive inlining and mutual recursion TCO, a comprehensive FFI implementation for the broader ecosystem, and `Aff` translation utilizing PHP 8.1 Fibers (Revolt).
+Our future roadmap includes advanced optimizations such as aggressive inlining and mutual recursion TCO, and a comprehensive FFI implementation for the broader PHP ecosystem.

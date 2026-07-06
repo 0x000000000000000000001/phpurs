@@ -98,10 +98,17 @@ composer require mpdf/mpdf
 When you build your project with `phpurs`, the compiler will automatically scan your `composer.json` and merge any PHP libraries required by your PureScript dependencies (such as `revolt/event-loop` required by `purescript-aff`).
 
 It will output the final merged dependencies into **`composer.final.json`**. 
-You should use this generated file for your actual PHP executions and deployments:
+
+**In Development:**
+Run an update to resolve dependencies and generate a `composer.final.lock` file. **You should commit this lockfile to your repository** to guarantee reproducible builds.
 ```bash
 COMPOSER=composer.final.json composer update
-COMPOSER=composer.final.json composer install --no-dev
+```
+
+**In Production (CI/CD):**
+Just like `npm ci`, use the `install` command to exactly replicate the locked dependencies:
+```bash
+COMPOSER=composer.final.json composer install --no-dev --optimize-autoloader
 ```
 
 ### Custom Composer Paths

@@ -10,6 +10,7 @@ import Data.Array as Array
 import Data.Foldable (find)
 import Foreign.Object (Object)
 import Foreign.Object as Object
+import Data.Tuple (Tuple(..))
 import Data.Array (nub, concatMap, filter, mapWithIndex, foldl, foldr, index, length, sortBy)
 import Data.Foldable (elem)
 import Phpurs.Pattern as P
@@ -581,16 +582,15 @@ translateDecl env currentModStr moduleName bind = case bind of
 type GlobalEnv = Object Expr
 
 buildGlobalEnv :: Array Module -> GlobalEnv
-buildGlobalEnv mods =
-  let
-    processDecl env modName decl = case decl of
-      NonRec ident expr -> Object.insert (modName <> "." <> ident) expr env
-      Rec binds -> foldl (\acc b -> Object.insert (modName <> "." <> b.identifier) b.expression acc) env binds
-      
-    processMod env (Module m) =
+buildGlobalEnv mods = Object.fromFoldable $ concatMap processMod mods
+  where
+    processMod (Module m) =
       let modNameStr = joinWith "." m.moduleName
-      in foldl (\acc d -> processDecl acc modNameStr d) env m.decls
-  in foldl processMod Object.empty mods
+      in concatMap (processDecl modNameStr) m.decls
+
+    processDecl modNameStr = case _ of
+      NonRec ident expr -> [Tuple (modNameStr <> "." <> ident) expr]
+      Rec binds -> map (\b -> Tuple (modNameStr <> "." <> b.identifier) b.expression) binds
 
 simplify :: GlobalEnv -> String -> Expr -> Expr
 simplify env currentMod expr = simplify' [] expr
@@ -716,15 +716,10 @@ simplify env currentMod expr = simplify' [] expr
            Variable mbMod ident
          else case Object.lookup globalKey env of
            Just exprToInline ->
-             let simplified = simplify' (visited <> [globalKey]) exprToInline
-             in case simplified of
+             case exprToInline of
                Constructor typeName constructorName fieldNames -> Constructor typeName constructorName fieldNames
-               Variable _ _ -> simplified
-               Literal (IntLiteral _) -> simplified
-               Literal (NumberLiteral _) -> simplified
-               Literal (StringLiteral _) -> simplified
-               Literal (BooleanLiteral _) -> simplified
-               Literal (CharLiteral _) -> simplified
+               Variable _ _ -> simplify' (visited <> [globalKey]) exprToInline
+               Literal l -> Literal l
                _ -> Variable mbMod ident
            Nothing -> Variable mbMod ident
            

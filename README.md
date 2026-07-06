@@ -100,7 +100,7 @@ To seamlessly merge these FFI dependencies into your project without any frictio
 ```json
 {
     "require": {
-        "phpurs/ffi-dependencies": "@dev"
+        "phpurs/lib-deps": "@dev"
     },
     "repositories": [
         {

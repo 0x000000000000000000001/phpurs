@@ -45,12 +45,21 @@ export const mergeComposersImpl = function(mbFfiDir) {
     return function() {
         const rootDir = process.cwd();
         let rootComposer = {};
-        const rootComposerPath = path.join(rootDir, 'composer.json');
-        if (fs.existsSync(rootComposerPath)) {
-            try {
-                rootComposer = JSON.parse(fs.readFileSync(rootComposerPath, 'utf8'));
-            } catch (e) {
-                // ignore
+        
+        const possibleBasePaths = [
+            path.join(rootDir, 'run', 'bak', 'php', 'composer.template.json'),
+            path.join(rootDir, 'composer.template.json'),
+            path.join(rootDir, 'composer.json')
+        ];
+        
+        for (const p of possibleBasePaths) {
+            if (fs.existsSync(p)) {
+                try {
+                    rootComposer = JSON.parse(fs.readFileSync(p, 'utf8'));
+                } catch (e) {
+                    // ignore
+                }
+                break;
             }
         }
         

@@ -11,11 +11,11 @@ Recently, we've observed a genuine surge of interest for strict typing and funct
 
 For the PureScript ecosystem, this represents a strategic opportunity to gain visibility and traction by tapping directly into the largest demographic of web developers in the world.
 
-## Current Status & Optimizations
+## Current status & optimizations
 
-This project is evolving rapidly. To prove the viability of the concept, it successfully compiles and executes a universal multi-runtime pedagogical benchmark suite ([altbak.pub](https://github.com/0x000000000000000000001/altbak.pub)), demonstrating how PureScript changes the game for the ideal of **"Write Once, Run Everywhere"**. The identical PureScript code runs seamlessly across Node.js (V8), Arista ES, Chez Scheme, Erlang BEAM… and natively on PHP!
+This project is evolving rapidly. To prove the viability of the concept, it successfully compiles and executes a universal multi runtime pedagogical benchmark suite ([altbak.pub](https://github.com/0x000000000000000000001/altbak.pub)), demonstrating how PureScript changes the game for the ideal of **"Write once, run everywhere"**. The identical PureScript code runs seamlessly across Node.js (V8), Arista ES, Chez Scheme, Erlang BEAM… and natively on PHP!
 
-### Write Once, Run Everywhere (Benchmarks)
+### Write once, run everywhere (benchmarks)
 
 The initial unoptimized benchmark gave 1m30s. After dozens of compiler optimizations, the exact same tests are now successful after a run of **~1.7s**. This is a massive step forward. 
 
@@ -25,32 +25,32 @@ In our specific context, this x3 difference is **not a problem**:
 - We are targeting a segment of the web that, while certainly the majority, is focused on factors other than pure performance (presence, visibility, significantly lower hosting costs, zero-config deployments). For highly advanced projects requiring containerized stacks and full DevOps control, JS, Go, or Erlang will naturally remain better compiler backends.
 - In the vast majority of real-world PHP applications, the main bottleneck remains I/O (Database, Network, Filesystem). As a result, the difference in raw execution performance is entirely unnoticeable in practice.
 
-### Asynchronous Operations (Aff)
+### Asynchronous operations (Aff)
 Support for `Aff` has also been natively added, backed by the **Revolt event loop** and **PHP 8.1+ Fibers**. The behavior of the event loop in the compiled PHP code perfectly mirrors its Node.js counterpart: asynchronous operations are handled transparently without blocking the OS thread, and the main process will automatically wait for all pending `Aff` tasks to complete before exiting.
 
-### Project Structure & Ecosystem
+### Project structure & ecosystem
 
 In parallel, the project structure has been fully reorganized to align with the standard conventions of other alternate backends (like `purerl`, `purescm`, or `purescript-go`). We now have:
 - A dedicated **FFI ecosystem** based on standard forks (`prelude`, `effect`, `aff`, etc.).
 - A standalone compiler repository (`phpurs`).
 - A ready-to-use **[starter template](https://github.com/0x000000000000000000001/phpurs-starter)** to easily bootstrap new projects.
 
-The compiler itself is now at a very advanced stage in terms of features and performance. My next immediate priorities are to clean up and refactor the codebase to make it truly maintainable, and then move on to the next phase: improving the Developer Experience (DX, e.g., seamless `npm install`) and building a real-world Proof of Concept to thoroughly battle-test the implementation.
+The compiler itself is now at a very advanced stage in terms of features and performance. My next immediate priorities are to clean up and refactor the codebase to make it truly maintainable, and then move on to the next phase: improving the Developer Experience (DX, e.g., seamless `npm install`) and building a real-world proof of concept to thoroughly battle-test the implementation.
 
 ---
 
-### Internal Compiler Optimizations
+### Internal compiler optimizations
 
 While initially an unoptimized proof-of-concept, we have implemented several key performance optimizations tailored specifically for the PHP runtime:
-- **Native ADT Representation:** PureScript Algebraic Data Types (ADTs) are now represented using lightweight, statically-defined native PHP classes (`Phpurs_DataN`) instead of generic structures, drastically reducing memory footprint and instantiation overhead.
-- **IIFE Flattening & Native TCO:** To accommodate PHP's execution model and avoid call stack exhaustion, nested Immediately Invoked Function Expressions (IIFEs) are flattened into linear statements. This paves the way for our robust Tail-Call Optimization (TCO), implemented via native `while(true)` loops.
+- **Native ADT Representation:** PureScript algebraic data types (ADTs) are now represented using lightweight, statically-defined native PHP classes (`Phpurs_DataN`) instead of generic structures, drastically reducing memory footprint and instantiation overhead.
+- **IIFE Flattening & Native TCO:** To accommodate PHP's execution model and avoid call stack exhaustion, nested immediately invoked function expressions (IIFEs) are flattened into linear statements. This paves the way for our robust Tail call Optimization (TCO), implemented via native `while(true)` loops.
 - **Inline Static Uncurrying:** To address the performance hit inherent to curried functions and partial application in PHP, we employ an inline static uncurrying strategy. By statically generating partial application closure wrappers (up to arity 4) directly inside the function body, we bypass expensive generic variadic fallbacks (`array_merge`/`array_slice`). This achieves a massive 40% speedup on partial applications, maintains near-zero overhead on fully applied functions, and ensures 100% backward compatibility with FFI closures.
-- **Pattern Matching as Native Jump Tables:** PureScript `Case` expressions handling ADT destructuring are aggressively translated into PHP `switch` jump tables instead of sequential `if-elseif` cascades. This reduces pattern matching dispatch to an `O(1)` operation, heavily optimizing recursive algorithms and State Monads.
-- **Static Type Class Resolution:** PureScript's heavy reliance on Type Class dictionary passing often incurs severe indirection overhead. We implemented an aggressive simplification pass (`simplify`) that intercepts dictionary lookups at compile-time, rewriting them as direct function calls whenever possible. This optimization single-handedly reduced the execution time of polymorphic algorithms by nearly 75%.
+- **Pattern Matching as Native Jump Tables:** PureScript `Case` expressions handling ADT destructuring are aggressively translated into PHP `switch` jump tables instead of sequential `if-elseif` cascades. This reduces pattern matching dispatch to an `O(1)` operation, heavily optimizing recursive algorithms and State monads.
+- **Static type class Resolution:** PureScript's heavy reliance on type class dictionary passing often incurs severe indirection overhead. We implemented an aggressive simplification pass (`simplify`) that intercepts dictionary lookups at compile-time, rewriting them as direct function calls whenever possible. This optimization single-handedly reduced the execution time of polymorphic algorithms by nearly 75%.
 - **Constant Folding & Intrinsic Operator Inlining:** Mathematical, string, and boolean operators are aggressively folded at compile time whenever possible. When variables are involved, the compiler translates operations (like `Data_Semiring_intAdd` or `Data_Semigroup_concatString`) directly into native PHP operators (`+`, `.`, `&&`, etc.), completely bypassing functional closures and drastically accelerating hot loops.
 - **Global Thunk Hoisting:** By analyzing variable dependencies during the compilation of tail-recursive functions, global thunk evaluations (`$GLOBALS['...'] ?? phpurs_eval_thunk(...)`) are hoisted strictly outside of the `while(true)` loop. This eliminates redundant dictionary lookups and closure evaluations on every iteration.
-- **Zero-Cost Lazy Initialization:** Traditional JavaScript-inspired approaches in PHP involve allocating thousands of file-level closures (`function() use (...)`) during `require_once` to handle currying constraints and recursive bindings. This previously caused massive startup overhead (~5.2s). We completely re-architected the initialization phase to utilize a centralized, lazy-loading mechanism powered by PHP's highly optimized null-coalescing operator (`??`) and static `switch` statement thunks. This ensures variables are only evaluated when first accessed, bringing startup initialization time effectively down to near zero.
-- **Zero-Cost ADT Singletons:** 0-arity constructors (such as `Nil` or `Nothing`) are statically compiled as global singletons utilizing PHP's null coalescing assignment operator (`??=`). This fundamentally eradicates garbage collection pressure and instantiation overhead when generating or traversing massive functional data structures (e.g. linked lists or trees).
+- **Zero cost Lazy Initialization:** Traditional JavaScript-inspired approaches in PHP involve allocating thousands of file-level closures (`function() use (...)`) during `require_once` to handle currying constraints and recursive bindings. This previously caused massive startup overhead (~5.2s). We completely re-architected the initialization phase to utilize a centralized, lazy-loading mechanism powered by PHP's highly optimized null-coalescing operator (`??`) and static `switch` statement thunks. This ensures variables are only evaluated when first accessed, bringing startup initialization time effectively down to near zero.
+- **Zero cost ADT Singletons:** 0-arity constructors (such as `Nil` or `Nothing`) are statically compiled as global singletons utilizing PHP's null coalescing assignment operator (`??=`). This fundamentally eradicates garbage collection pressure and instantiation overhead when generating or traversing massive functional data structures (e.g. linked lists or trees).
 - **Native Asynchronous Effects (`Aff`):** Leveraging PHP 8.1+ Fibers and the Revolt event loop, asynchronous operations (`Aff`) are executed concurrently without blocking the main OS thread. This allows the compiled PHP code to elegantly mirror the non-blocking I/O behavior traditionally seen in Node.js.
 
 Currently supported AST nodes: `Abs` (Lambdas), `Var` (Variables), `App` (Function application), `Let` (Bindings), `Case` (Pattern Matching), `Constructor`, `Literal`, `Accessor` and `Update` (Records).
@@ -78,7 +78,7 @@ The easiest way to bootstrap a new PureScript-to-PHP project is by using our off
    npm start      # Compiles and executes output/run.php
    ```
 
-### Manual Configuration
+### Manual configuration
 
 If you wish to configure an existing project manually, `phpurs` acts as a drop-in backend for the Spago build system.
 
@@ -99,7 +99,7 @@ If you wish to configure an existing project manually, `phpurs` acts as a drop-i
 3. **Check the output:**
    The compiler will parse all `corefn.json` files generated by `purs` and output native PHP files in the `output/` directory, mirroring the module hierarchy.
 
-### Compiler Configuration Options
+### Compiler configuration options
 
 You can pass arguments to the `phpurs` compiler by appending them to the `spago build --backend-args` command:
 
@@ -112,7 +112,7 @@ spago build --backend phpurs --backend-args "--main App.Main --bundle"
 | `--main <Module>` | Specifies the entry point. The compiler will perform Dead Code Elimination (DCE) keeping only the code reachable from this module, and generate an executable `output/main.php`. |
 | `--bundle` | Concatenates all generated PHP code into a single file (`output/bundle.php`). Excellent for minimal deployments, but **not necessarily more performant**. Depending on your PHP OPcache configuration, relying on multiple lazy-loaded files (`require_once`) might actually yield better startup times. |
 
-## PHP Dependencies
+## PHP dependencies
 
 You should manage your own PHP dependencies using the standard `composer.json` file at the root of your project:
 ```bash
@@ -151,6 +151,6 @@ Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
 The compilation pipeline is functionally decoupled. First, `Phpurs.CoreFn` decodes `corefn.json` into a PureScript Algebraic Data Type. Then, `Phpurs.CodeGen` maps the PureScript CoreFn AST to the `PhpAst`, and `Phpurs.Printer` formats it into valid PHP syntax. Finally, `Main` orchestrates the CLI, reading the `output/` directory and writing the generated `.php` files to their respective module directories.
 
-## Future Roadmap
+## Future roadmap
 
 Our future roadmap includes advanced optimizations such as aggressive inlining and mutual recursion TCO, and a comprehensive FFI implementation for the broader PHP ecosystem.

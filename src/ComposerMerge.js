@@ -58,9 +58,30 @@ export const mergeComposersImpl = function(mbFfiDir) {
         merged.require = merged.require || {};
         merged['require-dev'] = merged['require-dev'] || {};
         
-        const scanDirs = getScanDirs(mbFfiDir);
+        const scanDirsSet = new Set(getScanDirs(mbFfiDir));
+        const outDir = path.join(rootDir, 'output');
+        if (fs.existsSync(outDir)) {
+            const mods = fs.readdirSync(outDir);
+            for (const m of mods) {
+                const corefnPath = path.join(outDir, m, 'corefn.json');
+                if (fs.existsSync(corefnPath)) {
+                    try {
+                        const corefn = JSON.parse(fs.readFileSync(corefnPath, 'utf8'));
+                        if (corefn.modulePath) {
+                            const match = corefn.modulePath.match(/^(.*?)\/(?:src|test)\//);
+                            if (match) {
+                                scanDirsSet.add(path.resolve(rootDir, match[1]));
+                            } else {
+                                // Fallback if no src/ or test/ directory
+                                scanDirsSet.add(path.resolve(rootDir, path.dirname(corefn.modulePath)));
+                            }
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
         
-        for (const dir of scanDirs) {
+        for (const dir of scanDirsSet) {
             const compPath = path.join(dir, 'composer.json');
             if (fs.existsSync(compPath)) {
                 try {

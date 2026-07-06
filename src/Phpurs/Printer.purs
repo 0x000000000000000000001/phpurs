@@ -200,18 +200,18 @@ printExpr expr = case expr of
       thenBody = joinWith ";\n" (map printExpr thenStmts) <> ";"
       elseBody = joinWith ";\n" (map printExpr elseStmts) <> ";"
       
-      extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: String, body :: String }, defaultBody :: String }
+      extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
       extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [PhpIf (PhpBoolean true) tDefault eDefault]) | isLiteral litExpr =
-        Just { subject: subj, cases: [{ val: printExpr litExpr, body: joinWith ";\n" (map printExpr tBody) <> ";" }], defaultBody: joinWith ";\n" (map printExpr tDefault) <> ";" }
+        Just { subject: subj, cases: [{ val: litExpr, body: tBody }], defaultBody: tDefault }
       extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [eBody@(PhpIf _ _ _)]) | isLiteral litExpr =
         case extractSwitch eBody of
           Just rest -> 
-            if printExpr subj == printExpr rest.subject then
-              Just { subject: subj, cases: [{ val: printExpr litExpr, body: joinWith ";\n" (map printExpr tBody) <> ";" }] <> rest.cases, defaultBody: rest.defaultBody }
+            if subj == rest.subject then
+              Just { subject: subj, cases: [{ val: litExpr, body: tBody }] <> rest.cases, defaultBody: rest.defaultBody }
             else Nothing
           Nothing -> Nothing
       extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody eBodyArray) | isLiteral litExpr =
-        Just { subject: subj, cases: [{ val: printExpr litExpr, body: joinWith ";\n" (map printExpr tBody) <> ";" }], defaultBody: joinWith ";\n" (map printExpr eBodyArray) <> ";" }
+        Just { subject: subj, cases: [{ val: litExpr, body: tBody }], defaultBody: eBodyArray }
       extractSwitch _ = Nothing
       
       isLiteral :: PhpExpr -> Boolean
@@ -224,8 +224,8 @@ printExpr expr = case expr of
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
       Just sw ->
         let
-          caseStmts = joinWith "\n" (map (\c -> "case " <> c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") c.body <> "\nbreak;") sw.cases)
-          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") sw.defaultBody <> "\nbreak;"
+          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.body) <> ";") <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr sw.defaultBody) <> ";") <> "\nbreak;"
         in
           "switch (" <> printExpr sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
       Nothing ->

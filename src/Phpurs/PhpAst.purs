@@ -33,6 +33,8 @@ data PhpExpr
   | PhpGoto String
   | PhpLabel String
 
+derive instance eqPhpExpr :: Eq PhpExpr
+
 type PhpDecl =
   { identifier :: String
   , expression :: PhpExpr

@@ -81,6 +81,16 @@ main = launchAff_ do
 
   let mbBundle = isJust (elemIndex "--bundle" args)
 
+  let mbComposerInIndex = elemIndex "--composer-in" args
+  let mbComposerIn = case mbComposerInIndex of
+        Just i -> args !! (i + 1)
+        Nothing -> Nothing
+
+  let mbComposerOutIndex = elemIndex "--composer-out" args
+  let mbComposerOut = case mbComposerOutIndex of
+        Just i -> args !! (i + 1)
+        Nothing -> Nothing
+
   liftEffect $ log "phpurs: Scanning output directory..."
   
   result <- try (readdir "output")
@@ -138,5 +148,5 @@ main = launchAff_ do
             liftEffect $ log "phpurs: Successfully compiled all modules."
 
       case mbFfiDir of
-        Just dir -> liftEffect $ ComposerMerge.mergeComposers dir
-        Nothing -> liftEffect $ ComposerMerge.mergeComposers ""
+        Just dir -> liftEffect $ ComposerMerge.mergeComposers dir mbComposerIn mbComposerOut
+        Nothing -> liftEffect $ ComposerMerge.mergeComposers "" mbComposerIn mbComposerOut

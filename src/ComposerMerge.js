@@ -42,28 +42,31 @@ function getScanDirs(mbFfiDir) {
 }
 
 export const mergeComposersImpl = function(mbFfiDir) {
-    return function() {
-        const rootDir = process.cwd();
-        let rootComposer = {};
-        
-        const possibleBasePaths = [
-            path.join(rootDir, 'composer.template.json'),
-            path.join(rootDir, 'composer.json'),
-            path.join(rootDir, 'run', 'bak', 'php', 'composer.template.json')
-        ];
-        
-        let foundPath = null;
-        for (const p of possibleBasePaths) {
-            if (fs.existsSync(p)) {
-                foundPath = p;
-                try {
-                    rootComposer = JSON.parse(fs.readFileSync(p, 'utf8'));
-                } catch (e) {
-                    // ignore
+    return function(mbComposerIn) {
+        return function(mbComposerOut) {
+            return function() {
+                const rootDir = process.cwd();
+                let rootComposer = {};
+                
+                const possibleBasePaths = mbComposerIn 
+                    ? [path.resolve(rootDir, mbComposerIn)]
+                    : [
+                        path.join(rootDir, 'composer.template.json'),
+                        path.join(rootDir, 'composer.json')
+                      ];
+                
+                let foundPath = null;
+                for (const p of possibleBasePaths) {
+                    if (fs.existsSync(p)) {
+                        foundPath = p;
+                        try {
+                            rootComposer = JSON.parse(fs.readFileSync(p, 'utf8'));
+                        } catch (e) {
+                            // ignore
+                        }
+                        break;
+                    }
                 }
-                break;
-            }
-        }
         
         let merged = Object.assign({}, rootComposer);
         merged.require = merged.require || {};
@@ -120,15 +123,19 @@ export const mergeComposersImpl = function(mbFfiDir) {
             merged['require-dev'] = new Object();
         }
         
-        let outPath = path.join(rootDir, 'output', 'composer.json');
-        if (foundPath) {
-            outPath = path.join(path.dirname(foundPath), 'composer.json');
+        let outPath;
+        if (mbComposerOut) {
+            outPath = path.resolve(rootDir, mbComposerOut);
+        } else {
+            outPath = path.join(rootDir, 'composer.final.json');
         }
         
         fs.writeFileSync(outPath, JSON.stringify(merged, null, 4));
         
         console.log(`phpurs: Generated ${path.relative(rootDir, outPath)} with merged dependencies.`);
     };
+   };
+  };
 };
 
 export const findFfiFileImpl = function(mbFfiDir) {

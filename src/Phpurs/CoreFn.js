@@ -55,8 +55,10 @@ function parseExpr(obj) {
     case "App": return new CoreFn.Call(parseExpr(obj.abstraction), parseExpr(obj.argument));
     case "Literal": return new CoreFn.Literal(parseLiteral(obj.value, parseExpr));
     case "Case": return new CoreFn.Case(obj.caseExpressions.map(parseExpr), obj.caseAlternatives.map(function(ca) {
-      let expr = ca.isGuarded ? new CoreFn.Unsupported("Guards not supported") : parseExpr(ca.expression);
-      return new CoreFn.CaseAlternative({ binders: ca.binders.map(parseBinder), isGuarded: ca.isGuarded, expression: expr });
+      let expressions = ca.isGuarded 
+        ? ca.expressions.map(function(e) { return { guard: parseExpr(e.guard), expression: parseExpr(e.expression) }; })
+        : [{ guard: new CoreFn.Literal(new CoreFn.BooleanLiteral(true)), expression: parseExpr(ca.expression) }];
+      return new CoreFn.CaseAlternative({ binders: ca.binders.map(parseBinder), expressions: expressions });
     }));
     case "Let": {
       let binds = [];

@@ -31,8 +31,7 @@ data Binder
 
 data CaseAlternative = CaseAlternative
   { binders :: Array Binder
-  , isGuarded :: Boolean
-  , expression :: Expr
+  , expressions :: Array { guard :: Expr, expression :: Expr }
   }
 
 data Bind
@@ -198,10 +197,20 @@ instance decodeJsonCaseAlternative :: DecodeJson CaseAlternative where
     obj <- decodeJson json
     binders <- obj .: "binders"
     isGuarded <- obj .: "isGuarded"
-    expression <- if isGuarded 
-                  then pure (Unsupported "Guards not supported")
-                  else obj .: "expression"
-    pure $ CaseAlternative { binders, isGuarded, expression }
+    expressions <- if isGuarded 
+                   then do
+                     exprsArr <- obj .: "expressions"
+                     traverse decodeExprsArr exprsArr
+                   else do
+                     expr <- obj .: "expression"
+                     pure [{ guard: Literal (BooleanLiteral true), expression: expr }]
+    pure $ CaseAlternative { binders, expressions }
+    where
+      decodeExprsArr j = do
+        o <- decodeJson j
+        guard <- o .: "guard"
+        expression <- o .: "expression"
+        pure { guard, expression }
 
 type Decl =
   { identifier :: String

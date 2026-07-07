@@ -31,7 +31,7 @@ globalDeps = case _ of
   Unsupported _ -> []
 
 globalDepsAlt :: CaseAlternative -> Array String
-globalDepsAlt (CaseAlternative ca) = globalDeps ca.expression
+globalDepsAlt (CaseAlternative ca) = concatMap (\e -> globalDeps e.guard <> globalDeps e.expression) ca.expressions
 
 globalDepsBind :: Bind -> Array String
 globalDepsBind = case _ of

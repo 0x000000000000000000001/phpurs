@@ -41,43 +41,7 @@ genNativeCurry name args stmts =
     
     rewrittenStmts = replaceReturn stmts
 
-    fastPathStr = 
-      let
-        aNames = map sanitize args
-        nArgs = length args
-        arg idx = fromMaybe "" (index aNames idx)
-      in
-        if nArgs == 2 then
-          "    if ($__num === 1) return function($" <> arg 1 <> ") use ($" <> arg 0 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> "); };\n"
-        else if nArgs == 3 then
-          "    if ($__num === 2) return function($" <> arg 2 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> "); };\n" <>
-          "    if ($__num === 1) return function($" <> arg 1 <> ", $" <> arg 2 <> " = null) use ($" <> arg 0 <> ", $__fn) {\n" <>
-          "      $__num2 = func_num_args();\n" <>
-          "      if ($__num2 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ");\n" <>
-          "      if ($__num2 === 1) return function($" <> arg 2 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> "); };\n" <>
-          "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> "], 3);\n" <>
-          "    };\n"
-        else if nArgs == 4 then
-          "    if ($__num === 3) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-          "    if ($__num === 2) return function($" <> arg 2 <> ", $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $" <> arg 1 <> ", $__fn) {\n" <>
-          "      $__num2 = func_num_args();\n" <>
-          "      if ($__num2 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
-          "      if ($__num2 === 1) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-          "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> ", $" <> arg 1 <> "], 4);\n" <>
-          "    };\n" <>
-          "    if ($__num === 1) return function($" <> arg 1 <> ", $" <> arg 2 <> " = null, $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $__fn) {\n" <>
-          "      $__num2 = func_num_args();\n" <>
-          "      if ($__num2 === 3) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
-          "      if ($__num2 === 2) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-          "      if ($__num2 === 1) return function($" <> arg 2 <> ", $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $" <> arg 1 <> ", $__fn) {\n" <>
-          "        $__num3 = func_num_args();\n" <>
-          "        if ($__num3 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
-          "        if ($__num3 === 1) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-          "        return phpurs_curry_fallback($__fn, [$" <> arg 0 <> ", $" <> arg 1 <> "], 4);\n" <>
-          "      };\n" <>
-          "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> "], 4);\n" <>
-          "    };\n"
-        else ""
+    fastPathStr = ""
 
     fnBody = 
       "  $__num = func_num_args();\n" <>
@@ -95,7 +59,7 @@ genNativeCurry name args stmts =
 
 genCurry :: Array String -> Array String -> Array PhpExpr -> String
 genCurry args captures stmts =
-  if length args == 0 then "function() use (&$__fn) {\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
+  if length args == 0 then "function() use (&$__fn) {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
   else
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> sanitize a <> (if i > 0 then " = null" else "")) args)
@@ -111,43 +75,7 @@ genCurry args captures stmts =
       
       rewrittenStmts = replaceReturn stmts
 
-      fastPathStr = 
-        let
-          aNames = map sanitize args
-          nArgs = length args
-          arg idx = fromMaybe "" (index aNames idx)
-        in
-          if nArgs == 2 then
-            "    if ($__num === 1) return function($" <> arg 1 <> ") use ($" <> arg 0 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> "); };\n"
-          else if nArgs == 3 then
-            "    if ($__num === 2) return function($" <> arg 2 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> "); };\n" <>
-            "    if ($__num === 1) return function($" <> arg 1 <> ", $" <> arg 2 <> " = null) use ($" <> arg 0 <> ", &$__fn) {\n" <>
-            "      $__num2 = func_num_args();\n" <>
-            "      if ($__num2 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ");\n" <>
-            "      if ($__num2 === 1) return function($" <> arg 2 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> "); };\n" <>
-            "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> "], 3);\n" <>
-            "    };\n"
-          else if nArgs == 4 then
-            "    if ($__num === 3) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-            "    if ($__num === 2) return function($" <> arg 2 <> ", $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) {\n" <>
-            "      $__num2 = func_num_args();\n" <>
-            "      if ($__num2 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
-            "      if ($__num2 === 1) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-            "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> ", $" <> arg 1 <> "], 4);\n" <>
-            "    };\n" <>
-            "    if ($__num === 1) return function($" <> arg 1 <> ", $" <> arg 2 <> " = null, $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", &$__fn) {\n" <>
-            "      $__num2 = func_num_args();\n" <>
-            "      if ($__num2 === 3) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
-            "      if ($__num2 === 2) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-            "      if ($__num2 === 1) return function($" <> arg 2 <> ", $" <> arg 3 <> " = null) use ($" <> arg 0 <> ", $" <> arg 1 <> ", &$__fn) {\n" <>
-            "        $__num3 = func_num_args();\n" <>
-            "        if ($__num3 === 2) return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> ");\n" <>
-            "        if ($__num3 === 1) return function($" <> arg 3 <> ") use ($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", &$__fn) { return $__fn($" <> arg 0 <> ", $" <> arg 1 <> ", $" <> arg 2 <> ", $" <> arg 3 <> "); };\n" <>
-            "        return phpurs_curry_fallback($__fn, [$" <> arg 0 <> ", $" <> arg 1 <> "], 4);\n" <>
-            "      };\n" <>
-            "      return phpurs_curry_fallback($__fn, [$" <> arg 0 <> "], 4);\n" <>
-            "    };\n"
-          else ""
+      fastPathStr = ""
 
       fnBody = 
         "  $__num = func_num_args();\n" <>
@@ -229,8 +157,8 @@ printExpr expr = case expr of
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
       Just sw ->
         let
-          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr c.val <> ":\n" <> (joinWith ";\n" (map printExpr c.body) <> ";") <> "\nbreak;") sw.cases)
-          defaultStmt = "default:\n" <> (joinWith ";\n" (map printExpr sw.defaultBody) <> ";") <> "\nbreak;"
+          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.body) <> ";") <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr sw.defaultBody) <> ";") <> "\nbreak;"
         in
           "switch (" <> printExpr sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
       Nothing ->
@@ -384,4 +312,4 @@ printPhpFile isBundle ffiString file =
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $v0; public function __construct($t, $v0) { $this->tag = $t; $this->v0 = $v0; } }\n  class Phpurs_Data2 { public $tag; public $v0, $v1; public function __construct($t, $v0, $v1) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; } }\n  class Phpurs_Data3 { public $tag; public $v0, $v1, $v2; public function __construct($t, $v0, $v1, $v2) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; } }\n  class Phpurs_Data4 { public $tag; public $v0, $v1, $v2, $v3; public function __construct($t, $v0, $v1, $v2, $v3) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; } }\n  class Phpurs_Data5 { public $tag; public $v0, $v1, $v2, $v3, $v4; public function __construct($t, $v0, $v1, $v2, $v3, $v4) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; } }\n  class Phpurs_Data6 { public $tag; public $v0, $v1, $v2, $v3, $v4, $v5; public function __construct($t, $v0, $v1, $v2, $v3, $v4, $v5) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; $this->v5 = $v5; } }\n}\n"
     prefix = if isBundle then "namespace " else "<?php\n\nnamespace "
   in
-    prefix <> ns <> ";\n\n" <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$Prim_undefined = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"
+    prefix <> ns <> ";\n\n" <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$GLOBALS['" <> sanitize "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"

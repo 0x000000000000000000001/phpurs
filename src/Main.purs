@@ -57,7 +57,7 @@ generateModule env mbFfiDir isBundle mod = do
       let
         closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n"
         closureEnd = "\n});\n"
-        mappings = joinWith "\n" (map (\f -> "$GLOBALS['" <> phpModName <> "_" <> f <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? null;") (unwrap mod).foreign)
+        mappings = joinWith "\n" (map (\f -> "$GLOBALS['" <> Printer.sanitize (phpModName <> "_" <> f) <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? null;") (unwrap mod).foreign)
       in
         closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
     else

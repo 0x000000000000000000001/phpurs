@@ -164,9 +164,9 @@ main = launchAff_ do
         let totalCount = Array.length reachableDepsList
         
         if dirtyCount == 0 then do
-          liftEffect $ log $ "phpurs: 0/" <> show totalCount <> " modules modified. Up to date."
+          liftEffect $ log $ "Up to date."
         else do
-          liftEffect $ log $ "phpurs: Recompiling " <> show dirtyCount <> "/" <> show totalCount <> " modules (incremental)..."
+          liftEffect $ log $ "Recompiling " <> show dirtyCount <> "/" <> show totalCount <> " modules (incremental)..."
           
           -- We must read ALL reachable modules to build a complete globalEnv for cross-module inlining
           let reachableNames = map (\deps -> joinWith "." deps.moduleName) reachableDepsList

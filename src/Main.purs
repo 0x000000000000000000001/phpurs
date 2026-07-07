@@ -81,7 +81,7 @@ main = launchAff_ do
         Just i -> args !! (i + 1)
         Nothing -> Nothing
 
-  let mbAutoloadIndex = elemIndex "--autoload" args
+  let mbAutoloadIndex = elemIndex "--autoload-path" args
   let mbAutoloadPath = case mbAutoloadIndex of
         Just i -> args !! (i + 1)
         Nothing -> Nothing

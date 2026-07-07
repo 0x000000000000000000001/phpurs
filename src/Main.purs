@@ -93,7 +93,7 @@ main = launchAff_ do
 
   let mbBundle = isJust (elemIndex "--bundle" args)
 
-  liftEffect $ log "phpurs: Scanning output directory..."
+--   liftEffect $ log "phpurs: Scanning output directory..."
   
   result <- try (readdir "output")
   case result of
@@ -134,10 +134,10 @@ main = launchAff_ do
             writeTextFile UTF8 "output/bundle.php" bundleContent
             liftEffect $ log "phpurs: Successfully bundled all modules into output/bundle.php"
       else do
-        liftEffect $ log "phpurs: FastDeps parsing started"
+--         liftEffect $ log "phpurs: FastDeps parsing started"
         let corefnFiles = map (\dir -> "output/" <> dir <> "/corefn.json") validDirs
         moduleDepsList <- liftEffect $ FastDeps.parseAllImports corefnFiles
-        liftEffect $ log "phpurs: FastDeps parsing finished"
+--         liftEffect $ log "phpurs: FastDeps parsing finished"
         
         let reachableDepsList = case mbMainModule of
               Just mainMod ->
@@ -145,18 +145,18 @@ main = launchAff_ do
                 in Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) reachable) moduleDepsList
               Nothing -> moduleDepsList
         
-        liftEffect $ log "phpurs: Mtime checking started"
+--         liftEffect $ log "phpurs: Mtime checking started"
         directlyDirty <- liftEffect $ filterA (\deps -> do
           let modName = joinWith "." deps.moduleName
           corefnMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/corefn.json")
           phpMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/index.php")
           pure (corefnMtime > 0.0 && (phpMtime == 0.0 || corefnMtime > phpMtime))
         ) reachableDepsList
-        liftEffect $ log "phpurs: Mtime checking finished"
+--         liftEffect $ log "phpurs: Mtime checking finished"
         
         let directlyDirtyNames = map (\deps -> joinWith "." deps.moduleName) directlyDirty
-        liftEffect $ log $ "Directly dirty count: " <> show (Array.length directlyDirtyNames)
-        liftEffect $ log $ "Directly dirty sample: " <> joinWith ", " (Array.take 10 directlyDirtyNames)
+--         liftEffect $ log $ "Directly dirty count: " <> show (Array.length directlyDirtyNames)
+--         liftEffect $ log $ "Directly dirty sample: " <> joinWith ", " (Array.take 10 directlyDirtyNames)
         let transitivelyDirtySet = Dce.computeTransitiveDirtyFast directlyDirtyNames reachableDepsList
         let dirtyNames = Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) transitivelyDirtySet) reachableDepsList
         

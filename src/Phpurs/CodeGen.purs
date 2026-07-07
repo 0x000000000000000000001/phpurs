@@ -106,7 +106,7 @@ collectGlobals = case _ of
   _ -> []
 
 collectGlobalsAlt :: CaseAlternative -> Array GlobalRef
-collectGlobalsAlt (CaseAlternative { expression }) = collectGlobals expression
+collectGlobalsAlt (CaseAlternative { expressions }) = concatMap (\e -> collectGlobals e.guard <> collectGlobals e.expression) expressions
 
 replaceGlobals :: Array GlobalRef -> Expr -> Expr
 replaceGlobals globals = case _ of
@@ -121,7 +121,7 @@ replaceGlobals globals = case _ of
     ArrayLiteral arr -> Literal (ArrayLiteral (map (replaceGlobals globals) arr))
     ObjectLiteral arr -> Literal (ObjectLiteral (map (\item -> item { value = replaceGlobals globals item.value }) arr))
     _ -> Literal lit
-  Case exprs alts -> Case (map (replaceGlobals globals) exprs) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expression = replaceGlobals globals ca.expression })) alts)
+  Case exprs alts -> Case (map (replaceGlobals globals) exprs) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expressions = map (\e -> { guard: replaceGlobals globals e.guard, expression: replaceGlobals globals e.expression }) ca.expressions })) alts)
   Let binds expr -> Let (map (\b -> case b of
     NonRec i e -> NonRec i (replaceGlobals globals e)
     Rec rBinds -> Rec (map (\rb -> rb { expression = replaceGlobals globals rb.expression }) rBinds)
@@ -132,10 +132,10 @@ replaceGlobals globals = case _ of
   Unsupported s -> Unsupported s
 
 freeVarsAlt :: CaseAlternative -> Array String
-freeVarsAlt (CaseAlternative { binders, expression }) =
+freeVarsAlt (CaseAlternative { binders, expressions }) =
   let
     bVars = concatMap binderVars binders
-    eVars = freeVars expression
+    eVars = concatMap (\e -> freeVars e.guard <> freeVars e.expression) expressions
   in filter (\v -> not (v `elem` bVars)) eVars
 
 binderVars :: Binder -> Array String
@@ -195,7 +195,7 @@ translateTailCall env currentModStr moduleName recVars ident args nextId expr = 
       bodyRes = translateTailCall env currentModStr moduleName nextRecVars ident args bindRes.nextId body
     in { stmts: bindRes.stmts <> bodyRes.stmts, nextId: bodyRes.nextId }
     
-  Case caseExprs alts ->
+  Case caseExprs alts -> 
       let
         processCaseExpr acc e =
           let res = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId e
@@ -206,15 +206,32 @@ translateTailCall env currentModStr moduleName recVars ident args nextId expr = 
              }
         caseRes = foldl processCaseExpr { assigns: [], vars: [], nextId: nextId, i: 0 } caseExprs
         
-        processAlt (CaseAlternative alt) acc =
+        matchedVar = "__match_" <> show caseRes.nextId
+        
+        processAlt acc (CaseAlternative alt) =
           let
             bindResults = mapWithIndex (\i b -> P.bindBinder (caseRes.vars `unsafeIndex` i) b) alt.binders
             combined = foldl P.combineResult { cond: PhpBoolean true, assigns: [] } bindResults
-            altBodyRes = translateTailCall env currentModStr moduleName recVars ident args acc.nextId alt.expression
-          in { stmts: [PhpIf combined.cond (combined.assigns <> altBodyRes.stmts) acc.stmts], nextId: altBodyRes.nextId }
+            
+            processGuard gAcc e =
+              let
+                 guardRes = translateExprImpl env currentModStr moduleName recVars Nothing gAcc.nextId e.guard
+                 bodyRes = translateTailCall env currentModStr moduleName recVars ident args guardRes.nextId e.expression
+                 
+                 guardIf = PhpIf (PhpBinOp "===" (PhpVar matchedVar) (PhpBoolean false)) [ PhpIf guardRes.expr (bodyRes.stmts <> [PhpAssign matchedVar (PhpBoolean true)]) [] ] []
+              in { stmts: gAcc.stmts <> guardRes.stmts <> [guardIf], nextId: bodyRes.nextId }
+              
+            guardsRes = foldl processGuard { stmts: [], nextId: acc.nextId } alt.expressions
+            
+            altBlock = PhpIf combined.cond (combined.assigns <> guardsRes.stmts) []
+            finalAlt = PhpIf (PhpBinOp "===" (PhpVar matchedVar) (PhpBoolean false)) [altBlock] []
+            
+          in { stmts: acc.stmts <> [finalAlt], nextId: guardsRes.nextId }
              
-        altRes = foldr processAlt { stmts: [PhpThrow "Pattern match failure"], nextId: caseRes.nextId } alts
-      in { stmts: caseRes.assigns <> altRes.stmts, nextId: altRes.nextId }
+        altRes = foldl processAlt { stmts: [], nextId: caseRes.nextId + 1 } alts
+      in { stmts: caseRes.assigns <> [PhpAssign matchedVar (PhpBoolean false)] <> altRes.stmts <> [PhpIf (PhpBinOp "===" (PhpVar matchedVar) (PhpBoolean false)) [PhpThrow "Pattern match failure"] []]
+         , nextId: altRes.nextId
+         }
     
   _ ->
     case isTailCall ident (length args) expr of
@@ -365,7 +382,7 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               targetMod = case mbMod of 
                 Just m -> m
                 Nothing -> moduleName
-              fqn = "\\\\" <> joinWith "\\\\" targetMod <> "\\\\" <> Printer.sanitize (joinWith "_" targetMod <> "_" <> ident)
+              fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.sanitize (joinWith "_" targetMod <> "_" <> ident)
             in { stmts: [], expr: PhpString fqn, nextId }
           _ -> case mbMod of
             Just mod -> { stmts: [], expr: PhpGlobalVar (Just mod) ident, nextId }
@@ -459,17 +476,31 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
           caseRes = foldl processCaseExpr { assigns: [], vars: [], nextId: nextId, i: 0 } exprs
           
           resultVar = "__case_res_" <> show caseRes.nextId
+          matchedVar = "__match_" <> show caseRes.nextId
           nextIdAfterVar = caseRes.nextId + 1
           
-          processAlt (CaseAlternative alt) acc =
+          processAlt acc (CaseAlternative alt) =
             let
               bindResults = mapWithIndex (\i b -> P.bindBinder (caseRes.vars `unsafeIndex` i) b) alt.binders
               combined = foldl P.combineResult { cond: PhpBoolean true, assigns: [] } bindResults
-              altBodyRes = translateExprImpl env currentModStr moduleName recVars Nothing acc.nextId alt.expression
-            in { stmts: [PhpIf combined.cond (combined.assigns <> altBodyRes.stmts <> [PhpAssign resultVar altBodyRes.expr]) acc.stmts], nextId: altBodyRes.nextId }
+              
+              processGuard gAcc e =
+                let
+                   guardRes = translateExprImpl env currentModStr moduleName recVars Nothing gAcc.nextId e.guard
+                   bodyRes = translateExprImpl env currentModStr moduleName recVars Nothing guardRes.nextId e.expression
+                   
+                   guardIf = PhpIf (PhpBinOp "===" (PhpVar matchedVar) (PhpBoolean false)) [ PhpIf guardRes.expr (bodyRes.stmts <> [PhpAssign resultVar bodyRes.expr, PhpAssign matchedVar (PhpBoolean true)]) [] ] []
+                in { stmts: gAcc.stmts <> guardRes.stmts <> [guardIf], nextId: bodyRes.nextId }
+                
+              guardsRes = foldl processGuard { stmts: [], nextId: acc.nextId } alt.expressions
+              
+              altBlock = PhpIf combined.cond (combined.assigns <> guardsRes.stmts) []
+              finalAlt = PhpIf (PhpBinOp "===" (PhpVar matchedVar) (PhpBoolean false)) [altBlock] []
+              
+            in { stmts: acc.stmts <> [finalAlt], nextId: guardsRes.nextId }
                
-          altRes = foldr processAlt { stmts: [PhpThrow "Pattern match failure"], nextId: nextIdAfterVar } alts
-        in { stmts: caseRes.assigns <> [PhpAssign resultVar (PhpRaw "null")] <> altRes.stmts
+          altRes = foldl processAlt { stmts: [], nextId: nextIdAfterVar } alts
+        in { stmts: caseRes.assigns <> [PhpAssign resultVar (PhpRaw "null"), PhpAssign matchedVar (PhpBoolean false)] <> altRes.stmts <> [PhpIf (PhpBinOp "===" (PhpVar matchedVar) (PhpBoolean false)) [PhpThrow "Pattern match failure"] []]
            , expr: PhpVar resultVar
            , nextId: altRes.nextId
            }
@@ -506,7 +537,7 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
         let
           numFields = length fieldNames
           body = PhpNew ("Phpurs_Data" <> show numFields) ([PhpString constructorName] <> map PhpVar fieldNames)
-          singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> constructorName <> "']")) body
+          singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> Printer.sanitize constructorName <> "']")) body
         in if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
       Accessor field e -> 
         let res = translateExprImpl env currentModStr moduleName recVars Nothing nextId e
@@ -640,8 +671,8 @@ simplify env currentMod expr = simplify' [] expr
                   Lambda param (Case [Variable Nothing p2] [CaseAlternative ca]) | param == p2 ->
                     case ca.binders of
                       [ConstructorBinder _ _ _ [VarBinder v]] ->
-                        case ca.expression of
-                          Accessor prop (Variable Nothing p3) | v == p3 -> Just (Accessor prop argExpr)
+                        case ca.expressions of
+                          [{ guard: Literal (BooleanLiteral true), expression: Accessor prop (Variable Nothing p3) }] | v == p3 -> Just (Accessor prop argExpr)
                           _ -> Nothing
                       _ -> Nothing
                   Lambda param (Accessor prop (Variable Nothing v)) | param == v -> Just (Accessor prop argExpr)
@@ -655,13 +686,13 @@ simplify env currentMod expr = simplify' [] expr
     Accessor prop arg ->
       let
         arg' = simplify' visited arg
-        isSafeToInline e = case e of
+        isSafeToInline exprInline = case exprInline of
           Variable _ _ -> true
           Literal (IntLiteral _) -> true
           Literal (NumberLiteral _) -> true
           Literal (StringLiteral _) -> true
-          Literal (BooleanLiteral _) -> true
           Literal (CharLiteral _) -> true
+          Literal (BooleanLiteral _) -> true
           Accessor _ _ -> true
           _ -> false
         extractSafe item = if isSafeToInline item.value then item.value else Accessor prop arg'
@@ -698,7 +729,7 @@ simplify env currentMod expr = simplify' [] expr
       ) binds) (simplify' visited body)
       
     Lambda arg body -> Lambda arg (simplify' visited body)
-    Case binders alts -> Case (map (simplify' visited) binders) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expression = simplify' visited ca.expression })) alts)
+    Case binders alts -> Case (map (simplify' visited) binders) (map (\(CaseAlternative ca) -> CaseAlternative (ca { expressions = map (\e -> { guard: simplify' visited e.guard, expression: simplify' visited e.expression }) ca.expressions })) alts)
     Constructor t c n -> Constructor t c n
     Literal lit -> case lit of
       ArrayLiteral arr -> Literal (ArrayLiteral (map (simplify' visited) arr))

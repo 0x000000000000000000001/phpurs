@@ -151,7 +151,6 @@ printExpr expr = case expr of
       isLiteral (PhpString _) = true
       isLiteral (PhpInt _) = true
       isLiteral (PhpNumber _) = true
-      isLiteral (PhpBoolean _) = true
       isLiteral _ = false
       
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
@@ -196,7 +195,17 @@ resolveContinues str =
     r3 = replaceAll (Pattern "continue III;") (Replacement "continue 4;") r2
     r4 = replaceAll (Pattern "continue IIII;") (Replacement "continue 5;") r3
     r5 = replaceAll (Pattern "continue IIIII;") (Replacement "continue 6;") r4
-  in r5
+    r6 = replaceAll (Pattern "continue IIIIII;") (Replacement "continue 7;") r5
+    r7 = replaceAll (Pattern "continue IIIIIII;") (Replacement "continue 8;") r6
+    r8 = replaceAll (Pattern "continue IIIIIIII;") (Replacement "continue 9;") r7
+    r9 = replaceAll (Pattern "continue IIIIIIIII;") (Replacement "continue 10;") r8
+    r10 = replaceAll (Pattern "continue IIIIIIIIII;") (Replacement "continue 11;") r9
+    r11 = replaceAll (Pattern "continue IIIIIIIIIII;") (Replacement "continue 12;") r10
+    r12 = replaceAll (Pattern "continue IIIIIIIIIIII;") (Replacement "continue 13;") r11
+    r13 = replaceAll (Pattern "continue IIIIIIIIIIIII;") (Replacement "continue 14;") r12
+    r14 = replaceAll (Pattern "continue IIIIIIIIIIIIII;") (Replacement "continue 15;") r13
+    r15 = replaceAll (Pattern "continue IIIIIIIIIIIIIII;") (Replacement "continue 16;") r14
+  in r15
 
 printDecl :: PhpDecl -> String
 printDecl decl = resolveContinues $ case decl.expression of

@@ -68,10 +68,12 @@ genCurry args captures stmts =
       
       nArgs = length args
       
-      useClause = if nArgs == 1 then
+      innerUseClause = if nArgs == 1 then
                     (if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else "")
                   else
                     (if length captures > 0 then " use (" <> joinWith ", " captures <> ", &$__fn)" else " use (&$__fn)")
+                    
+      outerUseClause = if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else ""
       
       rewrittenStmts = replaceReturn stmts
 
@@ -90,10 +92,10 @@ genCurry args captures stmts =
 
     in 
       if nArgs == 1 then
-        "function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "}"
+        "function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "}"
       else
-        "(function()" <> useClause <> " {\n" <>
-        "  $__fn = function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "  };\n" <>
+        "(function()" <> outerUseClause <> " {\n" <>
+        "  $__fn = function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "  };\n" <>
         "  return $__fn;\n" <>
         "})()"
 
@@ -321,4 +323,4 @@ printPhpFile isBundle ffiString file =
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $v0; public function __construct($t, $v0) { $this->tag = $t; $this->v0 = $v0; } }\n  class Phpurs_Data2 { public $tag; public $v0, $v1; public function __construct($t, $v0, $v1) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; } }\n  class Phpurs_Data3 { public $tag; public $v0, $v1, $v2; public function __construct($t, $v0, $v1, $v2) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; } }\n  class Phpurs_Data4 { public $tag; public $v0, $v1, $v2, $v3; public function __construct($t, $v0, $v1, $v2, $v3) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; } }\n  class Phpurs_Data5 { public $tag; public $v0, $v1, $v2, $v3, $v4; public function __construct($t, $v0, $v1, $v2, $v3, $v4) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; } }\n  class Phpurs_Data6 { public $tag; public $v0, $v1, $v2, $v3, $v4, $v5; public function __construct($t, $v0, $v1, $v2, $v3, $v4, $v5) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; $this->v5 = $v5; } }\n}\n"
     prefix = if isBundle then "namespace " else "<?php\n\nnamespace "
   in
-    prefix <> ns <> ";\n\n" <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$GLOBALS['" <> sanitize "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"
+    prefix <> ns <> ";\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$GLOBALS['" <> sanitize "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> imps <> "\n\n" <> decls <> "\n"

@@ -151,6 +151,3 @@ Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
 The compilation pipeline is functionally decoupled. First, `Phpurs.CoreFn` decodes `corefn.json` into a PureScript Algebraic Data Type. Then, `Phpurs.CodeGen` maps the PureScript CoreFn AST to the `PhpAst`, and `Phpurs.Printer` formats it into valid PHP syntax. Finally, `Main` orchestrates the CLI, reading the `output/` directory and writing the generated `.php` files to their respective module directories.
 
-## Future roadmap
-
-Our future roadmap includes advanced optimizations such as aggressive inlining and mutual recursion TCO, and a comprehensive FFI implementation for the broader PHP ecosystem.

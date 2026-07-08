@@ -286,23 +286,23 @@ matchIntrinsicOperator (Variable (Just mod) ident) argCount = case mod, ident, a
 matchIntrinsicOperator _ _ = Nothing
 
 data InlineFunction
-  = InlineIdentity
-  | InlineIdentity1
+  = InlineIdentityWithDict
+  | InlineIdentityErasedDict
   | InlineConst
   | InlineApply
   | InlineFlip
 
 matchInlineFunction :: Expr -> Int -> Maybe InlineFunction
 matchInlineFunction (Variable (Just mod) ident) argCount = case mod, ident, argCount of
-  ["Control", "Category"], "identity", 2 -> Just InlineIdentity
-  ["Control", "Category"], "identity", 1 -> Just InlineIdentity1
+  ["Control", "Category"], "identity", 2 -> Just InlineIdentityWithDict
+  ["Control", "Category"], "identity", 1 -> Just InlineIdentityErasedDict
   ["Data", "Function"], "const", 2 -> Just InlineConst
   ["Data", "Function"], "apply", 2 -> Just InlineApply
   ["Data", "Function"], "flip", 3 -> Just InlineFlip
-  ["Data", "Newtype"], "unwrap", 2 -> Just InlineIdentity
-  ["Data", "Newtype"], "unwrap", 1 -> Just InlineIdentity1
-  ["Data", "Newtype"], "wrap", 2 -> Just InlineIdentity
-  ["Data", "Newtype"], "wrap", 1 -> Just InlineIdentity1
+  ["Data", "Newtype"], "unwrap", 2 -> Just InlineIdentityWithDict
+  ["Data", "Newtype"], "unwrap", 1 -> Just InlineIdentityErasedDict
+  ["Data", "Newtype"], "wrap", 2 -> Just InlineIdentityWithDict
+  ["Data", "Newtype"], "wrap", 1 -> Just InlineIdentityErasedDict
   _, _, _ -> Nothing
 matchInlineFunction _ _ = Nothing
 
@@ -402,9 +402,9 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
           extracted = collectCall expr
           
         in case matchInlineFunction extracted.fn (length extracted.args) of
-          Just InlineIdentity ->
+          Just InlineIdentityWithDict ->
             translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 1)
-          Just InlineIdentity1 ->
+          Just InlineIdentityErasedDict ->
             translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
           Just InlineConst ->
             translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)

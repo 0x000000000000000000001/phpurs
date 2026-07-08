@@ -1,8 +1,8 @@
 # phpurs
 
-An experimental PureScript to PHP compiler backend, entirely written in PureScript.
+A PureScript to PHP compiler backend, entirely written in PureScript.
 
-`phpurs` leverages the intermediate `CoreFn` representation to compile your pure business logic into robust, modern PHP 7.4/8+ code. It seamlessly integrates into your existing PureScript workflow as a custom backend.
+`phpurs` leverages the intermediate `CoreFn` representation to compile your pure business logic into robust, modern PHP 8.4+ code. It seamlessly integrates into your existing PureScript workflow as a custom backend.
 
 ## Why PHP?
 While the broader JS ecosystem has heavily leaned towards TypeScript, the PHP world (which still powers roughly **70% of the web**) has somewhat been left without a true, strictly-typed functional alternative. Furthermore, a massive portion of the web relies on legacy shared hosting or "containerless" VPS environments where escaping the PHP runtime is either impossible, financially unviable, or technically difficult. Just a few examples: cPanel/Plesk, GoDaddy, Bluehost, SiteGround, standard HostGator/OVH shared plans, basic LAMP stacks…

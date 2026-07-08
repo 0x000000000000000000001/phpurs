@@ -120,7 +120,7 @@ printExpr expr = case expr of
       pathStr = case mbMod of
         Just mod -> "\\" <> joinWith "\\" mod <> "\\phpurs_eval_thunk('" <> idStr <> "')"
         Nothing -> "phpurs_eval_thunk('" <> idStr <> "')"
-    in "($GLOBALS['" <> idStr <> "'] ?? " <> pathStr <> ")"
+    in "(array_key_exists('" <> idStr <> "', $GLOBALS) ? $GLOBALS['" <> idStr <> "'] : " <> pathStr <> ")"
   PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i

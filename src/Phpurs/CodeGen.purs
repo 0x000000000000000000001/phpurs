@@ -287,6 +287,7 @@ matchIntrinsicOperator _ _ = Nothing
 
 data InlineFunction
   = InlineIdentity
+  | InlineIdentity1
   | InlineConst
   | InlineApply
   | InlineFlip
@@ -294,9 +295,14 @@ data InlineFunction
 matchInlineFunction :: Expr -> Int -> Maybe InlineFunction
 matchInlineFunction (Variable (Just mod) ident) argCount = case mod, ident, argCount of
   ["Control", "Category"], "identity", 2 -> Just InlineIdentity
+  ["Control", "Category"], "identity", 1 -> Just InlineIdentity1
   ["Data", "Function"], "const", 2 -> Just InlineConst
   ["Data", "Function"], "apply", 2 -> Just InlineApply
   ["Data", "Function"], "flip", 3 -> Just InlineFlip
+  ["Data", "Newtype"], "unwrap", 2 -> Just InlineIdentity
+  ["Data", "Newtype"], "unwrap", 1 -> Just InlineIdentity1
+  ["Data", "Newtype"], "wrap", 2 -> Just InlineIdentity
+  ["Data", "Newtype"], "wrap", 1 -> Just InlineIdentity1
   _, _, _ -> Nothing
 matchInlineFunction _ _ = Nothing
 
@@ -398,6 +404,8 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
         in case matchInlineFunction extracted.fn (length extracted.args) of
           Just InlineIdentity ->
             translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 1)
+          Just InlineIdentity1 ->
+            translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
           Just InlineConst ->
             translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
           Just InlineApply ->

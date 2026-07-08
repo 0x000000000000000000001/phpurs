@@ -55,8 +55,8 @@ generateModule env mbFfiDir isBundle mod = do
     phpModName = String.replaceAll (Pattern ".") (Replacement "_") modNameStr
     wrappedFfiCode = if String.length ffiCode > 0 then
       let
-        closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n"
-        closureEnd = "\n});\n"
+        closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
+        closureEnd = "\n  return $exports;\n});\n"
         mappings = joinWith "\n" (map (\f -> "$GLOBALS['" <> Printer.safeName (phpModName <> "_" <> f) <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? null;") (unwrap mod).foreign)
       in
         closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
@@ -127,7 +127,7 @@ main = launchAff_ do
                 Just p -> "if (file_exists(__DIR__ . '/../" <> p <> "')) require_once __DIR__ . '/../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
                 Nothing -> "if (file_exists(__DIR__ . '/../vendor/autoload.php')) require_once __DIR__ . '/../vendor/autoload.php';\n"
               ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-              entryPoint = "<?php\n" <> autoloadStr <> "($GLOBALS['" <> mainMod <> "_main'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+              entryPoint = "<?php\n" <> autoloadStr <> "(array_key_exists('" <> mainMod <> "_main', $GLOBALS) ? $GLOBALS['" <> mainMod <> "_main'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
             writeTextFile UTF8 "output/bundle.php" (bundleContent <> "\n" <> entryPoint)
             liftEffect $ log $ "phpurs: Successfully bundled all modules into output/bundle.php for " <> mainMod
           Nothing -> do
@@ -192,7 +192,7 @@ main = launchAff_ do
                 Nothing -> "if (file_exists(__DIR__ . '/../vendor/autoload.php')) require_once __DIR__ . '/../vendor/autoload.php';\n"
               ns = joinWith "\\" (String.split (Pattern ".") mainMod)
               sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-              entryPoint = "<?php\n" <> autoloadStr <> "require_once __DIR__ . '/" <> mainMod <> "/index.php';\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+              entryPoint = "<?php\n" <> autoloadStr <> "require_once __DIR__ . '/" <> mainMod <> "/index.php';\n(array_key_exists('" <> sanitizedMain <> "', $GLOBALS) ? $GLOBALS['" <> sanitizedMain <> "'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
             writeTextFile UTF8 "output/main.php" entryPoint
             liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
           Nothing -> pure unit

@@ -8,10 +8,15 @@ import Data.Array (filter, length, mapWithIndex, index, concatMap)
 import Data.Array as Array
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
-foreign import sanitizeImpl :: String -> String
+foreign import safeNameImpl :: String -> String
+foreign import safeFuncNameImpl :: String -> String
 
-sanitize :: String -> String
-sanitize = sanitizeImpl
+safeName :: String -> String
+safeName = safeNameImpl
+  <<< replaceAll (Pattern "'") (Replacement "__prime__")
+
+safeFuncName :: String -> String
+safeFuncName = safeFuncNameImpl
   <<< replaceAll (Pattern "'") (Replacement "__prime__")
 
 isUppercase :: String -> Boolean
@@ -35,8 +40,8 @@ replaceReturn = concatMap replaceExpr
 genNativeCurry :: String -> Array String -> Array PhpExpr -> String
 genNativeCurry name args stmts =
   let
-    argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> sanitize a <> (if i > 0 then " = null" else "")) args)
-    argNames = joinWith ", " (map (\a -> "$" <> sanitize a) args)
+    argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
+    argNames = joinWith ", " (map (\a -> "$" <> safeName a) args)
     nStr = show (length args)
     
     rewrittenStmts = replaceReturn stmts
@@ -62,8 +67,8 @@ genCurry args captures stmts =
   if length args == 0 then "function() use (&$__fn) {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
   else
     let
-      argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> sanitize a <> (if i > 0 then " = null" else "")) args)
-      argNames = joinWith ", " (map (\a -> "$" <> sanitize a) args)
+      argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
+      argNames = joinWith ", " (map (\a -> "$" <> safeName a) args)
       nStr = show (length args)
       
       nArgs = length args
@@ -105,13 +110,13 @@ printExpr expr = case expr of
   PhpValueThunk name expr -> "/* ERROR: PhpValueThunk inside expression */"
   PhpFunction captures args stmts ->
     genCurry args captures stmts
-  PhpVar ident -> "$" <> sanitize ident
+  PhpVar ident -> "$" <> safeName ident
   PhpGlobalVar mbMod ident -> 
     let
       modPrefix = case mbMod of
         Just mod -> joinWith "_" mod <> "_"
         Nothing -> ""
-      idStr = sanitize (modPrefix <> ident)
+      idStr = safeName (modPrefix <> ident)
       pathStr = case mbMod of
         Just mod -> "\\" <> joinWith "\\" mod <> "\\phpurs_eval_thunk('" <> idStr <> "')"
         Nothing -> "phpurs_eval_thunk('" <> idStr <> "')"
@@ -128,11 +133,11 @@ printExpr expr = case expr of
     in "\"" <> s2 <> "\""
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
-  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> sanitize item.key <> "\" => " <> printExpr item.value) arr) <> "]"
-  PhpPropertyAccess expr prop -> "(" <> printExpr expr <> ")->" <> sanitize prop
+  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"
+  PhpPropertyAccess expr prop -> "(" <> printExpr expr <> ")->" <> safeName prop
   PhpArrayIndex expr idx -> "(" <> printExpr expr <> ")[" <> show idx <> "]"
   PhpClone obj -> "clone " <> printExpr obj
-  PhpAssign ident expr -> "$" <> sanitize ident <> " = " <> printExpr expr
+  PhpAssign ident expr -> "$" <> safeName ident <> " = " <> printExpr expr
   PhpIf cond thenStmts elseStmts ->
     let
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
@@ -177,8 +182,8 @@ printExpr expr = case expr of
   PhpContinue -> "continue /*__LVL__*/"
   PhpRaw raw -> raw
   PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map printExpr args) <> ")"
-  PhpGoto lbl -> "goto " <> sanitize lbl <> ";"
-  PhpLabel lbl -> sanitize lbl <> ":"
+  PhpGoto lbl -> "goto " <> safeName lbl <> ";"
+  PhpLabel lbl -> safeName lbl <> ":"
   PhpSwitch subject cases defaultStmts ->
     let
       printCase c = joinWith "\n" (map (\m -> "case " <> printExpr m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.stmts) <> ";") <> "\nbreak;"
@@ -213,11 +218,11 @@ printDecl :: PhpDecl -> String
 printDecl decl = resolveContinues $ case decl.expression of
   PhpNativeFunction name args stmts ->
     "// " <> decl.identifier <> "\n" <>
-    genNativeCurry (sanitize name) args stmts <> "\n" <>
-    "$GLOBALS['" <> sanitize decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> sanitize name <> "';\n"
+    genNativeCurry (safeFuncName name) args stmts <> "\n" <>
+    "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
   PhpValueThunk name expr -> ""
   expr ->
-    "// " <> decl.identifier <> "\n$" <> sanitize decl.identifier <> " = " <> printExpr expr <> ";\n"
+    "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr expr <> ";\n"
 
 printPhpFile :: Boolean -> String -> PhpFile -> String
 printPhpFile isBundle ffiString file =
@@ -238,7 +243,7 @@ printPhpFile isBundle ffiString file =
       _ -> false
     ) file.decls
     thunkCases = joinWith "\n" $ map (\d -> case d.expression of
-      PhpValueThunk name expr -> "      case '" <> sanitize name <> "': $v = " <> resolveContinues (printExpr expr) <> "; break;"
+      PhpValueThunk name expr -> "      case '" <> safeName name <> "': $v = " <> resolveContinues (printExpr expr) <> "; break;"
       _ -> ""
     ) thunks
     evalThunkStr = "if (!function_exists(__NAMESPACE__ . '\\\\phpurs_eval_thunk')) {\n" <>
@@ -323,4 +328,4 @@ printPhpFile isBundle ffiString file =
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $v0; public function __construct($t, $v0) { $this->tag = $t; $this->v0 = $v0; } }\n  class Phpurs_Data2 { public $tag; public $v0, $v1; public function __construct($t, $v0, $v1) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; } }\n  class Phpurs_Data3 { public $tag; public $v0, $v1, $v2; public function __construct($t, $v0, $v1, $v2) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; } }\n  class Phpurs_Data4 { public $tag; public $v0, $v1, $v2, $v3; public function __construct($t, $v0, $v1, $v2, $v3) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; } }\n  class Phpurs_Data5 { public $tag; public $v0, $v1, $v2, $v3, $v4; public function __construct($t, $v0, $v1, $v2, $v3, $v4) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; } }\n  class Phpurs_Data6 { public $tag; public $v0, $v1, $v2, $v3, $v4, $v5; public function __construct($t, $v0, $v1, $v2, $v3, $v4, $v5) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; $this->v5 = $v5; } }\n}\n"
     prefix = if isBundle then "namespace " else "<?php\n\nnamespace "
   in
-    prefix <> ns <> ";\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$GLOBALS['" <> sanitize "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> imps <> "\n\n" <> decls <> "\n"
+    prefix <> ns <> ";\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> imps <> "\n\n" <> decls <> "\n"

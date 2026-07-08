@@ -159,7 +159,7 @@ getArgs (Lambda arg body) =
 getArgs other = { args: [], body: other }
 
 formatFv :: Array String -> String -> String
-formatFv recVars f = if f `elem` recVars || Printer.isUppercase f then "&$" <> Printer.sanitize f else "$" <> Printer.sanitize f
+formatFv recVars f = if f `elem` recVars || Printer.isUppercase f then "&$" <> Printer.safeName f else "$" <> Printer.safeName f
 
 type CompileResult = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: Int }
 
@@ -382,7 +382,7 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               targetMod = case mbMod of 
                 Just m -> m
                 Nothing -> moduleName
-              fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.sanitize (joinWith "_" targetMod <> "_" <> ident)
+              fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.safeFuncName (joinWith "_" targetMod <> "_" <> ident)
             in { stmts: [], expr: PhpString fqn, nextId }
           _ -> case mbMod of
             Just mod -> { stmts: [], expr: PhpGlobalVar (Just mod) ident, nextId }
@@ -450,7 +450,7 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
                               targetMod = case fnMbMod of 
                                 Just m -> m
                                 Nothing -> moduleName
-                              fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.sanitize (joinWith "_" targetMod <> "_" <> fnIdent)
+                              fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.safeFuncName (joinWith "_" targetMod <> "_" <> fnIdent)
                               argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
                             in { stmts: argsRes.stmts, expr: PhpCall (PhpRaw fqn) argsRes.exprs, nextId: argsRes.nextId }
                           _ -> 
@@ -537,7 +537,7 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
         let
           numFields = length fieldNames
           body = PhpNew ("Phpurs_Data" <> show numFields) ([PhpString constructorName] <> map PhpVar fieldNames)
-          singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> Printer.sanitize constructorName <> "']")) body
+          singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> Printer.safeName constructorName <> "']")) body
         in if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] fieldNames [PhpReturn body], nextId }
       Accessor field e -> 
         let res = translateExprImpl env currentModStr moduleName recVars Nothing nextId e

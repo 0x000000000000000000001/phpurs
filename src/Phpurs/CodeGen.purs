@@ -156,7 +156,16 @@ getArgs (Lambda arg body) =
     rename a = if length (filter (\x -> x == a) next.args) > 0 then rename (a <> "_") else a
     arg' = rename arg
   in { args: [arg'] <> next.args, body: next.body }
+getArgs (Let binds body) =
+  let
+    next = getArgs body
+  in { args: next.args, body: Let binds next.body }
 getArgs other = { args: [], body: other }
+
+extractLambda :: Expr -> Maybe Expr
+extractLambda e@(Lambda _ _) = Just e
+extractLambda (Let _ body) = extractLambda body
+extractLambda _ = Nothing
 
 formatFv :: Array String -> String -> String
 formatFv recVars f = if f `elem` recVars || Printer.isUppercase f then "&$" <> Printer.safeName f else "$" <> Printer.safeName f
@@ -286,23 +295,20 @@ matchIntrinsicOperator (Variable (Just mod) ident) argCount = case mod, ident, a
 matchIntrinsicOperator _ _ = Nothing
 
 data InlineFunction
-  = InlineIdentityWithDict
-  | InlineIdentityErasedDict
+  = InlineIdentity Int
   | InlineConst
   | InlineApply
   | InlineFlip
 
 matchInlineFunction :: Expr -> Int -> Maybe InlineFunction
 matchInlineFunction (Variable (Just mod) ident) argCount = case mod, ident, argCount of
-  ["Control", "Category"], "identity", 2 -> Just InlineIdentityWithDict
-  ["Control", "Category"], "identity", 1 -> Just InlineIdentityErasedDict
+  ["Control", "Category"], "identity", _ -> Just (InlineIdentity 1)
   ["Data", "Function"], "const", 2 -> Just InlineConst
   ["Data", "Function"], "apply", 2 -> Just InlineApply
   ["Data", "Function"], "flip", 3 -> Just InlineFlip
-  ["Data", "Newtype"], "unwrap", 2 -> Just InlineIdentityWithDict
-  ["Data", "Newtype"], "unwrap", 1 -> Just InlineIdentityErasedDict
-  ["Data", "Newtype"], "wrap", 2 -> Just InlineIdentityWithDict
-  ["Data", "Newtype"], "wrap", 1 -> Just InlineIdentityErasedDict
+  ["Data", "Newtype"], "unwrap", _ -> Just (InlineIdentity 1)
+  ["Data", "Newtype"], "wrap", _ -> Just (InlineIdentity 1)
+  ["Safe", "Coerce"], "coerce", _ -> Just (InlineIdentity 1)
   _, _, _ -> Nothing
 matchInlineFunction _ _ = Nothing
 
@@ -402,10 +408,11 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
           extracted = collectCall expr
           
         in case matchInlineFunction extracted.fn (length extracted.args) of
-          Just InlineIdentityWithDict ->
-            translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 1)
-          Just InlineIdentityErasedDict ->
-            translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
+          Just (InlineIdentity dictCount) ->
+            if length extracted.args > dictCount then
+              translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` dictCount)
+            else
+              { stmts: [], expr: PhpFunction [] ["__x"] [PhpReturn (PhpVar "__x")], nextId }
           Just InlineConst ->
             translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
           Just InlineApply ->
@@ -452,25 +459,37 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
                             Just m -> joinWith "." m
                             Nothing -> currentModStr
                           fnGlobalKey = fnModPrefix <> "." <> fnIdent
-                        in case Object.lookup fnGlobalKey env of
-                          Just (Lambda _ _) ->
+                        in case Object.lookup fnGlobalKey env >>= extractLambda of
+                          Just lambdaExpr ->
                             let
                               targetMod = case fnMbMod of 
                                 Just m -> m
                                 Nothing -> moduleName
                               fqn = "\\" <> joinWith "\\" targetMod <> "\\" <> Printer.safeFuncName (joinWith "_" targetMod <> "_" <> fnIdent)
                               argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
-                            in { stmts: argsRes.stmts, expr: PhpCall (PhpRaw fqn) argsRes.exprs, nextId: argsRes.nextId }
+                              expectedArity = length (getArgs lambdaExpr).args
+                            in if length argsRes.exprs > expectedArity then
+                                 let
+                                   firstArgs = Array.take expectedArity argsRes.exprs
+                                   restArgs = Array.drop expectedArity argsRes.exprs
+                                 in { stmts: argsRes.stmts
+                                    , expr: foldl (\acc a -> PhpCall acc [a]) (PhpCall (PhpRaw fqn) firstArgs) restArgs
+                                    , nextId: argsRes.nextId 
+                                    }
+                               else
+                                 { stmts: argsRes.stmts, expr: PhpCall (PhpRaw fqn) argsRes.exprs, nextId: argsRes.nextId }
                           _ -> 
                             let
                               fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId extracted.fn
                               argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
-                            in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
+                              finalCall = if length argsRes.exprs > 0 then foldl (\acc a -> PhpCall acc [a]) (PhpCall fnRes.expr [argsRes.exprs `unsafeIndex` 0]) (Array.drop 1 argsRes.exprs) else PhpCall fnRes.expr []
+                            in { stmts: fnRes.stmts <> argsRes.stmts, expr: finalCall, nextId: argsRes.nextId }
                       _ ->
                         let
                           fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId extracted.fn
                           argsRes = foldl processArg { stmts: [], exprs: [], nextId: fnRes.nextId } extracted.args
-                        in { stmts: fnRes.stmts <> argsRes.stmts, expr: PhpCall fnRes.expr argsRes.exprs, nextId: argsRes.nextId }
+                          finalCall = if length argsRes.exprs > 0 then foldl (\acc a -> PhpCall acc [a]) (PhpCall fnRes.expr [argsRes.exprs `unsafeIndex` 0]) (Array.drop 1 argsRes.exprs) else PhpCall fnRes.expr []
+                        in { stmts: fnRes.stmts <> argsRes.stmts, expr: finalCall, nextId: argsRes.nextId }
       Literal lit -> translateLiteral env currentModStr moduleName lit nextId
       Case exprs alts -> 
         let

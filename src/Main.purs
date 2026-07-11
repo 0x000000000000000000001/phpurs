@@ -120,16 +120,23 @@ main = launchAff_ do
         let globalEnv = CodeGen.buildGlobalEnv dceModules
         strs <- traverse (generateModule globalEnv mbFfiDir true) dceModules
         let bundleContent = "<?php\n\n" <> joinWith "\n" strs
+        let targetMainModules = case mbMainModule of
+              Just mainMod -> [mainMod]
+              Nothing -> Array.mapMaybe (\(CF.Module m) -> if isJust (Array.elemIndex "main" m.exports) then Just (joinWith "." m.moduleName) else Nothing) dceModules
+        
+        _ <- traverse (\mainMod -> do
+          let
+            autoloadStr = case mbAutoloadPath of
+              Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
+              Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
+            ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+            sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
+            entryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n(array_key_exists('" <> sanitizedMain <> "', $GLOBALS) ? $GLOBALS['" <> sanitizedMain <> "'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+          writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
+        ) targetMainModules
+        
         case mbMainModule of
-          Just mainMod -> do
-            let
-              autoloadStr = case mbAutoloadPath of
-                Just p -> "if (file_exists(__DIR__ . '/../" <> p <> "')) require_once __DIR__ . '/../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
-                Nothing -> "if (file_exists(__DIR__ . '/../vendor/autoload.php')) require_once __DIR__ . '/../vendor/autoload.php';\n"
-              ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-              entryPoint = "<?php\n" <> autoloadStr <> "(array_key_exists('" <> mainMod <> "_main', $GLOBALS) ? $GLOBALS['" <> mainMod <> "_main'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> mainMod <> "_main'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
-            writeTextFile UTF8 "output/bundle.php" (bundleContent <> "\n" <> entryPoint)
-            liftEffect $ log $ "phpurs: Successfully bundled all modules into output/bundle.php for " <> mainMod
+          Just _ -> pure unit
           Nothing -> do
             writeTextFile UTF8 "output/bundle.php" bundleContent
             liftEffect $ log "phpurs: Successfully bundled all modules into output/bundle.php"
@@ -184,18 +191,20 @@ main = launchAff_ do
           ) dirtyModules
           pure unit
         
-        case mbMainModule of
-          Just mainMod -> do
-            let
-              autoloadStr = case mbAutoloadPath of
-                Just p -> "if (file_exists(__DIR__ . '/../" <> p <> "')) require_once __DIR__ . '/../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
-                Nothing -> "if (file_exists(__DIR__ . '/../vendor/autoload.php')) require_once __DIR__ . '/../vendor/autoload.php';\n"
-              ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-              sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-              entryPoint = "<?php\n" <> autoloadStr <> "require_once __DIR__ . '/" <> mainMod <> "/index.php';\n(array_key_exists('" <> sanitizedMain <> "', $GLOBALS) ? $GLOBALS['" <> sanitizedMain <> "'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
-            writeTextFile UTF8 "output/main.php" entryPoint
-            liftEffect $ log $ "phpurs: Successfully compiled all modules. Generated main.php for " <> mainMod
-          Nothing -> pure unit
+        let targetMainModules = case mbMainModule of
+              Just mainMod -> [mainMod]
+              Nothing -> Array.mapMaybe (\deps -> if isJust (Array.elemIndex "main" deps.exports) then Just (joinWith "." deps.moduleName) else Nothing) reachableDepsList
+        
+        _ <- traverse (\mainMod -> do
+          let
+            autoloadStr = case mbAutoloadPath of
+              Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
+              Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
+            ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+            sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
+            entryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n(array_key_exists('" <> sanitizedMain <> "', $GLOBALS) ? $GLOBALS['" <> sanitizedMain <> "'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+          writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") entryPoint
+        ) targetMainModules
         
         if dirtyCount > 0 then do
           case mbFfiDir of

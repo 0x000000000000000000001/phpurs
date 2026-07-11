@@ -6,6 +6,7 @@ import Effect (Effect)
 type ModuleDeps = 
   { moduleName :: Array String
   , imports :: Array (Array String)
+  , exports :: Array String
   }
 
 foreign import parseAllImportsImpl :: Array String -> Effect (Array ModuleDeps)

@@ -28,7 +28,8 @@ export const parseAllImportsImpl = function(files) {
           newCache.modules[dirName] = cachedMod;
           results.push({
             moduleName: cachedMod.moduleName,
-            imports: cachedMod.imports
+            imports: cachedMod.imports,
+            exports: cachedMod.exports || []
           });
         } else {
           const content = fs.readFileSync(file, 'utf8');
@@ -37,17 +38,20 @@ export const parseAllImportsImpl = function(files) {
           
           const modName = json.moduleName || [];
           const importsList = imports.map(function(i) { return i.moduleName || []; });
+          const exportsList = json.exports || [];
           
           newCache.modules[dirName] = {
             mtime: mtime,
             moduleName: modName,
             imports: importsList,
+            exports: exportsList,
             modulePath: json.modulePath || null
           };
           
           results.push({
             moduleName: modName,
-            imports: importsList
+            imports: importsList,
+            exports: exportsList
           });
           changed = true;
         }

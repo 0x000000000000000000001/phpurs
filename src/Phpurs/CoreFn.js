@@ -91,6 +91,7 @@ export const parseModuleImpl = function(jsonStr) {
         moduleName: obj.moduleName || [],
         decls: binds,
         imports: imports,
+        exports: obj.exports || [],
         foreign: obj.foreign || [],
         modulePath: obj.modulePath ? new Just(obj.modulePath) : Nothing.value
       }));

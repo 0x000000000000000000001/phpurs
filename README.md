@@ -118,6 +118,9 @@ If you wish to configure an existing project manually, `phpurs` acts as a drop-i
    ```bash
    php output/App.Main/main.bundle.php
    ```
+   
+   > **Real-world example:** For a practical demonstration of how to orchestrate execution across multiple entrypoints, check out the [b8x.pub](https://github.com/0x000000000000000000001/b8x.pub) repository. It utilizes a dedicated [`bin/run`](https://github.com/0x000000000000000000001/b8x.pub/blob/main/bin/run) shell script wrapper that gracefully abstracts the underlying `main.mod.php` execution.
+
 
 ### Compiler configuration options
 

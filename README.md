@@ -91,6 +91,11 @@ If you wish to configure an existing project manually, `phpurs` acts as a drop-i
    workspace:
      packageSet:
        registry: 73.3.0
+     extraPackages:
+       # -------------------------------------------------------------
+       # Copy the entire extraPackages block from the starter template
+       # https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml
+       # -------------------------------------------------------------
      backend:
        cmd: phpurs
        args: ["--autoload-path", "path/to/vendor/autoload.php"]

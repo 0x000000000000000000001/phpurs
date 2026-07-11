@@ -83,22 +83,17 @@ The easiest way to bootstrap a new PureScript-to-PHP project is by using our off
 If you wish to configure an existing project manually, `phpurs` acts as a drop-in backend for the Spago build system.
 
 1. **Override Core Libraries (`spago.yaml`):**
-   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts using Git dependencies in your `workspace.extraPackages`. **You must copy the entire `workspace.extraPackages` block from the [starter template's spago.yaml](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) and paste it into your own.**
+   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts. To do this effortlessly, simply point your workspace package set to our pre-configured registry which already includes all PHP overrides.
 
 2. **Specify Backend and Registry (`spago.yaml`):**
-   You also need to declare a specific `registry` (or package set) compatible with the overrides, and set up the backend options:
+   Set up your `spago.yaml` to use the `phpurs-registry` and configure the compiler backend options:
    ```yaml
    workspace:
      packageSet:
-       registry: 73.3.0
-     extraPackages:
-       # -------------------------------------------------------------
-       # Copy the entire extraPackages block from the starter template
-       # https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml
-       # -------------------------------------------------------------
+       url: "https://raw.githubusercontent.com/0x000000000000000000001/phpurs-registry/main/packages.json"
      backend:
        cmd: phpurs
-       args: ["--autoload-path", "path/to/vendor/autoload.php"] # Set yout vendor autoload path.
+       args: ["--autoload-path", "path/to/vendor/autoload.php"] # Set your vendor autoload path.
    ```
    *Alternatively, you can pass the backend directly via CLI:*
    ```bash

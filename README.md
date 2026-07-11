@@ -83,7 +83,7 @@ The easiest way to bootstrap a new PureScript-to-PHP project is by using our off
 If you wish to configure an existing project manually, `phpurs` acts as a drop-in backend for the Spago build system.
 
 1. **Override Core Libraries (`spago.yaml`):**
-   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts using Git dependencies in your `workspace.extraPackages`. See the [starter template's spago.yaml](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) for the full list of required overrides.
+   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts using Git dependencies in your `workspace.extraPackages`. **You must copy the entire `workspace.extraPackages` block from the [starter template's spago.yaml](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) and paste it into your own.**
 
 2. **Specify Backend and Registry (`spago.yaml`):**
    You also need to declare a specific `registry` (or package set) compatible with the overrides, and set up the backend options:

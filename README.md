@@ -82,11 +82,11 @@ The easiest way to bootstrap a new PureScript-to-PHP project is by using our off
 
 If you wish to configure an existing project manually, `phpurs` acts as a drop-in backend for the Spago build system.
 
-1. **Override Core Libraries (`spago.yaml`):**
-   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts. To do this effortlessly, simply point your workspace package set to our pre-configured registry which already includes all PHP overrides.
+1. **Manage Core Library Overrides (`spago.yaml`):**
+   Because standard PureScript libraries use JavaScript FFI, you must override them with their `phpurs-*` counterparts. There are two valid approaches to handle this in modern Spago, depending on your needs:
 
-2. **Specify Backend and Registry (`spago.yaml`):**
-   Set up your `spago.yaml` to use the `phpurs-registry` and configure the compiler backend options:
+   **Approach A: Custom Registry (Turnkey but strict)**
+   Point your workspace package set to a pre-configured remote registry that already includes all PHP overrides. This keeps your `spago.yaml` incredibly clean, but you are tied to the update cycle of this custom registry for any third-party package updates.
    ```yaml
    workspace:
      packageSet:
@@ -94,6 +94,23 @@ If you wish to configure an existing project manually, `phpurs` acts as a drop-i
      backend:
        cmd: phpurs
        args: ["--autoload-path", "path/to/vendor/autoload.php"] # Set your vendor autoload path.
+   ```
+
+   **Approach B: Local Overrides (Verbose but flexible)**
+   Keep using the official PureScript registry as your base, and manually define all PHP overrides using the `extraPackages` directive (see the [`phpurs-starter` `spago.yaml`](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) for a complete working example). While this makes your `spago.yaml` quite verbose, it grants you total freedom to bump the official registry version (`registry: XX.X.X`) independently, without waiting for the custom registry maintainer.
+   ```yaml
+   workspace:
+     packageSet:
+       registry: 77.7.0
+     extraPackages:
+       prelude:
+         git: "https://github.com/0x000000000000000000001/phpurs-prelude.git"
+         ref: "master"
+         dependencies: []
+       # ... all other phpurs-* packages (see the phpurs-starter link above for full list)
+     backend:
+       cmd: phpurs
+       args: ["--autoload-path", "path/to/vendor/autoload.php"]
    ```
    *Alternatively, you can pass the backend directly via CLI:*
    ```bash

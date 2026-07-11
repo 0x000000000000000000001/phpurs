@@ -93,7 +93,7 @@ If you wish to configure an existing project manually, `phpurs` acts as a drop-i
        registry: 73.3.0
      backend:
        cmd: phpurs
-       args: ["--autoload-path", "vendor/autoload.php"]
+       args: ["--autoload-path", "path/to/vendor/autoload.php"]
    ```
    *Alternatively, you can pass the backend directly via CLI:*
    ```bash

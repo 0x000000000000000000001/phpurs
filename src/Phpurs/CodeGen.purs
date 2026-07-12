@@ -4,7 +4,7 @@ import Prelude
 
 import Phpurs.CoreFn (Expr(..), Bind(..), Module(..), Literal(..), CaseAlternative(..), Binder(..), Decl)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (joinWith)
 import Data.Array as Array
 import Data.Foldable (find)
@@ -355,6 +355,15 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
             ["Data", "HeytingAlgebra"], "boolAnd" -> true
             ["Data", "HeytingAlgebra"], "boolOr" -> true
             ["Data", "Semigroup"], "concatString" -> true
+            _, "compose" -> true
+            _, "composeFlipped" -> true
+            ["Control", "Category"], "identity" -> true
+            ["Data", "Newtype"], "unwrap" -> true
+            ["Data", "Newtype"], "wrap" -> true
+            ["Safe", "Coerce"], "coerce" -> true
+            ["Data", "Function"], "const" -> true
+            ["Data", "Function"], "apply" -> true
+            ["Data", "Function"], "flip" -> true
             _, _ -> false
           isRec h = h.ident == ctx.ident || h.ident `elem` recVars || isIntrinsic h
           hoisted = filter (not <<< isRec) (collectGlobals extracted.body)
@@ -382,6 +391,15 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
             ["Data", "HeytingAlgebra"], "boolAnd" -> true
             ["Data", "HeytingAlgebra"], "boolOr" -> true
             ["Data", "Semigroup"], "concatString" -> true
+            _, "compose" -> true
+            _, "composeFlipped" -> true
+            ["Control", "Category"], "identity" -> true
+            ["Data", "Newtype"], "unwrap" -> true
+            ["Data", "Newtype"], "wrap" -> true
+            ["Safe", "Coerce"], "coerce" -> true
+            ["Data", "Function"], "const" -> true
+            ["Data", "Function"], "apply" -> true
+            ["Data", "Function"], "flip" -> true
             _, _ -> false
           isRec h = h.ident `elem` recVars || isIntrinsic h
           hoisted = filter (not <<< isRec) (collectGlobals extracted.body)
@@ -421,10 +439,6 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
             in { fn: c.fn, args: c.args <> [x] }
           collectCall other = { fn: other, args: [] }
           extracted = collectCall expr
-          _ = unsafePerformEffect $ case extracted.fn of
-            Variable mbMod ident | ident == "composeFlipped" -> log ("\n\nMATCHING composeFlipped: args=" <> show (length extracted.args) <> " mod=" <> show mbMod)
-            _ -> pure unit
-          
         in case matchInlineFunction extracted.fn (length extracted.args) of
           Just (InlineIdentity dictCount) ->
             if length extracted.args > dictCount then
@@ -473,9 +487,12 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
               gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
               
+              fvs = nub (freeVars fExpr <> freeVars gExpr)
+              formattedFvs = map (formatFv recVars) fvs
+              
               phpX = PhpVar "__x"
               composeBody = PhpCall fRes.expr [PhpCall gRes.expr [phpX]]
-            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction formattedFvs ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
           Just InlineComposeFlipped3 ->
             let
                
@@ -484,9 +501,12 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
               gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
               
+              fvs = nub (freeVars fExpr <> freeVars gExpr)
+              formattedFvs = map (formatFv recVars) fvs
+              
               phpX = PhpVar "__x"
               composeBody = PhpCall gRes.expr [PhpCall fRes.expr [phpX]]
-            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction formattedFvs ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
           Just InlineCompose2 ->
             let 
               fExpr = extracted.args `unsafeIndex` 0
@@ -494,9 +514,12 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
               gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
               
+              fvs = nub (freeVars fExpr <> freeVars gExpr)
+              formattedFvs = map (formatFv recVars) fvs
+              
               phpX = PhpVar "__x"
               composeBody = PhpCall fRes.expr [PhpCall gRes.expr [phpX]]
-            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction formattedFvs ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
           Just InlineComposeFlipped2 ->
             let 
               fExpr = extracted.args `unsafeIndex` 0
@@ -504,9 +527,12 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
               gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
               
+              fvs = nub (freeVars fExpr <> freeVars gExpr)
+              formattedFvs = map (formatFv recVars) fvs
+              
               phpX = PhpVar "__x"
               composeBody = PhpCall gRes.expr [PhpCall fRes.expr [phpX]]
-            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction formattedFvs ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
           Nothing ->
             case extracted.fn of
               Constructor _ constructorName fieldNames | length fieldNames == length extracted.args ->
@@ -550,13 +576,13 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
                               argsRes = foldl processArg { stmts: [], exprs: [], nextId: nextId } extracted.args
                               expectedArity = length (getArgs lambdaExpr).args
                             in if length argsRes.exprs > expectedArity then
-                                 let
-                                   firstArgs = Array.take expectedArity argsRes.exprs
-                                   restArgs = Array.drop expectedArity argsRes.exprs
-                                 in { stmts: argsRes.stmts
-                                    , expr: foldl (\acc a -> PhpCall acc [a]) (PhpCall (PhpRaw fqn) firstArgs) restArgs
-                                    , nextId: argsRes.nextId 
-                                    }
+                                   let
+                                     firstArgs = Array.take expectedArity argsRes.exprs
+                                     restArgs = Array.drop expectedArity argsRes.exprs
+                                   in { stmts: argsRes.stmts
+                                      , expr: foldl (\acc a -> PhpCall acc [a]) (PhpCall (PhpRaw fqn) firstArgs) restArgs
+                                      , nextId: argsRes.nextId 
+                                      }
                                else
                                  { stmts: argsRes.stmts, expr: PhpCall (PhpRaw fqn) argsRes.exprs, nextId: argsRes.nextId }
                           _ -> 

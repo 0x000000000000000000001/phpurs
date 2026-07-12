@@ -202,12 +202,11 @@ main = launchAff_ do
 
           -- But we only generate PHP for the dirty subset
           let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) reachableModules
-          
+
           ø $ traverse
             ( \m -> do
                 liftEffect $ log $ "Generating " <> joinWith "." (unwrap m).moduleName
-                res <- generateModule globalEnv mbFfiDir false m
-                pure res
+                generateModule globalEnv mbFfiDir false m
             )
             dirtyModules
 

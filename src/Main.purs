@@ -1,6 +1,8 @@
 module Main where
 
 import Prelude
+import Foreign.Object as Object
+import Data.Array as Array
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (unwrap)
@@ -131,7 +133,7 @@ main = launchAff_ do
               Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
             ns = joinWith "\\" (String.split (Pattern ".") mainMod)
             sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-            entryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n(array_key_exists('" <> sanitizedMain <> "', $GLOBALS) ? $GLOBALS['" <> sanitizedMain <> "'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+            entryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
           writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
         ) targetMainModules
         
@@ -181,6 +183,8 @@ main = launchAff_ do
           let reachableModules = Array.mapMaybe identity mbReachableModules
           
           let globalEnv = CodeGen.buildGlobalEnv reachableModules
+          let keysWithCompose = Array.filter (\k -> String.contains (Pattern "composeFlipped") k) (Object.keys globalEnv)
+          liftEffect $ log $ "\n\nGLOBAL ENV COMPOSE FLIPPED KEYS:\n" <> joinWith "\n" keysWithCompose <> "\n\n"
           
           -- But we only generate PHP for the dirty subset
           let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) reachableModules
@@ -202,7 +206,7 @@ main = launchAff_ do
               Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
             ns = joinWith "\\" (String.split (Pattern ".") mainMod)
             sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-            entryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n(array_key_exists('" <> sanitizedMain <> "', $GLOBALS) ? $GLOBALS['" <> sanitizedMain <> "'] : \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+            entryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
           writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") entryPoint
         ) targetMainModules
         

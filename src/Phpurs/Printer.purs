@@ -49,15 +49,15 @@ genNativeCurry name args stmts =
     fastPathStr = ""
 
     fnBody = 
-      "  $__num = func_num_args();\n" <>
+      "  $__num = \\func_num_args();\n" <>
       "  $__fn = __NAMESPACE__ . '\\\\' . '" <> name <> "';\n" <>
       "  if ($__num < " <> nStr <> ") {\n" <>
       fastPathStr <>
-      "    return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
+      "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
       "  }\n" <>
       (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
       "  __end:\n" <>
-      "  return " <> nStr <> " < $__num ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
+      "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
 
   in
     "function " <> name <> "(" <> argStr <> ") {\n" <> fnBody <> "}"
@@ -68,7 +68,6 @@ genCurry args captures stmts =
   else
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
-      argNames = joinWith ", " (map (\a -> "$" <> safeName a) args)
       nStr = show (length args)
       
       nArgs = length args
@@ -85,15 +84,15 @@ genCurry args captures stmts =
       fastPathStr = ""
 
       fnBody = 
-        "  $__num = func_num_args();\n" <>
+        "  $__num = \\func_num_args();\n" <>
         (if nArgs == 1 then "" else
         "  if ($__num < " <> nStr <> ") {\n" <>
         fastPathStr <>
-        "    return phpurs_curry_fallback($__fn, func_get_args(), " <> nStr <> ");\n" <>
+        "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
         "  }\n") <>
         (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
         "  __end:\n" <>
-        "  return $__num > " <> nStr <> " ? $__res(...array_slice(func_get_args(), " <> nStr <> ")) : $__res;\n"
+        "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
 
     in 
       if nArgs == 1 then
@@ -120,7 +119,7 @@ printExpr expr = case expr of
       pathStr = case mbMod of
         Just mod -> "\\" <> joinWith "\\" mod <> "\\phpurs_eval_thunk('" <> idStr <> "')"
         Nothing -> "phpurs_eval_thunk('" <> idStr <> "')"
-    in "(array_key_exists('" <> idStr <> "', $GLOBALS) ? $GLOBALS['" <> idStr <> "'] : " <> pathStr <> ")"
+    in "($GLOBALS['" <> idStr <> "'] ?? " <> pathStr <> ")"
   PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
@@ -246,10 +245,10 @@ printPhpFile isBundle ffiString file =
       PhpValueThunk name expr -> "      case '" <> safeName name <> "': $v = " <> resolveContinues (printExpr expr) <> "; break;"
       _ -> ""
     ) thunks
-    evalThunkStr = "if (!function_exists(__NAMESPACE__ . '\\\\phpurs_eval_thunk')) {\n" <>
+    evalThunkStr = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_eval_thunk')) {\n" <>
       "  function phpurs_eval_thunk($id) {\n" <>
       "    static $cache = [];\n" <>
-      "    if (array_key_exists($id, $cache)) return $cache[$id];\n" <>
+      "    if (isset($cache[$id]) || array_key_exists($id, $cache)) return $cache[$id];\n" <>
       "    switch ($id) {\n" <>
       thunkCases <> "\n" <>
       "      default: throw new \\Exception(\"Unknown thunk \" . $id);\n" <>
@@ -258,16 +257,16 @@ printPhpFile isBundle ffiString file =
       "    return $cache[$id] = $v;\n" <>
       "  }\n" <>
       "}\n"
-    fallback = "if (!function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
+    fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
       "  function phpurs_curry_fallback($fn, $args, $expected) {\n" <>
-      "    $missing = $expected - count($args);\n" <>
+      "    $missing = $expected - \\count($args);\n" <>
       "    if ($missing === 1) {\n" <>
       "      return function($a) use ($fn, $args, $expected) {\n" <>
-      "        $num = func_num_args();\n" <>
+      "        $num = \\func_num_args();\n" <>
       "        if ($num > 1) {\n" <>
-      "          $merged = array_merge($args, func_get_args());\n" <>
-      "          $res = $fn(...array_slice($merged, 0, $expected));\n" <>
-      "          return $res(...array_slice($merged, $expected));\n" <>
+      "          $merged = \\array_merge($args, \\func_get_args());\n" <>
+      "          $res = $fn(...\\array_slice($merged, 0, $expected));\n" <>
+      "          return $res(...\\array_slice($merged, $expected));\n" <>
       "        }\n" <>
       "        $args[] = $a;\n" <>
       "        return $fn(...$args);\n" <>
@@ -275,12 +274,12 @@ printPhpFile isBundle ffiString file =
       "    }\n" <>
       "    if ($missing === 2) {\n" <>
       "      return function($a, $b = null) use ($fn, $args, $expected) {\n" <>
-      "        $num = func_num_args();\n" <>
+      "        $num = \\func_num_args();\n" <>
       "        if ($num === 1) { $args[] = $a; return phpurs_curry_fallback($fn, $args, $expected); }\n" <>
       "        if ($num > 2) {\n" <>
-      "          $merged = array_merge($args, func_get_args());\n" <>
-      "          $res = $fn(...array_slice($merged, 0, $expected));\n" <>
-      "          return $res(...array_slice($merged, $expected));\n" <>
+      "          $merged = \\array_merge($args, \\func_get_args());\n" <>
+      "          $res = $fn(...\\array_slice($merged, 0, $expected));\n" <>
+      "          return $res(...\\array_slice($merged, $expected));\n" <>
       "        }\n" <>
       "        $args[] = $a; $args[] = $b;\n" <>
       "        return $fn(...$args);\n" <>
@@ -288,13 +287,13 @@ printPhpFile isBundle ffiString file =
       "    }\n" <>
       "    if ($missing === 3) {\n" <>
       "      return function($a, $b = null, $c = null) use ($fn, $args, $expected) {\n" <>
-      "        $num = func_num_args();\n" <>
+      "        $num = \\func_num_args();\n" <>
       "        if ($num === 1) { $args[] = $a; return phpurs_curry_fallback($fn, $args, $expected); }\n" <>
       "        if ($num === 2) { $args[] = $a; $args[] = $b; return phpurs_curry_fallback($fn, $args, $expected); }\n" <>
       "        if ($num > 3) {\n" <>
-      "          $merged = array_merge($args, func_get_args());\n" <>
-      "          $res = $fn(...array_slice($merged, 0, $expected));\n" <>
-      "          return $res(...array_slice($merged, $expected));\n" <>
+      "          $merged = \\array_merge($args, \\func_get_args());\n" <>
+      "          $res = $fn(...\\array_slice($merged, 0, $expected));\n" <>
+      "          return $res(...\\array_slice($merged, $expected));\n" <>
       "        }\n" <>
       "        $args[] = $a; $args[] = $b; $args[] = $c;\n" <>
       "        return $fn(...$args);\n" <>
@@ -302,24 +301,27 @@ printPhpFile isBundle ffiString file =
       "    }\n" <>
       "    if ($missing === 4) {\n" <>
       "      return function($a, $b = null, $c = null, $d = null) use ($fn, $args, $expected) {\n" <>
-      "        $num = func_num_args();\n" <>
+      "        $num = \\func_num_args();\n" <>
       "        if ($num === 1) { $args[] = $a; return phpurs_curry_fallback($fn, $args, $expected); }\n" <>
       "        if ($num === 2) { $args[] = $a; $args[] = $b; return phpurs_curry_fallback($fn, $args, $expected); }\n" <>
       "        if ($num === 3) { $args[] = $a; $args[] = $b; $args[] = $c; return phpurs_curry_fallback($fn, $args, $expected); }\n" <>
       "        if ($num > 4) {\n" <>
-      "          $merged = array_merge($args, func_get_args());\n" <>
-      "          $res = $fn(...array_slice($merged, 0, $expected));\n" <>
-      "          return $res(...array_slice($merged, $expected));\n" <>
+      "          $merged = \\array_merge($args, \\func_get_args());\n" <>
+      "          $res = $fn(...\\array_slice($merged, 0, $expected));\n" <>
+      "          return $res(...\\array_slice($merged, $expected));\n" <>
       "        }\n" <>
       "        $args[] = $a; $args[] = $b; $args[] = $c; $args[] = $d;\n" <>
       "        return $fn(...$args);\n" <>
       "      };\n" <>
       "    }\n" <>
       "    return function(...$more) use ($fn, $args, $expected) {\n" <>
-      "      $merged = array_merge($args, $more);\n" <>
-      "      if (count($merged) >= $expected) {\n" <>
-      "        $res = $fn(...array_slice($merged, 0, $expected));\n" <>
-      "        return count($merged) > $expected ? $res(...array_slice($merged, $expected)) : $res;\n" <>
+      "      $merged = \\array_merge($args, $more);\n" <>
+      "      if (\\count($merged) >= $expected) {\n" <>
+      "        $res = $fn(...\\array_slice($merged, 0, $expected));\n" <>
+      "        if (\\count($merged) > $expected) {\n" <>
+      "          return $res(...\\array_slice($merged, $expected));\n" <>
+      "        }\n" <>
+      "        return $res;\n" <>
       "      }\n" <>
       "      return phpurs_curry_fallback($fn, $merged, $expected);\n" <>
       "    };\n" <>

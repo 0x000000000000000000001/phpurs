@@ -8,6 +8,8 @@ import Data.Maybe (Maybe(..))
 import Data.String (joinWith)
 import Data.Array as Array
 import Data.Foldable (find)
+import Effect.Unsafe (unsafePerformEffect)
+import Effect.Console (log)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Data.Tuple (Tuple(..))
@@ -74,6 +76,7 @@ freeVars = case _ of
   Constructor _ _ _ -> []
   Accessor _ expr -> freeVars expr
   ObjectUpdate expr updates -> nub (freeVars expr <> concatMap (\u -> freeVars u.value) updates)
+  Unsupported _ -> []
   Unsupported _ -> []
 
 type GlobalRef = { mod :: Array String, ident :: String }
@@ -299,6 +302,12 @@ data InlineFunction
   | InlineConst
   | InlineApply
   | InlineFlip
+  | InlineCompose4
+  | InlineComposeFlipped4
+  | InlineCompose3
+  | InlineComposeFlipped3
+  | InlineCompose2
+  | InlineComposeFlipped2
 
 matchInlineFunction :: Expr -> Int -> Maybe InlineFunction
 matchInlineFunction (Variable (Just mod) ident) argCount = case mod, ident, argCount of
@@ -306,6 +315,12 @@ matchInlineFunction (Variable (Just mod) ident) argCount = case mod, ident, argC
   ["Data", "Function"], "const", 2 -> Just InlineConst
   ["Data", "Function"], "apply", 2 -> Just InlineApply
   ["Data", "Function"], "flip", 3 -> Just InlineFlip
+  _, "compose", 4 -> Just InlineCompose4
+  _, "composeFlipped", 4 -> Just InlineComposeFlipped4
+  _, "compose", 3 -> Just InlineCompose3
+  _, "composeFlipped", 3 -> Just InlineComposeFlipped3
+  _, "compose", 2 -> Just InlineCompose2
+  _, "composeFlipped", 2 -> Just InlineComposeFlipped2
   ["Data", "Newtype"], "unwrap", _ -> Just (InlineIdentity 1)
   ["Data", "Newtype"], "wrap", _ -> Just (InlineIdentity 1)
   ["Safe", "Coerce"], "coerce", _ -> Just (InlineIdentity 1)
@@ -406,6 +421,9 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
             in { fn: c.fn, args: c.args <> [x] }
           collectCall other = { fn: other, args: [] }
           extracted = collectCall expr
+          _ = unsafePerformEffect $ case extracted.fn of
+            Variable mbMod ident | ident == "composeFlipped" -> log ("\n\nMATCHING composeFlipped: args=" <> show (length extracted.args) <> " mod=" <> show mbMod)
+            _ -> pure unit
           
         in case matchInlineFunction extracted.fn (length extracted.args) of
           Just (InlineIdentity dictCount) ->
@@ -421,11 +439,74 @@ translateExprImpl env currentModStr moduleName recVars tcoCtx nextId expr = case
               argRes = translateExprImpl env currentModStr moduleName recVars Nothing fnRes.nextId (extracted.args `unsafeIndex` 1)
             in { stmts: fnRes.stmts <> argRes.stmts, expr: PhpCall fnRes.expr [argRes.expr], nextId: argRes.nextId }
           Just InlineFlip ->
-            let
+            let 
               fnRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId (extracted.args `unsafeIndex` 0)
               argYRes = translateExprImpl env currentModStr moduleName recVars Nothing fnRes.nextId (extracted.args `unsafeIndex` 2)
               argXRes = translateExprImpl env currentModStr moduleName recVars Nothing argYRes.nextId (extracted.args `unsafeIndex` 1)
-            in { stmts: fnRes.stmts <> argYRes.stmts <> argXRes.stmts, expr: PhpCall fnRes.expr [argYRes.expr, argXRes.expr], nextId: argXRes.nextId }
+            in { stmts: fnRes.stmts <> argYRes.stmts <> argXRes.stmts, expr: PhpCall (PhpCall fnRes.expr [argYRes.expr]) [argXRes.expr], nextId: argXRes.nextId }
+          Just InlineCompose4 ->
+            let 
+              fExpr = extracted.args `unsafeIndex` 1
+              gExpr = extracted.args `unsafeIndex` 2
+              xExpr = extracted.args `unsafeIndex` 3
+              fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
+              gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
+              xRes = translateExprImpl env currentModStr moduleName recVars Nothing gRes.nextId xExpr
+              
+              composeBody = PhpCall fRes.expr [PhpCall gRes.expr [xRes.expr]]
+            in { stmts: fRes.stmts <> gRes.stmts <> xRes.stmts, expr: composeBody, nextId: xRes.nextId }
+          Just InlineComposeFlipped4 ->
+            let 
+              fExpr = extracted.args `unsafeIndex` 1
+              gExpr = extracted.args `unsafeIndex` 2
+              xExpr = extracted.args `unsafeIndex` 3
+              fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
+              gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
+              xRes = translateExprImpl env currentModStr moduleName recVars Nothing gRes.nextId xExpr
+              
+              composeBody = PhpCall gRes.expr [PhpCall fRes.expr [xRes.expr]]
+            in { stmts: fRes.stmts <> gRes.stmts <> xRes.stmts, expr: composeBody, nextId: xRes.nextId }
+          Just InlineCompose3 ->
+            let 
+              fExpr = extracted.args `unsafeIndex` 1
+              gExpr = extracted.args `unsafeIndex` 2
+              fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
+              gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
+              
+              phpX = PhpVar "__x"
+              composeBody = PhpCall fRes.expr [PhpCall gRes.expr [phpX]]
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+          Just InlineComposeFlipped3 ->
+            let
+               
+              fExpr = extracted.args `unsafeIndex` 1
+              gExpr = extracted.args `unsafeIndex` 2
+              fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
+              gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
+              
+              phpX = PhpVar "__x"
+              composeBody = PhpCall gRes.expr [PhpCall fRes.expr [phpX]]
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+          Just InlineCompose2 ->
+            let 
+              fExpr = extracted.args `unsafeIndex` 0
+              gExpr = extracted.args `unsafeIndex` 1
+              fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
+              gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
+              
+              phpX = PhpVar "__x"
+              composeBody = PhpCall fRes.expr [PhpCall gRes.expr [phpX]]
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
+          Just InlineComposeFlipped2 ->
+            let 
+              fExpr = extracted.args `unsafeIndex` 0
+              gExpr = extracted.args `unsafeIndex` 1
+              fRes = translateExprImpl env currentModStr moduleName recVars Nothing nextId fExpr
+              gRes = translateExprImpl env currentModStr moduleName recVars Nothing fRes.nextId gExpr
+              
+              phpX = PhpVar "__x"
+              composeBody = PhpCall gRes.expr [PhpCall fRes.expr [phpX]]
+            in { stmts: fRes.stmts <> gRes.stmts, expr: PhpFunction [] ["__x"] [PhpReturn composeBody], nextId: gRes.nextId }
           Nothing ->
             case extracted.fn of
               Constructor _ constructorName fieldNames | length fieldNames == length extracted.args ->

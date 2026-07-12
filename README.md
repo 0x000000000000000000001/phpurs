@@ -185,6 +185,17 @@ Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
 > **Note on Custom Directory Structures:** If you prefer to keep your PHP environment isolated in a subdirectory (e.g., `run/bak/php/composer.json`) rather than the root, simply adjust the `url` to be relative to the location of the `composer.json` file (e.g., `"../../../output"`).
 
+## Asynchronous I/O and Concurrency (Aff)
+
+`phpurs` provides native asynchronous effects (`Aff`) by leveraging PHP 8.1+ Fibers and the [Revolt](https://revolt.run/) event loop. 
+
+To take full advantage of this concurrency model without blocking the event loop, **you must use asynchronous, non-blocking PHP libraries** (such as [Amphp](https://amphp.org/) components like `amphp/postgres` or `amphp/http-client`) when writing FFI bindings for I/O operations. Alternatively, you can manage the `Fiber` and `Revolt` calls yourself to manually wrap blocking operations. 
+
+If you use standard synchronous PHP functions (like `PDO` or `file_get_contents`) inside an `Aff` block, you will freeze the entire event loop, preventing all other concurrent fibers from executing.
+
+**Why native Fibers instead of Swoole?**
+While `phpurs` could have been built around powerful daemonized extensions like [Swoole](https://swoole.co.uk/) or FrankenPHP, doing so would have compromised the core promise of the project: the ability to compile and deploy highly-concurrent PureScript into cheap, standard "containerless" environments (like a basic VPS or shared hosting). By relying exclusively on native PHP 8.1+ Fibers, `phpurs` ensures that your asynchronous PureScript code can run natively anywhere PHP runs, without requiring custom C extensions or complex server-side configurations.
+
 ## Architecture
 
 The compilation pipeline is functionally decoupled. First, `Phpurs.CoreFn` decodes `corefn.json` into a PureScript Algebraic Data Type. Then, `Phpurs.CodeGen` maps the PureScript CoreFn AST to the `PhpAst`, and `Phpurs.Printer` formats it into valid PHP syntax. Finally, `Main` orchestrates the CLI, reading the `output/` directory and writing the generated `.php` files to their respective module directories.

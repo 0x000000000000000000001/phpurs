@@ -189,9 +189,9 @@ Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
 `phpurs` provides native asynchronous effects (`Aff`) by leveraging PHP 8.1+ Fibers and the [Revolt](https://revolt.run/) event loop. 
 
-To take full advantage of this concurrency model without blocking the event loop, **you must use asynchronous, non-blocking PHP libraries** (such as [Amphp](https://amphp.org/) components like `amphp/postgres` or `amphp/http-client`) when writing FFI bindings for I/O operations. Alternatively, you can manage the `Fiber` and `Revolt` calls yourself to manually wrap blocking operations. 
+To take full advantage of this concurrency model without blocking the event loop, **you must use asynchronous, non-blocking PHP libraries** (such as [Amphp](https://amphp.org/) components like `amphp/postgres` or `amphp/http-client`) when writing FFI bindings for I/O operations. 
 
-If you use standard synchronous PHP functions (like `PDO` or `file_get_contents`) inside an `Aff` block, you will freeze the entire event loop, preventing all other concurrent fibers from executing.
+A good rule of thumb is to **act exactly as if you were importing Node.js libraries**: you must strictly seek out PHP packages that manage asynchronous I/O natively. If you use standard synchronous PHP functions (like `PDO` or `file_get_contents`) inside an `Aff` block, you will freeze the entire event loop, preventing all other concurrent fibers from executing. Alternatively, you can manage the `Fiber` and `Revolt` calls yourself to manually wrap blocking operations.
 
 **Why native Fibers instead of Swoole?**
 While `phpurs` could have been built around powerful daemonized extensions like [Swoole](https://swoole.co.uk/) or FrankenPHP, doing so would have compromised the core promise of the project: the ability to compile and deploy highly-concurrent PureScript into cheap, standard "containerless" environments (like a basic VPS or shared hosting). By relying exclusively on native PHP 8.1+ Fibers, `phpurs` ensures that your asynchronous PureScript code can run natively anywhere PHP runs, without requiring custom C extensions or complex server-side configurations.

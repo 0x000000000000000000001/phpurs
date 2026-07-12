@@ -183,8 +183,8 @@ main = launchAff_ do
           let reachableModules = Array.mapMaybe identity mbReachableModules
           
           let globalEnv = CodeGen.buildGlobalEnv reachableModules
-          let keysWithCompose = Array.filter (\k -> String.contains (Pattern "composeFlipped") k) (Object.keys globalEnv)
-          liftEffect $ log $ "\n\nGLOBAL ENV COMPOSE FLIPPED KEYS:\n" <> joinWith "\n" keysWithCompose <> "\n\n"
+          -- let keysWithCompose = Array.filter (\k -> String.contains (Pattern "composeFlipped") k) (Object.keys globalEnv)
+          -- liftEffect $ log $ "\n\nGLOBAL ENV COMPOSE FLIPPED KEYS:\n" <> joinWith "\n" keysWithCompose <> "\n\n"
           
           -- But we only generate PHP for the dirty subset
           let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) reachableModules

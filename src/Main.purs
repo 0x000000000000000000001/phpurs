@@ -55,15 +55,16 @@ generateModule env mbFfiDir isBundle mod = do
         Right content -> pure (String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") content)))
   let
     phpModName = String.replaceAll (Pattern ".") (Replacement "_") modNameStr
-    wrappedFfiCode = if String.length ffiCode > 0 then
-      let
-        closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
-        closureEnd = "\n  return $exports;\n});\n"
-        mappings = joinWith "\n" (map (\f -> "$GLOBALS['" <> Printer.safeName (phpModName <> "_" <> f) <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? null;") (unwrap mod).foreign)
-      in
-        closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
-    else
-      ""
+    wrappedFfiCode =
+      if String.length ffiCode > 0 then
+        let
+          closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
+          closureEnd = "\n  return $exports;\n});\n"
+          mappings = joinWith "\n" (map (\f -> "$GLOBALS['" <> Printer.safeName (phpModName <> "_" <> f) <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? null;") (unwrap mod).foreign)
+        in
+          closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
+      else
+        ""
   let phpAst = CodeGen.translate env mod
   let phpStr = Printer.printPhpFile isBundle wrappedFfiCode phpAst
   if isBundle then
@@ -76,140 +77,158 @@ main :: Effect Unit
 main = launchAff_ do
   argsRaw <- liftEffect Process.argv
   let args = Array.concatMap (\s -> String.split (Pattern " ") s) argsRaw
-  
+
   -- Handle both ["--main", "App"] and ["--main App"]
   let mbMainIndex = elemIndex "--main" args
-  let mbMainModule = case mbMainIndex of
-        Just i -> args !! (i + 1)
-        Nothing -> Nothing
+  let
+    mbMainModule = case mbMainIndex of
+      Just i -> args !! (i + 1)
+      Nothing -> Nothing
 
   let mbAutoloadIndex = elemIndex "--autoload-path" args
-  let mbAutoloadPath = case mbAutoloadIndex of
-        Just i -> args !! (i + 1)
-        Nothing -> Nothing
+  let
+    mbAutoloadPath = case mbAutoloadIndex of
+      Just i -> args !! (i + 1)
+      Nothing -> Nothing
 
   let mbFfiIndex = elemIndex "--ffi" args
-  let mbFfiDir = case mbFfiIndex of
-        Just i -> args !! (i + 1)
-        Nothing -> Nothing
+  let
+    mbFfiDir = case mbFfiIndex of
+      Just i -> args !! (i + 1)
+      Nothing -> Nothing
 
   let mbBundle = isJust (elemIndex "--bundle" args)
 
---   liftEffect $ log "phpurs: Scanning output directory..."
-  
+  --   liftEffect $ log "phpurs: Scanning output directory..."
+
   result <- try (readdir "output")
   case result of
     Left _ -> do
       liftEffect $ log "Error: 'output' directory not found. Please compile with 'purs compile ... --codegen corefn' first."
     Right files -> do
       -- filter only directories
-      validDirs <- filterA (\f -> do
-        s <- stat ("output/" <> f)
-        pure $ isDirectory s
-      ) files
-      
+      validDirs <- filterA
+        ( \f -> do
+            s <- stat ("output/" <> f)
+            pure $ isDirectory s
+        )
+        files
+
       if mbBundle then do
         mbModules <- traverse readModule validDirs
         let modules = Array.mapMaybe identity mbModules
-        let dceModules = case mbMainModule of
-              Just mainMod ->
-                let
-                  entryPoint = mainMod <> ".main"
-                  depGraph = Dce.buildDepGraph modules
-                  reachable = Dce.computeReachable entryPoint depGraph
-                in Dce.filterModules reachable modules
-              Nothing -> modules
+        let
+          dceModules = case mbMainModule of
+            Just mainMod ->
+              let
+                entryPoint = mainMod <> ".main"
+                depGraph = Dce.buildDepGraph modules
+                reachable = Dce.computeReachable entryPoint depGraph
+              in
+                Dce.filterModules reachable modules
+            Nothing -> modules
         let globalEnv = CodeGen.buildGlobalEnv dceModules
         strs <- traverse (generateModule globalEnv mbFfiDir true) dceModules
         let bundleContent = "<?php\n\n" <> joinWith "\n" strs
-        let targetMainModules = case mbMainModule of
-              Just mainMod -> [mainMod]
-              Nothing -> Array.mapMaybe (\(CF.Module m) -> if isJust (Array.elemIndex "main" m.exports) then Just (joinWith "." m.moduleName) else Nothing) dceModules
-        
-        _ <- traverse (\mainMod -> do
-          let
-            autoloadStr = case mbAutoloadPath of
-              Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
-              Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
-            ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-            sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-            entryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
-          writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
-        ) targetMainModules
-        
+        let
+          targetMainModules = case mbMainModule of
+            Just mainMod -> [ mainMod ]
+            Nothing -> Array.mapMaybe (\(CF.Module m) -> if isJust (Array.elemIndex "main" m.exports) then Just (joinWith "." m.moduleName) else Nothing) dceModules
+
+        _ <- traverse
+          ( \mainMod -> do
+              let
+                autoloadStr = case mbAutoloadPath of
+                  Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
+                  Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
+                ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+                sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
+                entryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+              writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
+          )
+          targetMainModules
+
         case mbMainModule of
           Just _ -> pure unit
           Nothing -> do
             writeTextFile UTF8 "output/bundle.php" bundleContent
             liftEffect $ log "phpurs: Successfully bundled all modules into output/bundle.php"
       else do
---         liftEffect $ log "phpurs: FastDeps parsing started"
+        --         liftEffect $ log "phpurs: FastDeps parsing started"
         let corefnFiles = map (\dir -> "output/" <> dir <> "/corefn.json") validDirs
         moduleDepsList <- liftEffect $ FastDeps.parseAllImports corefnFiles
---         liftEffect $ log "phpurs: FastDeps parsing finished"
-        
-        let reachableDepsList = case mbMainModule of
-              Just mainMod ->
-                let reachable = Dce.computeReachableModulesFast mainMod moduleDepsList
-                in Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) reachable) moduleDepsList
-              Nothing -> moduleDepsList
-        
---         liftEffect $ log "phpurs: Mtime checking started"
-        directlyDirty <- liftEffect $ filterA (\deps -> do
-          let modName = joinWith "." deps.moduleName
-          corefnMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/corefn.json")
-          phpMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/index.php")
-          pure (corefnMtime > 0.0 && (phpMtime == 0.0 || corefnMtime > phpMtime))
-        ) reachableDepsList
---         liftEffect $ log "phpurs: Mtime checking finished"
-        
+        --         liftEffect $ log "phpurs: FastDeps parsing finished"
+
+        let
+          reachableDepsList = case mbMainModule of
+            Just mainMod ->
+              let
+                reachable = Dce.computeReachableModulesFast mainMod moduleDepsList
+              in
+                Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) reachable) moduleDepsList
+            Nothing -> moduleDepsList
+
+        --         liftEffect $ log "phpurs: Mtime checking started"
+        directlyDirty <- liftEffect $ filterA
+          ( \deps -> do
+              let modName = joinWith "." deps.moduleName
+              corefnMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/corefn.json")
+              phpMtime <- Mtime.getMtimeMs ("output/" <> modName <> "/index.php")
+              pure (corefnMtime > 0.0 && (phpMtime == 0.0 || corefnMtime > phpMtime))
+          )
+          reachableDepsList
+        --         liftEffect $ log "phpurs: Mtime checking finished"
+
         let directlyDirtyNames = map (\deps -> joinWith "." deps.moduleName) directlyDirty
---         liftEffect $ log $ "Directly dirty count: " <> show (Array.length directlyDirtyNames)
---         liftEffect $ log $ "Directly dirty sample: " <> joinWith ", " (Array.take 10 directlyDirtyNames)
+        --         liftEffect $ log $ "Directly dirty count: " <> show (Array.length directlyDirtyNames)
+        --         liftEffect $ log $ "Directly dirty sample: " <> joinWith ", " (Array.take 10 directlyDirtyNames)
         let transitivelyDirtySet = Dce.computeTransitiveDirtyFast directlyDirtyNames reachableDepsList
         let dirtyNames = Array.filter (\deps -> Set.member (joinWith "." deps.moduleName) transitivelyDirtySet) reachableDepsList
-        
+
         let dirtyCount = Array.length dirtyNames
         let totalCount = Array.length reachableDepsList
-        
+
         if dirtyCount == 0 then do
           liftEffect $ log $ "Up to date."
         else do
           liftEffect $ log $ "Recompiling " <> show dirtyCount <> "/" <> show totalCount <> " modules (incremental)..."
-          
+
           -- We must read ALL reachable modules to build a complete globalEnv for cross-module inlining
           let reachableNames = map (\deps -> joinWith "." deps.moduleName) reachableDepsList
           mbReachableModules <- traverse readModule reachableNames
           let reachableModules = Array.mapMaybe identity mbReachableModules
-          
+
           let globalEnv = CodeGen.buildGlobalEnv reachableModules
-          -- let keysWithCompose = Array.filter (\k -> String.contains (Pattern "composeFlipped") k) (Object.keys globalEnv)
-          -- liftEffect $ log $ "\n\nGLOBAL ENV COMPOSE FLIPPED KEYS:\n" <> joinWith "\n" keysWithCompose <> "\n\n"
-          
+
           -- But we only generate PHP for the dirty subset
           let dirtyModules = Array.filter (\(CF.Module m) -> Set.member (joinWith "." m.moduleName) transitivelyDirtySet) reachableModules
-          _ <- traverse (\m -> do
-            liftEffect $ log $ "Generating " <> joinWith "." (unwrap m).moduleName
-            res <- generateModule globalEnv mbFfiDir false m
-            pure res
-          ) dirtyModules
-          pure unit
-        
-        let targetMainModules = case mbMainModule of
-              Just mainMod -> [mainMod]
-              Nothing -> Array.mapMaybe (\deps -> if isJust (Array.elemIndex "main" deps.exports) then Just (joinWith "." deps.moduleName) else Nothing) reachableDepsList
-        
-        _ <- traverse (\mainMod -> do
-          let
-            autoloadStr = case mbAutoloadPath of
-              Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
-              Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
-            ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-            sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-            entryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
-          writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") entryPoint
-        ) targetMainModules
-        
+          
+          ø $ traverse
+            ( \m -> do
+                liftEffect $ log $ "Generating " <> joinWith "." (unwrap m).moduleName
+                res <- generateModule globalEnv mbFfiDir false m
+                pure res
+            )
+            dirtyModules
+
+        let
+          targetMainModules = case mbMainModule of
+            Just mainMod -> [ mainMod ]
+            Nothing -> Array.mapMaybe (\deps -> if isJust (Array.elemIndex "main" deps.exports) then Just (joinWith "." deps.moduleName) else Nothing) reachableDepsList
+
+        _ <- traverse
+          ( \mainMod -> do
+              let
+                autoloadStr = case mbAutoloadPath of
+                  Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
+                  Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
+                ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+                sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
+                entryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+              writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") entryPoint
+          )
+          targetMainModules
+
         if dirtyCount > 0 then do
           case mbFfiDir of
             Just dir -> liftEffect $ ComposerMerge.mergeComposers dir

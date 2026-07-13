@@ -80,7 +80,7 @@ main = launchAff_ do
 
   let sortedModules = sortModules modulesList
 
-  bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
+  bundleContentRef <- liftEffect $ Ref.new ("<?php\n\n" <> "if (!\\class_exists('\\\\PhpursThunks', false)) {\n  class PhpursThunks {\n    public static $thunks = [];\n    public static $cache = [];\n    public static function eval($id) {\n      if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n      if (isset(self::$thunks[$id])) {\n        self::$cache[$id] = self::$thunks[$id]();\n        return self::$cache[$id];\n      }\n      throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n    }\n  }\n}\n")
 
   buildModules
     { directives: Map.empty
@@ -108,7 +108,7 @@ main = launchAff_ do
               let
                 closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
                 closureEnd = "\n  return $exports;\n});\n"
-                mappings = joinWith "\n" (map (\(Ident f) -> "$GLOBALS['__phpurs_thunks']['" <> safeName (phpModName <> "_" <> f) <> "'] = function() use (&$ffi_" <> phpModName <> ") { return $ffi_" <> phpModName <> "['" <> f <> "']; };") (Array.fromFoldable backendMod.foreign))
+                mappings = joinWith "\n" (map (\(Ident f) -> "\\PhpursThunks::$thunks['" <> safeName (phpModName <> "_" <> f) <> "'] = function() use (&$ffi_" <> phpModName <> ") { return $ffi_" <> phpModName <> "['" <> f <> "']; };") (Array.fromFoldable backendMod.foreign))
               in
                 closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
             else
@@ -137,8 +137,9 @@ main = launchAff_ do
             Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
           ns = joinWith "\\" (String.split (Pattern ".") mainMod)
           sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-          baseEntryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n"
-          callStr = "($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+          thunksClass = "if (!\\class_exists('\\\\PhpursThunks', false)) {\n  class PhpursThunks {\n    public static $thunks = [];\n    public static $cache = [];\n    public static function eval($id) {\n      if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n      if (isset(self::$thunks[$id])) {\n        self::$cache[$id] = self::$thunks[$id]();\n        return self::$cache[$id];\n      }\n      throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n    }\n  }\n}\n"
+          baseEntryPoint = autoloadStr <> thunksClass <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n"
+          callStr = "($GLOBALS['" <> sanitizedMain <> "'] ?? \\PhpursThunks::eval('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
 
         if mbBundle then do
           bundleContent <- liftEffect $ Ref.read bundleContentRef

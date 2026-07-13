@@ -114,7 +114,7 @@ printExpr expr = case expr of
   PhpFunction captures args stmts ->
     genCurry args captures stmts
   PhpVar ident -> "$" <> safeName ident
-  PhpursThunkRef mbMod ident -> 
+  PhpGlobalVar mbMod ident -> 
     let
       modPrefix = case mbMod of
         Just mod -> joinWith "_" mod <> "_"
@@ -245,21 +245,10 @@ printPhpFile isBundle ffiString file =
       _ -> false
     ) file.decls
     thunkAssignments = joinWith "\n" $ map (\d -> case d.expression of
-      PhpValueThunk name expr -> "$GLOBALS['__phpurs_thunks']['" <> safeName name <> "'] = function() { $v = " <> resolveContinues (printExpr expr) <> "; return $v; };"
+      PhpValueThunk name expr -> "\\PhpursThunks::$thunks['" <> safeName name <> "'] = function() { $v = " <> resolveContinues (printExpr expr) <> "; return $v; };"
       _ -> ""
     ) thunks
-    evalThunkStr = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_eval_thunk')) {\n" <>
-      "  function phpurs_eval_thunk($id) {\n" <>
-      "    static $cache = [];\n" <>
-      "    if (isset($cache[$id]) || array_key_exists($id, $cache)) return $cache[$id];\n" <>
-      "    if (isset($GLOBALS['__phpurs_thunks'][$id])) {\n" <>
-      "      $cache[$id] = $GLOBALS['__phpurs_thunks'][$id]();\n" <>
-      "      return $cache[$id];\n" <>
-      "    }\n" <>
-      "    if (\\function_exists('\\\\phpurs_eval_thunk') && __NAMESPACE__ !== '') return \\phpurs_eval_thunk($id);\n" <>
-      "    throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n" <>
-      "  }\n" <>
-      "}\n"
+    evalThunkStr = ""
     fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
       "  function phpurs_curry_fallback($fn, $args, $expected) {\n" <>
       "    $missing = $expected - \\count($args);\n" <>

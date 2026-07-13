@@ -64,7 +64,10 @@ genNativeCurry name args stmts =
 
 genCurry :: Array String -> Array String -> Array PhpExpr -> String
 genCurry args captures stmts =
-  if length args == 0 then "function() use (&$__fn) {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
+  let safeCaptures = map (\c -> "$" <> safeName c) captures
+  in if length args == 0 then
+    let useClause = if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ", &$__fn)" else " use (&$__fn)"
+    in "function()" <> useClause <> " {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
   else
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
@@ -111,16 +114,13 @@ printExpr expr = case expr of
   PhpFunction captures args stmts ->
     genCurry args captures stmts
   PhpVar ident -> "$" <> safeName ident
-  PhpGlobalVar mbMod ident -> 
+  PhpursThunkRef mbMod ident -> 
     let
       modPrefix = case mbMod of
         Just mod -> joinWith "_" mod <> "_"
         Nothing -> ""
       idStr = safeName (modPrefix <> ident)
-      pathStr = case mbMod of
-        Just mod -> "\\" <> joinWith "\\" mod <> "\\phpurs_eval_thunk('" <> idStr <> "')"
-        Nothing -> "phpurs_eval_thunk('" <> idStr <> "')"
-    in "($GLOBALS['" <> idStr <> "'] ?? " <> pathStr <> ")"
+    in "($GLOBALS['" <> idStr <> "'] ?? \\PhpursThunks::eval('" <> idStr <> "'))"
   PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
@@ -175,7 +175,7 @@ printExpr expr = case expr of
           "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n}" <> 
           (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map printExpr elseStmts) <> ";") <> "\n}" else "")
 
-  PhpThrow msg -> "throw new \\Exception(\"" <> replaceAll (Pattern "\"") (Replacement "\\\"") msg <> "\")"
+  PhpThrow expr -> "throw new \\Exception(" <> printExpr expr <> ")"
   PhpTernary cond t e -> "(" <> printExpr cond <> " ? " <> printExpr t <> " : " <> printExpr e <> ")"
   PhpReturn expr -> "return " <> printExpr expr
   PhpBinOp op left right -> "(" <> printExpr left <> " " <> op <> " " <> printExpr right <> ")"
@@ -238,6 +238,7 @@ printPhpFile isBundle ffiString file =
       )
       file.imports
     imps = if isBundle then "" else joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
+    debugImps = "// ALL IMPORTS: " <> joinWith ", " (map (\i -> joinWith "." i) file.imports) <> "\n" <> "// TO REQUIRE: " <> joinWith ", " (map (\i -> joinWith "." i) importsToRequire) <> "\n"
     decls = joinWith "\n" $ map printDecl file.decls
     thunks = filter (\d -> case d.expression of
       PhpValueThunk _ _ -> true
@@ -332,4 +333,4 @@ printPhpFile isBundle ffiString file =
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $value0; public function __construct($t, $value0) { $this->tag = $t; $this->value0 = $value0; } }\n  class Phpurs_Data2 { public $tag; public $value0, $value1; public function __construct($t, $value0, $value1) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; } }\n  class Phpurs_Data3 { public $tag; public $value0, $value1, $value2; public function __construct($t, $value0, $value1, $value2) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; } }\n  class Phpurs_Data4 { public $tag; public $value0, $value1, $value2, $value3; public function __construct($t, $value0, $value1, $value2, $value3) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; $this->value3 = $value3; } }\n  class Phpurs_Data5 { public $tag; public $value0, $value1, $value2, $value3, $value4; public function __construct($t, $value0, $value1, $value2, $value3, $value4) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; $this->value3 = $value3; $this->value4 = $value4; } }\n  class Phpurs_Data6 { public $tag; public $value0, $value1, $value2, $value3, $value4, $value5; public function __construct($t, $value0, $value1, $value2, $value3, $value4, $value5) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; $this->value3 = $value3; $this->value4 = $value4; $this->value5 = $value5; } }\n}\n"
     prefix = if isBundle then "namespace " else "<?php\n\nnamespace "
   in
-    prefix <> ns <> ";\n\n" <> dataClasses <> fallback <> evalThunkStr <> thunkAssignments <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> imps <> "\n\n" <> decls <> "\n"
+    prefix <> ns <> ";\n\n" <> debugImps <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> thunkAssignments <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> "\n"

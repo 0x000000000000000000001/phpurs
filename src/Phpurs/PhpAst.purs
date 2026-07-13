@@ -21,7 +21,7 @@ data PhpExpr
   | PhpArrayIndex PhpExpr Int
   | PhpAssign String PhpExpr | PhpAssignExpr PhpExpr PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
-  | PhpThrow String
+  | PhpThrow PhpExpr
   | PhpTernary PhpExpr PhpExpr PhpExpr
   | PhpReturn PhpExpr
   | PhpBinOp String PhpExpr PhpExpr

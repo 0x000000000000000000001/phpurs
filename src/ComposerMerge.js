@@ -125,8 +125,6 @@ export const mergeComposersImpl = function(mbFfiDir) {
             fs.mkdirSync(outDir, { recursive: true });
         }
         fs.writeFileSync(outPath, JSON.stringify(outPkg, null, 4));
-        
-        console.log(`phpurs: Generated ${path.relative(rootDir, outPath)} with FFI dependencies.`);
     };
 };
 

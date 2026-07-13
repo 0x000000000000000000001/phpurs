@@ -25,10 +25,10 @@ import Data.String as String
 import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
 import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
 import PureScript.Backend.Optimizer.Builder (buildModules)
-import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..))
+import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName)
 import Phpurs.CodeGen (translate)
 import Phpurs.Printer (printPhpFile, safeName)
-import Phpurs.ComposerMerge (findFfiFile)
+import Phpurs.ComposerMerge (findFfiFile, mergeComposers)
 import Data.Newtype (unwrap)
 import Data.String (joinWith, replace, replaceAll, trim, Pattern(..), Replacement(..), length)
 import PureScript.Backend.Optimizer.CoreFn (Ident(..))
@@ -50,48 +50,50 @@ readCoreFnModule filePath = do
 main :: Effect Unit
 main = launchAff_ do
   argsRaw <- liftEffect Process.argv
-  let args = Array.concatMap (\s -> String.split (Pattern " ") s) argsRaw
 
-  let mbMainIndex = Array.elemIndex "--main" args
-  let mbMainModule = case mbMainIndex of
-        Just i -> Array.index args (i + 1)
-        Nothing -> Nothing
+  let
+    args = Array.concatMap (\s -> String.split (Pattern " ") s) argsRaw
+    mbMainIndex = Array.elemIndex "--main" args
+    mbMainModule = case mbMainIndex of
+      Just i -> Array.index args (i + 1)
+      Nothing -> Nothing
 
-  let mbAutoloadIndex = Array.elemIndex "--autoload-path" args
-  let mbAutoloadPath = case mbAutoloadIndex of
-        Just i -> Array.index args (i + 1)
-        Nothing -> Nothing
+    mbAutoloadIndex = Array.elemIndex "--autoload-path" args
+    mbAutoloadPath = case mbAutoloadIndex of
+      Just i -> Array.index args (i + 1)
+      Nothing -> Nothing
 
-  let mbBundle = isJust (Array.elemIndex "--bundle" args)
+    mbBundle = isJust (Array.elemIndex "--bundle" args)
 
-  liftEffect $ Console.log "Reading corefn.json files..."
   files <- FS.readdir "output"
-  
-  validDirs <- Array.filterA (\f -> do
-    stat <- FS.stat ("output/" <> f)
-    pure (Stats.isDirectory stat)
-  ) files
-  
+
+  validDirs <- Array.filterA
+    ( \f -> do
+        stat <- FS.stat ("output/" <> f)
+        pure (Stats.isDirectory stat)
+    )
+    files
+
   mbModules <- traverse (\dir -> readCoreFnModule ("output/" <> dir <> "/corefn.json")) validDirs
   let modulesArray = Array.catMaybes mbModules
   let modulesList = List.fromFoldable modulesArray
-  
+
   let sortedModules = sortModules modulesList
-  
-  liftEffect $ Console.log "Building modules..."
-  
+
   bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
-  
-  buildModules 
+
+  buildModules
     { directives: Map.empty
     , analyzeCustom: \_ _ -> Nothing
     , foreignSemantics: Map.empty
     , traceIdents: Set.empty
     , onPrepareModule: \_ m -> pure m
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
-        let phpFile = translate backendMod
-        let modNameStr = unwrap backendMod.name
-        
+        let
+          importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
+          phpFile = translate importsArray backendMod
+          modNameStr = unwrap backendMod.name
+
         ffiPathMb <- liftEffect $ findFfiFile Nothing modNameStr (Just coreFnMod.path)
         ffiCode <- case ffiPathMb of
           Nothing -> pure ""
@@ -119,32 +121,42 @@ main = launchAff_ do
 
         let phpCode = printPhpFile false wrappedFfiCode phpFile
         FS.writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpCode
-    } sortedModules
+    }
+    sortedModules
+
+  let
+    targetMainModules = case mbMainModule of
+      Just mainMod -> [ mainMod ]
+      Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) modulesArray
+
+  _ <- traverse
+    ( \mainMod -> do
+        let
+          autoloadStr = case mbAutoloadPath of
+            Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
+            Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
+          ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+          sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
+          baseEntryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n"
+          callStr = "($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+
+        if mbBundle then do
+          bundleContent <- liftEffect $ Ref.read bundleContentRef
+          let entryPoint = baseEntryPoint <> callStr
+          FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
+        else pure unit
+
+        let modEntryPoint = "<?php\n" <> baseEntryPoint <> "require_once __DIR__ . '/index.php';\n" <> callStr
+        FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") modEntryPoint
+    )
+    targetMainModules
 
   if mbBundle then do
-    bundleContent <- liftEffect $ Ref.read bundleContentRef
-    
-    let targetMainModules = case mbMainModule of
-          Just mainMod -> [ mainMod ]
-          Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) modulesArray
-
-    _ <- traverse (\mainMod -> do
-      let
-        autoloadStr = case mbAutoloadPath of
-          Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
-          Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
-        ns = joinWith "\\" (String.split (Pattern ".") mainMod)
-        sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-        entryPoint = autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n($GLOBALS['" <> sanitizedMain <> "'] ?? \\" <> ns <> "\\phpurs_eval_thunk('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
-      
-      FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
-    ) targetMainModules
-    
     case mbMainModule of
       Just _ -> pure unit
       Nothing -> do
+        bundleContent <- liftEffect $ Ref.read bundleContentRef
         FS.writeTextFile UTF8 "output/bundle.php" bundleContent
-        liftEffect $ Console.log "phpurs: Successfully bundled all modules into output/bundle.php"
   else pure unit
 
-  liftEffect $ Console.log "Done."
+  liftEffect $ mergeComposers ""

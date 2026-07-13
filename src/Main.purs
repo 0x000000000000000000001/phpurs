@@ -80,7 +80,7 @@ main = launchAff_ do
 
   let sortedModules = sortModules modulesList
 
-  bundleContentRef <- liftEffect $ Ref.new ("<?php\n\n" <> "if (!\\class_exists('\\\\PhpursThunks', false)) {\n  class PhpursThunks {\n    public static $thunks = [];\n    public static $cache = [];\n    public static function eval($id) {\n      if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n      if (isset(self::$thunks[$id])) {\n        self::$cache[$id] = self::$thunks[$id]();\n        return self::$cache[$id];\n      }\n      throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n    }\n  }\n}\n")
+  bundleContentRef <- liftEffect $ Ref.new ("<?php\n\n" <> "namespace {\n  if (!\\class_exists('\\\\PhpursThunks', false)) {\n    class PhpursThunks {\n      public static $thunks = [];\n      public static $cache = [];\n      public static function eval($id) {\n        if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n        if (isset(self::$thunks[$id])) {\n          self::$cache[$id] = self::$thunks[$id]();\n          return self::$cache[$id];\n        }\n        throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n      }\n    }\n  }\n}\n")
 
   buildModules
     { directives: Map.empty
@@ -138,16 +138,15 @@ main = launchAff_ do
           ns = joinWith "\\" (String.split (Pattern ".") mainMod)
           sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
           thunksClass = "if (!\\class_exists('\\\\PhpursThunks', false)) {\n  class PhpursThunks {\n    public static $thunks = [];\n    public static $cache = [];\n    public static function eval($id) {\n      if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n      if (isset(self::$thunks[$id])) {\n        self::$cache[$id] = self::$thunks[$id]();\n        return self::$cache[$id];\n      }\n      throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n    }\n  }\n}\n"
-          baseEntryPoint = autoloadStr <> thunksClass <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n"
           callStr = "($GLOBALS['" <> sanitizedMain <> "'] ?? \\PhpursThunks::eval('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
 
         if mbBundle then do
           bundleContent <- liftEffect $ Ref.read bundleContentRef
-          let entryPoint = baseEntryPoint <> callStr
+          let entryPoint = "namespace {\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n" <> callStr <> "}\n"
           FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
         else pure unit
 
-        let modEntryPoint = "<?php\n" <> baseEntryPoint <> "require_once __DIR__ . '/index.php';\n" <> callStr
+        let modEntryPoint = "<?php\n" <> autoloadStr <> thunksClass <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n" <> callStr
         FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") modEntryPoint
     )
     targetMainModules

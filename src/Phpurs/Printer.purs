@@ -72,12 +72,13 @@ genCurry args captures stmts =
       
       nArgs = length args
       
+      safeCaptures = map (\v -> "&$" <> safeName v) captures
       innerUseClause = if nArgs == 1 then
-                    (if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else "")
+                    (if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ")" else "")
                   else
-                    (if length captures > 0 then " use (" <> joinWith ", " captures <> ", &$__fn)" else " use (&$__fn)")
+                    (if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ", &$__fn)" else " use (&$__fn)")
                     
-      outerUseClause = if length captures > 0 then " use (" <> joinWith ", " captures <> ")" else ""
+      outerUseClause = if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ")" else ""
       
       rewrittenStmts = replaceReturn stmts
 
@@ -137,6 +138,7 @@ printExpr expr = case expr of
   PhpArrayIndex expr idx -> "(" <> printExpr expr <> ")[" <> show idx <> "]"
   PhpClone obj -> "clone " <> printExpr obj
   PhpAssign ident expr -> "$" <> safeName ident <> " = " <> printExpr expr
+  PhpAssignExpr left expr -> printExpr left <> " = " <> printExpr expr
   PhpIf cond thenStmts elseStmts ->
     let
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
@@ -241,20 +243,20 @@ printPhpFile isBundle ffiString file =
       PhpValueThunk _ _ -> true
       _ -> false
     ) file.decls
-    thunkCases = joinWith "\n" $ map (\d -> case d.expression of
-      PhpValueThunk name expr -> "      case '" <> safeName name <> "': $v = " <> resolveContinues (printExpr expr) <> "; break;"
+    thunkAssignments = joinWith "\n" $ map (\d -> case d.expression of
+      PhpValueThunk name expr -> "$GLOBALS['__phpurs_thunks']['" <> safeName name <> "'] = function() { $v = " <> resolveContinues (printExpr expr) <> "; return $v; };"
       _ -> ""
     ) thunks
     evalThunkStr = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_eval_thunk')) {\n" <>
       "  function phpurs_eval_thunk($id) {\n" <>
       "    static $cache = [];\n" <>
       "    if (isset($cache[$id]) || array_key_exists($id, $cache)) return $cache[$id];\n" <>
-      "    switch ($id) {\n" <>
-      thunkCases <> "\n" <>
-      "      default: throw new \\Exception(\"Unknown thunk \" . $id);\n" <>
+      "    if (isset($GLOBALS['__phpurs_thunks'][$id])) {\n" <>
+      "      $cache[$id] = $GLOBALS['__phpurs_thunks'][$id]();\n" <>
+      "      return $cache[$id];\n" <>
       "    }\n" <>
-      "    $GLOBALS[$id] = $v;\n" <>
-      "    return $cache[$id] = $v;\n" <>
+      "    if (\\function_exists('\\\\phpurs_eval_thunk') && __NAMESPACE__ !== '') return \\phpurs_eval_thunk($id);\n" <>
+      "    throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n" <>
       "  }\n" <>
       "}\n"
     fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
@@ -327,7 +329,7 @@ printPhpFile isBundle ffiString file =
       "    };\n" <>
       "  }\n" <>
       "}\n"
-    dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $v0; public function __construct($t, $v0) { $this->tag = $t; $this->v0 = $v0; } }\n  class Phpurs_Data2 { public $tag; public $v0, $v1; public function __construct($t, $v0, $v1) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; } }\n  class Phpurs_Data3 { public $tag; public $v0, $v1, $v2; public function __construct($t, $v0, $v1, $v2) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; } }\n  class Phpurs_Data4 { public $tag; public $v0, $v1, $v2, $v3; public function __construct($t, $v0, $v1, $v2, $v3) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; } }\n  class Phpurs_Data5 { public $tag; public $v0, $v1, $v2, $v3, $v4; public function __construct($t, $v0, $v1, $v2, $v3, $v4) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; } }\n  class Phpurs_Data6 { public $tag; public $v0, $v1, $v2, $v3, $v4, $v5; public function __construct($t, $v0, $v1, $v2, $v3, $v4, $v5) { $this->tag = $t; $this->v0 = $v0; $this->v1 = $v1; $this->v2 = $v2; $this->v3 = $v3; $this->v4 = $v4; $this->v5 = $v5; } }\n}\n"
+    dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n  class Phpurs_Data1 { public $tag; public $value0; public function __construct($t, $value0) { $this->tag = $t; $this->value0 = $value0; } }\n  class Phpurs_Data2 { public $tag; public $value0, $value1; public function __construct($t, $value0, $value1) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; } }\n  class Phpurs_Data3 { public $tag; public $value0, $value1, $value2; public function __construct($t, $value0, $value1, $value2) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; } }\n  class Phpurs_Data4 { public $tag; public $value0, $value1, $value2, $value3; public function __construct($t, $value0, $value1, $value2, $value3) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; $this->value3 = $value3; } }\n  class Phpurs_Data5 { public $tag; public $value0, $value1, $value2, $value3, $value4; public function __construct($t, $value0, $value1, $value2, $value3, $value4) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; $this->value3 = $value3; $this->value4 = $value4; } }\n  class Phpurs_Data6 { public $tag; public $value0, $value1, $value2, $value3, $value4, $value5; public function __construct($t, $value0, $value1, $value2, $value3, $value4, $value5) { $this->tag = $t; $this->value0 = $value0; $this->value1 = $value1; $this->value2 = $value2; $this->value3 = $value3; $this->value4 = $value4; $this->value5 = $value5; } }\n}\n"
     prefix = if isBundle then "namespace " else "<?php\n\nnamespace "
   in
-    prefix <> ns <> ";\n\n" <> dataClasses <> fallback <> evalThunkStr <> "$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> imps <> "\n\n" <> decls <> "\n"
+    prefix <> ns <> ";\n\n" <> dataClasses <> fallback <> evalThunkStr <> thunkAssignments <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> imps <> "\n\n" <> decls <> "\n"

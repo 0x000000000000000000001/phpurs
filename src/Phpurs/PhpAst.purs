@@ -19,7 +19,7 @@ data PhpExpr
   | PhpAssocArray (Array { key :: String, value :: PhpExpr })
   | PhpPropertyAccess PhpExpr String
   | PhpArrayIndex PhpExpr Int
-  | PhpAssign String PhpExpr
+  | PhpAssign String PhpExpr | PhpAssignExpr PhpExpr PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
   | PhpThrow String
   | PhpTernary PhpExpr PhpExpr PhpExpr

@@ -1,9 +1,11 @@
 .agents
 /node_modules
 /output
+/output-es
 /.spago
 /output.php
 /.psc-ide-port
 /.purs-repl
 purs_files.txt
 .DS_Store
+bin/phpurs.js

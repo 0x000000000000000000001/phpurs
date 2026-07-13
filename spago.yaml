@@ -25,7 +25,7 @@ workspace:
     registry: 77.10.1
   extraPackages:
     backend-optimizer:
-      git: "https://github.com/aristanetworks/purescript-backend-optimizer.git"
+      git: "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git"
       ref: "main"
       dependencies:
         - argonaut

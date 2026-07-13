@@ -22,6 +22,7 @@ import Data.Set as Set
 import Data.Traversable (traverse)
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.String as String
+import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
 import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
 import PureScript.Backend.Optimizer.Builder (buildModules)
@@ -33,6 +34,15 @@ import Data.Newtype (unwrap)
 import Data.String (joinWith, replace, replaceAll, trim, Pattern(..), Replacement(..), length)
 import PureScript.Backend.Optimizer.CoreFn (Ident(..))
 import Effect.Ref as Ref
+
+foreign import stringify :: forall a. String -> a -> String
+foreign import parseImpl :: forall a. (a -> Maybe a) -> Maybe a -> String -> String -> Maybe a
+
+parse :: forall a. String -> String -> Maybe a
+parse version = parseImpl Just Nothing version
+
+cacheVersion :: String
+cacheVersion = "1.0.0"
 
 readCoreFnModule :: String -> Aff (Maybe (Module Ann))
 readCoreFnModule filePath = do
@@ -90,7 +100,23 @@ main = launchAff_ do
     , foreignSemantics: Map.empty
     , traceIdents: Set.empty
     , onPrepareModule: \_ m -> pure m
+    , onSkipModule: \_ (Module coreFnMod) -> do
+        let
+          modNameStr = unwrap coreFnMod.name
+          corefnPath = coreFnMod.path
+          cachePath = "output/" <> modNameStr <> "/.phpurs-cache.json"
+        
+        corefnStatRes <- attempt (FS.stat corefnPath)
+        cacheStatRes <- attempt (FS.stat cachePath)
+        
+        case corefnStatRes, cacheStatRes of
+          Right corefnStat, Right cacheStat | Stats.modifiedTimeMs cacheStat >= Stats.modifiedTimeMs corefnStat -> do
+            cacheContent <- FS.readTextFile UTF8 cachePath
+            pure (parse cacheVersion cacheContent)
+          _, _ -> pure Nothing
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
+        let modNameStr = unwrap backendMod.name
+        FS.writeTextFile UTF8 ("output/" <> modNameStr <> "/.phpurs-cache.json") (stringify cacheVersion backendMod)
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod

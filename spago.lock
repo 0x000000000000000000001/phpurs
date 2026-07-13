@@ -678,7 +678,7 @@
     },
     "extra_packages": {
       "backend-optimizer": {
-        "git": "https://github.com/aristanetworks/purescript-backend-optimizer.git",
+        "git": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
         "ref": "main",
         "dependencies": [
           "argonaut",
@@ -845,8 +845,8 @@
     },
     "backend-optimizer": {
       "type": "git",
-      "url": "https://github.com/aristanetworks/purescript-backend-optimizer.git",
-      "rev": "4810dc03048dbfed5bb194cb5b6120aa4a20be59",
+      "url": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
+      "rev": "0024e773c5df107ee5d8d84b9dd0969292bd2783",
       "dependencies": [
         "argonaut",
         "arrays",

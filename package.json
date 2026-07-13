@@ -2,11 +2,16 @@
   "name": "phpurs",
   "version": "0.1.0",
   "description": "PureScript to PHP backend",
+  "type": "module",
   "bin": {
     "phpurs": "bin/index.js"
   },
   "scripts": {
-    "build": "spago build",
-    "prepare": "spago build"
+    "build": "spago build && npx purs-backend-es bundle-app -p node -m Main --to bin/phpurs.js",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.1",
+    "purs-backend-es": "^1.4.3"
   }
 }

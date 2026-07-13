@@ -1,3 +1,12 @@
+-- | The Code Printer for the `phpurs` backend.
+-- | Converts the `PhpAst` into actual PHP strings.
+-- | 
+-- | Handles:
+-- | - Printing PHP expressions (closures, arrays, binary operations).
+-- | - Inlining the `\PhpursThunks` class for lazy value evaluation.
+-- | - Generating the Curry Fallback function (`phpurs_curry_fallback`) to support 
+-- |   partial application dynamically at runtime if arguments are missing.
+-- | - Generating ADT data classes (`Phpurs_Data0`, `Phpurs_Data1`, etc.).
 module Phpurs.Printer where
 
 import Prelude
@@ -225,6 +234,9 @@ printDecl decl = resolveContinues $ case decl.expression of
   expr ->
     "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr expr <> ";\n"
 
+-- | Main printing function that assembles a complete PHP file.
+-- | Generates the namespace, require statements (if not bundled), standard library
+-- | helpers (ADT classes, curry fallback), the thunk definitions, and finally the declarations.
 printPhpFile :: Boolean -> String -> PhpFile -> String
 printPhpFile isBundle ffiString file =
   let

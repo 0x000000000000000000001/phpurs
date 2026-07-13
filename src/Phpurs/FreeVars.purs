@@ -1,3 +1,10 @@
+-- | Provides static analysis for variable scoping in PHP.
+-- | Unlike JavaScript, PHP closures do not automatically capture variables from their parent scope.
+-- | In PHP, variables must be explicitly captured using the `use ($x, &$y)` syntax.
+-- | 
+-- | This module traverses the `NeutralExpr` AST to compute the set of "free variables"
+-- | (variables referenced inside an expression but not defined within it). This information
+-- | is used during code generation to correctly generate the `use` clauses for closures.
 module Phpurs.FreeVars where
 
 import Prelude
@@ -15,6 +22,10 @@ import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Pair(..), Backend
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), Prop(..), Literal(..))
 
+-- | Computes the set of free variables (by name) in a given `NeutralExpr`.
+-- | The `bound` map keeps track of variables currently bound in the local scope
+-- | (e.g. function arguments, let bindings). If an identifier is found that is NOT
+-- | in the `bound` map, it is considered a free variable.
 freeVars :: Map Int String -> NeutralExpr -> Set String
 freeVars bound (NeutralExpr syntax) = case syntax of
   Var _ -> Set.empty

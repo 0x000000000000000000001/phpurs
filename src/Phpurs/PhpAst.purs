@@ -1,9 +1,13 @@
+-- | Defines the Abstract Syntax Tree (AST) representing PHP code.
+-- | This is the intermediate representation between PureScript's optimized `NeutralExpr`
+-- | and the final PHP string generation. It models PHP constructs like closures,
+-- | arrays, objects, and control flow.
 module Phpurs.PhpAst where
 
 import Prelude
 import Data.Maybe (Maybe(..))
 
--- Abstract Syntax Tree for PHP
+-- | Represents a PHP expression or statement.
 data PhpExpr
   = PhpFunction (Array String) (Array String) (Array PhpExpr)
   | PhpNativeFunction String (Array String) (Array PhpExpr)

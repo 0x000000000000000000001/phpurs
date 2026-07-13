@@ -1,3 +1,12 @@
+-- | The Code Generator for the `phpurs` backend.
+-- | Translates the `NeutralExpr` (the optimized AST from `purescript-backend-optimizer`)
+-- | into `PhpAst` (the PHP-specific AST).
+-- |
+-- | Responsibilities:
+-- | - Handling `Let` bindings and converting them into PHP statements.
+-- | - Translating pattern matching (`Case`) into PHP nested `if` statements.
+-- | - Translating uncurried functions into native PHP functions.
+-- | - Performing basic Tail Call Optimization (TCO) loop generation (`resolveContinues`).
 module Phpurs.CodeGen where
 
 import Prelude
@@ -279,6 +288,9 @@ translateExprImpl recVars bound nextId syntax = case syntax of
 unwrapExpr :: NeutralExpr -> BackendSyntax NeutralExpr
 unwrapExpr (NeutralExpr e) = e
 
+-- | Main translation function.
+-- | Takes the list of module imports and a `BackendModule` (containing `NeutralExpr` bindings)
+-- | and returns a fully constructed `PhpFile` ready for printing.
 translate :: Array (Array String) -> BackendModule -> PhpFile
 translate imports mod =
   let

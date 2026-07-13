@@ -78,7 +78,9 @@ main = launchAff_ do
   let modulesArray = Array.catMaybes mbModules
   let modulesList = List.fromFoldable modulesArray
 
-  let sortedModules = sortModules modulesList
+  let
+    sortedModules = sortModules modulesList
+    finalModules = sortedModules
 
   bundleContentRef <- liftEffect $ Ref.new ("<?php\n\n" <> "namespace {\n  if (!\\class_exists('\\\\PhpursThunks', false)) {\n    class PhpursThunks {\n      public static $thunks = [];\n      public static $cache = [];\n      public static function eval($id) {\n        if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n        if (isset(self::$thunks[$id])) {\n          self::$cache[$id] = self::$thunks[$id]();\n          return self::$cache[$id];\n        }\n        throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n      }\n    }\n  }\n}\n")
 
@@ -122,7 +124,7 @@ main = launchAff_ do
         let phpCode = printPhpFile false wrappedFfiCode phpFile
         FS.writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpCode
     }
-    sortedModules
+    finalModules
 
   let
     targetMainModules = case mbMainModule of

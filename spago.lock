@@ -846,7 +846,7 @@
     "backend-optimizer": {
       "type": "git",
       "url": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
-      "rev": "0024e773c5df107ee5d8d84b9dd0969292bd2783",
+      "rev": "0b34be007eccd45f6ce4c6d3c12bff60fd0a0296",
       "dependencies": [
         "argonaut",
         "arrays",

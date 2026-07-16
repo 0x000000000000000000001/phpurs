@@ -4,7 +4,7 @@
   "description": "PureScript to PHP backend",
   "type": "module",
   "bin": {
-    "phpurs": "bin/index.js"
+    "phpurs": "bin/phpurs.js"
   },
   "scripts": {
     "build": "spago build && npx purs-backend-es bundle-app -p node -m Main --to bin/phpurs.js",

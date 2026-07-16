@@ -9,5 +9,5 @@ npx spago build
 # Now go to b8x
 cd ../b8x
 echo "==> Generating PHP for b8x..."
-node ../phpurs/bin/index.js "$@"
+node ../phpurs/bin/phpurs.js "$@"
 echo "==> Done!"

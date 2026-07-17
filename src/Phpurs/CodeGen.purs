@@ -167,7 +167,12 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
           Nothing -> "_") (toArray args)
         argsArray = dedupArgs rawArgsArray
         fvs = freeVars bound (NeutralExpr syntax)
-        useVars = Array.fromFoldable fvs
+        useVars = map (\v -> case Map.lookup v namedBound of
+            Just shadowed -> shadowed
+            Nothing -> v) (Array.fromFoldable fvs)
+        _ = if Array.elem "bind1" (Array.fromFoldable fvs) || Array.elem "bindProxy" (Array.fromFoldable fvs) then
+              Debug.trace { msg: "Found bind1 or bindProxy in Abs", fvs: Array.fromFoldable fvs, useVars, keys: Map.keys namedBound } \_ -> unit
+            else unit
         newNamedBound = foldl (\acc (Tuple mbI _) -> case mbI of
             Just (Ident i) -> Map.delete i acc
             Nothing -> acc) namedBound (toArray args)
@@ -180,7 +185,12 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
           Nothing -> "_") args
         argsArray = dedupArgs rawArgsArray
         fvs = freeVars bound (NeutralExpr syntax)
-        useVars = Array.fromFoldable fvs
+        useVars = map (\v -> case Map.lookup v namedBound of
+            Just shadowed -> shadowed
+            Nothing -> v) (Array.fromFoldable fvs)
+        _ = if Array.elem "bindProxy" (Array.fromFoldable fvs) then
+              Debug.trace { msg: "Found bindProxy", fvs: Array.fromFoldable fvs, useVars, keys: Map.keys namedBound } \_ -> unit
+            else unit
         newNamedBound = foldl (\acc (Tuple mbI _) -> case mbI of
             Just (Ident i) -> Map.delete i acc
             Nothing -> acc) namedBound args
@@ -193,7 +203,9 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
           Nothing -> "_") args
         argsArray = dedupArgs rawArgsArray
         fvs = freeVars bound (NeutralExpr syntax)
-        useVars = Array.fromFoldable fvs
+        useVars = map (\v -> case Map.lookup v namedBound of
+            Just shadowed -> shadowed
+            Nothing -> v) (Array.fromFoldable fvs)
         newNamedBound = foldl (\acc (Tuple mbI _) -> case mbI of
             Just (Ident i) -> Map.delete i acc
             Nothing -> acc) namedBound args
@@ -250,7 +262,12 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
 
   EffectDefer e -> 
     let res = translateExprImpl recVars namedBound bound nextId (unwrapExpr e)
-    in { stmts: [], expr: PhpFunction [] [] (res.stmts <> [PhpReturn res.expr]), nextId: res.nextId }
+        shadow v = case Map.lookup v namedBound of
+          Just shadowed -> shadowed
+          Nothing -> v
+        fvs = freeVars bound (NeutralExpr syntax)
+        useVars = map shadow (Array.fromFoldable fvs)
+    in { stmts: [], expr: PhpFunction useVars [] (res.stmts <> [PhpReturn res.expr]), nextId: res.nextId }
 
   Branch pairs def ->
     let resDef = translateExprImpl recVars namedBound bound nextId (unwrapExpr def)
@@ -258,7 +275,10 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
         accPairs = foldl (\acc (Pair (NeutralExpr cond) (NeutralExpr body)) -> 
             let resCond = translateExprImpl recVars namedBound bound acc.nextId cond
                 resBody = translateExprImpl recVars namedBound bound resCond.nextId body
-            in { ifNodes: Array.snoc acc.ifNodes { cond: wrapInStmts (Array.fromFoldable (freeVars bound (NeutralExpr cond))) resCond.stmts resCond.expr, body: resBody.stmts <> [PhpAssign tmpVar resBody.expr] }, nextId: resBody.nextId }
+                shadow v = case Map.lookup v namedBound of
+                  Just shadowed -> shadowed
+                  Nothing -> v
+            in { ifNodes: Array.snoc acc.ifNodes { cond: wrapInStmts (map shadow (Array.fromFoldable (freeVars bound (NeutralExpr cond)))) resCond.stmts resCond.expr, body: resBody.stmts <> [PhpAssign tmpVar resBody.expr] }, nextId: resBody.nextId }
           ) { ifNodes: [], nextId: resDef.nextId + 1 } (toArray pairs)
         
         finalElse = resDef.stmts <> [PhpAssign tmpVar resDef.expr]

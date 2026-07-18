@@ -2,14 +2,11 @@ module Phpurs.FreeVars where
 
 import Prelude
 
-import Data.Map (Map)
-import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Data.Set (Set)
 import Data.Set as Set
 import Data.Tuple (Tuple(..))
 import Data.Array (foldl)
-import Data.Array as Array
 
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendOperator(..))
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))

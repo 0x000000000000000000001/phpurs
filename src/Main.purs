@@ -22,7 +22,6 @@ import Data.Set as Set
 import Data.Traversable (traverse)
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.String as String
-import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
 import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
 import PureScript.Backend.Optimizer.Builder (buildModules)
@@ -31,8 +30,7 @@ import Phpurs.CodeGen (translate)
 import Phpurs.Printer (printPhpFile, safeName)
 import Phpurs.ComposerMerge (findFfiFile, mergeComposers)
 import Data.Newtype (unwrap)
-import Data.String (joinWith, replace, replaceAll, trim, Pattern(..), Replacement(..), length)
-import PureScript.Backend.Optimizer.CoreFn (Ident(..))
+import Data.String (joinWith, replace, replaceAll, trim, length)
 import Effect.Ref as Ref
 
 foreign import stringify :: forall a. String -> a -> String
@@ -105,10 +103,10 @@ main = launchAff_ do
           modNameStr = unwrap coreFnMod.name
           corefnPath = coreFnMod.path
           cachePath = "output/" <> modNameStr <> "/.phpurs-cache.json"
-        
+
         corefnStatRes <- attempt (FS.stat corefnPath)
         cacheStatRes <- attempt (FS.stat cachePath)
-        
+
         case corefnStatRes, cacheStatRes of
           Right corefnStat, Right cacheStat | Stats.modifiedTimeMs cacheStat >= Stats.modifiedTimeMs corefnStat -> do
             cacheContent <- FS.readTextFile UTF8 cachePath
@@ -120,7 +118,6 @@ main = launchAff_ do
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod
-          modNameStr = unwrap backendMod.name
 
         ffiPathMb <- liftEffect $ findFfiFile Nothing modNameStr (Just coreFnMod.path)
         ffiCode <- case ffiPathMb of
@@ -163,7 +160,7 @@ main = launchAff_ do
           autoloadStr = case mbAutoloadPath of
             Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
             Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
-          ns = joinWith "\\" (String.split (Pattern ".") mainMod)
+
           sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
           thunksClass = "if (!\\class_exists('\\\\PhpursThunks', false)) {\n  class PhpursThunks {\n    public static $thunks = [];\n    public static $cache = [];\n    public static function eval($id) {\n      if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n      if (isset(self::$thunks[$id])) {\n        self::$cache[$id] = self::$thunks[$id]();\n        return self::$cache[$id];\n      }\n      throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n    }\n  }\n}\n"
           callStr = "($GLOBALS['" <> sanitizedMain <> "'] ?? \\PhpursThunks::eval('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"

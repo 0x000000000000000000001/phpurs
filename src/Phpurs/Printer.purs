@@ -12,9 +12,8 @@ module Phpurs.Printer where
 import Prelude
 
 import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take)
-import Data.Maybe (fromMaybe, isNothing, Maybe(..))
-import Data.Array (filter, length, mapWithIndex, index, concatMap)
-import Data.Array as Array
+import Data.Maybe (isNothing, Maybe(..))
+import Data.Array (filter, length, mapWithIndex, concatMap)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
 foreign import safeNameImpl :: String -> String
@@ -50,7 +49,7 @@ genNativeCurry :: String -> Array String -> Array PhpExpr -> String
 genNativeCurry name args stmts =
   let
     argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
-    argNames = joinWith ", " (map (\a -> "$" <> safeName a) args)
+
     nStr = show (length args)
     
     rewrittenStmts = replaceReturn stmts
@@ -81,21 +80,15 @@ genCurry args captures stmts =
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
       nStr = show (length args)
-      
       nArgs = length args
-      
-      safeCaptures = map (\v -> "&$" <> safeName v) captures
+      safeCaps = map (\v -> "&$" <> safeName v) captures
+      outerUseClause = if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ")" else ""
       innerUseClause = if nArgs == 1 then
-                    (if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ")" else "")
+                    (if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ")" else "")
                   else
-                    (if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ", &$__fn)" else " use (&$__fn)")
-                    
-      outerUseClause = if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ")" else ""
-      
+                    (if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ", &$__fn)" else " use (&$__fn)")
       rewrittenStmts = replaceReturn stmts
-
       fastPathStr = ""
-
       fnBody = 
         "  $__num = \\func_num_args();\n" <>
         (if nArgs == 1 then "" else
@@ -106,7 +99,6 @@ genCurry args captures stmts =
         (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
         "  __end:\n" <>
         "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
-
     in 
       if nArgs == 1 then
         "function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "}"
@@ -118,8 +110,8 @@ genCurry args captures stmts =
 
 printExpr :: PhpExpr -> String
 printExpr expr = case expr of
-  PhpNativeFunction name args stmts -> "/* ERROR: PhpNativeFunction inside expression */"
-  PhpValueThunk name expr -> "/* ERROR: PhpValueThunk inside expression */"
+  PhpNativeFunction _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
+  PhpValueThunk _ _ -> "/* ERROR: PhpValueThunk inside expression */"
   PhpFunction captures args stmts ->
     genCurry args captures stmts
   PhpVar ident -> "$" <> safeName ident
@@ -143,15 +135,15 @@ printExpr expr = case expr of
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
   PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"
-  PhpPropertyAccess expr prop -> "(" <> printExpr expr <> ")->" <> safeName prop
-  PhpArrayIndex expr idx -> "(" <> printExpr expr <> ")[" <> show idx <> "]"
+  PhpPropertyAccess e prop -> "(" <> printExpr e <> ")->" <> safeName prop
+  PhpArrayIndex arr i -> "(" <> printExpr arr <> ")[" <> show i <> "]"
   PhpClone obj -> "clone " <> printExpr obj
-  PhpAssign ident expr -> "$" <> safeName ident <> " = " <> printExpr expr
-  PhpAssignExpr left expr -> printExpr left <> " = " <> printExpr expr
+  PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr v
+  PhpAssignExpr left v -> printExpr left <> " = " <> printExpr v
   PhpIf cond thenStmts elseStmts ->
     let
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
-      extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [PhpIf (PhpBoolean true) tDefault eDefault]) | isLiteral litExpr =
+      extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [PhpIf (PhpBoolean true) tDefault _]) | isLiteral litExpr =
         Just { subject: subj, cases: [{ val: litExpr, body: tBody }], defaultBody: tDefault }
       extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [eBody@(PhpIf _ _ _)]) | isLiteral litExpr =
         case extractSwitch eBody of
@@ -184,9 +176,9 @@ printExpr expr = case expr of
           "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n}" <> 
           (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map printExpr elseStmts) <> ";") <> "\n}" else "")
 
-  PhpThrow expr -> "throw new \\Exception(" <> printExpr expr <> ")"
+  PhpThrow v -> "throw new \\Exception(" <> printExpr v <> ")"
   PhpTernary cond t e -> "(" <> printExpr cond <> " ? " <> printExpr t <> " : " <> printExpr e <> ")"
-  PhpReturn expr -> "return " <> printExpr expr
+  PhpReturn v -> "return " <> printExpr v
   PhpBinOp op left right -> "(" <> printExpr left <> " " <> op <> " " <> printExpr right <> ")"
   PhpWhile cond stmts -> "while (" <> printExpr cond <> ") {\n" <> joinWith ";\n" (map printExpr stmts) <> ";\n}"
   PhpContinue -> "continue /*__LVL__*/"
@@ -230,7 +222,7 @@ printDecl decl = resolveContinues $ case decl.expression of
     "// " <> decl.identifier <> "\n" <>
     genNativeCurry (safeFuncName name) args stmts <> "\n" <>
     "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
-  PhpValueThunk name expr -> ""
+  PhpValueThunk _ _ -> ""
   expr ->
     "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr expr <> ";\n"
 

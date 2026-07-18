@@ -5,7 +5,7 @@
 module Phpurs.PhpAst where
 
 import Prelude
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe)
 
 -- | Represents a PHP expression or statement.
 data PhpExpr

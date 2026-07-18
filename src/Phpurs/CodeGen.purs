@@ -16,8 +16,8 @@ import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
 import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), ProperName(..), Literal(..), ConstructorType(..), Prop(..))
 import PureScript.Backend.Optimizer.Convert (BackendModule, BackendBindingGroup)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
-import Phpurs.FreeVars (freeVars)
-import Data.Maybe (Maybe(..), isJust)
+import Phpurs.FreeVars (freeVars, localId)
+import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray)
 import Data.Tuple (Tuple(..))
 import Data.Array as Array
@@ -104,7 +104,7 @@ translateOperator2 (OpStringOrd OpLt) l r = PhpBinOp "<" l r
 translateOperator2 (OpStringOrd OpLte) l r = PhpBinOp "<=" l r
 translateOperator2 _ l r = PhpBinOp "???" l r
 
-translateExprImpl :: Array String -> Map String String -> Map Int String -> Int -> BackendSyntax NeutralExpr -> TranslationRes
+translateExprImpl :: Array String -> Map String String -> Map String String -> Int -> BackendSyntax NeutralExpr -> TranslationRes
 translateExprImpl recVars namedBound bound nextId syntax = case syntax of
   Lit lit ->
     case lit of
@@ -128,14 +128,12 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
 
   Var qi -> { stmts: [], expr: PhpGlobalVar (case qi of (Qualified mbMod _) -> map (\(ModuleName m) -> String.split (Pattern ".") m) mbMod) (case qi of (Qualified _ (Ident i)) -> i), nextId }
 
-  Local (Just (Ident i)) _ ->
-    case Map.lookup i namedBound of
-      Just varName -> { stmts: [], expr: PhpVar varName, nextId }
-      Nothing -> { stmts: [], expr: PhpVar i, nextId }
+  Local (Just (Ident i)) (Level l) ->
+    let v = localId (Just (Ident i)) (Level l)
+    in { stmts: [], expr: PhpVar (fromMaybe v (Map.lookup v bound)), nextId }
   Local Nothing (Level l) ->
-    case Map.lookup l bound of
-      Just varName -> { stmts: [], expr: PhpVar varName, nextId }
-      Nothing -> { stmts: [], expr: PhpVar ("__local_var_" <> show l), nextId }
+    let v = localId Nothing (Level l)
+    in { stmts: [], expr: PhpVar (fromMaybe v (Map.lookup v bound)), nextId }
 
   App fn args ->
     let resFn = translateExprImpl recVars namedBound bound nextId (unwrapExpr fn)
@@ -162,54 +160,24 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
     in { stmts: resFn.stmts <> accArgs.stmts, expr: PhpCall resFn.expr accArgs.exprs, nextId: accArgs.nextId }
 
   Abs args body ->
-    let rawArgsArray = map (\(Tuple mbI _) -> case mbI of
-          Just (Ident i) -> i
-          Nothing -> "_") (toArray args)
-        argsArray = dedupArgs rawArgsArray
-        fvs = freeVars bound (NeutralExpr syntax)
-        useVars = map (\v -> case Map.lookup v namedBound of
-            Just shadowed -> shadowed
-            Nothing -> v) (Array.fromFoldable fvs)
-        _ = if Array.elem "bind1" (Array.fromFoldable fvs) || Array.elem "bindProxy" (Array.fromFoldable fvs) then
-              Debug.trace { msg: "Found bind1 or bindProxy in Abs", fvs: Array.fromFoldable fvs, useVars, keys: Map.keys namedBound } \_ -> unit
-            else unit
-        newNamedBound = foldl (\acc (Tuple mbI _) -> case mbI of
-            Just (Ident i) -> Map.delete i acc
-            Nothing -> acc) namedBound (toArray args)
-        resBody = translateExprImpl recVars newNamedBound bound nextId (unwrapExpr body)
+    let argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
+        fvs = freeVars (NeutralExpr syntax)
+        useVars = map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable fvs)
+        resBody = translateExprImpl recVars namedBound bound nextId (unwrapExpr body)
     in { stmts: [], expr: PhpFunction useVars argsArray (resBody.stmts <> [PhpReturn resBody.expr]), nextId: resBody.nextId }
 
   UncurriedAbs args body ->
-    let rawArgsArray = map (\(Tuple mbI _) -> case mbI of
-          Just (Ident i) -> i
-          Nothing -> "_") args
-        argsArray = dedupArgs rawArgsArray
-        fvs = freeVars bound (NeutralExpr syntax)
-        useVars = map (\v -> case Map.lookup v namedBound of
-            Just shadowed -> shadowed
-            Nothing -> v) (Array.fromFoldable fvs)
-        _ = if Array.elem "bindProxy" (Array.fromFoldable fvs) then
-              Debug.trace { msg: "Found bindProxy", fvs: Array.fromFoldable fvs, useVars, keys: Map.keys namedBound } \_ -> unit
-            else unit
-        newNamedBound = foldl (\acc (Tuple mbI _) -> case mbI of
-            Just (Ident i) -> Map.delete i acc
-            Nothing -> acc) namedBound args
-        resBody = translateExprImpl recVars newNamedBound bound nextId (unwrapExpr body)
+    let argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) args
+        fvs = freeVars (NeutralExpr syntax)
+        useVars = map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable fvs)
+        resBody = translateExprImpl recVars namedBound bound nextId (unwrapExpr body)
     in { stmts: [], expr: PhpFunction useVars argsArray (resBody.stmts <> [PhpReturn resBody.expr]), nextId: resBody.nextId }
 
   UncurriedEffectAbs args body ->
-    let rawArgsArray = map (\(Tuple mbI _) -> case mbI of
-          Just (Ident i) -> i
-          Nothing -> "_") args
-        argsArray = dedupArgs rawArgsArray
-        fvs = freeVars bound (NeutralExpr syntax)
-        useVars = map (\v -> case Map.lookup v namedBound of
-            Just shadowed -> shadowed
-            Nothing -> v) (Array.fromFoldable fvs)
-        newNamedBound = foldl (\acc (Tuple mbI _) -> case mbI of
-            Just (Ident i) -> Map.delete i acc
-            Nothing -> acc) namedBound args
-        resBody = translateExprImpl recVars newNamedBound bound nextId (unwrapExpr body)
+    let argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) args
+        fvs = freeVars (NeutralExpr syntax)
+        useVars = map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable fvs)
+        resBody = translateExprImpl recVars namedBound bound nextId (unwrapExpr body)
     in { stmts: [], expr: PhpFunction useVars argsArray (resBody.stmts <> [PhpReturn resBody.expr]), nextId: resBody.nextId }
 
   Accessor e acc ->
@@ -219,42 +187,53 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
       GetIndex idx -> { stmts: res.stmts, expr: PhpArrayIndex res.expr idx, nextId: res.nextId }
       GetCtorField _ _ _ _ prop idx -> { stmts: res.stmts, expr: PhpPropertyAccess res.expr prop, nextId: res.nextId }
 
-  Let (Just (Ident i)) _ val body ->
+  Let (Just (Ident i)) (Level l) val body ->
     let resVal = translateExprImpl recVars namedBound bound nextId (unwrapExpr val)
-        varName = i <> "_" <> show resVal.nextId
-        newNamedBound = Map.insert i varName namedBound
-        resBody = translateExprImpl recVars newNamedBound bound (resVal.nextId + 1) (unwrapExpr body)
+        oldVarName = localId (Just (Ident i)) (Level l)
+        varName = oldVarName <> "_" <> show resVal.nextId
+        newBound = Map.insert oldVarName varName bound
+        resBody = translateExprImpl recVars namedBound newBound (resVal.nextId + 1) (unwrapExpr body)
     in { stmts: resVal.stmts <> [PhpAssign varName resVal.expr] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
   Let Nothing (Level l) val body ->
     let resVal = translateExprImpl recVars namedBound bound nextId (unwrapExpr val)
-        varName = "__local_var_" <> show resVal.nextId
-        newBound = Map.insert l varName bound
+        oldVarName = localId Nothing (Level l)
+        varName = oldVarName <> "_" <> show resVal.nextId
+        newBound = Map.insert oldVarName varName bound
         resBody = translateExprImpl recVars namedBound newBound (resVal.nextId + 1) (unwrapExpr body)
     in { stmts: resVal.stmts <> [PhpAssign varName resVal.expr] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
-  LetRec _ binds body ->
-    let newRecVars = map (\(Tuple (Ident i) _) -> i) (toArray binds)
+  LetRec lvl binds body ->
+    let oldNewPairs = map (\(Tuple ident _) -> 
+            let oldName = localId (Just ident) lvl
+            in { oldName, newName: oldName <> "_" <> show nextId }
+          ) (toArray binds)
+        newBound = foldl (\acc pair -> Map.insert pair.oldName pair.newName acc) bound oldNewPairs
+        newRecVars = map _.newName oldNewPairs
         combinedRecVars = recVars <> newRecVars
-        initStmts = map (\v -> PhpAssign v (PhpRaw "null")) newRecVars
-        accBinds = foldl (\acc (Tuple (Ident i) (NeutralExpr val)) -> 
-            let res = translateExprImpl combinedRecVars namedBound bound acc.nextId val
-            in { stmts: acc.stmts <> res.stmts <> [PhpAssign i res.expr], nextId: res.nextId }
-          ) { stmts: initStmts, nextId } (toArray binds)
-        resBody = translateExprImpl combinedRecVars namedBound bound accBinds.nextId (unwrapExpr body)
+        initStmts = map (\pair -> PhpAssign pair.newName (PhpRaw "null")) oldNewPairs
+        accBinds = foldl (\acc (Tuple ident (NeutralExpr val)) -> 
+            let res = translateExprImpl combinedRecVars namedBound newBound acc.nextId val
+                oldName = localId (Just ident) lvl
+                newName = fromMaybe oldName (Map.lookup oldName newBound)
+            in { stmts: acc.stmts <> res.stmts <> [PhpAssign newName res.expr], nextId: res.nextId }
+          ) { stmts: initStmts, nextId: nextId + 1 } (toArray binds)
+        resBody = translateExprImpl combinedRecVars namedBound newBound accBinds.nextId (unwrapExpr body)
     in { stmts: accBinds.stmts <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
-  EffectBind (Just (Ident i)) _ val body ->
+  EffectBind (Just (Ident i)) (Level l) val body ->
     let resVal = translateExprImpl recVars namedBound bound nextId (unwrapExpr val)
-        varName = i <> "_" <> show resVal.nextId
-        newNamedBound = Map.insert i varName namedBound
-        resBody = translateExprImpl recVars newNamedBound bound (resVal.nextId + 1) (unwrapExpr body)
+        oldVarName = localId (Just (Ident i)) (Level l)
+        varName = oldVarName <> "_" <> show resVal.nextId
+        newBound = Map.insert oldVarName varName bound
+        resBody = translateExprImpl recVars namedBound newBound (resVal.nextId + 1) (unwrapExpr body)
     in { stmts: resVal.stmts <> [PhpAssign varName resVal.expr] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
   EffectBind Nothing (Level l) val body ->
     let resVal = translateExprImpl recVars namedBound bound nextId (unwrapExpr val)
-        varName = "__local_var_" <> show resVal.nextId
-        newBound = Map.insert l varName bound
+        oldVarName = localId Nothing (Level l)
+        varName = oldVarName <> "_" <> show resVal.nextId
+        newBound = Map.insert oldVarName varName bound
         resBody = translateExprImpl recVars namedBound newBound (resVal.nextId + 1) (unwrapExpr body)
     in { stmts: resVal.stmts <> [PhpAssign varName resVal.expr] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
@@ -262,11 +241,8 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
 
   EffectDefer e -> 
     let res = translateExprImpl recVars namedBound bound nextId (unwrapExpr e)
-        shadow v = case Map.lookup v namedBound of
-          Just shadowed -> shadowed
-          Nothing -> v
-        fvs = freeVars bound (NeutralExpr syntax)
-        useVars = map shadow (Array.fromFoldable fvs)
+        fvs = freeVars (NeutralExpr syntax)
+        useVars = map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable fvs)
     in { stmts: [], expr: PhpFunction useVars [] (res.stmts <> [PhpReturn res.expr]), nextId: res.nextId }
 
   Branch pairs def ->
@@ -275,10 +251,7 @@ translateExprImpl recVars namedBound bound nextId syntax = case syntax of
         accPairs = foldl (\acc (Pair (NeutralExpr cond) (NeutralExpr body)) -> 
             let resCond = translateExprImpl recVars namedBound bound acc.nextId cond
                 resBody = translateExprImpl recVars namedBound bound resCond.nextId body
-                shadow v = case Map.lookup v namedBound of
-                  Just shadowed -> shadowed
-                  Nothing -> v
-            in { ifNodes: Array.snoc acc.ifNodes { cond: wrapInStmts (map shadow (Array.fromFoldable (freeVars bound (NeutralExpr cond)))) resCond.stmts resCond.expr, body: resBody.stmts <> [PhpAssign tmpVar resBody.expr] }, nextId: resBody.nextId }
+            in { ifNodes: Array.snoc acc.ifNodes { cond: wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars (NeutralExpr cond)))) resCond.stmts resCond.expr, body: resBody.stmts <> [PhpAssign tmpVar resBody.expr] }, nextId: resBody.nextId }
           ) { ifNodes: [], nextId: resDef.nextId + 1 } (toArray pairs)
         
         finalElse = resDef.stmts <> [PhpAssign tmpVar resDef.expr]

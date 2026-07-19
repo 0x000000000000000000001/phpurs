@@ -11,7 +11,7 @@ module Phpurs.Printer where
 
 import Prelude
 
-import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take)
+import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take, drop)
 import Data.Maybe (isNothing, Maybe(..))
 import Data.Array (filter, length, mapWithIndex, concatMap)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
@@ -72,7 +72,7 @@ genNativeCurry name args stmts =
 
 genCurry :: Array String -> Array String -> Array PhpExpr -> String
 genCurry args captures stmts =
-  let safeCaptures = map (\c -> "$" <> safeName c) captures
+  let safeCaptures = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
   in if length args == 0 then
     let useClause = if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ", &$__fn)" else " use (&$__fn)"
     in "function()" <> useClause <> " {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
@@ -81,7 +81,7 @@ genCurry args captures stmts =
       argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
       nStr = show (length args)
       nArgs = length args
-      safeCaps = map (\v -> "&$" <> safeName v) captures
+      safeCaps = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
       outerUseClause = if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ")" else ""
       innerUseClause = if nArgs == 1 then
                     (if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ")" else "")

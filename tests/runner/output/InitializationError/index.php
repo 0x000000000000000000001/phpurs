@@ -1,12 +1,10 @@
 <?php
 
-namespace Lib;
+namespace InitializationError;
 
-// ALL IMPORTS: Data.Semigroup, Lib, Prelude, Prim
-// TO REQUIRE: Data.Semigroup, Lib, Prelude
-require_once __DIR__ . '/../Data.Semigroup/index.php';
-require_once __DIR__ . '/../Lib/index.php';
-require_once __DIR__ . '/../Prelude/index.php';
+// ALL IMPORTS: InitializationError, Prim
+// TO REQUIRE: InitializationError
+require_once __DIR__ . '/../InitializationError/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -87,57 +85,41 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Lib_Tuple'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
+\PhpursThunks::$thunks['InitializationError_alpha'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  $__res = new Phpurs_Data2("Tuple", $value0, $value1);
-  goto __end;;
-  __end:
-  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
-  };
-  return $__fn;
-})(); return $v; };
-\PhpursThunks::$thunks['Lib_testInt'] = function() { $v = (object)["runTest" => function($v_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = "4";
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}]; return $v; };
-\PhpursThunks::$thunks['Lib_runTest'] = function() { $v = function($dict_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_runTest"), recVars=[];
-  $__res = ($dict_0)->{'runTest'};
+  // DEBUG UncurriedAbs: currentBindingName=(Just "InitializationError_alpha"), recVars=[];
+  $__res = ($dict_0)->{'alpha'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Lib_test/bslash'] = function() { $v = (function() {
-  $__fn = function($dictTest_0, $dictTest1_1 = null) use (&$__fn) {
+\PhpursThunks::$thunks['InitializationError_charlieAlpha'] = function() { $v = function($dictCharlie_0) {
   $__num = \func_num_args();
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_test/\\"), recVars=[];
-  $__res = (object)["runTest" => function($v_2) use ($dictTest1_1, $dictTest_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictTest_0)->{'runTest'})(($v_2)->{'value0'})))((($dictTest1_1)->{'runTest'})(($v_2)->{'value1'}));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "InitializationError_charlieAlpha"), recVars=[];
+  $__res = ((((($dictCharlie_0)->{'Bravo0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Alpha0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'alpha'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}];
+}; return $v; };
+\PhpursThunks::$thunks['InitializationError_charlieArray'] = function() { $v = (object)["Bravo0" => function($dollar__unused_0) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["InitializationError_charlieArray","InitializationError_bravoArray","InitializationError_alphaArray"];
+  $__res = ($GLOBALS['InitializationError_bravoArray'] ?? \PhpursThunks::eval('InitializationError_bravoArray'));
   goto __end;;
   __end:
-  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
-  };
-  return $__fn;
-})(); return $v; };
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+}]; return $v; };
+\PhpursThunks::$thunks['InitializationError_bravoArray'] = function() { $v = (object)["Alpha0" => function($dollar__unused_0) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["InitializationError_charlieArray","InitializationError_bravoArray","InitializationError_alphaArray"];
+  $__res = ($GLOBALS['InitializationError_alphaArray'] ?? \PhpursThunks::eval('InitializationError_alphaArray'));
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+}]; return $v; };
+\PhpursThunks::$thunks['InitializationError_alphaArray'] = function() { $v = (object)["alpha" => (($GLOBALS['InitializationError_alphaArray'] ?? \PhpursThunks::eval('InitializationError_alphaArray')))->{'alpha'}]; return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+
 
 
 

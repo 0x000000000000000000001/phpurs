@@ -5,10 +5,8 @@ import Prelude
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
-import Test.Assert (assertEqual, assert)
+import Test.Assert (assertEqual)
 import CustomAssert (assertThrows)
-import Data.String (contains)
-import Data.String.Pattern (Pattern(..))
 
 force :: forall a b. (Unit -> b) -> b
 force f = f unit
@@ -20,6 +18,17 @@ bravo = force \_ -> alpha.x
 complicatedIdentity :: forall a. a -> a
 complicatedIdentity = h
   where
+  -- This highly contrived function tests that escalating force is caught and
+  -- doesn't cause an infinite loop during compilation. ("Escalating force"
+  -- means that invoking `f` with two argument leads to `f` being invoked with
+  -- three arguments, and so on.)
+
+  -- If the escalating loop in `f` isn't taken into account, `h` might be
+  -- initialized before `g`, which will lead to a run-time error. The intended
+  -- behavior is to lazily initialize `g` and `h` together, and let the fact
+  -- that at run time `g` never actually dereferences `h` resolve the
+  -- initialization ordering.
+
   f :: forall a. Int -> { tick :: a -> a, tock :: a -> a }
   f n = { tick: if n <= 0 then identity else (f (n - 1)).tock identity, tock: \a -> g n a }
 
@@ -42,7 +51,7 @@ main = do
     let
       selfOwn = { a: 1, b: force \_ -> selfOwn.a }
     in selfOwn
-  assert $ contains (Pattern "Attempt to read property") err
+  assertEqual { actual: err, expected: "ReferenceError: selfOwn was needed before it finished initializing (module Main, line 52)" }
 
   err2 <- assertThrows \_ ->
     let
@@ -56,9 +65,9 @@ main = do
 
       j x y z = { left: x y z, right: f.left }
     in f
-  assert $ contains (Pattern "Attempt to read property") err2
+  assertEqual { actual: err2, expected: "ReferenceError: f was needed before it finished initializing (module Main, line 66)" }
 
   assertEqual { actual: bravo, expected: 1 }
   runtimeImport "InitializationError" \err3 -> do
-    assertEqual { actual: (err3 /= Nothing), expected: true }
+    assertEqual { actual: err3, expected: Just "ReferenceError: alphaArray was needed before it finished initializing (module InitializationError, line 0)" } -- TODO: fix the 0
     log "Done"

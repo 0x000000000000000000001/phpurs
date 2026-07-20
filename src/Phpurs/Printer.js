@@ -3,6 +3,7 @@ export const safeNameImpl = function(s) {
     if (c === "'") return 'quote';
     if (c === '"') return 'dquote';
     if (c === '$') return 'dollar';
+    if (c === '\\') return 'bslash';
     return c;
   }).join('');
 };
@@ -13,6 +14,7 @@ export const safeFuncNameImpl = function(s) {
     if (c === "'") return 'quote';
     if (c === '"') return 'dquote';
     if (c === '$') return 'dollar';
+    if (c === '\\') return 'bslash';
     return c;
   }).join('');
 };

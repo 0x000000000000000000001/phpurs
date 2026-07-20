@@ -1,11 +1,12 @@
 <?php
 
-namespace Lib;
+namespace CustomAssert;
 
-// ALL IMPORTS: Data.Semigroup, Lib, Prelude, Prim
-// TO REQUIRE: Data.Semigroup, Lib, Prelude
-require_once __DIR__ . '/../Data.Semigroup/index.php';
-require_once __DIR__ . '/../Lib/index.php';
+// ALL IMPORTS: CustomAssert, Data.Unit, Effect, Prelude, Prim
+// TO REQUIRE: CustomAssert, Data.Unit, Effect, Prelude
+require_once __DIR__ . '/../CustomAssert/index.php';
+require_once __DIR__ . '/../Data.Unit/index.php';
+require_once __DIR__ . '/../Effect/index.php';
 require_once __DIR__ . '/../Prelude/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
@@ -87,60 +88,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Lib_Tuple'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
-  $__num = \func_num_args();
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  $__res = new Phpurs_Data2("Tuple", $value0, $value1);
-  goto __end;;
-  __end:
-  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
-  };
-  return $__fn;
-})(); return $v; };
-\PhpursThunks::$thunks['Lib_testInt'] = function() { $v = (object)["runTest" => function($v_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = "4";
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}]; return $v; };
-\PhpursThunks::$thunks['Lib_runTest'] = function() { $v = function($dict_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_runTest"), recVars=[];
-  $__res = ($dict_0)->{'runTest'};
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}; return $v; };
-\PhpursThunks::$thunks['Lib_test/bslash'] = function() { $v = (function() {
-  $__fn = function($dictTest_0, $dictTest1_1 = null) use (&$__fn) {
-  $__num = \func_num_args();
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_test/\\"), recVars=[];
-  $__res = (object)["runTest" => function($v_2) use ($dictTest1_1, $dictTest_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictTest_0)->{'runTest'})(($v_2)->{'value0'})))((($dictTest1_1)->{'runTest'})(($v_2)->{'value1'}));
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}];
-  goto __end;;
-  __end:
-  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
-  };
-  return $__fn;
-})(); return $v; };
+\PhpursThunks::$thunks['CustomAssert_assertThrows'] = function() { $v = (($GLOBALS['CustomAssert_assertThrowsImpl'] ?? \PhpursThunks::eval('CustomAssert_assertThrowsImpl')))(($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'))); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
-
-
-
 
 
 

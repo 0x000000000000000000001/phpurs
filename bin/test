@@ -10,6 +10,7 @@ RUNNER_DIR="$TEST_DIR/runner"
 
 # Tests to skip (e.g. tests using experimental compiler features not supported by our purs version)
 BLACKLIST=(
+  # For versions > 0.15
   "DerivingClause.purs"
   "DerivingContravariant.purs"
   "DerivingFunctorFromBi.purs"

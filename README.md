@@ -15,7 +15,7 @@ Recently, we've observed a genuine surge of interest for strict typing and funct
 
 ## Production readiness & optimizations
 
-`phpurs` has successfully graduated from its experimental phase. It passes **100% of the official PureScript passing test suite** (361/361 tests), proving that the AST transformation is sound and the runtime execution strictly matches the original language's specifications (scoping, TCO loops, strict evaluation, etc.).
+`phpurs` has successfully graduated from its experimental phase. It passes **100% of the [official PureScript passing test suite](https://github.com/purescript/purescript/tree/master/tests/purs/passing)** (361/361 tests), proving that the AST transformation is sound and the runtime execution strictly matches the original language's specifications (scoping, TCO loops, strict evaluation, etc.).
 
 It also successfully compiles and executes a universal multi runtime pedagogical benchmark suite ([altbak.pub](https://github.com/0x000000000000000000001/altbak.pub)), demonstrating how PureScript changes the game for the ideal of **"Write once, run everywhere"**. The identical PureScript code runs seamlessly across Node.js (V8), Arista ES, Chez Scheme, Erlang BEAM… and natively on PHP!
 

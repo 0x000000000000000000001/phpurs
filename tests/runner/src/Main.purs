@@ -1,8 +1,8 @@
 module Main where
 
 import Prelude
-import Effect.Console (log)
+import Effect
+import M1
+import Effect.Console as C
 
-s = \x y z -> x z (y z)
-
-main = log "Done"
+main = C.log (log "Done")

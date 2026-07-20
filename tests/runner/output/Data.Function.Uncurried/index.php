@@ -118,7 +118,7 @@ $mkFn0 = function($fn) use (&$mkFn0) {
         };
     }
     return function() use ($fn) {
-        return $fn();
+        return $fn(null);
     };
 };
 $mkFn1 = function($fn) use (&$mkFn1) {
@@ -140,7 +140,7 @@ $mkFn2 = function($fn) use (&$mkFn2) {
         };
     }
     return function($a0 = null, $a1 = null) use ($fn) {
-        return $fn($a0, $a1);
+        return $fn($a0)($a1);
     };
 };
 $mkFn3 = function($fn) use (&$mkFn3) {
@@ -151,7 +151,7 @@ $mkFn3 = function($fn) use (&$mkFn3) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null) use ($fn) {
-        return $fn($a0, $a1, $a2);
+        return $fn($a0)($a1)($a2);
     };
 };
 $mkFn4 = function($fn) use (&$mkFn4) {
@@ -162,7 +162,7 @@ $mkFn4 = function($fn) use (&$mkFn4) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3);
+        return $fn($a0)($a1)($a2)($a3);
     };
 };
 $mkFn5 = function($fn) use (&$mkFn5) {
@@ -173,7 +173,7 @@ $mkFn5 = function($fn) use (&$mkFn5) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null, $a4 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3, $a4);
+        return $fn($a0)($a1)($a2)($a3)($a4);
     };
 };
 $mkFn6 = function($fn) use (&$mkFn6) {
@@ -184,7 +184,7 @@ $mkFn6 = function($fn) use (&$mkFn6) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null, $a4 = null, $a5 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3, $a4, $a5);
+        return $fn($a0)($a1)($a2)($a3)($a4)($a5);
     };
 };
 $mkFn7 = function($fn) use (&$mkFn7) {
@@ -195,7 +195,7 @@ $mkFn7 = function($fn) use (&$mkFn7) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null, $a4 = null, $a5 = null, $a6 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3, $a4, $a5, $a6);
+        return $fn($a0)($a1)($a2)($a3)($a4)($a5)($a6);
     };
 };
 $mkFn8 = function($fn) use (&$mkFn8) {
@@ -206,7 +206,7 @@ $mkFn8 = function($fn) use (&$mkFn8) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null, $a4 = null, $a5 = null, $a6 = null, $a7 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3, $a4, $a5, $a6, $a7);
+        return $fn($a0)($a1)($a2)($a3)($a4)($a5)($a6)($a7);
     };
 };
 $mkFn9 = function($fn) use (&$mkFn9) {
@@ -217,7 +217,7 @@ $mkFn9 = function($fn) use (&$mkFn9) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null, $a4 = null, $a5 = null, $a6 = null, $a7 = null, $a8 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8);
+        return $fn($a0)($a1)($a2)($a3)($a4)($a5)($a6)($a7)($a8);
     };
 };
 $mkFn10 = function($fn) use (&$mkFn10) {
@@ -228,7 +228,7 @@ $mkFn10 = function($fn) use (&$mkFn10) {
         };
     }
     return function($a0 = null, $a1 = null, $a2 = null, $a3 = null, $a4 = null, $a5 = null, $a6 = null, $a7 = null, $a8 = null, $a9 = null) use ($fn) {
-        return $fn($a0, $a1, $a2, $a3, $a4, $a5, $a6, $a7, $a8, $a9);
+        return $fn($a0)($a1)($a2)($a3)($a4)($a5)($a6)($a7)($a8)($a9);
     };
 };
 $runFn0 = function($fn = null) use (&$runFn0) {

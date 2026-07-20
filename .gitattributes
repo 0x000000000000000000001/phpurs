@@ -1,1 +1,4 @@
-*.js linguist-vendored=true
+*.js linguist-generated
+*.js linguist-vendored
+bin/phpurs.js linguist-generated
+bin/phpurs.js linguist-vendored

@@ -278,7 +278,7 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2);
 };
   $__res = $__tco_res_go_1_0_0;

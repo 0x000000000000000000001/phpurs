@@ -837,7 +837,7 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -926,7 +926,7 @@ $__t0 = new Phpurs_Data0("Nothing");
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_0_0_0) {
+  while (($__tco_done_go_0_0_0 === false)) {
 $__tco_res_go_0_0_0 = ($__tco_loop_go_0_0_0)($__tco_var_go_0_0_0_v_1);
 };
   $__res = $__tco_res_go_0_0_0;
@@ -1098,7 +1098,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1392,7 +1392,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_n_2, $__tco_var_go_1_0_0_list_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1520,7 +1520,7 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1719,7 +1719,7 @@ $__t0 = (($GLOBALS['Data_List_Lazy_fromStep'] ?? \PhpursThunks::eval('Data_List_
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1782,7 +1782,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;

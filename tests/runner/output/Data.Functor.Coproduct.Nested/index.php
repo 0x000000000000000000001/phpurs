@@ -222,7 +222,7 @@ $spin_10_9 = function($v_11 = null) use (&$spin_10_9) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_10_9_9) {
+  while (($__tco_done_spin_10_9_9 === false)) {
 $__tco_res_spin_10_9_9 = ($__tco_loop_spin_10_9_9)($__tco_var_spin_10_9_9_v_11);
 };
   $__res = $__tco_res_spin_10_9_9;
@@ -349,7 +349,7 @@ $spin_9_8 = function($v_10 = null) use (&$spin_9_8) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_9_8_8) {
+  while (($__tco_done_spin_9_8_8 === false)) {
 $__tco_res_spin_9_8_8 = ($__tco_loop_spin_9_8_8)($__tco_var_spin_9_8_8_v_10);
 };
   $__res = $__tco_res_spin_9_8_8;
@@ -466,7 +466,7 @@ $spin_8_7 = function($v_9 = null) use (&$spin_8_7) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_8_7_7) {
+  while (($__tco_done_spin_8_7_7 === false)) {
 $__tco_res_spin_8_7_7 = ($__tco_loop_spin_8_7_7)($__tco_var_spin_8_7_7_v_9);
 };
   $__res = $__tco_res_spin_8_7_7;
@@ -573,7 +573,7 @@ $spin_7_6 = function($v_8 = null) use (&$spin_7_6) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_7_6_6) {
+  while (($__tco_done_spin_7_6_6 === false)) {
 $__tco_res_spin_7_6_6 = ($__tco_loop_spin_7_6_6)($__tco_var_spin_7_6_6_v_8);
 };
   $__res = $__tco_res_spin_7_6_6;
@@ -670,7 +670,7 @@ $spin_6_5 = function($v_7 = null) use (&$spin_6_5) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_6_5_5) {
+  while (($__tco_done_spin_6_5_5 === false)) {
 $__tco_res_spin_6_5_5 = ($__tco_loop_spin_6_5_5)($__tco_var_spin_6_5_5_v_7);
 };
   $__res = $__tco_res_spin_6_5_5;
@@ -757,7 +757,7 @@ $spin_5_4 = function($v_6 = null) use (&$spin_5_4) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_5_4_4) {
+  while (($__tco_done_spin_5_4_4 === false)) {
 $__tco_res_spin_5_4_4 = ($__tco_loop_spin_5_4_4)($__tco_var_spin_5_4_4_v_6);
 };
   $__res = $__tco_res_spin_5_4_4;
@@ -834,7 +834,7 @@ $spin_4_3 = function($v_5 = null) use (&$spin_4_3) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_4_3_3) {
+  while (($__tco_done_spin_4_3_3 === false)) {
 $__tco_res_spin_4_3_3 = ($__tco_loop_spin_4_3_3)($__tco_var_spin_4_3_3_v_5);
 };
   $__res = $__tco_res_spin_4_3_3;
@@ -901,7 +901,7 @@ $spin_3_2 = function($v_4 = null) use (&$spin_3_2) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_3_2_2) {
+  while (($__tco_done_spin_3_2_2 === false)) {
 $__tco_res_spin_3_2_2 = ($__tco_loop_spin_3_2_2)($__tco_var_spin_3_2_2_v_4);
 };
   $__res = $__tco_res_spin_3_2_2;
@@ -994,7 +994,7 @@ $spin_11_10 = function($v_12 = null) use (&$spin_11_10) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_11_10_10) {
+  while (($__tco_done_spin_11_10_10 === false)) {
 $__tco_res_spin_11_10_10 = ($__tco_loop_spin_11_10_10)($__tco_var_spin_11_10_10_v_12);
 };
   $__res = $__tco_res_spin_11_10_10;
@@ -1095,7 +1095,7 @@ $spin_1_1 = function($v_2 = null) use (&$spin_1_1) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_1_1_1) {
+  while (($__tco_done_spin_1_1_1 === false)) {
 $__tco_res_spin_1_1_1 = ($__tco_loop_spin_1_1_1)($__tco_var_spin_1_1_1_v_2);
 };
   $__res = $__tco_res_spin_1_1_1;

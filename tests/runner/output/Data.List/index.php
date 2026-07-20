@@ -424,7 +424,7 @@ $__t7 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_mergeAll_3_6_6) {
+  while (($__tco_done_mergeAll_3_6_6 === false)) {
 $__tco_res_mergeAll_3_6_6 = ($__tco_loop_mergeAll_3_6_6)($__tco_var_mergeAll_3_6_6_v_4);
 };
   $__res = $__tco_res_mergeAll_3_6_6;
@@ -487,7 +487,7 @@ $__t7 = new Phpurs_Data2("Cons", $v_5, new Phpurs_Data0("Nil"));
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_sequences_4_7_7) {
+  while (($__tco_done_sequences_4_7_7 === false)) {
 $__tco_res_sequences_4_7_7 = ($__tco_loop_sequences_4_7_7)($__tco_var_sequences_4_7_7_v_5);
 };
   $__res = $__tco_res_sequences_4_7_7;
@@ -538,7 +538,7 @@ $__t7 = new Phpurs_Data2("Cons", new Phpurs_Data2("Cons", $v_5, $v1_6), ($sequen
   };
   return $__fn;
 })();
-  while (!$__tco_done_descending_4_7_7) {
+  while (($__tco_done_descending_4_7_7 === false)) {
 $__tco_res_descending_4_7_7 = ($__tco_loop_descending_4_7_7)($__tco_var_descending_4_7_7_v_5, $__tco_var_descending_4_7_7_v1_6, $__tco_var_descending_4_7_7_v2_7);
 };
   $__res = $__tco_res_descending_4_7_7;
@@ -598,7 +598,7 @@ $__t7 = new Phpurs_Data2("Cons", ($v1_6)(new Phpurs_Data2("Cons", $v_5, new Phpu
   };
   return $__fn;
 })();
-  while (!$__tco_done_ascending_4_7_7) {
+  while (($__tco_done_ascending_4_7_7 === false)) {
 $__tco_res_ascending_4_7_7 = ($__tco_loop_ascending_4_7_7)($__tco_var_ascending_4_7_7_v_5, $__tco_var_ascending_4_7_7_v1_6, $__tco_var_ascending_4_7_7_v2_7);
 };
   $__res = $__tco_res_ascending_4_7_7;
@@ -685,7 +685,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_0_0_0) {
+  while (($__tco_done_go_0_0_0 === false)) {
 $__tco_res_go_0_0_0 = ($__tco_loop_go_0_0_0)($__tco_var_go_0_0_0_v_1, $__tco_var_go_0_0_0_v1_2);
 };
   $__res = $__tco_res_go_0_0_0;
@@ -765,7 +765,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_1_1) {
+  while (($__tco_done_go_4_1_1 === false)) {
 $__tco_res_go_4_1_1 = ($__tco_loop_go_4_1_1)($__tco_var_go_4_1_1_v_5, $__tco_var_go_4_1_1_v1_6);
 };
   $__res = $__tco_res_go_4_1_1;
@@ -822,7 +822,7 @@ $__t2 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_2_2) {
+  while (($__tco_done_go_4_2_2 === false)) {
 $__tco_res_go_4_2_2 = ($__tco_loop_go_4_2_2)($__tco_var_go_4_2_2_v_5, $__tco_var_go_4_2_2_v1_6);
 };
   $__res = $__tco_res_go_4_2_2;
@@ -858,7 +858,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_0_0_0) {
+  while (($__tco_done_go_0_0_0 === false)) {
 $__tco_res_go_0_0_0 = ($__tco_loop_go_0_0_0)($__tco_var_go_0_0_0_v_1, $__tco_var_go_0_0_0_v1_2, $__tco_var_go_0_0_0_v2_3);
 };
   $__res = $__tco_res_go_0_0_0;
@@ -946,7 +946,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_0_0) {
+  while (($__tco_done_go_4_0_0 === false)) {
 $__tco_res_go_4_0_0 = ($__tco_loop_go_4_0_0)($__tco_var_go_4_0_0_v_5, $__tco_var_go_4_0_0_v1_6);
 };
   $__res = $__tco_res_go_4_0_0;
@@ -965,7 +965,7 @@ $__t1 = (($go_4_0)(new Phpurs_Data0("Nil")))($v_2);
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1031,7 +1031,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1087,7 +1087,7 @@ $__t3 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_3_3) {
+  while (($__tco_done_go_3_3_3 === false)) {
 $__tco_res_go_3_3_3 = ($__tco_loop_go_3_3_3)($__tco_var_go_3_3_3_v_4, $__tco_var_go_3_3_3_v1_5);
 };
   $__res = $__tco_res_go_3_3_3;
@@ -1164,7 +1164,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_0_0) {
+  while (($__tco_done_go_3_0_0 === false)) {
 $__tco_res_go_3_0_0 = ($__tco_loop_go_3_0_0)($__tco_var_go_3_0_0_v_4, $__tco_var_go_3_0_0_v1_5, $__tco_var_go_3_0_0_v2_6);
 };
   $__res = $__tco_res_go_3_0_0;
@@ -1218,7 +1218,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_1_1) {
+  while (($__tco_done_go_4_1_1 === false)) {
 $__tco_res_go_4_1_1 = ($__tco_loop_go_4_1_1)($__tco_var_go_4_1_1_v_5, $__tco_var_go_4_1_1_v1_6);
 };
   $__res = $__tco_res_go_4_1_1;
@@ -1293,7 +1293,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_2_0_0) {
+  while (($__tco_done_go_2_0_0 === false)) {
 $__tco_res_go_2_0_0 = ($__tco_loop_go_2_0_0)($__tco_var_go_2_0_0_v_3, $__tco_var_go_2_0_0_v1_4, $__tco_var_go_2_0_0_v2_5);
 };
   $__res = $__tco_res_go_2_0_0;
@@ -1347,7 +1347,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_1_1) {
+  while (($__tco_done_go_3_1_1 === false)) {
 $__tco_res_go_3_1_1 = ($__tco_loop_go_3_1_1)($__tco_var_go_3_1_1_v_4, $__tco_var_go_3_1_1_v1_5);
 };
   $__res = $__tco_res_go_3_1_1;
@@ -1425,7 +1425,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_5_1_1) {
+  while (($__tco_done_go_5_1_1 === false)) {
 $__tco_res_go_5_1_1 = ($__tco_loop_go_5_1_1)($__tco_var_go_5_1_1_v_6, $__tco_var_go_5_1_1_v1_7, $__tco_var_go_5_1_1_v2_8);
 };
   $__res = $__tco_res_go_5_1_1;
@@ -1479,7 +1479,7 @@ $__t2 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_6_2_2) {
+  while (($__tco_done_go_6_2_2 === false)) {
 $__tco_res_go_6_2_2 = ($__tco_loop_go_6_2_2)($__tco_var_go_6_2_2_v_7, $__tco_var_go_6_2_2_v1_8);
 };
   $__res = $__tco_res_go_6_2_2;
@@ -1556,7 +1556,7 @@ $__t4 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_2_0_0) {
+  while (($__tco_done_go_2_0_0 === false)) {
 $__tco_res_go_2_0_0 = ($__tco_loop_go_2_0_0)($__tco_var_go_2_0_0_s_3, $__tco_var_go_2_0_0_e_4, $__tco_var_go_2_0_0_step_5, $__tco_var_go_2_0_0_rest_6);
 };
   $__res = $__tco_res_go_2_0_0;
@@ -1682,7 +1682,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3, $__tco_var_go_1_0_0_v2_4);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1778,7 +1778,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_1_1) {
+  while (($__tco_done_go_4_1_1 === false)) {
 $__tco_res_go_4_1_1 = ($__tco_loop_go_4_1_1)($__tco_var_go_4_1_1_v_5, $__tco_var_go_4_1_1_v1_6);
 };
   $__res = $__tco_res_go_4_1_1;
@@ -1829,7 +1829,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -1906,7 +1906,7 @@ $__t3 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_7_3_3) {
+  while (($__tco_done_go_7_3_3 === false)) {
 $__tco_res_go_7_3_3 = ($__tco_loop_go_7_3_3)($__tco_var_go_7_3_3_v_8, $__tco_var_go_7_3_3_v1_9);
 };
   $__res = $__tco_res_go_7_3_3;
@@ -2038,7 +2038,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_0_0_0) {
+  while (($__tco_done_go_0_0_0 === false)) {
 $__tco_res_go_0_0_0 = ($__tco_loop_go_0_0_0)($__tco_var_go_0_0_0_b_1, $__tco_var_go_0_0_0_v_2);
 };
   $__res = $__tco_res_go_0_0_0;
@@ -2266,7 +2266,7 @@ $__t3 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_3_3) {
+  while (($__tco_done_go_4_3_3 === false)) {
 $__tco_res_go_4_3_3 = ($__tco_loop_go_4_3_3)($__tco_var_go_4_3_3_v_5, $__tco_var_go_4_3_3_v1_6);
 };
   $__res = $__tco_res_go_4_3_3;
@@ -2316,7 +2316,7 @@ $__t2 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_2_2) {
+  while (($__tco_done_go_1_2_2 === false)) {
 $__tco_res_go_1_2_2 = ($__tco_loop_go_1_2_2)($__tco_var_go_1_2_2_v_2, $__tco_var_go_1_2_2_v1_3);
 };
   $__res = $__tco_res_go_1_2_2;
@@ -2391,7 +2391,7 @@ $__t4 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_4_4) {
+  while (($__tco_done_go_4_4_4 === false)) {
 $__tco_res_go_4_4_4 = ($__tco_loop_go_4_4_4)($__tco_var_go_4_4_4_v_5, $__tco_var_go_4_4_4_v1_6);
 };
   $__res = $__tco_res_go_4_4_4;
@@ -2441,7 +2441,7 @@ $__t3 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_3_3) {
+  while (($__tco_done_go_1_3_3 === false)) {
 $__tco_res_go_1_3_3 = ($__tco_loop_go_1_3_3)($__tco_var_go_1_3_3_v_2, $__tco_var_go_1_3_3_v1_3);
 };
   $__res = $__tco_res_go_1_3_3;
@@ -2620,7 +2620,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -2685,7 +2685,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_2_0_0) {
+  while (($__tco_done_go_2_0_0 === false)) {
 $__tco_res_go_2_0_0 = ($__tco_loop_go_2_0_0)($__tco_var_go_2_0_0_v_3, $__tco_var_go_2_0_0_v1_4);
 };
   $__res = $__tco_res_go_2_0_0;
@@ -2825,7 +2825,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_4_1_1) {
+  while (($__tco_done_go_4_1_1 === false)) {
 $__tco_res_go_4_1_1 = ($__tco_loop_go_4_1_1)($__tco_var_go_4_1_1_v_5, $__tco_var_go_4_1_1_v1_6);
 };
   $__res = $__tco_res_go_4_1_1;
@@ -2870,7 +2870,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2, $__tco_var_go_1_0_0_v1_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -2962,7 +2962,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_6_1_1) {
+  while (($__tco_done_go_6_1_1 === false)) {
 $__tco_res_go_6_1_1 = ($__tco_loop_go_6_1_1)($__tco_var_go_6_1_1_v_7, $__tco_var_go_6_1_1_v1_8);
 };
   $__res = $__tco_res_go_6_1_1;
@@ -3007,7 +3007,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_0_0) {
+  while (($__tco_done_go_3_0_0 === false)) {
 $__tco_res_go_3_0_0 = ($__tco_loop_go_3_0_0)($__tco_var_go_3_0_0_v_4, $__tco_var_go_3_0_0_v1_5);
 };
   $__res = $__tco_res_go_3_0_0;
@@ -3110,7 +3110,7 @@ $__t3 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_6_3_3) {
+  while (($__tco_done_go_6_3_3 === false)) {
 $__tco_res_go_6_3_3 = ($__tco_loop_go_6_3_3)($__tco_var_go_6_3_3_v_7, $__tco_var_go_6_3_3_v1_8);
 };
   $__res = $__tco_res_go_6_3_3;
@@ -3155,7 +3155,7 @@ $__t2 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_2_2) {
+  while (($__tco_done_go_3_2_2 === false)) {
 $__tco_res_go_3_2_2 = ($__tco_loop_go_3_2_2)($__tco_var_go_3_2_2_v_4, $__tco_var_go_3_2_2_v1_5);
 };
   $__res = $__tco_res_go_3_2_2;
@@ -3308,7 +3308,7 @@ $__t0 = $v_2;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -3465,7 +3465,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_0_0) {
+  while (($__tco_done_go_3_0_0 === false)) {
 $__tco_res_go_3_0_0 = ($__tco_loop_go_3_0_0)($__tco_var_go_3_0_0_b_4, $__tco_var_go_3_0_0_v_5);
 };
   $__res = $__tco_res_go_3_0_0;
@@ -3574,7 +3574,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_b_2, $__tco_var_go_1_0_0_v_3);
 };
   $__res = $__tco_res_go_1_0_0;
@@ -3675,7 +3675,7 @@ $__t1 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_3_1_1) {
+  while (($__tco_done_go_3_1_1 === false)) {
 $__tco_res_go_3_1_1 = ($__tco_loop_go_3_1_1)($__tco_var_go_3_1_1_v_4, $__tco_var_go_3_1_1_v1_5);
 };
   $__res = $__tco_res_go_3_1_1;
@@ -3725,7 +3725,7 @@ $__t0 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_0_0_0) {
+  while (($__tco_done_go_0_0_0 === false)) {
 $__tco_res_go_0_0_0 = ($__tco_loop_go_0_0_0)($__tco_var_go_0_0_0_v_1, $__tco_var_go_0_0_0_v1_2);
 };
   $__res = $__tco_res_go_0_0_0;

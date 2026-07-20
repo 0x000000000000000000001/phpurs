@@ -619,7 +619,7 @@ $__t1 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_go_2_0_0) {
+  while (($__tco_done_go_2_0_0 === false)) {
 $__tco_res_go_2_0_0 = ($__tco_loop_go_2_0_0)($__tco_var_go_2_0_0_i_3);
 };
   $__res = $__tco_res_go_2_0_0;
@@ -1012,7 +1012,7 @@ $__t4 = null;
   };
   return $__fn;
 })();
-  while (!$__tco_done_go_1_0_0) {
+  while (($__tco_done_go_1_0_0 === false)) {
 $__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_idx_2, $__tco_var_go_1_0_0_allArrays_3);
 };
   $__res = $__tco_res_go_1_0_0;

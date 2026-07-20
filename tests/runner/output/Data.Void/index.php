@@ -113,7 +113,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_1_0_0) {
+  while (($__tco_done_spin_1_0_0 === false)) {
 $__tco_res_spin_1_0_0 = ($__tco_loop_spin_1_0_0)($__tco_var_spin_1_0_0_v_2);
 };
   $__res = $__tco_res_spin_1_0_0;

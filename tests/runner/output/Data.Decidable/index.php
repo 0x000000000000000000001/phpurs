@@ -140,7 +140,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_2_0_0) {
+  while (($__tco_done_spin_2_0_0 === false)) {
 $__tco_res_spin_2_0_0 = ($__tco_loop_spin_2_0_0)($__tco_var_spin_2_0_0_v_3);
 };
   $__res = $__tco_res_spin_2_0_0;
@@ -197,7 +197,7 @@ $__tco_res_spin_2_0_0 = ($__tco_loop_spin_2_0_0)($__tco_var_spin_2_0_0_v_3);
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_5_2_2) {
+  while (($__tco_done_spin_5_2_2 === false)) {
 $__tco_res_spin_5_2_2 = ($__tco_loop_spin_5_2_2)($__tco_var_spin_5_2_2_v_6);
 };
   $__res = $__tco_res_spin_5_2_2;
@@ -254,7 +254,7 @@ $__tco_res_spin_5_2_2 = ($__tco_loop_spin_5_2_2)($__tco_var_spin_5_2_2_v_6);
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_2_0_0) {
+  while (($__tco_done_spin_2_0_0 === false)) {
 $__tco_res_spin_2_0_0 = ($__tco_loop_spin_2_0_0)($__tco_var_spin_2_0_0_v_3);
 };
   $__res = $__tco_res_spin_2_0_0;
@@ -307,7 +307,7 @@ $__tco_res_spin_2_0_0 = ($__tco_loop_spin_2_0_0)($__tco_var_spin_2_0_0_v_3);
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
-  while (!$__tco_done_spin_3_0_0) {
+  while (($__tco_done_spin_3_0_0 === false)) {
 $__tco_res_spin_3_0_0 = ($__tco_loop_spin_3_0_0)($__tco_var_spin_3_0_0_v_4);
 };
   $__res = $__tco_res_spin_3_0_0;

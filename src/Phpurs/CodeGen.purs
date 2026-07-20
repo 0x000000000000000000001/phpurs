@@ -12,7 +12,6 @@ module Phpurs.CodeGen where
 import Prelude
 
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendOperatorNum(..))
-
 import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr)
 import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..))
@@ -346,7 +345,10 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
       
       isLoop = (unwrap (tcoAnalysisOf tcoExpr)).role.isLoop
       mutRecBinds = if isLoop then
-        traverse (\(Tuple ident val) -> map (\abs -> { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs }) (extractUncurriedAbs val)) (toArray binds)
+        traverse (\(Tuple ident val) -> case extractUncurriedAbs val of
+            Just abs -> Just { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs }
+            Nothing -> Nothing
+        ) (toArray binds)
       else Nothing
     in case mutRecBinds of
       Just fns ->
@@ -558,27 +560,68 @@ translate imports mod =
 
     decls = Array.concatMap
       ( \group ->
-          if group.recursive then
-            let
-              recVars = map (\(Tuple (Ident name) _) -> modPrefix <> name) group.bindings
-            in
+          let
+            recVars = if group.recursive then map (\(Tuple (Ident name) _) -> modPrefix <> name) group.bindings else []
+          in
+            if group.recursive then
+              let
+                mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs }) (extractUncurriedAbs val)) group.bindings
+              in case mutRecBinds of
+                Just fns ->
+                  let
+                    loopCtxs = map (\fn ->
+                      { ident: fn.ident, params: fn.args, doneVar: "__tco_done_" <> fn.ident, resultVar: "__tco_res_" <> fn.ident, loopFuncVar: "__tco_loop_" <> fn.ident, varPrefix: "__tco_var_" <> fn.ident <> "_" }
+                    ) fns
+                    
+                    fnWrapperStmts = map
+                      ( \fn ->
+                          let
+                            ctx = fromMaybe { ident: "", params: [], doneVar: "", resultVar: "", loopFuncVar: "", varPrefix: "" } (Array.find (\c -> c.ident == fn.ident) loopCtxs)
+                            loopVars = map (\p -> ctx.varPrefix <> p) fn.args
+                            initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
+                            doneAssign = PhpAssign ctx.doneVar (PhpBoolean false)
+                            resAssign = PhpAssign ctx.resultVar (PhpRaw "null")
+                            
+                            resBodyMut = translateExprImpl recVars Map.empty Map.empty Nothing loopCtxs true 0 fn.body
+                            
+                            mappedFvs = map (\v -> v) (Array.fromFoldable fn.fvs)
+                            useVarsLoopRaw = Array.nub (map (\mapped -> if Array.elem mapped recVars then "&" <> mapped else mapped) mappedFvs)
+                            
+                            mutVarsToCapture = foldMap (\c -> Array.cons ("&" <> c.doneVar) (map (\p -> "&" <> c.varPrefix <> p) c.params)) loopCtxs
+                            useVarsInner = mutVarsToCapture <> useVarsLoopRaw
+                            useVarsOuter = useVarsLoopRaw
+                            
+                            innerLoopInit = Array.mapWithIndex (\i p -> PhpAssign p (PhpVar (fromMaybe "" (Array.index loopVars i)))) fn.args
+                            innerFuncBody = Array.cons (PhpAssign ctx.doneVar (PhpRaw "true")) (innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ])
+                            innerFunc = PhpAssign ctx.loopFuncVar (PhpFunction useVarsInner fn.args innerFuncBody)
+                            
+                            whileLoop = PhpWhile (PhpBinOp "===" (PhpVar ctx.doneVar) (PhpBoolean false))
+                              [ PhpAssign ctx.resultVar (PhpCall (PhpVar ctx.loopFuncVar) (map PhpVar loopVars)) ]
+                              
+                          in
+                            { identifier: fn.ident, expression: PhpValueThunk fn.ident (PhpFunction useVarsOuter fn.args (initVarStmts <> [doneAssign, resAssign, innerFunc, whileLoop, PhpReturn (PhpVar ctx.resultVar)])) }
+                      )
+                      fns
+                  in
+                    fnWrapperStmts
+                Nothing ->
+                  Array.concatMap
+                    ( \(Tuple (Ident name) expr) ->
+                        let
+                          res = translateExprImpl recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
+                        in
+                          [ { identifier: modPrefix <> name, expression: PhpValueThunk (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
+                    )
+                    group.bindings
+            else
               Array.concatMap
                 ( \(Tuple (Ident name) expr) ->
                     let
-                      res = translateExprImpl recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
+                      res = translateExprImpl [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
                     in
                       [ { identifier: modPrefix <> name, expression: PhpValueThunk (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
                 )
                 group.bindings
-          else
-            Array.concatMap
-              ( \(Tuple (Ident name) expr) ->
-                  let
-                    res = translateExprImpl [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
-                  in
-                    [ { identifier: modPrefix <> name, expression: PhpValueThunk (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
-              )
-              group.bindings
       )
       tcoBindings
 

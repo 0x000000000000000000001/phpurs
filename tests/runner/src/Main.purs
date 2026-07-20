@@ -1,20 +1,16 @@
 module Main where
 
+-- Note that Data.Profunctor is not in the dependencies of any types imported
+-- here. The package that contains that module must be a dependency of the test
+-- project.
+
 import Prelude
 
-import Data.Functor.Contravariant (class Contravariant)
-import Data.Predicate (Predicate)
-import Data.Tuple (Tuple)
 import Effect.Console (log)
 
-data Test f a
-  = Test0
-  | Test1 (Predicate a)
-  | Test2 (Predicate (Predicate (Predicate a)))
-  | Test3 Int (forall a. Array a -> Array a)
-  | Test4 Int (f a)
-  | Test5 (Array (a -> Int)) (Tuple (Predicate a) Int)
-  | Test6 { nested :: Array { x :: f { a :: a } } }
-derive instance Contravariant f => Contravariant (Test f)
+data Test a
+  = Test1 ((Array a -> Int) -> Int)
+  | Test2 { f :: ({ a :: a } -> Int) -> Int }
+derive instance Functor Test
 
 main = log "Done"

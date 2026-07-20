@@ -12,6 +12,7 @@ RUNNER_DIR="$TEST_DIR/runner"
 BLACKLIST=(
   "DerivingClause.purs"
   "DerivingContravariant.purs"
+  "DerivingFunctorFromBi.purs"
 )
 
 mkdir -p "$RUNNER_DIR/src"

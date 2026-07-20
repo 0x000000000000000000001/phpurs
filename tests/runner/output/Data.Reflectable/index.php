@@ -98,22 +98,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Reflectable_reifiableInt'] = function() { $v = (object)[]; return $v; };
 \PhpursThunks::$thunks['Data_Reflectable_reifiableBoolean'] = function() { $v = (object)[]; return $v; };
 \PhpursThunks::$thunks['Data_Reflectable_reifyType'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $s_1 = null, $f_2 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $s_1 = null, $f_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Reflectable_reifyType"), recVars=[];
-  $__res = (((($GLOBALS['Data_Reflectable_unsafeCoerce'] ?? \PhpursThunks::eval('Data_Reflectable_unsafeCoerce')))(function($dictReflectable_3) use ($f_2) {
+  $__res = (((($GLOBALS['Data_Reflectable_unsafeCoerce'] ?? \PhpursThunks::eval('Data_Reflectable_unsafeCoerce')))(function($dictReflectable_3 = null) use ($f_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_2)($dictReflectable_3);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))((object)["reflectType" => function($v_3) use ($s_1) {
+}))((object)["reflectType" => function($v_3 = null) use ($s_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $s_1;
   goto __end;;
   __end:
@@ -125,9 +122,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Reflectable_reflectType'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Reflectable_reflectType'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Reflectable_reflectType"), recVars=[];
   $__res = ($dict_0)->{'reflectType'};
   goto __end;;
   __end:

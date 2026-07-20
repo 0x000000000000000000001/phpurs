@@ -102,12 +102,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Test_Assert_assert__prime__'] = function() { $v = ($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')); return $v; };
 \PhpursThunks::$thunks['Test_Assert_assertEqual__prime__'] = function() { $v = (function() {
-  $__fn = function($dictEq_0, $dictShow_1 = null, $userMessage_2 = null, $v_3 = null) use (&$__fn) {
+  $__fn = function($dictEq_0 = null, $dictShow_1 = null, $userMessage_2 = null, $v_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertEqual'"), recVars=[];
   $result_4_0 = ((($dictEq_0)->{'eq'})(($v_3)->{'actual'}))(($v_3)->{'expected'});
   if (((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))($userMessage_2))("")) {
 $__t1 = "";
@@ -128,9 +127,8 @@ throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t4 = null;
 };
 };
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))($__t4))(function($dollar__unused_6) use ($message_5_1, $result_4_0) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))($__t4))(function($dollar__unused_6 = null) use ($message_5_1, $result_4_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))($message_5_1))($result_4_0);
   goto __end;;
   __end:
@@ -143,12 +141,11 @@ $__t4 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Test_Assert_assertEqual'] = function() { $v = (function() {
-  $__fn = function($dictEq_0, $dictShow_1 = null) use (&$__fn) {
+  $__fn = function($dictEq_0 = null, $dictShow_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertEqual"), recVars=[];
   $__res = (((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))($dictEq_0))($dictShow_1))("");
   goto __end;;
   __end:
@@ -156,29 +153,26 @@ $__t4 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Test_Assert_assertFalse'] = function() { $v = function($actual_0) {
+\PhpursThunks::$thunks['Test_Assert_assertFalse'] = function() { $v = function($actual_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertFalse"), recVars=[];
   $__res = ((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqBoolean'] ?? \PhpursThunks::eval('Data_Eq_eqBoolean'))))(($GLOBALS['Data_Show_showBoolean'] ?? \PhpursThunks::eval('Data_Show_showBoolean'))))(""))((object)["actual" => $actual_0, "expected" => false]);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Test_Assert_assertTrue'] = function() { $v = function($actual_0) {
+\PhpursThunks::$thunks['Test_Assert_assertTrue'] = function() { $v = function($actual_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertTrue"), recVars=[];
   $__res = ((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqBoolean'] ?? \PhpursThunks::eval('Data_Eq_eqBoolean'))))(($GLOBALS['Data_Show_showBoolean'] ?? \PhpursThunks::eval('Data_Show_showBoolean'))))(""))((object)["actual" => $actual_0, "expected" => true]);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Test_Assert_assertFalse__prime__'] = function() { $v = (function() {
-  $__fn = function($message_0, $actual_1 = null) use (&$__fn) {
+  $__fn = function($message_0 = null, $actual_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertFalse'"), recVars=[];
   $__res = ((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqBoolean'] ?? \PhpursThunks::eval('Data_Eq_eqBoolean'))))(($GLOBALS['Data_Show_showBoolean'] ?? \PhpursThunks::eval('Data_Show_showBoolean'))))($message_0))((object)["actual" => $actual_1, "expected" => false]);
   goto __end;;
   __end:
@@ -187,12 +181,11 @@ $__t4 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Test_Assert_assertTrue__prime__'] = function() { $v = (function() {
-  $__fn = function($message_0, $actual_1 = null) use (&$__fn) {
+  $__fn = function($message_0 = null, $actual_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertTrue'"), recVars=[];
   $__res = ((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqBoolean'] ?? \PhpursThunks::eval('Data_Eq_eqBoolean'))))(($GLOBALS['Data_Show_showBoolean'] ?? \PhpursThunks::eval('Data_Show_showBoolean'))))($message_0))((object)["actual" => $actual_1, "expected" => true]);
   goto __end;;
   __end:
@@ -201,12 +194,11 @@ $__t4 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Test_Assert_assertThrows__prime__'] = function() { $v = (function() {
-  $__fn = function($msg_0, $fn_1 = null) use (&$__fn) {
+  $__fn = function($msg_0 = null, $fn_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_Assert_assertThrows'"), recVars=[];
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Test_Assert_checkThrows'] ?? \PhpursThunks::eval('Test_Assert_checkThrows')))($fn_1)))((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))($msg_0));
   goto __end;;
   __end:

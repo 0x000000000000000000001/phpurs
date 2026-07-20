@@ -91,20 +91,33 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Void_absurd'] = function() { $v = function($a_0) {
+\PhpursThunks::$thunks['Data_Void_absurd'] = function() { $v = function($a_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Void_absurd"), recVars=[];
   $spin_1_0 = null;
-  $spin_1_0 = function($v_2) use (&$spin_1_0) {
+  $spin_1_0 = function($v_2 = null) use (&$spin_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "spin_1_0"), recVars=["spin_1_0"];
-  while (true) {
-$__tco_1 = $v_2;
-$v_2 = $__tco_1;
-continue ;
-$__res = null;
-goto __end;;
+  $__tco_var_spin_1_0_0_v_2 = $v_2;
+  $__tco_done_spin_1_0_0 = false;
+  $__tco_res_spin_1_0_0 = null;
+  $__tco_loop_spin_1_0_0 = function($v_2 = null) use (&$__tco_done_spin_1_0_0, &$__tco_var_spin_1_0_0_v_2, &$spin_1_0) {
+  $__num = \func_num_args();
+  $__tco_done_spin_1_0_0 = true;
+  $v_2 = $__tco_var_spin_1_0_0_v_2;
+  $__tco_0 = $v_2;
+  $__tco_var_spin_1_0_0_v_2 = $__tco_0;
+  $__tco_done_spin_1_0_0 = false;
+  $__res = null;
+  goto __end;;
+  $__res = null;
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
+  while (!$__tco_done_spin_1_0_0) {
+$__tco_res_spin_1_0_0 = ($__tco_loop_spin_1_0_0)($__tco_var_spin_1_0_0_v_2);
+};
+  $__res = $__tco_res_spin_1_0_0;
+  goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };

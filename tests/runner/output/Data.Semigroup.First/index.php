@@ -102,20 +102,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Semigroup_First_First'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_First'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_First_First"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_showFirst'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_showFirst'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_First_showFirst"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(First "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
@@ -126,12 +123,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_First_semigroupFirst'] = function() { $v = (object)["append" => (function() {
-  $__fn = function($x_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($x_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -139,21 +135,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_ordFirst'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_ordFirst'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_First_ordFirst"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_First_functorFirst'] = function() { $v = (object)["map" => (function() {
-  $__fn = function($f_0, $m_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $m_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($m_1);
   goto __end;;
   __end:
@@ -161,105 +155,93 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_eqFirst'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_eqFirst'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_First_eqFirst"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_eq1First'] = function() { $v = (object)["eq1" => function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_eq1First'] = function() { $v = (object)["eq1" => function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($dictEq_0)->{'eq'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_ord1First'] = function() { $v = (object)["compare1" => function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_ord1First'] = function() { $v = (object)["compare1" => function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($dictOrd_0)->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Eq10" => function($dollar__unused_0) {
+}, "Eq10" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_First_eq1First'] ?? \PhpursThunks::eval('Data_Semigroup_First_eq1First'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_boundedFirst'] = function() { $v = function($dictBounded_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_boundedFirst'] = function() { $v = function($dictBounded_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_First_boundedFirst"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_First_applyFirst'] = function() { $v = (object)["apply" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v_0)($v1_1);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_First_functorFirst'] ?? \PhpursThunks::eval('Data_Semigroup_First_functorFirst'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_First_bindFirst'] = function() { $v = (object)["bind" => (function() {
-  $__fn = function($v_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_0);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Apply0" => function($dollar__unused_0) {
+})(), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_First_applyFirst'] ?? \PhpursThunks::eval('Data_Semigroup_First_applyFirst'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_applicativeFirst'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Semigroup_First_First'] ?? \PhpursThunks::eval('Data_Semigroup_First_First')), "Apply0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_applicativeFirst'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Semigroup_First_First'] ?? \PhpursThunks::eval('Data_Semigroup_First_First')), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_First_applyFirst'] ?? \PhpursThunks::eval('Data_Semigroup_First_applyFirst'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_First_monadFirst'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Semigroup_First_monadFirst'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_First_applicativeFirst'] ?? \PhpursThunks::eval('Data_Semigroup_First_applicativeFirst'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bind1" => function($dollar__unused_0) {
+}, "Bind1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_First_bindFirst'] ?? \PhpursThunks::eval('Data_Semigroup_First_bindFirst'));
   goto __end;;
   __end:

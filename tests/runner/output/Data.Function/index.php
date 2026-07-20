@@ -96,12 +96,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Function_on'] = function() { $v = (function() {
-  $__fn = function($f_0, $g_1 = null, $x_2 = null, $y_3 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $g_1 = null, $x_2 = null, $y_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_on"), recVars=[];
   $__res = (($f_0)(($g_1)($x_2)))(($g_1)($y_3));
   goto __end;;
   __end:
@@ -110,12 +109,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Function_flip'] = function() { $v = (function() {
-  $__fn = function($f_0, $b_1 = null, $a_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $b_1 = null, $a_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_flip"), recVars=[];
   $__res = (($f_0)($a_2))($b_1);
   goto __end;;
   __end:
@@ -124,12 +122,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Function_const'] = function() { $v = (function() {
-  $__fn = function($a_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($a_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_const"), recVars=[];
   $__res = $a_0;
   goto __end;;
   __end:
@@ -137,31 +134,52 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Function_applyN'] = function() { $v = function($f_0) {
+\PhpursThunks::$thunks['Data_Function_applyN'] = function() { $v = function($f_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_applyN"), recVars=[];
   $go_1_0 = null;
   $go_1_0 = (function() use ($f_0, &$go_1_0) {
-  $__fn = function($n_2, $acc_3 = null) use ($f_0, &$go_1_0, &$__fn) {
+  $__fn = function($n_2 = null, $acc_3 = null) use ($f_0, &$go_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "go_1_0"), recVars=["go_1_0"];
-  while (true) {
-if (( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_2))(0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_2))(0))->{'tag'} === "GT")))) {
-$__t3 = $acc_3;
+  $__tco_var_go_1_0_0_n_2 = $n_2;
+  $__tco_var_go_1_0_0_acc_3 = $acc_3;
+  $__tco_done_go_1_0_0 = false;
+  $__tco_res_go_1_0_0 = null;
+  $__tco_loop_go_1_0_0 = (function() use (&$__tco_done_go_1_0_0, &$__tco_var_go_1_0_0_n_2, &$__tco_var_go_1_0_0_acc_3, $f_0, &$go_1_0) {
+  $__fn = function($n_2 = null, $acc_3 = null) use (&$__tco_done_go_1_0_0, &$__tco_var_go_1_0_0_n_2, &$__tco_var_go_1_0_0_acc_3, $f_0, &$go_1_0, &$__fn) {
+  $__num = \func_num_args();
+  if ($__num < 2) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
+  }
+  $__tco_done_go_1_0_0 = true;
+  $n_2 = $__tco_var_go_1_0_0_n_2;
+  $acc_3 = $__tco_var_go_1_0_0_acc_3;
+  if (( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_2))(0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_2))(0))->{'tag'} === "GT")))) {
+$__t2 = $acc_3;
 } else {
-$__tco_1 = ((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($n_2))(1);
-$__tco_2 = ($f_0)($acc_3);
-$n_2 = $__tco_1;
-$acc_3 = $__tco_2;
-continue ;
-$__t3 = null;
-};
-$__res = $__t3;
+$__tco_0 = ((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($n_2))(1);
+$__tco_1 = ($f_0)($acc_3);
+$__tco_var_go_1_0_0_n_2 = $__tco_0;
+$__tco_var_go_1_0_0_acc_3 = $__tco_1;
+$__tco_done_go_1_0_0 = false;
+$__res = null;
 goto __end;;
+$__t2 = null;
 };
+  $__res = $__t2;
+  goto __end;;
+  __end:
+  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
+  };
+  return $__fn;
+})();
+  while (!$__tco_done_go_1_0_0) {
+$__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_n_2, $__tco_var_go_1_0_0_acc_3);
+};
+  $__res = $__tco_res_go_1_0_0;
+  goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
@@ -173,12 +191,11 @@ goto __end;;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Function_applyFlipped'] = function() { $v = (function() {
-  $__fn = function($x_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($x_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_applyFlipped"), recVars=[];
   $__res = ($f_1)($x_0);
   goto __end;;
   __end:
@@ -187,12 +204,11 @@ goto __end;;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Function_apply'] = function() { $v = (function() {
-  $__fn = function($f_0, $x_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $x_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_apply"), recVars=[];
   $__res = ($f_0)($x_1);
   goto __end;;
   __end:

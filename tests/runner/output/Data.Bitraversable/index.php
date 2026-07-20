@@ -106,30 +106,27 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Bitraversable_bitraverse'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraverse'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bitraverse"), recVars=[];
   $__res = ($dict_0)->{'bitraverse'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_lfor'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_lfor"), recVars=[];
   $bitraverse2_2_0 = (($dictBitraversable_0)->{'bitraverse'})($dictApplicative_1);
   $pure_3_1 = ($dictApplicative_1)->{'pure'};
   $__res = (function() use ($bitraverse2_2_0, $pure_3_1) {
-  $__fn = function($t_4, $f_5 = null) use ($bitraverse2_2_0, $pure_3_1, &$__fn) {
+  $__fn = function($t_4 = null, $f_5 = null) use ($bitraverse2_2_0, $pure_3_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($bitraverse2_2_0)($f_5))($pure_3_1))($t_4);
   goto __end;;
   __end:
@@ -144,17 +141,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_ltraverse'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_ltraverse"), recVars=[];
   $bitraverse2_2_0 = (($dictBitraversable_0)->{'bitraverse'})($dictApplicative_1);
   $pure_3_1 = ($dictApplicative_1)->{'pure'};
-  $__res = function($f_4) use ($bitraverse2_2_0, $pure_3_1) {
+  $__res = function($f_4 = null) use ($bitraverse2_2_0, $pure_3_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($bitraverse2_2_0)($f_4))($pure_3_1);
   goto __end;;
   __end:
@@ -167,21 +162,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_rfor'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_rfor"), recVars=[];
   $bitraverse2_2_0 = (($dictBitraversable_0)->{'bitraverse'})($dictApplicative_1);
   $pure_3_1 = ($dictApplicative_1)->{'pure'};
   $__res = (function() use ($bitraverse2_2_0, $pure_3_1) {
-  $__fn = function($t_4, $f_5 = null) use ($bitraverse2_2_0, $pure_3_1, &$__fn) {
+  $__fn = function($t_4 = null, $f_5 = null) use ($bitraverse2_2_0, $pure_3_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($bitraverse2_2_0)($pure_3_1))($f_5))($t_4);
   goto __end;;
   __end:
@@ -196,12 +189,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_rtraverse'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_rtraverse"), recVars=[];
   $__res = ((($dictBitraversable_0)->{'bitraverse'})($dictApplicative_1))(($dictApplicative_1)->{'pure'});
   goto __end;;
   __end:
@@ -209,17 +201,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bitraversableTuple'] = function() { $v = (object)["bitraverse" => function($dictApplicative_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraversableTuple'] = function() { $v = (object)["bitraverse" => function($dictApplicative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $Apply0_1_0 = (($dictApplicative_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $__res = (function() use ($Apply0_1_0) {
-  $__fn = function($f_2, $g_3 = null, $v_4 = null) use ($Apply0_1_0, &$__fn) {
+  $__fn = function($f_2 = null, $g_3 = null, $v_4 = null) use ($Apply0_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($Apply0_1_0)->{'apply'})(((((($Apply0_1_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple'))))(($f_2)(($v_4)->{'value0'}))))(($g_3)(($v_4)->{'value1'}));
   goto __end;;
   __end:
@@ -230,13 +220,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "bisequence" => function($dictApplicative_0) {
+}, "bisequence" => function($dictApplicative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $Apply0_1_1 = (($dictApplicative_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($v_2) use ($Apply0_1_1) {
+  $__res = function($v_2 = null) use ($Apply0_1_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($Apply0_1_1)->{'apply'})(((((($Apply0_1_1)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple'))))(($v_2)->{'value0'})))(($v_2)->{'value1'});
   goto __end;;
   __end:
@@ -245,32 +233,28 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifunctor0" => function($dollar__unused_0) {
+}, "Bifunctor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Bifunctor_bifunctorTuple'] ?? \PhpursThunks::eval('Data_Bifunctor_bifunctorTuple'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_0) {
+}, "Bifoldable1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Bifoldable_bifoldableTuple'] ?? \PhpursThunks::eval('Data_Bifoldable_bifoldableTuple'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bitraversableJoker'] = function() { $v = function($dictTraversable_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraversableJoker'] = function() { $v = function($dictTraversable_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bitraversableJoker"), recVars=[];
   $__local_var_1_0 = (($dictTraversable_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifunctorJoker_2_1 = (object)["bimap" => (function() use ($__local_var_1_0) {
-  $__fn = function($v_2, $g_3 = null, $v1_4 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($v_2 = null, $g_3 = null, $v1_4 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($__local_var_1_0)->{'map'})($g_3))($v1_4);
   goto __end;;
   __end:
@@ -280,12 +264,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()];
   $__local_var_3_2 = (($dictTraversable_0)->{'Foldable1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifoldableJoker_4_3 = (object)["bifoldr" => (function() use ($__local_var_3_2) {
-  $__fn = function($v_4, $r_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
+  $__fn = function($v_4 = null, $r_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($__local_var_3_2)->{'foldr'})($r_5))($u_6))($v1_7);
   goto __end;;
   __end:
@@ -293,29 +276,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "bifoldl" => (function() use ($__local_var_3_2) {
-  $__fn = function($v_4, $r_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
+  $__fn = function($v_4 = null, $r_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($__local_var_3_2)->{'foldl'})($r_5))($u_6))($v1_7);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
   };
   return $__fn;
-})(), "bifoldMap" => function($dictMonoid_4) use ($__local_var_3_2) {
+})(), "bifoldMap" => function($dictMonoid_4 = null) use ($__local_var_3_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $foldMap1_5_3 = (($__local_var_3_2)->{'foldMap'})($dictMonoid_4);
   $__res = (function() use ($foldMap1_5_3) {
-  $__fn = function($v_6, $r_7 = null, $v1_8 = null) use ($foldMap1_5_3, &$__fn) {
+  $__fn = function($v_6 = null, $r_7 = null, $v1_8 = null) use ($foldMap1_5_3, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($foldMap1_5_3)($r_7))($v1_8);
   goto __end;;
   __end:
@@ -327,17 +307,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }];
-  $__res = (object)["bitraverse" => function($dictApplicative_5) use ($dictTraversable_0) {
+  $__res = (object)["bitraverse" => function($dictApplicative_5 = null) use ($dictTraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $traverse1_6_5 = (($dictTraversable_0)->{'traverse'})($dictApplicative_5);
   $__res = (function() use ($dictApplicative_5, $traverse1_6_5) {
-  $__fn = function($v_7, $r_8 = null, $v1_9 = null) use ($dictApplicative_5, $traverse1_6_5, &$__fn) {
+  $__fn = function($v_7 = null, $r_8 = null, $v1_9 = null) use ($dictApplicative_5, $traverse1_6_5, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_5)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Joker_Joker'] ?? \PhpursThunks::eval('Data_Functor_Joker_Joker'))))((($traverse1_6_5)($r_8))($v1_9));
   goto __end;;
   __end:
@@ -348,13 +326,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "bisequence" => function($dictApplicative_5) use ($dictTraversable_0) {
+}, "bisequence" => function($dictApplicative_5 = null) use ($dictTraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $sequence1_6_6 = (($dictTraversable_0)->{'sequence'})($dictApplicative_5);
-  $__res = function($v_7) use ($dictApplicative_5, $sequence1_6_6) {
+  $__res = function($v_7 = null) use ($dictApplicative_5, $sequence1_6_6) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_5)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Joker_Joker'] ?? \PhpursThunks::eval('Data_Functor_Joker_Joker'))))(($sequence1_6_6)($v_7));
   goto __end;;
   __end:
@@ -363,16 +339,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifunctor0" => function($dollar__unused_5) use ($bifunctorJoker_2_1) {
+}, "Bifunctor0" => function($dollar__unused_5 = null) use ($bifunctorJoker_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifunctorJoker_2_1;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_5) use ($bifoldableJoker_4_3) {
+}, "Bifoldable1" => function($dollar__unused_5 = null) use ($bifoldableJoker_4_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifoldableJoker_4_3;
   goto __end;;
   __end:
@@ -382,17 +356,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bitraversableEither'] = function() { $v = (object)["bitraverse" => function($dictApplicative_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraversableEither'] = function() { $v = (object)["bitraverse" => function($dictApplicative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_1_0 = (((($dictApplicative_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $__res = (function() use ($__local_var_1_0) {
-  $__fn = function($v_2, $v1_3 = null, $v2_4 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null, $v2_4 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_4) && (($v2_4)->{'tag'} === "Left"))) {
 $__t1 = ((($__local_var_1_0)->{'map'})(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))))(($v_2)(($v2_4)->{'value0'}));
 } else {
@@ -413,13 +385,11 @@ $__t1 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "bisequence" => function($dictApplicative_0) {
+}, "bisequence" => function($dictApplicative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_1_2 = (((($dictApplicative_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($v_2) use ($__local_var_1_2) {
+  $__res = function($v_2 = null) use ($__local_var_1_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_2) && (($v_2)->{'tag'} === "Left"))) {
 $__t3 = ((($__local_var_1_2)->{'map'})(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))))(($v_2)->{'value0'});
 } else {
@@ -438,28 +408,25 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifunctor0" => function($dollar__unused_0) {
+}, "Bifunctor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Bifunctor_bifunctorEither'] ?? \PhpursThunks::eval('Data_Bifunctor_bifunctorEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_0) {
+}, "Bifoldable1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Bifoldable_bifoldableEither'] ?? \PhpursThunks::eval('Data_Bifoldable_bifoldableEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_bitraversableConst'] = function() { $v = (object)["bitraverse" => (function() {
-  $__fn = function($dictApplicative_0, $f_1 = null, $v_2 = null, $v1_3 = null) use (&$__fn) {
+  $__fn = function($dictApplicative_0 = null, $f_1 = null, $v_2 = null, $v1_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Const_Const'] ?? \PhpursThunks::eval('Data_Const_Const'))))(($f_1)($v1_3));
   goto __end;;
   __end:
@@ -467,44 +434,39 @@ $__t3 = null;
   };
   return $__fn;
 })(), "bisequence" => (function() {
-  $__fn = function($dictApplicative_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dictApplicative_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Const_Const'] ?? \PhpursThunks::eval('Data_Const_Const'))))($v_1);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Bifunctor0" => function($dollar__unused_0) {
+})(), "Bifunctor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Bifunctor_bifunctorConst'] ?? \PhpursThunks::eval('Data_Bifunctor_bifunctorConst'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_0) {
+}, "Bifoldable1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Bifoldable_bifoldableConst'] ?? \PhpursThunks::eval('Data_Bifoldable_bifoldableConst'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bitraversableClown'] = function() { $v = function($dictTraversable_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraversableClown'] = function() { $v = function($dictTraversable_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bitraversableClown"), recVars=[];
   $__local_var_1_0 = (($dictTraversable_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifunctorClown_2_1 = (object)["bimap" => (function() use ($__local_var_1_0) {
-  $__fn = function($f_2, $v_3 = null, $v1_4 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($f_2 = null, $v_3 = null, $v1_4 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($__local_var_1_0)->{'map'})($f_2))($v1_4);
   goto __end;;
   __end:
@@ -514,12 +476,11 @@ $__t3 = null;
 })()];
   $__local_var_3_2 = (($dictTraversable_0)->{'Foldable1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifoldableClown_4_3 = (object)["bifoldr" => (function() use ($__local_var_3_2) {
-  $__fn = function($l_4, $v_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
+  $__fn = function($l_4 = null, $v_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($__local_var_3_2)->{'foldr'})($l_4))($u_6))($v1_7);
   goto __end;;
   __end:
@@ -527,29 +488,26 @@ $__t3 = null;
   };
   return $__fn;
 })(), "bifoldl" => (function() use ($__local_var_3_2) {
-  $__fn = function($l_4, $v_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
+  $__fn = function($l_4 = null, $v_5 = null, $u_6 = null, $v1_7 = null) use ($__local_var_3_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($__local_var_3_2)->{'foldl'})($l_4))($u_6))($v1_7);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
   };
   return $__fn;
-})(), "bifoldMap" => function($dictMonoid_4) use ($__local_var_3_2) {
+})(), "bifoldMap" => function($dictMonoid_4 = null) use ($__local_var_3_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $foldMap1_5_3 = (($__local_var_3_2)->{'foldMap'})($dictMonoid_4);
   $__res = (function() use ($foldMap1_5_3) {
-  $__fn = function($l_6, $v_7 = null, $v1_8 = null) use ($foldMap1_5_3, &$__fn) {
+  $__fn = function($l_6 = null, $v_7 = null, $v1_8 = null) use ($foldMap1_5_3, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($foldMap1_5_3)($l_6))($v1_8);
   goto __end;;
   __end:
@@ -561,17 +519,15 @@ $__t3 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }];
-  $__res = (object)["bitraverse" => function($dictApplicative_5) use ($dictTraversable_0) {
+  $__res = (object)["bitraverse" => function($dictApplicative_5 = null) use ($dictTraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $traverse1_6_5 = (($dictTraversable_0)->{'traverse'})($dictApplicative_5);
   $__res = (function() use ($dictApplicative_5, $traverse1_6_5) {
-  $__fn = function($l_7, $v_8 = null, $v1_9 = null) use ($dictApplicative_5, $traverse1_6_5, &$__fn) {
+  $__fn = function($l_7 = null, $v_8 = null, $v1_9 = null) use ($dictApplicative_5, $traverse1_6_5, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_5)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Clown_Clown'] ?? \PhpursThunks::eval('Data_Functor_Clown_Clown'))))((($traverse1_6_5)($l_7))($v1_9));
   goto __end;;
   __end:
@@ -582,13 +538,11 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "bisequence" => function($dictApplicative_5) use ($dictTraversable_0) {
+}, "bisequence" => function($dictApplicative_5 = null) use ($dictTraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $sequence1_6_6 = (($dictTraversable_0)->{'sequence'})($dictApplicative_5);
-  $__res = function($v_7) use ($dictApplicative_5, $sequence1_6_6) {
+  $__res = function($v_7 = null) use ($dictApplicative_5, $sequence1_6_6) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_5)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Clown_Clown'] ?? \PhpursThunks::eval('Data_Functor_Clown_Clown'))))(($sequence1_6_6)($v_7));
   goto __end;;
   __end:
@@ -597,16 +551,14 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifunctor0" => function($dollar__unused_5) use ($bifunctorClown_2_1) {
+}, "Bifunctor0" => function($dollar__unused_5 = null) use ($bifunctorClown_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifunctorClown_2_1;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_5) use ($bifoldableClown_4_3) {
+}, "Bifoldable1" => function($dollar__unused_5 = null) use ($bifoldableClown_4_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifoldableClown_4_3;
   goto __end;;
   __end:
@@ -617,12 +569,11 @@ $__t3 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_bisequenceDefault'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bisequenceDefault"), recVars=[];
   $__res = (((($dictBitraversable_0)->{'bitraverse'})($dictApplicative_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
@@ -630,25 +581,22 @@ $__t3 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bisequence'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bisequence'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bisequence"), recVars=[];
   $__res = ($dict_0)->{'bisequence'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bitraversableFlip'] = function() { $v = function($dictBitraversable_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraversableFlip'] = function() { $v = function($dictBitraversable_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bitraversableFlip"), recVars=[];
   $__local_var_1_0 = (($dictBitraversable_0)->{'Bifunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifunctorFlip_2_1 = (object)["bimap" => (function() use ($__local_var_1_0) {
-  $__fn = function($f_2, $g_3 = null, $v_4 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($f_2 = null, $g_3 = null, $v_4 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($__local_var_1_0)->{'bimap'})($g_3))($f_2))($v_4);
   goto __end;;
   __end:
@@ -658,12 +606,11 @@ $__t3 = null;
 })()];
   $__local_var_3_2 = (($dictBitraversable_0)->{'Bifoldable1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifoldableFlip_4_3 = (object)["bifoldr" => (function() use ($__local_var_3_2) {
-  $__fn = function($r_4, $l_5 = null, $u_6 = null, $v_7 = null) use ($__local_var_3_2, &$__fn) {
+  $__fn = function($r_4 = null, $l_5 = null, $u_6 = null, $v_7 = null) use ($__local_var_3_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((($__local_var_3_2)->{'bifoldr'})($l_5))($r_4))($u_6))($v_7);
   goto __end;;
   __end:
@@ -671,29 +618,26 @@ $__t3 = null;
   };
   return $__fn;
 })(), "bifoldl" => (function() use ($__local_var_3_2) {
-  $__fn = function($r_4, $l_5 = null, $u_6 = null, $v_7 = null) use ($__local_var_3_2, &$__fn) {
+  $__fn = function($r_4 = null, $l_5 = null, $u_6 = null, $v_7 = null) use ($__local_var_3_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((($__local_var_3_2)->{'bifoldl'})($l_5))($r_4))($u_6))($v_7);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
   };
   return $__fn;
-})(), "bifoldMap" => function($dictMonoid_4) use ($__local_var_3_2) {
+})(), "bifoldMap" => function($dictMonoid_4 = null) use ($__local_var_3_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $bifoldMap2_5_3 = (($__local_var_3_2)->{'bifoldMap'})($dictMonoid_4);
   $__res = (function() use ($bifoldMap2_5_3) {
-  $__fn = function($r_6, $l_7 = null, $v_8 = null) use ($bifoldMap2_5_3, &$__fn) {
+  $__fn = function($r_6 = null, $l_7 = null, $v_8 = null) use ($bifoldMap2_5_3, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($bifoldMap2_5_3)($l_7))($r_6))($v_8);
   goto __end;;
   __end:
@@ -705,17 +649,15 @@ $__t3 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }];
-  $__res = (object)["bitraverse" => function($dictApplicative_5) use ($dictBitraversable_0) {
+  $__res = (object)["bitraverse" => function($dictApplicative_5 = null) use ($dictBitraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $bitraverse2_6_5 = (($dictBitraversable_0)->{'bitraverse'})($dictApplicative_5);
   $__res = (function() use ($bitraverse2_6_5, $dictApplicative_5) {
-  $__fn = function($r_7, $l_8 = null, $v_9 = null) use ($bitraverse2_6_5, $dictApplicative_5, &$__fn) {
+  $__fn = function($r_7 = null, $l_8 = null, $v_9 = null) use ($bitraverse2_6_5, $dictApplicative_5, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_5)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Flip_Flip'] ?? \PhpursThunks::eval('Data_Functor_Flip_Flip'))))(((($bitraverse2_6_5)($l_8))($r_7))($v_9));
   goto __end;;
   __end:
@@ -726,13 +668,11 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "bisequence" => function($dictApplicative_5) use ($dictBitraversable_0) {
+}, "bisequence" => function($dictApplicative_5 = null) use ($dictBitraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $bisequence2_6_6 = (($dictBitraversable_0)->{'bisequence'})($dictApplicative_5);
-  $__res = function($v_7) use ($bisequence2_6_6, $dictApplicative_5) {
+  $__res = function($v_7 = null) use ($bisequence2_6_6, $dictApplicative_5) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((((((($dictApplicative_5)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Flip_Flip'] ?? \PhpursThunks::eval('Data_Functor_Flip_Flip'))))(($bisequence2_6_6)($v_7));
   goto __end;;
   __end:
@@ -741,16 +681,14 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifunctor0" => function($dollar__unused_5) use ($bifunctorFlip_2_1) {
+}, "Bifunctor0" => function($dollar__unused_5 = null) use ($bifunctorFlip_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifunctorFlip_2_1;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_5) use ($bifoldableFlip_4_3) {
+}, "Bifoldable1" => function($dollar__unused_5 = null) use ($bifoldableFlip_4_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifoldableFlip_4_3;
   goto __end;;
   __end:
@@ -760,22 +698,19 @@ $__t3 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Bitraversable_bitraversableProduct2'] = function() { $v = function($dictBitraversable_0) {
+\PhpursThunks::$thunks['Data_Bitraversable_bitraversableProduct2'] = function() { $v = function($dictBitraversable_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bitraversableProduct2"), recVars=[];
   $__local_var_1_0 = (($dictBitraversable_0)->{'Bifunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifoldableProduct2_2_1 = (($GLOBALS['Data_Bifoldable_bifoldableProduct2'] ?? \PhpursThunks::eval('Data_Bifoldable_bifoldableProduct2')))((($dictBitraversable_0)->{'Bifoldable1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = function($dictBitraversable1_3) use ($__local_var_1_0, $bifoldableProduct2_2_1, $dictBitraversable_0) {
+  $__res = function($dictBitraversable1_3 = null) use ($__local_var_1_0, $bifoldableProduct2_2_1, $dictBitraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_4_2 = (($dictBitraversable1_3)->{'Bifunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifunctorProduct21_5_3 = (object)["bimap" => (function() use ($__local_var_1_0, $__local_var_4_2) {
-  $__fn = function($f_5, $g_6 = null, $v_7 = null) use ($__local_var_1_0, $__local_var_4_2, &$__fn) {
+  $__fn = function($f_5 = null, $g_6 = null, $v_7 = null) use ($__local_var_1_0, $__local_var_4_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", (((($__local_var_1_0)->{'bimap'})($f_5))($g_6))(($v_7)->{'value0'}), (((($__local_var_4_2)->{'bimap'})($f_5))($g_6))(($v_7)->{'value1'}));
   goto __end;;
   __end:
@@ -784,19 +719,17 @@ $__t3 = null;
   return $__fn;
 })()];
   $bifoldableProduct21_6_4 = ($bifoldableProduct2_2_1)((($dictBitraversable1_3)->{'Bifoldable1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = (object)["bitraverse" => function($dictApplicative_7) use ($dictBitraversable1_3, $dictBitraversable_0) {
+  $__res = (object)["bitraverse" => function($dictApplicative_7 = null) use ($dictBitraversable1_3, $dictBitraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $Apply0_8_5 = (($dictApplicative_7)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bitraverse3_9_6 = (($dictBitraversable_0)->{'bitraverse'})($dictApplicative_7);
   $bitraverse4_10_7 = (($dictBitraversable1_3)->{'bitraverse'})($dictApplicative_7);
   $__res = (function() use ($Apply0_8_5, $bitraverse3_9_6, $bitraverse4_10_7) {
-  $__fn = function($l_11, $r_12 = null, $v_13 = null) use ($Apply0_8_5, $bitraverse3_9_6, $bitraverse4_10_7, &$__fn) {
+  $__fn = function($l_11 = null, $r_12 = null, $v_13 = null) use ($Apply0_8_5, $bitraverse3_9_6, $bitraverse4_10_7, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($Apply0_8_5)->{'apply'})(((((($Apply0_8_5)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Product2_Product2'] ?? \PhpursThunks::eval('Data_Functor_Product2_Product2'))))(((($bitraverse3_9_6)($l_11))($r_12))(($v_13)->{'value0'}))))(((($bitraverse4_10_7)($l_11))($r_12))(($v_13)->{'value1'}));
   goto __end;;
   __end:
@@ -807,15 +740,13 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "bisequence" => function($dictApplicative_7) use ($dictBitraversable1_3, $dictBitraversable_0) {
+}, "bisequence" => function($dictApplicative_7 = null) use ($dictBitraversable1_3, $dictBitraversable_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $Apply0_8_8 = (($dictApplicative_7)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bisequence3_9_9 = (($dictBitraversable_0)->{'bisequence'})($dictApplicative_7);
   $bisequence4_10_10 = (($dictBitraversable1_3)->{'bisequence'})($dictApplicative_7);
-  $__res = function($v_11) use ($Apply0_8_8, $bisequence3_9_9, $bisequence4_10_10) {
+  $__res = function($v_11 = null) use ($Apply0_8_8, $bisequence3_9_9, $bisequence4_10_10) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($Apply0_8_8)->{'apply'})(((((($Apply0_8_8)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Functor_Product2_Product2'] ?? \PhpursThunks::eval('Data_Functor_Product2_Product2'))))(($bisequence3_9_9)(($v_11)->{'value0'}))))(($bisequence4_10_10)(($v_11)->{'value1'}));
   goto __end;;
   __end:
@@ -824,16 +755,14 @@ $__t3 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifunctor0" => function($dollar__unused_7) use ($bifunctorProduct21_5_3) {
+}, "Bifunctor0" => function($dollar__unused_7 = null) use ($bifunctorProduct21_5_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifunctorProduct21_5_3;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bifoldable1" => function($dollar__unused_7) use ($bifoldableProduct21_6_4) {
+}, "Bifoldable1" => function($dollar__unused_7 = null) use ($bifoldableProduct21_6_4) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifoldableProduct21_6_4;
   goto __end;;
   __end:
@@ -848,20 +777,18 @@ $__t3 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_bitraverseDefault'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bitraverseDefault"), recVars=[];
   $bisequence2_2_0 = (($dictBitraversable_0)->{'bisequence'})($dictApplicative_1);
   $__res = (function() use ($bisequence2_2_0, $dictBitraversable_0) {
-  $__fn = function($f_3, $g_4 = null, $t_5 = null) use ($bisequence2_2_0, $dictBitraversable_0, &$__fn) {
+  $__fn = function($f_3 = null, $g_4 = null, $t_5 = null) use ($bisequence2_2_0, $dictBitraversable_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($bisequence2_2_0)((((((($dictBitraversable_0)->{'Bifunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'bimap'})($f_3))($g_4))($t_5));
   goto __end;;
   __end:
@@ -876,20 +803,18 @@ $__t3 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Bitraversable_bifor'] = function() { $v = (function() {
-  $__fn = function($dictBitraversable_0, $dictApplicative_1 = null) use (&$__fn) {
+  $__fn = function($dictBitraversable_0 = null, $dictApplicative_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bitraversable_bifor"), recVars=[];
   $bitraverse2_2_0 = (($dictBitraversable_0)->{'bitraverse'})($dictApplicative_1);
   $__res = (function() use ($bitraverse2_2_0) {
-  $__fn = function($t_3, $f_4 = null, $g_5 = null) use ($bitraverse2_2_0, &$__fn) {
+  $__fn = function($t_3 = null, $f_4 = null, $g_5 = null) use ($bitraverse2_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($bitraverse2_2_0)($f_4))($g_5))($t_3);
   goto __end;;
   __end:

@@ -98,29 +98,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Number_Approximate_Tolerance'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Number_Approximate_Tolerance'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Approximate_Tolerance"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Number_Approximate_Fraction'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Number_Approximate_Fraction'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Approximate_Fraction"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Number_Approximate_eqRelative'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Approximate_eqRelative"), recVars=[];
   if (($v1_1 === 0.0)) {
 $__t0 = ( ! (is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})((($GLOBALS['Data_Number_abs'] ?? \PhpursThunks::eval('Data_Number_abs')))($v2_2)))($v_0)) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})((($GLOBALS['Data_Number_abs'] ?? \PhpursThunks::eval('Data_Number_abs')))($v2_2)))($v_0))->{'tag'} === "GT")));
 } else {
@@ -142,12 +139,11 @@ break;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Number_Approximate_eqApproximate'] = function() { $v = (($GLOBALS['Data_Number_Approximate_eqRelative'] ?? \PhpursThunks::eval('Data_Number_Approximate_eqRelative')))(0.000001); return $v; };
 \PhpursThunks::$thunks['Data_Number_Approximate_neqApproximate'] = function() { $v = (function() {
-  $__fn = function($x_0, $y_1 = null) use (&$__fn) {
+  $__fn = function($x_0 = null, $y_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Approximate_neqApproximate"), recVars=[];
   $__res = (($GLOBALS['Data_HeytingAlgebra_boolNot'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolNot')))((((($GLOBALS['Data_Number_Approximate_eqRelative'] ?? \PhpursThunks::eval('Data_Number_Approximate_eqRelative')))(0.000001))($x_0))($y_1));
   goto __end;;
   __end:
@@ -156,12 +152,11 @@ break;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Number_Approximate_eqAbsolute'] = function() { $v = (function() {
-  $__fn = function($v_0, $x_1 = null, $y_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $x_1 = null, $y_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Approximate_eqAbsolute"), recVars=[];
   $__res = ( ! (is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})((($GLOBALS['Data_Number_abs'] ?? \PhpursThunks::eval('Data_Number_abs')))(((($GLOBALS['Data_Ring_numSub'] ?? \PhpursThunks::eval('Data_Ring_numSub')))($x_1))($y_2))))($v_0)) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})((($GLOBALS['Data_Number_abs'] ?? \PhpursThunks::eval('Data_Number_abs')))(((($GLOBALS['Data_Ring_numSub'] ?? \PhpursThunks::eval('Data_Ring_numSub')))($x_1))($y_2))))($v_0))->{'tag'} === "GT")));
   goto __end;;
   __end:

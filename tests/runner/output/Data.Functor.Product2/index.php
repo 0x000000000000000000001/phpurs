@@ -104,7 +104,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Functor_Product2_Product2'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
@@ -117,15 +117,13 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Functor_Product2_showProduct2'] = function() { $v = (function() {
-  $__fn = function($dictShow_0, $dictShow1_1 = null) use (&$__fn) {
+  $__fn = function($dictShow_0 = null, $dictShow1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_showProduct2"), recVars=[];
-  $__res = (object)["show" => function($v_2) use ($dictShow1_1, $dictShow_0) {
+  $__res = (object)["show" => function($v_2 = null) use ($dictShow1_1, $dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Product2 "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})(($v_2)->{'value0'})))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow1_1)->{'show'})(($v_2)->{'value1'})))(")"))));
   goto __end;;
   __end:
@@ -138,19 +136,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Functor_Product2_profunctorProduct2'] = function() { $v = (function() {
-  $__fn = function($dictProfunctor_0, $dictProfunctor1_1 = null) use (&$__fn) {
+  $__fn = function($dictProfunctor_0 = null, $dictProfunctor1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_profunctorProduct2"), recVars=[];
   $__res = (object)["dimap" => (function() use ($dictProfunctor1_1, $dictProfunctor_0) {
-  $__fn = function($f_2, $g_3 = null, $v_4 = null) use ($dictProfunctor1_1, $dictProfunctor_0, &$__fn) {
+  $__fn = function($f_2 = null, $g_3 = null, $v_4 = null) use ($dictProfunctor1_1, $dictProfunctor_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", (((($dictProfunctor_0)->{'dimap'})($f_2))($g_3))(($v_4)->{'value0'}), (((($dictProfunctor1_1)->{'dimap'})($f_2))($g_3))(($v_4)->{'value1'}));
   goto __end;;
   __end:
@@ -165,19 +161,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Functor_Product2_functorProduct2'] = function() { $v = (function() {
-  $__fn = function($dictFunctor_0, $dictFunctor1_1 = null) use (&$__fn) {
+  $__fn = function($dictFunctor_0 = null, $dictFunctor1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_functorProduct2"), recVars=[];
   $__res = (object)["map" => (function() use ($dictFunctor1_1, $dictFunctor_0) {
-  $__fn = function($f_2, $v_3 = null) use ($dictFunctor1_1, $dictFunctor_0, &$__fn) {
+  $__fn = function($f_2 = null, $v_3 = null) use ($dictFunctor1_1, $dictFunctor_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", ((($dictFunctor_0)->{'map'})($f_2))(($v_3)->{'value0'}), ((($dictFunctor1_1)->{'map'})($f_2))(($v_3)->{'value1'}));
   goto __end;;
   __end:
@@ -192,19 +186,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Functor_Product2_eqProduct2'] = function() { $v = (function() {
-  $__fn = function($dictEq_0, $dictEq1_1 = null) use (&$__fn) {
+  $__fn = function($dictEq_0 = null, $dictEq1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_eqProduct2"), recVars=[];
   $__res = (object)["eq" => (function() use ($dictEq1_1, $dictEq_0) {
-  $__fn = function($x_2, $y_3 = null) use ($dictEq1_1, $dictEq_0, &$__fn) {
+  $__fn = function($x_2 = null, $y_3 = null) use ($dictEq1_1, $dictEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(((($dictEq_0)->{'eq'})(($x_2)->{'value0'}))(($y_3)->{'value0'})))(((($dictEq1_1)->{'eq'})(($x_2)->{'value1'}))(($y_3)->{'value1'}));
   goto __end;;
   __end:
@@ -218,21 +210,18 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Functor_Product2_ordProduct2'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Functor_Product2_ordProduct2'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_ordProduct2"), recVars=[];
   $eqProduct21_1_0 = (($GLOBALS['Data_Functor_Product2_eqProduct2'] ?? \PhpursThunks::eval('Data_Functor_Product2_eqProduct2')))((($dictOrd_0)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = function($dictOrd1_2) use ($dictOrd_0, $eqProduct21_1_0) {
+  $__res = function($dictOrd1_2 = null) use ($dictOrd_0, $eqProduct21_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $eqProduct22_3_1 = ($eqProduct21_1_0)((($dictOrd1_2)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
   $__res = (object)["compare" => (function() use ($dictOrd1_2, $dictOrd_0) {
-  $__fn = function($x_4, $y_5 = null) use ($dictOrd1_2, $dictOrd_0, &$__fn) {
+  $__fn = function($x_4 = null, $y_5 = null) use ($dictOrd1_2, $dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v_6_2 = ((($dictOrd_0)->{'compare'})(($x_4)->{'value0'}))(($y_5)->{'value0'});
   if ((is_object($v_6_2) && (($v_6_2)->{'tag'} === "LT"))) {
 $__t3 = new Phpurs_Data0("LT");
@@ -249,9 +238,8 @@ $__t3 = ((($dictOrd1_2)->{'compare'})(($x_4)->{'value1'}))(($y_5)->{'value1'});
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Eq0" => function($dollar__unused_4) use ($eqProduct22_3_1) {
+})(), "Eq0" => function($dollar__unused_4 = null) use ($eqProduct22_3_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $eqProduct22_3_1;
   goto __end;;
   __end:
@@ -266,19 +254,17 @@ $__t3 = ((($dictOrd1_2)->{'compare'})(($x_4)->{'value1'}))(($y_5)->{'value1'});
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Functor_Product2_bifunctorProduct2'] = function() { $v = (function() {
-  $__fn = function($dictBifunctor_0, $dictBifunctor1_1 = null) use (&$__fn) {
+  $__fn = function($dictBifunctor_0 = null, $dictBifunctor1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_bifunctorProduct2"), recVars=[];
   $__res = (object)["bimap" => (function() use ($dictBifunctor1_1, $dictBifunctor_0) {
-  $__fn = function($f_2, $g_3 = null, $v_4 = null) use ($dictBifunctor1_1, $dictBifunctor_0, &$__fn) {
+  $__fn = function($f_2 = null, $g_3 = null, $v_4 = null) use ($dictBifunctor1_1, $dictBifunctor_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", (((($dictBifunctor_0)->{'bimap'})($f_2))($g_3))(($v_4)->{'value0'}), (((($dictBifunctor1_1)->{'bimap'})($f_2))($g_3))(($v_4)->{'value1'}));
   goto __end;;
   __end:
@@ -292,21 +278,18 @@ $__t3 = ((($dictOrd1_2)->{'compare'})(($x_4)->{'value1'}))(($y_5)->{'value1'});
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Functor_Product2_biapplyProduct2'] = function() { $v = function($dictBiapply_0) {
+\PhpursThunks::$thunks['Data_Functor_Product2_biapplyProduct2'] = function() { $v = function($dictBiapply_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_biapplyProduct2"), recVars=[];
   $__local_var_1_0 = (($dictBiapply_0)->{'Bifunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($dictBiapply1_2) use ($__local_var_1_0, $dictBiapply_0) {
+  $__res = function($dictBiapply1_2 = null) use ($__local_var_1_0, $dictBiapply_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_3_1 = (($dictBiapply1_2)->{'Bifunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $bifunctorProduct22_4_2 = (object)["bimap" => (function() use ($__local_var_1_0, $__local_var_3_1) {
-  $__fn = function($f_4, $g_5 = null, $v_6 = null) use ($__local_var_1_0, $__local_var_3_1, &$__fn) {
+  $__fn = function($f_4 = null, $g_5 = null, $v_6 = null) use ($__local_var_1_0, $__local_var_3_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", (((($__local_var_1_0)->{'bimap'})($f_4))($g_5))(($v_6)->{'value0'}), (((($__local_var_3_1)->{'bimap'})($f_4))($g_5))(($v_6)->{'value1'}));
   goto __end;;
   __end:
@@ -315,21 +298,19 @@ $__t3 = ((($dictOrd1_2)->{'compare'})(($x_4)->{'value1'}))(($y_5)->{'value1'});
   return $__fn;
 })()];
   $__res = (object)["biapply" => (function() use ($dictBiapply1_2, $dictBiapply_0) {
-  $__fn = function($v_5, $v1_6 = null) use ($dictBiapply1_2, $dictBiapply_0, &$__fn) {
+  $__fn = function($v_5 = null, $v1_6 = null) use ($dictBiapply1_2, $dictBiapply_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", ((($dictBiapply_0)->{'biapply'})(($v_5)->{'value0'}))(($v1_6)->{'value0'}), ((($dictBiapply1_2)->{'biapply'})(($v_5)->{'value1'}))(($v1_6)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Bifunctor0" => function($dollar__unused_5) use ($bifunctorProduct22_4_2) {
+})(), "Bifunctor0" => function($dollar__unused_5 = null) use ($bifunctorProduct22_4_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $bifunctorProduct22_4_2;
   goto __end;;
   __end:
@@ -343,30 +324,26 @@ $__t3 = ((($dictOrd1_2)->{'compare'})(($x_4)->{'value1'}))(($y_5)->{'value1'});
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Functor_Product2_biapplicativeProduct2'] = function() { $v = function($dictBiapplicative_0) {
+\PhpursThunks::$thunks['Data_Functor_Product2_biapplicativeProduct2'] = function() { $v = function($dictBiapplicative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Product2_biapplicativeProduct2"), recVars=[];
   $biapplyProduct21_1_0 = (($GLOBALS['Data_Functor_Product2_biapplyProduct2'] ?? \PhpursThunks::eval('Data_Functor_Product2_biapplyProduct2')))((($dictBiapplicative_0)->{'Biapply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = function($dictBiapplicative1_2) use ($biapplyProduct21_1_0, $dictBiapplicative_0) {
+  $__res = function($dictBiapplicative1_2 = null) use ($biapplyProduct21_1_0, $dictBiapplicative_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $biapplyProduct22_3_1 = ($biapplyProduct21_1_0)((($dictBiapplicative1_2)->{'Biapply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
   $__res = (object)["bipure" => (function() use ($dictBiapplicative1_2, $dictBiapplicative_0) {
-  $__fn = function($a_4, $b_5 = null) use ($dictBiapplicative1_2, $dictBiapplicative_0, &$__fn) {
+  $__fn = function($a_4 = null, $b_5 = null) use ($dictBiapplicative1_2, $dictBiapplicative_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Product2", ((($dictBiapplicative_0)->{'bipure'})($a_4))($b_5), ((($dictBiapplicative1_2)->{'bipure'})($a_4))($b_5));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Biapply0" => function($dollar__unused_4) use ($biapplyProduct22_3_1) {
+})(), "Biapply0" => function($dollar__unused_4 = null) use ($biapplyProduct22_3_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $biapplyProduct22_3_1;
   goto __end;;
   __end:

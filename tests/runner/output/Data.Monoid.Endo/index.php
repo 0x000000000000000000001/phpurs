@@ -100,20 +100,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Monoid_Endo_Endo'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_Endo'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_Endo"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Endo_showEndo'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_showEndo'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_showEndo"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Endo "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
@@ -123,16 +120,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Endo_semigroupEndo'] = function() { $v = function($dictSemigroupoid_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_semigroupEndo'] = function() { $v = function($dictSemigroupoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_semigroupEndo"), recVars=[];
   $__res = (object)["append" => (function() use ($dictSemigroupoid_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemigroupoid_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemigroupoid_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictSemigroupoid_0)->{'compose'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -144,25 +139,22 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Endo_ordEndo'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_ordEndo'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_ordEndo"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Endo_monoidEndo'] = function() { $v = function($dictCategory_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_monoidEndo'] = function() { $v = function($dictCategory_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_monoidEndo"), recVars=[];
   $__local_var_1_0 = (($dictCategory_0)->{'Semigroupoid0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $semigroupEndo1_2_1 = (object)["append" => (function() use ($__local_var_1_0) {
-  $__fn = function($v_2, $v1_3 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($__local_var_1_0)->{'compose'})($v_2))($v1_3);
   goto __end;;
   __end:
@@ -170,9 +162,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => ($dictCategory_0)->{'identity'}, "Semigroup0" => function($dollar__unused_3) use ($semigroupEndo1_2_1) {
+  $__res = (object)["mempty" => ($dictCategory_0)->{'identity'}, "Semigroup0" => function($dollar__unused_3 = null) use ($semigroupEndo1_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupEndo1_2_1;
   goto __end;;
   __end:
@@ -182,17 +173,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Endo_eqEndo'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_eqEndo'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_eqEndo"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Endo_boundedEndo'] = function() { $v = function($dictBounded_0) {
+\PhpursThunks::$thunks['Data_Monoid_Endo_boundedEndo'] = function() { $v = function($dictBounded_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Endo_boundedEndo"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:

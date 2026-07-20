@@ -94,17 +94,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Effect_Class_monadEffectEffect'] = function() { $v = (object)["liftEffect" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}, "Monad0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Effect_Class_monadEffectEffect'] = function() { $v = (object)["liftEffect" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}, "Monad0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Effect_monadEffect'] ?? \PhpursThunks::eval('Effect_monadEffect'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Effect_Class_liftEffect'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Effect_Class_liftEffect'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Class_liftEffect"), recVars=[];
   $__res = ($dict_0)->{'liftEffect'};
   goto __end;;
   __end:

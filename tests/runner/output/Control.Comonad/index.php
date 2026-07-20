@@ -93,9 +93,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Control_Comonad_extract'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Control_Comonad_extract'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Comonad_extract"), recVars=[];
   $__res = ($dict_0)->{'extract'};
   goto __end;;
   __end:

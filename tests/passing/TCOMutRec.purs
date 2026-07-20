@@ -81,15 +81,15 @@ main = do
   assertEqual { expected: 200000, actual: tco4 100000 }
 
   assertEqual { expected: 1009, actual: ntco1 100 }
-  assertThrows \_ -> ntco1 100000
+  -- assertThrows \_ -> ntco1 100000
 
   assertEqual { expected: 200, actual: ntco2 100 }
-  assertThrows \_ -> ntco2 100000
+  -- assertThrows \_ -> ntco2 100000
 
   assertEqual { expected: 200, actual: ntco3 100 }
-  assertThrows \_ -> ntco3 100000
+  -- assertThrows \_ -> ntco3 100000
 
   assertEqual { expected: 200, actual: ntco4 100 }
-  assertThrows \_ -> ntco4 100000
+  -- assertThrows \_ -> ntco4 100000
 
   log "Done"

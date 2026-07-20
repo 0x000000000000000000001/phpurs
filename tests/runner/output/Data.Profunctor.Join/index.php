@@ -102,20 +102,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Profunctor_Join_Join'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_Join'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_Join"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_showJoin'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_showJoin'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_showJoin"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Join "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
@@ -125,16 +122,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_semigroupJoin'] = function() { $v = function($dictSemigroupoid_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_semigroupJoin'] = function() { $v = function($dictSemigroupoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_semigroupJoin"), recVars=[];
   $__res = (object)["append" => (function() use ($dictSemigroupoid_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemigroupoid_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemigroupoid_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictSemigroupoid_0)->{'compose'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -146,33 +141,29 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_ordJoin'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_ordJoin'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_ordJoin"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_newtypeJoin'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_newtypeJoin'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_monoidJoin'] = function() { $v = function($dictCategory_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_monoidJoin'] = function() { $v = function($dictCategory_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_monoidJoin"), recVars=[];
   $__local_var_1_0 = (($dictCategory_0)->{'Semigroupoid0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $semigroupJoin1_2_1 = (object)["append" => (function() use ($__local_var_1_0) {
-  $__fn = function($v_2, $v1_3 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($__local_var_1_0)->{'compose'})($v_2))($v1_3);
   goto __end;;
   __end:
@@ -180,9 +171,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => ($dictCategory_0)->{'identity'}, "Semigroup0" => function($dollar__unused_3) use ($semigroupJoin1_2_1) {
+  $__res = (object)["mempty" => ($dictCategory_0)->{'identity'}, "Semigroup0" => function($dollar__unused_3 = null) use ($semigroupJoin1_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupJoin1_2_1;
   goto __end;;
   __end:
@@ -192,16 +182,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_invariantJoin'] = function() { $v = function($dictProfunctor_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_invariantJoin'] = function() { $v = function($dictProfunctor_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_invariantJoin"), recVars=[];
   $__res = (object)["imap" => (function() use ($dictProfunctor_0) {
-  $__fn = function($f_1, $g_2 = null, $v_3 = null) use ($dictProfunctor_0, &$__fn) {
+  $__fn = function($f_1 = null, $g_2 = null, $v_3 = null) use ($dictProfunctor_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($dictProfunctor_0)->{'dimap'})($g_2))($f_1))($v_3);
   goto __end;;
   __end:
@@ -213,9 +201,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Join_eqJoin'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Join_eqJoin'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Join_eqJoin"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:

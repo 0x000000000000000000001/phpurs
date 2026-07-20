@@ -99,9 +99,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_String_CodeUnits_uncons'] = function() { $v = function($v_0) {
+\PhpursThunks::$thunks['Data_String_CodeUnits_uncons'] = function() { $v = function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_uncons"), recVars=[];
   switch ($v_0) {
 case "":
 $__t0 = new Phpurs_Data0("Nothing");
@@ -117,12 +116,11 @@ break;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_toChar'] = function() { $v = ((($GLOBALS['Data_String_CodeUnits__toChar'] ?? \PhpursThunks::eval('Data_String_CodeUnits__toChar')))(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))(new Phpurs_Data0("Nothing")); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_takeWhile'] = function() { $v = (function() {
-  $__fn = function($p_0, $s_1 = null) use (&$__fn) {
+  $__fn = function($p_0 = null, $s_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_takeWhile"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(((($GLOBALS['Data_String_CodeUnits_countPrefix'] ?? \PhpursThunks::eval('Data_String_CodeUnits_countPrefix')))($p_0))($s_1)))($s_1);
   goto __end;;
   __end:
@@ -131,12 +129,11 @@ break;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_takeRight'] = function() { $v = (function() {
-  $__fn = function($i_0, $s_1 = null) use (&$__fn) {
+  $__fn = function($i_0 = null, $s_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_takeRight"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodeUnits_drop'] ?? \PhpursThunks::eval('Data_String_CodeUnits_drop')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_1)))($i_0)))($s_1);
   goto __end;;
   __end:
@@ -145,12 +142,11 @@ break;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_stripSuffix'] = function() { $v = (function() {
-  $__fn = function($v_0, $str_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $str_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_stripSuffix"), recVars=[];
   $v1_2_0 = ((($GLOBALS['Data_String_CodeUnits_splitAt'] ?? \PhpursThunks::eval('Data_String_CodeUnits_splitAt')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($str_1)))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($v_0))))($str_1);
   if (((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))(($v1_2_0)->{'after'}))($v_0)) {
 $__t1 = new Phpurs_Data1("Just", ($v1_2_0)->{'before'});
@@ -165,12 +161,11 @@ $__t1 = new Phpurs_Data0("Nothing");
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_stripPrefix'] = function() { $v = (function() {
-  $__fn = function($v_0, $str_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $str_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_stripPrefix"), recVars=[];
   $v1_2_0 = ((($GLOBALS['Data_String_CodeUnits_splitAt'] ?? \PhpursThunks::eval('Data_String_CodeUnits_splitAt')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($v_0)))($str_1);
   if (((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))(($v1_2_0)->{'before'}))($v_0)) {
 $__t1 = new Phpurs_Data1("Just", ($v1_2_0)->{'after'});
@@ -184,9 +179,8 @@ $__t1 = new Phpurs_Data0("Nothing");
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_String_CodeUnits_startsWith'] = function() { $v = function($pat_0) {
+\PhpursThunks::$thunks['Data_String_CodeUnits_startsWith'] = function() { $v = function($pat_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_startsWith"), recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Maybe_isJust'] ?? \PhpursThunks::eval('Data_Maybe_isJust'))))((($GLOBALS['Data_String_CodeUnits_stripPrefix'] ?? \PhpursThunks::eval('Data_String_CodeUnits_stripPrefix')))($pat_0));
   goto __end;;
   __end:
@@ -196,21 +190,19 @@ $__t1 = new Phpurs_Data0("Nothing");
 \PhpursThunks::$thunks['Data_String_CodeUnits_lastIndexOf'] = function() { $v = ((($GLOBALS['Data_String_CodeUnits__lastIndexOf'] ?? \PhpursThunks::eval('Data_String_CodeUnits__lastIndexOf')))(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))(new Phpurs_Data0("Nothing")); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_indexOf__prime__'] = function() { $v = ((($GLOBALS['Data_String_CodeUnits__indexOfStartingAt'] ?? \PhpursThunks::eval('Data_String_CodeUnits__indexOfStartingAt')))(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))(new Phpurs_Data0("Nothing")); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_indexOf'] = function() { $v = ((($GLOBALS['Data_String_CodeUnits__indexOf'] ?? \PhpursThunks::eval('Data_String_CodeUnits__indexOf')))(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))(new Phpurs_Data0("Nothing")); return $v; };
-\PhpursThunks::$thunks['Data_String_CodeUnits_endsWith'] = function() { $v = function($pat_0) {
+\PhpursThunks::$thunks['Data_String_CodeUnits_endsWith'] = function() { $v = function($pat_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_endsWith"), recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Maybe_isJust'] ?? \PhpursThunks::eval('Data_Maybe_isJust'))))((($GLOBALS['Data_String_CodeUnits_stripSuffix'] ?? \PhpursThunks::eval('Data_String_CodeUnits_stripSuffix')))($pat_0));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_dropWhile'] = function() { $v = (function() {
-  $__fn = function($p_0, $s_1 = null) use (&$__fn) {
+  $__fn = function($p_0 = null, $s_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_dropWhile"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodeUnits_drop'] ?? \PhpursThunks::eval('Data_String_CodeUnits_drop')))(((($GLOBALS['Data_String_CodeUnits_countPrefix'] ?? \PhpursThunks::eval('Data_String_CodeUnits_countPrefix')))($p_0))($s_1)))($s_1);
   goto __end;;
   __end:
@@ -219,12 +211,11 @@ $__t1 = new Phpurs_Data0("Nothing");
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_CodeUnits_dropRight'] = function() { $v = (function() {
-  $__fn = function($i_0, $s_1 = null) use (&$__fn) {
+  $__fn = function($i_0 = null, $s_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_dropRight"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_1)))($i_0)))($s_1);
   goto __end;;
   __end:
@@ -232,9 +223,8 @@ $__t1 = new Phpurs_Data0("Nothing");
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_String_CodeUnits_contains'] = function() { $v = function($pat_0) {
+\PhpursThunks::$thunks['Data_String_CodeUnits_contains'] = function() { $v = function($pat_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodeUnits_contains"), recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Maybe_isJust'] ?? \PhpursThunks::eval('Data_Maybe_isJust'))))((($GLOBALS['Data_String_CodeUnits_indexOf'] ?? \PhpursThunks::eval('Data_String_CodeUnits_indexOf')))($pat_0));
   goto __end;;
   __end:

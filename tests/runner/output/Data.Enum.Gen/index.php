@@ -100,13 +100,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Enum_Gen_foldable1NonEmpty'] = function() { $v = (($GLOBALS['Data_NonEmpty_foldable1NonEmpty'] ?? \PhpursThunks::eval('Data_NonEmpty_foldable1NonEmpty')))(($GLOBALS['Data_Foldable_foldableArray'] ?? \PhpursThunks::eval('Data_Foldable_foldableArray'))); return $v; };
-\PhpursThunks::$thunks['Data_Enum_Gen_genBoundedEnum'] = function() { $v = function($dictMonadGen_0) {
+\PhpursThunks::$thunks['Data_Enum_Gen_genBoundedEnum'] = function() { $v = function($dictMonadGen_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Enum_Gen_genBoundedEnum"), recVars=[];
   $elements_1_0 = ((($GLOBALS['Control_Monad_Gen_elements'] ?? \PhpursThunks::eval('Control_Monad_Gen_elements')))($dictMonadGen_0))(($GLOBALS['Data_Enum_Gen_foldable1NonEmpty'] ?? \PhpursThunks::eval('Data_Enum_Gen_foldable1NonEmpty')));
-  $__res = function($dictBoundedEnum_2) use ($dictMonadGen_0, $elements_1_0) {
+  $__res = function($dictBoundedEnum_2 = null) use ($dictMonadGen_0, $elements_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $Enum1_3_1 = (($dictBoundedEnum_2)->{'Enum1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $Bounded0_4_2 = (($dictBoundedEnum_2)->{'Bounded0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $v_5_3 = (($Enum1_3_1)->{'succ'})(($Bounded0_4_2)->{'bottom'});

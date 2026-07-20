@@ -97,43 +97,38 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Predicate_Predicate'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Predicate_Predicate'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Predicate_Predicate"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Predicate_newtypePredicate'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Predicate_newtypePredicate'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Predicate_heytingAlgebraPredicate'] = function() { $v = (object)["ff" => function($v_0) {
+\PhpursThunks::$thunks['Data_Predicate_heytingAlgebraPredicate'] = function() { $v = (object)["ff" => function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = false;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "tt" => function($v_0) {
+}, "tt" => function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = true;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "implies" => (function() {
-  $__fn = function($f_0, $g_1 = null, $a_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $g_1 = null, $a_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_HeytingAlgebra_boolDisj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolDisj')))((($GLOBALS['Data_HeytingAlgebra_boolNot'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolNot')))(($f_0)($a_2))))(($g_1)($a_2));
   goto __end;;
   __end:
@@ -141,12 +136,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "conj" => (function() {
-  $__fn = function($f_0, $g_1 = null, $a_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $g_1 = null, $a_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(($f_0)($a_2)))(($g_1)($a_2));
   goto __end;;
   __end:
@@ -154,12 +148,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "disj" => (function() {
-  $__fn = function($f_0, $g_1 = null, $a_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $g_1 = null, $a_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_HeytingAlgebra_boolDisj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolDisj')))(($f_0)($a_2)))(($g_1)($a_2));
   goto __end;;
   __end:
@@ -167,12 +160,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "not" => (function() {
-  $__fn = function($f_0, $a_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Data_HeytingAlgebra_boolNot'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolNot')))(($f_0)($a_1));
   goto __end;;
   __end:
@@ -181,12 +173,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Predicate_contravariantPredicate'] = function() { $v = (object)["cmap" => (function() {
-  $__fn = function($f_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($v_1))($f_0);
   goto __end;;
   __end:

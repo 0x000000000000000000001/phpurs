@@ -96,12 +96,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Ord_Generic_genericOrdNoConstructors'] = function() { $v = (object)["genericCompare__prime__" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("EQ");
   goto __end;;
   __end:
@@ -110,12 +109,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericOrdNoArguments'] = function() { $v = (object)["genericCompare__prime__" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("EQ");
   goto __end;;
   __end:
@@ -123,16 +121,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Ord_Generic_genericOrdArgument'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Ord_Generic_genericOrdArgument'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdArgument"), recVars=[];
   $__res = (object)["genericCompare__prime__" => (function() use ($dictOrd_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictOrd_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictOrd_0)->{'compare'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -144,24 +140,21 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Ord_Generic_genericCompare__prime__'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Ord_Generic_genericCompare__prime__'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericCompare'"), recVars=[];
   $__res = ($dict_0)->{'genericCompare__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Ord_Generic_genericOrdConstructor'] = function() { $v = function($dictGenericOrd_0) {
+\PhpursThunks::$thunks['Data_Ord_Generic_genericOrdConstructor'] = function() { $v = function($dictGenericOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdConstructor"), recVars=[];
   $__res = (object)["genericCompare__prime__" => (function() use ($dictGenericOrd_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictGenericOrd_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictGenericOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictGenericOrd_0)->{'genericCompare__prime__'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -174,19 +167,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericOrdProduct'] = function() { $v = (function() {
-  $__fn = function($dictGenericOrd_0, $dictGenericOrd1_1 = null) use (&$__fn) {
+  $__fn = function($dictGenericOrd_0 = null, $dictGenericOrd1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdProduct"), recVars=[];
   $__res = (object)["genericCompare__prime__" => (function() use ($dictGenericOrd1_1, $dictGenericOrd_0) {
-  $__fn = function($v_2, $v1_3 = null) use ($dictGenericOrd1_1, $dictGenericOrd_0, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null) use ($dictGenericOrd1_1, $dictGenericOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_4_0 = ((($dictGenericOrd_0)->{'genericCompare__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'});
   if ((is_object($v2_4_0) && (($v2_4_0)->{'tag'} === "EQ"))) {
 $__t1 = ((($dictGenericOrd1_1)->{'genericCompare__prime__'})(($v_2)->{'value1'}))(($v1_3)->{'value1'});
@@ -207,19 +198,17 @@ $__t1 = $v2_4_0;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericOrdSum'] = function() { $v = (function() {
-  $__fn = function($dictGenericOrd_0, $dictGenericOrd1_1 = null) use (&$__fn) {
+  $__fn = function($dictGenericOrd_0 = null, $dictGenericOrd1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdSum"), recVars=[];
   $__res = (object)["genericCompare__prime__" => (function() use ($dictGenericOrd1_1, $dictGenericOrd_0) {
-  $__fn = function($v_2, $v1_3 = null) use ($dictGenericOrd1_1, $dictGenericOrd_0, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null) use ($dictGenericOrd1_1, $dictGenericOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_2) && (($v_2)->{'tag'} === "Inl"))) {
 if ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inl"))) {
 $__t1 = ((($dictGenericOrd_0)->{'genericCompare__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'});
@@ -264,12 +253,11 @@ $__t0 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericCompare'] = function() { $v = (function() {
-  $__fn = function($dictGeneric_0, $dictGenericOrd_1 = null, $x_2 = null, $y_3 = null) use (&$__fn) {
+  $__fn = function($dictGeneric_0 = null, $dictGenericOrd_1 = null, $x_2 = null, $y_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericCompare"), recVars=[];
   $__res = ((($dictGenericOrd_1)->{'genericCompare__prime__'})((($dictGeneric_0)->{'from'})($x_2)))((($dictGeneric_0)->{'from'})($y_3));
   goto __end;;
   __end:

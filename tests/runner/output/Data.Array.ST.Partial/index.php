@@ -95,17 +95,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Array_ST_Partial_poke'] = function() { $v = function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Array_ST_Partial_poke'] = function() { $v = function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_Partial_poke"), recVars=[];
   $__res = (($GLOBALS['Control_Monad_ST_Uncurried_runSTFn3'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn3')))(($GLOBALS['Data_Array_ST_Partial_pokeImpl'] ?? \PhpursThunks::eval('Data_Array_ST_Partial_pokeImpl')));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Array_ST_Partial_peek'] = function() { $v = function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Array_ST_Partial_peek'] = function() { $v = function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_Partial_peek"), recVars=[];
   $__res = (($GLOBALS['Control_Monad_ST_Uncurried_runSTFn2'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn2')))(($GLOBALS['Data_Array_ST_Partial_peekImpl'] ?? \PhpursThunks::eval('Data_Array_ST_Partial_peekImpl')));
   goto __end;;
   __end:

@@ -98,18 +98,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_prj'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_prj'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Coproduct_Inject_prj"), recVars=[];
   $__res = ($dict_0)->{'prj'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_injectReflexive'] = function() { $v = (object)["inj" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}, "prj" => ($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))]; return $v; };
-\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_injectLeft'] = function() { $v = (object)["inj" => ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Functor_Coproduct_Coproduct'] ?? \PhpursThunks::eval('Data_Functor_Coproduct_Coproduct'))))(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))), "prj" => function($v2_0) {
+\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_injectLeft'] = function() { $v = (object)["inj" => ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Functor_Coproduct_Coproduct'] ?? \PhpursThunks::eval('Data_Functor_Coproduct_Coproduct'))))(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))), "prj" => function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Just", ($v2_0)->{'value0'});
 } else {
@@ -125,20 +123,17 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_inj'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_inj'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Coproduct_Inject_inj"), recVars=[];
   $__res = ($dict_0)->{'inj'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_injectRight'] = function() { $v = function($dictInject_0) {
+\PhpursThunks::$thunks['Data_Functor_Coproduct_Inject_injectRight'] = function() { $v = function($dictInject_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Coproduct_Inject_injectRight"), recVars=[];
-  $__res = (object)["inj" => ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Functor_Coproduct_Coproduct'] ?? \PhpursThunks::eval('Data_Functor_Coproduct_Coproduct'))))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right'))))(($dictInject_0)->{'inj'})), "prj" => function($v2_1) use ($dictInject_0) {
+  $__res = (object)["inj" => ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Functor_Coproduct_Coproduct'] ?? \PhpursThunks::eval('Data_Functor_Coproduct_Coproduct'))))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right'))))(($dictInject_0)->{'inj'})), "prj" => function($v2_1 = null) use ($dictInject_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_1) && (($v2_1)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data0("Nothing");
 } else {

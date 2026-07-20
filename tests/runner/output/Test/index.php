@@ -93,17 +93,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Test_testClsUnit'] = function() { $v = (object)["test" => function($v_0) {
+\PhpursThunks::$thunks['Test_testClsUnit'] = function() { $v = (object)["test" => function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Test_test'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Test_test'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Test_test"), recVars=[];
   $__res = ($dict_0)->{'test'};
   goto __end;;
   __end:

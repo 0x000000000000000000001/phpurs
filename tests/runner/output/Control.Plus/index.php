@@ -93,17 +93,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Control_Plus_plusArray'] = function() { $v = (object)["empty" => [], "Alt0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Control_Plus_plusArray'] = function() { $v = (object)["empty" => [], "Alt0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Control_Alt_altArray'] ?? \PhpursThunks::eval('Control_Alt_altArray'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Control_Plus_empty'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Control_Plus_empty'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Plus_empty"), recVars=[];
   $__res = ($dict_0)->{'empty'};
   goto __end;;
   __end:

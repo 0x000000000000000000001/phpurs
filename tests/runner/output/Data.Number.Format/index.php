@@ -95,12 +95,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Number_Format_clamp'] = function() { $v = (function() {
-  $__fn = function($low_0, $hi_1 = null, $x_2 = null) use (&$__fn) {
+  $__fn = function($low_0 = null, $hi_1 = null, $x_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Format_clamp"), recVars=[];
   $v_3_0 = (((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($low_0))($x_2);
   if ((is_object($v_3_0) && (($v_3_0)->{'tag'} === "LT"))) {
 $__t1 = $x_2;
@@ -139,30 +138,29 @@ $__t4 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Number_Format_Precision'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Number_Format_Precision'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Precision", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Number_Format_Fixed'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Number_Format_Fixed'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Fixed", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Number_Format_Exponential'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Number_Format_Exponential'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Exponential", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Number_Format_toStringWith'] = function() { $v = function($v_0) {
+\PhpursThunks::$thunks['Data_Number_Format_toStringWith'] = function() { $v = function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Number_Format_toStringWith"), recVars=[];
   if ((is_object($v_0) && (($v_0)->{'tag'} === "Precision"))) {
 $__t0 = (($GLOBALS['Data_Number_Format_toPrecisionNative'] ?? \PhpursThunks::eval('Data_Number_Format_toPrecisionNative')))(($v_0)->{'value0'});
 } else {

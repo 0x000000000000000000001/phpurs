@@ -95,12 +95,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Type_RowList_rowListSetImpl'] = function() { $v = (function() {
-  $__fn = function($dictTypeEquals_0, $dictTypeEquals1_1 = null, $dollar__unused_2 = null) use (&$__fn) {
+  $__fn = function($dictTypeEquals_0 = null, $dictTypeEquals1_1 = null, $dollar__unused_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListSetImpl"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -110,12 +109,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Type_RowList_rowListRemoveNil'] = function() { $v = (object)[]; return $v; };
 \PhpursThunks::$thunks['Type_RowList_rowListRemoveCons'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $dollar__unused_1 = null, $dollar__unused_2 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $dollar__unused_1 = null, $dollar__unused_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListRemoveCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -125,12 +123,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Type_RowList_rowListNubNil'] = function() { $v = (object)[]; return $v; };
 \PhpursThunks::$thunks['Type_RowList_rowListNubCons'] = function() { $v = (function() {
-  $__fn = function($dictTypeEquals_0, $dictTypeEquals1_1 = null, $dictTypeEquals2_2 = null, $dollar__unused_3 = null, $dollar__unused_4 = null) use (&$__fn) {
+  $__fn = function($dictTypeEquals_0 = null, $dictTypeEquals1_1 = null, $dictTypeEquals2_2 = null, $dollar__unused_3 = null, $dollar__unused_4 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListNubCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -138,21 +135,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Type_RowList_rowListAppendNil'] = function() { $v = function($dictTypeEquals_0) {
+\PhpursThunks::$thunks['Type_RowList_rowListAppendNil'] = function() { $v = function($dictTypeEquals_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListAppendNil"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Type_RowList_rowListAppendCons'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $dictTypeEquals_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $dictTypeEquals_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListAppendCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -162,12 +157,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Type_RowList_listToRowNil'] = function() { $v = (object)[]; return $v; };
 \PhpursThunks::$thunks['Type_RowList_listToRowCons'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $dollar__unused_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $dollar__unused_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_listToRowCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:

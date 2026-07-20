@@ -98,29 +98,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Profunctor_Choice_right'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Choice_right'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_right"), recVars=[];
   $__res = ($dict_0)->{'right'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Choice_left'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Choice_left'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_left"), recVars=[];
   $__res = ($dict_0)->{'left'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Profunctor_Choice_splitChoice'] = function() { $v = (function() {
-  $__fn = function($dictSemigroupoid_0, $dictChoice_1 = null, $l_2 = null, $r_3 = null) use (&$__fn) {
+  $__fn = function($dictSemigroupoid_0 = null, $dictChoice_1 = null, $l_2 = null, $r_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_splitChoice"), recVars=[];
   $__res = ((($dictSemigroupoid_0)->{'compose'})((($dictChoice_1)->{'right'})($r_3)))((($dictChoice_1)->{'left'})($l_2));
   goto __end;;
   __end:
@@ -129,23 +126,20 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Profunctor_Choice_fanin'] = function() { $v = (function() {
-  $__fn = function($dictSemigroupoid_0, $dictChoice_1 = null) use (&$__fn) {
+  $__fn = function($dictSemigroupoid_0 = null, $dictChoice_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_fanin"), recVars=[];
   $rmap_2_0 = (($GLOBALS['Data_Profunctor_rmap'] ?? \PhpursThunks::eval('Data_Profunctor_rmap')))((($dictChoice_1)->{'Profunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
   $__res = (function() use ($dictChoice_1, $dictSemigroupoid_0, $rmap_2_0) {
-  $__fn = function($l_3, $r_4 = null) use ($dictChoice_1, $dictSemigroupoid_0, $rmap_2_0, &$__fn) {
+  $__fn = function($l_3 = null, $r_4 = null) use ($dictChoice_1, $dictSemigroupoid_0, $rmap_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = (($rmap_2_0)(function($v2_5) {
+  $__res = (($rmap_2_0)(function($v2_5 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_5) && (($v2_5)->{'tag'} === "Left"))) {
 $__t1 = ($v2_5)->{'value0'};
 } else {
@@ -174,12 +168,11 @@ $__t1 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Profunctor_Choice_choiceFn'] = function() { $v = (object)["left" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Left", ($v_0)(($v1_1)->{'value0'}));
 } else {
@@ -196,9 +189,8 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "right" => (($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither')))->{'map'}, "Profunctor0" => function($dollar__unused_0) {
+})(), "right" => (($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither')))->{'map'}, "Profunctor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Profunctor_profunctorFn'] ?? \PhpursThunks::eval('Data_Profunctor_profunctorFn'));
   goto __end;;
   __end:

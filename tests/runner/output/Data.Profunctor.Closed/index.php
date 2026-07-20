@@ -94,17 +94,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Profunctor_Closed_closedFunction'] = function() { $v = (object)["closed" => ($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')), "Profunctor0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Closed_closedFunction'] = function() { $v = (object)["closed" => ($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')), "Profunctor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Profunctor_profunctorFn'] ?? \PhpursThunks::eval('Data_Profunctor_profunctorFn'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Profunctor_Closed_closed'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Profunctor_Closed_closed'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Closed_closed"), recVars=[];
   $__res = ($dict_0)->{'closed'};
   goto __end;;
   __end:

@@ -96,12 +96,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Functor_Contravariant_contravariantConst'] = function() { $v = (object)["cmap" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -109,21 +108,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Functor_Contravariant_cmap'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Functor_Contravariant_cmap'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_cmap"), recVars=[];
   $__res = ($dict_0)->{'cmap'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Functor_Contravariant_cmapFlipped'] = function() { $v = (function() {
-  $__fn = function($dictContravariant_0, $x_1 = null, $f_2 = null) use (&$__fn) {
+  $__fn = function($dictContravariant_0 = null, $x_1 = null, $f_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_cmapFlipped"), recVars=[];
   $__res = ((($dictContravariant_0)->{'cmap'})($f_2))($x_1);
   goto __end;;
   __end:
@@ -132,12 +129,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Functor_Contravariant_coerce'] = function() { $v = (function() {
-  $__fn = function($dictContravariant_0, $dictFunctor_1 = null, $a_2 = null) use (&$__fn) {
+  $__fn = function($dictContravariant_0 = null, $dictFunctor_1 = null, $a_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_coerce"), recVars=[];
   $__res = ((($dictFunctor_1)->{'map'})(($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))))(((($dictContravariant_0)->{'cmap'})(($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))))($a_2));
   goto __end;;
   __end:
@@ -146,12 +142,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Functor_Contravariant_imapC'] = function() { $v = (function() {
-  $__fn = function($dictContravariant_0, $v_1 = null, $f_2 = null) use (&$__fn) {
+  $__fn = function($dictContravariant_0 = null, $v_1 = null, $f_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_imapC"), recVars=[];
   $__res = (($dictContravariant_0)->{'cmap'})($f_2);
   goto __end;;
   __end:

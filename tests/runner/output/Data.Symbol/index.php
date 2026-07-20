@@ -93,22 +93,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Symbol_reifySymbol'] = function() { $v = (function() {
-  $__fn = function($s_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($s_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Symbol_reifySymbol"), recVars=[];
-  $__res = (((($GLOBALS['Data_Symbol_unsafeCoerce'] ?? \PhpursThunks::eval('Data_Symbol_unsafeCoerce')))(function($dictIsSymbol_2) use ($f_1) {
+  $__res = (((($GLOBALS['Data_Symbol_unsafeCoerce'] ?? \PhpursThunks::eval('Data_Symbol_unsafeCoerce')))(function($dictIsSymbol_2 = null) use ($f_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($dictIsSymbol_2);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))((object)["reflectSymbol" => function($v_2) use ($s_0) {
+}))((object)["reflectSymbol" => function($v_2 = null) use ($s_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $s_0;
   goto __end;;
   __end:
@@ -120,9 +117,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Symbol_reflectSymbol'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Symbol_reflectSymbol'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Symbol_reflectSymbol"), recVars=[];
   $__res = ($dict_0)->{'reflectSymbol'};
   goto __end;;
   __end:

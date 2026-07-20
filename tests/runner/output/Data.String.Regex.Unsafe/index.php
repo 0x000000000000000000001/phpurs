@@ -96,18 +96,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_String_Regex_Unsafe_unsafeRegex'] = function() { $v = (function() {
-  $__fn = function($s_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($s_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_Regex_Unsafe_unsafeRegex"), recVars=[];
   $__local_var_2_0 = ((((($GLOBALS['Data_String_Regex_regexImpl'] ?? \PhpursThunks::eval('Data_String_Regex_regexImpl')))(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))))(($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right'))))($s_0))((($GLOBALS['Data_String_Regex_renderFlags'] ?? \PhpursThunks::eval('Data_String_Regex_renderFlags')))($f_1));
   if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Left"))) {
 $__local_var_3_2 = ($__local_var_2_0)->{'value0'};
-$__t1 = (($GLOBALS['Partial_Unsafe__unsafePartial'] ?? \PhpursThunks::eval('Partial_Unsafe__unsafePartial')))(function($dollar__unused_4) use ($__local_var_3_2) {
+$__t1 = (($GLOBALS['Partial_Unsafe__unsafePartial'] ?? \PhpursThunks::eval('Partial_Unsafe__unsafePartial')))(function($dollar__unused_4 = null) use ($__local_var_3_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Partial__crashWith'] ?? \PhpursThunks::eval('Partial__crashWith')))($__local_var_3_2);
   goto __end;;
   __end:

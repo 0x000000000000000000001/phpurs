@@ -109,16 +109,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_JoinWith'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_JoinWith'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_JoinWith"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_FoldRight1'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
@@ -130,53 +129,47 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_Act'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_Act'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_Act"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_runFoldRight1'] = function() { $v = function($v_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_runFoldRight1'] = function() { $v = function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_runFoldRight1"), recVars=[];
   $__res = (($v_0)->{'value0'})(($v_0)->{'value1'});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_mkFoldRight1'] = function() { $v = (($GLOBALS['Data_Semigroup_Foldable_FoldRight1'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_FoldRight1')))(($GLOBALS['Data_Function_const'] ?? \PhpursThunks::eval('Data_Function_const'))); return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldr1'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldr1'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldr1"), recVars=[];
   $__res = ($dict_0)->{'foldr1'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldl1'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldl1'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldl1"), recVars=[];
   $__res = ($dict_0)->{'foldl1'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_maximumBy'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $cmp_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $cmp_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_maximumBy"), recVars=[];
   $__res = (($dictFoldable1_0)->{'foldl1'})((function() use ($cmp_1) {
-  $__fn = function($x_2, $y_3 = null) use ($cmp_1, &$__fn) {
+  $__fn = function($x_2 = null, $y_3 = null) use ($cmp_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object((($cmp_1)($x_2))($y_3)) && (((($cmp_1)($x_2))($y_3))->{'tag'} === "GT"))) {
 $__t0 = $x_2;
 } else {
@@ -196,19 +189,17 @@ $__t0 = $y_3;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_minimumBy'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $cmp_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $cmp_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_minimumBy"), recVars=[];
   $__res = (($dictFoldable1_0)->{'foldl1'})((function() use ($cmp_1) {
-  $__fn = function($x_2, $y_3 = null) use ($cmp_1, &$__fn) {
+  $__fn = function($x_2 = null, $y_3 = null) use ($cmp_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object((($cmp_1)($x_2))($y_3)) && (((($cmp_1)($x_2))($y_3))->{'tag'} === "LT"))) {
 $__t0 = $x_2;
 } else {
@@ -228,12 +219,11 @@ $__t0 = $y_3;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldableTuple'] = function() { $v = (object)["foldMap1" => (function() {
-  $__fn = function($dictSemigroup_0, $f_1 = null, $v_2 = null) use (&$__fn) {
+  $__fn = function($dictSemigroup_0 = null, $f_1 = null, $v_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)(($v_2)->{'value1'});
   goto __end;;
   __end:
@@ -241,12 +231,11 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldr1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v1_1)->{'value1'};
   goto __end;;
   __end:
@@ -254,33 +243,30 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldl1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v1_1)->{'value1'};
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Foldable0" => function($dollar__unused_0) {
+})(), "Foldable0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Foldable_foldableTuple'] ?? \PhpursThunks::eval('Data_Foldable_foldableTuple'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldableMultiplicative'] = function() { $v = (object)["foldr1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -288,12 +274,11 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldl1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -301,33 +286,30 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldMap1" => (function() {
-  $__fn = function($dictSemigroup_0, $f_1 = null, $v_2 = null) use (&$__fn) {
+  $__fn = function($dictSemigroup_0 = null, $f_1 = null, $v_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_2);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
   };
   return $__fn;
-})(), "Foldable0" => function($dollar__unused_0) {
+})(), "Foldable0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Foldable_foldableMultiplicative'] ?? \PhpursThunks::eval('Data_Foldable_foldableMultiplicative'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldableIdentity'] = function() { $v = (object)["foldMap1" => (function() {
-  $__fn = function($dictSemigroup_0, $f_1 = null, $v_2 = null) use (&$__fn) {
+  $__fn = function($dictSemigroup_0 = null, $f_1 = null, $v_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_2);
   goto __end;;
   __end:
@@ -335,12 +317,11 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldl1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -348,33 +329,30 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldr1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Foldable0" => function($dollar__unused_0) {
+})(), "Foldable0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Foldable_foldableIdentity'] ?? \PhpursThunks::eval('Data_Foldable_foldableIdentity'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldableDual'] = function() { $v = (object)["foldr1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -382,12 +360,11 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldl1" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -395,41 +372,37 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(), "foldMap1" => (function() {
-  $__fn = function($dictSemigroup_0, $f_1 = null, $v_2 = null) use (&$__fn) {
+  $__fn = function($dictSemigroup_0 = null, $f_1 = null, $v_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_2);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
   };
   return $__fn;
-})(), "Foldable0" => function($dollar__unused_0) {
+})(), "Foldable0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Foldable_foldableDual'] ?? \PhpursThunks::eval('Data_Foldable_foldableDual'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldRight1Semigroup'] = function() { $v = (object)["append" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_2_0 = ($v_0)->{'value1'};
   $__res = new Phpurs_Data2("FoldRight1", (function() use ($__local_var_2_0, $v1_1, $v_0) {
-  $__fn = function($a_3, $f_4 = null) use ($__local_var_2_0, $v1_1, $v_0, &$__fn) {
+  $__fn = function($a_3 = null, $f_4 = null) use ($__local_var_2_0, $v1_1, $v_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($v_0)->{'value0'})((($f_4)($__local_var_2_0))(((($v1_1)->{'value0'})($a_3))($f_4))))($f_4);
   goto __end;;
   __end:
@@ -444,20 +417,18 @@ $__t0 = $y_3;
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_semigroupDual'] = function() { $v = (object)["append" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_2_0 = ($v1_1)->{'value1'};
   $__res = new Phpurs_Data2("FoldRight1", (function() use ($__local_var_2_0, $v1_1, $v_0) {
-  $__fn = function($a_3, $f_4 = null) use ($__local_var_2_0, $v1_1, $v_0, &$__fn) {
+  $__fn = function($a_3 = null, $f_4 = null) use ($__local_var_2_0, $v1_1, $v_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($v1_1)->{'value0'})((($f_4)($__local_var_2_0))(((($v_0)->{'value0'})($a_3))($f_4))))($f_4);
   goto __end;;
   __end:
@@ -472,16 +443,14 @@ $__t0 = $y_3;
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldMap1DefaultR'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictFunctor_1 = null, $dictSemigroup_2 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictFunctor_1 = null, $dictSemigroup_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldMap1DefaultR"), recVars=[];
   $append_3_0 = ($dictSemigroup_2)->{'append'};
-  $__res = function($f_4) use ($append_3_0, $dictFoldable1_0, $dictFunctor_1) {
+  $__res = function($f_4 = null) use ($append_3_0, $dictFoldable1_0, $dictFunctor_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((($dictFoldable1_0)->{'foldr1'})($append_3_0)))((($dictFunctor_1)->{'map'})($f_4));
   goto __end;;
   __end:
@@ -494,16 +463,14 @@ $__t0 = $y_3;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_foldMap1DefaultL'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictFunctor_1 = null, $dictSemigroup_2 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictFunctor_1 = null, $dictSemigroup_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldMap1DefaultL"), recVars=[];
   $append_3_0 = ($dictSemigroup_2)->{'append'};
-  $__res = function($f_4) use ($append_3_0, $dictFoldable1_0, $dictFunctor_1) {
+  $__res = function($f_4 = null) use ($append_3_0, $dictFoldable1_0, $dictFunctor_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((($dictFoldable1_0)->{'foldl1'})($append_3_0)))((($dictFunctor_1)->{'map'})($f_4));
   goto __end;;
   __end:
@@ -515,25 +482,22 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldMap1'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldMap1'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldMap1"), recVars=[];
   $__res = ($dict_0)->{'foldMap1'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldl1Default'] = function() { $v = function($dictFoldable1_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldl1Default'] = function() { $v = function($dictFoldable1_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldl1Default"), recVars=[];
   $__local_var_1_0 = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Semigroup_Foldable_runFoldRight1'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_runFoldRight1'))))(((($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce')))((($dictFoldable1_0)->{'foldMap1'})(($GLOBALS['Data_Semigroup_Foldable_semigroupDual'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_semigroupDual')))))(($GLOBALS['Data_Semigroup_Foldable_mkFoldRight1'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_mkFoldRight1'))));
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((function() use ($__local_var_1_0) {
-  $__fn = function($b_2, $a_3 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($b_2 = null, $a_3 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($__local_var_1_0)($a_3))($b_2);
   goto __end;;
   __end:
@@ -545,17 +509,15 @@ $__t0 = $y_3;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldr1Default'] = function() { $v = function($dictFoldable1_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_foldr1Default'] = function() { $v = function($dictFoldable1_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_foldr1Default"), recVars=[];
   $__local_var_1_0 = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Semigroup_Foldable_runFoldRight1'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_runFoldRight1'))))(((($dictFoldable1_0)->{'foldMap1'})(($GLOBALS['Data_Semigroup_Foldable_foldRight1Semigroup'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_foldRight1Semigroup'))))(($GLOBALS['Data_Semigroup_Foldable_mkFoldRight1'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_mkFoldRight1'))));
   $__res = (function() use ($__local_var_1_0) {
-  $__fn = function($b_2, $a_3 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($b_2 = null, $a_3 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($__local_var_1_0)($a_3))($b_2);
   goto __end;;
   __end:
@@ -568,19 +530,17 @@ $__t0 = $y_3;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_intercalateMap'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictSemigroup_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictSemigroup_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_intercalateMap"), recVars=[];
   $foldMap12_2_0 = (($dictFoldable1_0)->{'foldMap1'})((object)["append" => (function() use ($dictSemigroup_1) {
-  $__fn = function($v_2, $v1_3 = null, $j_4 = null) use ($dictSemigroup_1, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null, $j_4 = null) use ($dictSemigroup_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictSemigroup_1)->{'append'})(($v_2)($j_4)))(((($dictSemigroup_1)->{'append'})($j_4))(($v1_3)($j_4)));
   goto __end;;
   __end:
@@ -589,12 +549,11 @@ $__t0 = $y_3;
   return $__fn;
 })()]);
   $__res = (function() use ($foldMap12_2_0) {
-  $__fn = function($j_3, $f_4 = null, $foldable_5 = null) use ($foldMap12_2_0, &$__fn) {
+  $__fn = function($j_3 = null, $f_4 = null, $foldable_5 = null) use ($foldMap12_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($foldMap12_2_0)(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Semigroup_Foldable_JoinWith'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_JoinWith'))))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Function_const'] ?? \PhpursThunks::eval('Data_Function_const'))))($f_4))))($foldable_5))($j_3);
   goto __end;;
   __end:
@@ -609,16 +568,14 @@ $__t0 = $y_3;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_intercalate'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictSemigroup_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictSemigroup_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_intercalate"), recVars=[];
   $__local_var_2_0 = ((($GLOBALS['Data_Semigroup_Foldable_intercalateMap'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_intercalateMap')))($dictFoldable1_0))($dictSemigroup_1);
-  $__res = function($a_3) use ($__local_var_2_0) {
+  $__res = function($a_3 = null) use ($__local_var_2_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($__local_var_2_0)($a_3))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
@@ -630,16 +587,14 @@ $__t0 = $y_3;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_maximum'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_maximum'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_maximum"), recVars=[];
   $semigroupMax_1_0 = (object)["append" => (function() use ($dictOrd_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictOrd_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v_3_0 = ((($dictOrd_0)->{'compare'})($v_1))($v1_2);
   if ((is_object($v_3_0) && (($v_3_0)->{'tag'} === "LT"))) {
 $__t1 = $v1_2;
@@ -662,9 +617,8 @@ $__t1 = null;
   };
   return $__fn;
 })()];
-  $__res = function($dictFoldable1_2) use ($semigroupMax_1_0) {
+  $__res = function($dictFoldable1_2 = null) use ($semigroupMax_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce')))(((($dictFoldable1_2)->{'foldMap1'})($semigroupMax_1_0))(($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce'))));
   goto __end;;
   __end:
@@ -674,16 +628,14 @@ $__t1 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Semigroup_Foldable_minimum'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Semigroup_Foldable_minimum'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_minimum"), recVars=[];
   $semigroupMin_1_0 = (object)["append" => (function() use ($dictOrd_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictOrd_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v_3_0 = ((($dictOrd_0)->{'compare'})($v_1))($v1_2);
   if ((is_object($v_3_0) && (($v_3_0)->{'tag'} === "LT"))) {
 $__t1 = $v_1;
@@ -706,9 +658,8 @@ $__t1 = null;
   };
   return $__fn;
 })()];
-  $__res = function($dictFoldable1_2) use ($semigroupMin_1_0) {
+  $__res = function($dictFoldable1_2 = null) use ($semigroupMin_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce')))(((($dictFoldable1_2)->{'foldMap1'})($semigroupMin_1_0))(($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce'))));
   goto __end;;
   __end:
@@ -719,20 +670,18 @@ $__t1 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_traverse1_'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictApply_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictApply_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_traverse1_"), recVars=[];
   $__local_var_2_0 = (($dictApply_1)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $foldMap12_3_1 = (($dictFoldable1_0)->{'foldMap1'})((object)["append" => (function() use ($dictApply_1) {
-  $__fn = function($v_3, $v1_4 = null) use ($dictApply_1, &$__fn) {
+  $__fn = function($v_3 = null, $v1_4 = null) use ($dictApply_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($GLOBALS['Control_Apply_applySecond'] ?? \PhpursThunks::eval('Control_Apply_applySecond')))($dictApply_1))($v_3))($v1_4);
   goto __end;;
   __end:
@@ -741,15 +690,13 @@ $__t1 = null;
   return $__fn;
 })()]);
   $__res = (function() use ($__local_var_2_0, $foldMap12_3_1) {
-  $__fn = function($f_4, $t_5 = null) use ($__local_var_2_0, $foldMap12_3_1, &$__fn) {
+  $__fn = function($f_4 = null, $t_5 = null) use ($__local_var_2_0, $foldMap12_3_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($__local_var_2_0)->{'map'})(function($v_6) {
+  $__res = ((($__local_var_2_0)->{'map'})(function($v_6 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'));
   goto __end;;
   __end:
@@ -768,20 +715,18 @@ $__t1 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_for1_'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictApply_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictApply_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_for1_"), recVars=[];
   $__local_var_2_0 = ((($GLOBALS['Data_Semigroup_Foldable_traverse1_'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_traverse1_')))($dictFoldable1_0))($dictApply_1);
   $__res = (function() use ($__local_var_2_0) {
-  $__fn = function($b_3, $a_4 = null) use ($__local_var_2_0, &$__fn) {
+  $__fn = function($b_3 = null, $a_4 = null) use ($__local_var_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($__local_var_2_0)($a_4))($b_3);
   goto __end;;
   __end:
@@ -796,12 +741,11 @@ $__t1 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_sequence1_'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictApply_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictApply_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_sequence1_"), recVars=[];
   $__res = (((($GLOBALS['Data_Semigroup_Foldable_traverse1_'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_traverse1_')))($dictFoldable1_0))($dictApply_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
@@ -810,12 +754,11 @@ $__t1 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Foldable_fold1'] = function() { $v = (function() {
-  $__fn = function($dictFoldable1_0, $dictSemigroup_1 = null) use (&$__fn) {
+  $__fn = function($dictFoldable1_0 = null, $dictSemigroup_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Foldable_fold1"), recVars=[];
   $__res = ((($dictFoldable1_0)->{'foldMap1'})($dictSemigroup_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:

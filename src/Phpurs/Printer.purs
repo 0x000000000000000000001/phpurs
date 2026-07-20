@@ -79,7 +79,7 @@ genCurry args captures stmts =
     in "function()" <> useClause <> " {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
   else
     let
-      argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
+      argStr = joinWith ", " (map (\a -> "$" <> safeName a <> " = null") args)
       nStr = show (length args)
       nArgs = length args
       safeCaps = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures

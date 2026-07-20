@@ -101,52 +101,46 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Distributive_distributiveIdentity'] = function() { $v = (object)["distribute" => function($dictFunctor_0) {
+\PhpursThunks::$thunks['Data_Distributive_distributiveIdentity'] = function() { $v = (object)["distribute" => function($dictFunctor_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))((($dictFunctor_0)->{'map'})(($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce'))));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "collect" => (function() {
-  $__fn = function($dictFunctor_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($dictFunctor_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))((($dictFunctor_0)->{'map'})(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce'))))($f_1)));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Identity_functorIdentity'] ?? \PhpursThunks::eval('Data_Identity_functorIdentity'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Distributive_distribute'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Distributive_distribute'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Distributive_distribute"), recVars=[];
   $__res = ($dict_0)->{'distribute'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Distributive_distributiveFunction'] = function() { $v = (object)["distribute" => (function() {
-  $__fn = function($dictFunctor_0, $a_1 = null, $e_2 = null) use (&$__fn) {
+  $__fn = function($dictFunctor_0 = null, $a_1 = null, $e_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveFunction"];
-  $__res = ((($dictFunctor_0)->{'map'})(function($v_3) use ($e_2) {
+  $__res = ((($dictFunctor_0)->{'map'})(function($v_3 = null) use ($e_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveFunction"];
   $__res = ($v_3)($e_2);
   goto __end;;
   __end:
@@ -158,37 +152,33 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "collect" => (function() {
-  $__fn = function($dictFunctor_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($dictFunctor_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveFunction"];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(((($GLOBALS['Data_Distributive_distributiveFunction'] ?? \PhpursThunks::eval('Data_Distributive_distributiveFunction')))->{'distribute'})($dictFunctor_0)))((($dictFunctor_0)->{'map'})($f_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveFunction"];
   $__res = ($GLOBALS['Data_Functor_functorFn'] ?? \PhpursThunks::eval('Data_Functor_functorFn'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Distributive_cotraverse'] = function() { $v = (function() {
-  $__fn = function($dictDistributive_0, $dictFunctor_1 = null) use (&$__fn) {
+  $__fn = function($dictDistributive_0 = null, $dictFunctor_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Distributive_cotraverse"), recVars=[];
   $distribute2_2_0 = (($dictDistributive_0)->{'distribute'})($dictFunctor_1);
-  $__res = function($f_3) use ($dictDistributive_0, $distribute2_2_0) {
+  $__res = function($f_3 = null) use ($dictDistributive_0, $distribute2_2_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((((($dictDistributive_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})($f_3)))($distribute2_2_0);
   goto __end;;
   __end:
@@ -201,16 +191,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Distributive_collectDefault'] = function() { $v = (function() {
-  $__fn = function($dictDistributive_0, $dictFunctor_1 = null) use (&$__fn) {
+  $__fn = function($dictDistributive_0 = null, $dictFunctor_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Distributive_collectDefault"), recVars=[];
   $distribute2_2_0 = (($dictDistributive_0)->{'distribute'})($dictFunctor_1);
-  $__res = function($f_3) use ($dictFunctor_1, $distribute2_2_0) {
+  $__res = function($f_3 = null) use ($dictFunctor_1, $distribute2_2_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($distribute2_2_0))((($dictFunctor_1)->{'map'})($f_3));
   goto __end;;
   __end:
@@ -222,60 +210,51 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Distributive_distributiveTuple'] = function() { $v = function($dictTypeEquals_0) {
+\PhpursThunks::$thunks['Data_Distributive_distributiveTuple'] = function() { $v = function($dictTypeEquals_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Distributive_distributiveTuple"), recVars=["Data_Distributive_distributiveTuple"];
-  while (true) {
-$from_1_0 = (($dictTypeEquals_0)->{'proof'})(function($a_1) {
+  $from_1_0 = (($dictTypeEquals_0)->{'proof'})(function($a_1 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveTuple"];
   $__res = $a_1;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 });
-$__res = (object)["collect" => function($dictFunctor_2) use ($dictTypeEquals_0) {
+  $__res = (object)["collect" => function($dictFunctor_2 = null) use ($dictTypeEquals_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveTuple"];
   $__res = ((($GLOBALS['Data_Distributive_collectDefault'] ?? \PhpursThunks::eval('Data_Distributive_collectDefault')))((($GLOBALS['Data_Distributive_distributiveTuple'] ?? \PhpursThunks::eval('Data_Distributive_distributiveTuple')))($dictTypeEquals_0)))($dictFunctor_2);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "distribute" => function($dictFunctor_2) use ($from_1_0) {
+}, "distribute" => function($dictFunctor_2 = null) use ($from_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveTuple"];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple')))(($from_1_0)(($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'))))))((($dictFunctor_2)->{'map'})(($GLOBALS['Data_Tuple_snd'] ?? \PhpursThunks::eval('Data_Tuple_snd'))));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Functor0" => function($dollar__unused_2) {
+}, "Functor0" => function($dollar__unused_2 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Distributive_distributiveTuple"];
   $__res = ($GLOBALS['Data_Tuple_functorTuple'] ?? \PhpursThunks::eval('Data_Tuple_functorTuple'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }];
-goto __end;;
-};
+  goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Distributive_collect'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Distributive_collect'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Distributive_collect"), recVars=[];
   $__res = ($dict_0)->{'collect'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Distributive_distributeDefault'] = function() { $v = (function() {
-  $__fn = function($dictDistributive_0, $dictFunctor_1 = null) use (&$__fn) {
+  $__fn = function($dictDistributive_0 = null, $dictFunctor_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Distributive_distributeDefault"), recVars=[];
   $__res = ((($dictDistributive_0)->{'collect'})($dictFunctor_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:

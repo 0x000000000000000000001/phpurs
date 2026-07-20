@@ -96,7 +96,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_List_Internal_Leaf'] = function() { $v = ($GLOBALS['__phpurs_data0_Leaf'] ??= new Phpurs_Data0("Leaf")); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_Two'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null, $value2 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null, $value2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
@@ -109,7 +109,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_Three'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null, $value2 = null, $value3 = null, $value4 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null, $value2 = null, $value3 = null, $value4 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
@@ -122,7 +122,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_TwoLeft'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
@@ -135,7 +135,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_TwoRight'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
@@ -148,7 +148,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_ThreeLeft'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null, $value2 = null, $value3 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null, $value2 = null, $value3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
@@ -161,7 +161,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_ThreeMiddle'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null, $value2 = null, $value3 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null, $value2 = null, $value3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
@@ -174,7 +174,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_ThreeRight'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null, $value2 = null, $value3 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null, $value2 = null, $value3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
@@ -187,7 +187,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_KickUp'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null, $value2 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null, $value2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
@@ -200,55 +200,114 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Internal_fromZipper'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_List_Internal_fromZipper"), recVars=["Data_List_Internal_fromZipper"];
-  while (true) {
-if ((is_object($v_0) && (($v_0)->{'tag'} === "Nil"))) {
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "Nil"))) {
 $__t0 = $v1_1;
 } else {
 if ((is_object($v_0) && (($v_0)->{'tag'} === "Cons"))) {
 if ((is_object(($v_0)->{'value0'}) && ((($v_0)->{'value0'})->{'tag'} === "TwoLeft"))) {
-$__tco_2 = ($v_0)->{'value1'};
-$__tco_3 = new Phpurs_Data3("Two", $v1_1, (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'});
-$v_0 = $__tco_2;
-$v1_1 = $__tco_3;
-continue ;
-$__t1 = null;
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_0)->{'value1'}))(new Phpurs_Data3("Two", $v1_1, (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}));
 } else {
 if ((is_object(($v_0)->{'value0'}) && ((($v_0)->{'value0'})->{'tag'} === "TwoRight"))) {
-$__tco_4 = ($v_0)->{'value1'};
-$__tco_5 = new Phpurs_Data3("Two", (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, $v1_1);
-$v_0 = $__tco_4;
-$v1_1 = $__tco_5;
-continue ;
-$__t1 = null;
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_0)->{'value1'}))(new Phpurs_Data3("Two", (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, $v1_1));
 } else {
 if ((is_object(($v_0)->{'value0'}) && ((($v_0)->{'value0'})->{'tag'} === "ThreeLeft"))) {
-$__tco_6 = ($v_0)->{'value1'};
-$__tco_7 = new Phpurs_Data5("Three", $v1_1, (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, (($v_0)->{'value0'})->{'value2'}, (($v_0)->{'value0'})->{'value3'});
-$v_0 = $__tco_6;
-$v1_1 = $__tco_7;
-continue ;
-$__t1 = null;
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_0)->{'value1'}))(new Phpurs_Data5("Three", $v1_1, (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, (($v_0)->{'value0'})->{'value2'}, (($v_0)->{'value0'})->{'value3'}));
 } else {
 if ((is_object(($v_0)->{'value0'}) && ((($v_0)->{'value0'})->{'tag'} === "ThreeMiddle"))) {
-$__tco_8 = ($v_0)->{'value1'};
-$__tco_9 = new Phpurs_Data5("Three", (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, $v1_1, (($v_0)->{'value0'})->{'value2'}, (($v_0)->{'value0'})->{'value3'});
-$v_0 = $__tco_8;
-$v1_1 = $__tco_9;
-continue ;
-$__t1 = null;
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_0)->{'value1'}))(new Phpurs_Data5("Three", (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, $v1_1, (($v_0)->{'value0'})->{'value2'}, (($v_0)->{'value0'})->{'value3'}));
 } else {
 if ((is_object(($v_0)->{'value0'}) && ((($v_0)->{'value0'})->{'tag'} === "ThreeRight"))) {
-$__tco_10 = ($v_0)->{'value1'};
-$__tco_11 = new Phpurs_Data5("Three", (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, (($v_0)->{'value0'})->{'value2'}, (($v_0)->{'value0'})->{'value3'}, $v1_1);
-$v_0 = $__tco_10;
-$v1_1 = $__tco_11;
-continue ;
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_0)->{'value1'}))(new Phpurs_Data5("Three", (($v_0)->{'value0'})->{'value0'}, (($v_0)->{'value0'})->{'value1'}, (($v_0)->{'value0'})->{'value2'}, (($v_0)->{'value0'})->{'value3'}, $v1_1));
+} else {
+throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
+$__t1 = null;
+};
+};
+};
+};
+};
+$__t0 = $__t1;
+} else {
+throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
+$__t0 = null;
+};
+};
+  $__res = $__t0;
+  goto __end;;
+  __end:
+  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
+  };
+  return $__fn;
+})(); return $v; };
+\PhpursThunks::$thunks['Data_List_Internal_insertAndLookupBy'] = function() { $v = (function() {
+  $__fn = function($comp_0 = null, $k_1 = null, $orig_2 = null) use (&$__fn) {
+  $__num = \func_num_args();
+  if ($__num < 3) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 3);
+  }
+  $up_3_0 = null;
+  $up_3_0 = (function() use (&$up_3_0) {
+  $__fn = function($v_4 = null, $v1_5 = null) use (&$up_3_0, &$__fn) {
+  $__num = \func_num_args();
+  if ($__num < 2) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
+  }
+  $__tco_var_up_3_0_0_v_4 = $v_4;
+  $__tco_var_up_3_0_0_v1_5 = $v1_5;
+  $__tco_done_up_3_0_0 = false;
+  $__tco_res_up_3_0_0 = null;
+  $__tco_loop_up_3_0_0 = (function() use (&$__tco_done_up_3_0_0, &$__tco_var_up_3_0_0_v_4, &$__tco_var_up_3_0_0_v1_5, &$up_3_0) {
+  $__fn = function($v_4 = null, $v1_5 = null) use (&$__tco_done_up_3_0_0, &$__tco_var_up_3_0_0_v_4, &$__tco_var_up_3_0_0_v1_5, &$up_3_0, &$__fn) {
+  $__num = \func_num_args();
+  if ($__num < 2) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
+  }
+  $__tco_done_up_3_0_0 = true;
+  $v_4 = $__tco_var_up_3_0_0_v_4;
+  $v1_5 = $__tco_var_up_3_0_0_v1_5;
+  if ((is_object($v_4) && (($v_4)->{'tag'} === "Nil"))) {
+$__t0 = new Phpurs_Data3("Two", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'});
+} else {
+if ((is_object($v_4) && (($v_4)->{'tag'} === "Cons"))) {
+if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "TwoLeft"))) {
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_4)->{'value1'}))(new Phpurs_Data5("Three", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}, (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}));
+} else {
+if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "TwoRight"))) {
+$__t1 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_4)->{'value1'}))(new Phpurs_Data5("Three", (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}, ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}));
+} else {
+if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "ThreeLeft"))) {
+$__tco_2 = ($v_4)->{'value1'};
+$__tco_3 = new Phpurs_Data3("KickUp", new Phpurs_Data3("Two", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}), (($v_4)->{'value0'})->{'value0'}, new Phpurs_Data3("Two", (($v_4)->{'value0'})->{'value1'}, (($v_4)->{'value0'})->{'value2'}, (($v_4)->{'value0'})->{'value3'}));
+$__tco_var_up_3_0_0_v_4 = $__tco_2;
+$__tco_var_up_3_0_0_v1_5 = $__tco_3;
+$__tco_done_up_3_0_0 = false;
+$__res = null;
+goto __end;;
+$__t1 = null;
+} else {
+if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "ThreeMiddle"))) {
+$__tco_4 = ($v_4)->{'value1'};
+$__tco_5 = new Phpurs_Data3("KickUp", new Phpurs_Data3("Two", (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}, ($v1_5)->{'value0'}), ($v1_5)->{'value1'}, new Phpurs_Data3("Two", ($v1_5)->{'value2'}, (($v_4)->{'value0'})->{'value2'}, (($v_4)->{'value0'})->{'value3'}));
+$__tco_var_up_3_0_0_v_4 = $__tco_4;
+$__tco_var_up_3_0_0_v1_5 = $__tco_5;
+$__tco_done_up_3_0_0 = false;
+$__res = null;
+goto __end;;
+$__t1 = null;
+} else {
+if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "ThreeRight"))) {
+$__tco_6 = ($v_4)->{'value1'};
+$__tco_7 = new Phpurs_Data3("KickUp", new Phpurs_Data3("Two", (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}, (($v_4)->{'value0'})->{'value2'}), (($v_4)->{'value0'})->{'value3'}, new Phpurs_Data3("Two", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}));
+$__tco_var_up_3_0_0_v_4 = $__tco_6;
+$__tco_var_up_3_0_0_v1_5 = $__tco_7;
+$__tco_done_up_3_0_0 = false;
+$__res = null;
+goto __end;;
 $__t1 = null;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -264,172 +323,140 @@ throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t0 = null;
 };
 };
-$__res = $__t0;
-goto __end;;
-};
+  $__res = $__t0;
+  goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(); return $v; };
-\PhpursThunks::$thunks['Data_List_Internal_insertAndLookupBy'] = function() { $v = (function() {
-  $__fn = function($comp_0, $k_1 = null, $orig_2 = null) use (&$__fn) {
-  $__num = \func_num_args();
-  if ($__num < 3) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 3);
-  }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_List_Internal_insertAndLookupBy"), recVars=[];
-  $up_3_0 = null;
-  $up_3_0 = (function() use (&$up_3_0) {
-  $__fn = function($v_4, $v1_5 = null) use (&$up_3_0, &$__fn) {
+})();
+  while (!$__tco_done_up_3_0_0) {
+$__tco_res_up_3_0_0 = ($__tco_loop_up_3_0_0)($__tco_var_up_3_0_0_v_4, $__tco_var_up_3_0_0_v1_5);
+};
+  $__res = $__tco_res_up_3_0_0;
+  goto __end;;
+  __end:
+  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
+  };
+  return $__fn;
+})();
+  $down_4_1 = null;
+  $down_4_1 = (function() use ($comp_0, &$down_4_1, $k_1, $orig_2, &$up_3_0) {
+  $__fn = function($v_5 = null, $v1_6 = null) use ($comp_0, &$down_4_1, $k_1, $orig_2, &$up_3_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "up_3_0"), recVars=["up_3_0"];
-  while (true) {
-if ((is_object($v_4) && (($v_4)->{'tag'} === "Nil"))) {
-$__t1 = new Phpurs_Data3("Two", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'});
+  $__tco_var_down_4_1_1_v_5 = $v_5;
+  $__tco_var_down_4_1_1_v1_6 = $v1_6;
+  $__tco_done_down_4_1_1 = false;
+  $__tco_res_down_4_1_1 = null;
+  $__tco_loop_down_4_1_1 = (function() use (&$__tco_done_down_4_1_1, &$__tco_var_down_4_1_1_v_5, &$__tco_var_down_4_1_1_v1_6, $comp_0, &$down_4_1, $k_1, $orig_2, &$up_3_0) {
+  $__fn = function($v_5 = null, $v1_6 = null) use (&$__tco_done_down_4_1_1, &$__tco_var_down_4_1_1_v_5, &$__tco_var_down_4_1_1_v1_6, $comp_0, &$down_4_1, $k_1, $orig_2, &$up_3_0, &$__fn) {
+  $__num = \func_num_args();
+  if ($__num < 2) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
+  }
+  $__tco_done_down_4_1_1 = true;
+  $v_5 = $__tco_var_down_4_1_1_v_5;
+  $v1_6 = $__tco_var_down_4_1_1_v1_6;
+  if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Leaf"))) {
+$__t1 = (object)["found" => false, "result" => (($up_3_0)($v_5))(new Phpurs_Data3("KickUp", new Phpurs_Data0("Leaf"), $k_1, new Phpurs_Data0("Leaf")))];
 } else {
-if ((is_object($v_4) && (($v_4)->{'tag'} === "Cons"))) {
-if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "TwoLeft"))) {
-$__t2 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_4)->{'value1'}))(new Phpurs_Data5("Three", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}, (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}));
+if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Two"))) {
+$v2_7_2 = (($comp_0)($k_1))(($v1_6)->{'value1'});
+if ((is_object($v2_7_2) && (($v2_7_2)->{'tag'} === "EQ"))) {
+$__t5 = (object)["found" => true, "result" => $orig_2];
 } else {
-if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "TwoRight"))) {
-$__t2 = ((($GLOBALS['Data_List_Internal_fromZipper'] ?? \PhpursThunks::eval('Data_List_Internal_fromZipper')))(($v_4)->{'value1'}))(new Phpurs_Data5("Three", (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}, ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}));
+if ((is_object($v2_7_2) && (($v2_7_2)->{'tag'} === "LT"))) {
+$__tco_6 = new Phpurs_Data2("Cons", new Phpurs_Data2("TwoLeft", ($v1_6)->{'value1'}, ($v1_6)->{'value2'}), $v_5);
+$__tco_7 = ($v1_6)->{'value0'};
+$__tco_var_down_4_1_1_v_5 = $__tco_6;
+$__tco_var_down_4_1_1_v1_6 = $__tco_7;
+$__tco_done_down_4_1_1 = false;
+$__res = null;
+goto __end;;
+$__t5 = null;
 } else {
-if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "ThreeLeft"))) {
-$__tco_3 = ($v_4)->{'value1'};
-$__tco_4 = new Phpurs_Data3("KickUp", new Phpurs_Data3("Two", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}), (($v_4)->{'value0'})->{'value0'}, new Phpurs_Data3("Two", (($v_4)->{'value0'})->{'value1'}, (($v_4)->{'value0'})->{'value2'}, (($v_4)->{'value0'})->{'value3'}));
-$v_4 = $__tco_3;
-$v1_5 = $__tco_4;
-continue ;
-$__t2 = null;
+$__tco_3 = new Phpurs_Data2("Cons", new Phpurs_Data2("TwoRight", ($v1_6)->{'value0'}, ($v1_6)->{'value1'}), $v_5);
+$__tco_4 = ($v1_6)->{'value2'};
+$__tco_var_down_4_1_1_v_5 = $__tco_3;
+$__tco_var_down_4_1_1_v1_6 = $__tco_4;
+$__tco_done_down_4_1_1 = false;
+$__res = null;
+goto __end;;
+$__t5 = null;
+};
+};
+$__t1 = $__t5;
 } else {
-if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "ThreeMiddle"))) {
-$__tco_5 = ($v_4)->{'value1'};
-$__tco_6 = new Phpurs_Data3("KickUp", new Phpurs_Data3("Two", (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}, ($v1_5)->{'value0'}), ($v1_5)->{'value1'}, new Phpurs_Data3("Two", ($v1_5)->{'value2'}, (($v_4)->{'value0'})->{'value2'}, (($v_4)->{'value0'})->{'value3'}));
-$v_4 = $__tco_5;
-$v1_5 = $__tco_6;
-continue ;
-$__t2 = null;
+if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Three"))) {
+$v2_7_8 = (($comp_0)($k_1))(($v1_6)->{'value1'});
+if ((is_object($v2_7_8) && (($v2_7_8)->{'tag'} === "EQ"))) {
+$__t17 = (object)["found" => true, "result" => $orig_2];
 } else {
-if ((is_object(($v_4)->{'value0'}) && ((($v_4)->{'value0'})->{'tag'} === "ThreeRight"))) {
-$__tco_7 = ($v_4)->{'value1'};
-$__tco_8 = new Phpurs_Data3("KickUp", new Phpurs_Data3("Two", (($v_4)->{'value0'})->{'value0'}, (($v_4)->{'value0'})->{'value1'}, (($v_4)->{'value0'})->{'value2'}), (($v_4)->{'value0'})->{'value3'}, new Phpurs_Data3("Two", ($v1_5)->{'value0'}, ($v1_5)->{'value1'}, ($v1_5)->{'value2'}));
-$v_4 = $__tco_7;
-$v1_5 = $__tco_8;
-continue ;
-$__t2 = null;
+$v3_8_9 = (($comp_0)($k_1))(($v1_6)->{'value3'});
+if ((is_object($v3_8_9) && (($v3_8_9)->{'tag'} === "EQ"))) {
+$__t12 = (object)["found" => true, "result" => $orig_2];
 } else {
-throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
-$__t2 = null;
+if ((is_object($v2_7_8) && (($v2_7_8)->{'tag'} === "LT"))) {
+$__tco_13 = new Phpurs_Data2("Cons", new Phpurs_Data4("ThreeLeft", ($v1_6)->{'value1'}, ($v1_6)->{'value2'}, ($v1_6)->{'value3'}, ($v1_6)->{'value4'}), $v_5);
+$__tco_14 = ($v1_6)->{'value0'};
+$__tco_var_down_4_1_1_v_5 = $__tco_13;
+$__tco_var_down_4_1_1_v1_6 = $__tco_14;
+$__tco_done_down_4_1_1 = false;
+$__res = null;
+goto __end;;
+$__t12 = null;
+} else {
+if (((is_object($v2_7_8) && (($v2_7_8)->{'tag'} === "GT")) && (is_object($v3_8_9) && (($v3_8_9)->{'tag'} === "LT")))) {
+$__tco_15 = new Phpurs_Data2("Cons", new Phpurs_Data4("ThreeMiddle", ($v1_6)->{'value0'}, ($v1_6)->{'value1'}, ($v1_6)->{'value3'}, ($v1_6)->{'value4'}), $v_5);
+$__tco_16 = ($v1_6)->{'value2'};
+$__tco_var_down_4_1_1_v_5 = $__tco_15;
+$__tco_var_down_4_1_1_v1_6 = $__tco_16;
+$__tco_done_down_4_1_1 = false;
+$__res = null;
+goto __end;;
+$__t12 = null;
+} else {
+$__tco_10 = new Phpurs_Data2("Cons", new Phpurs_Data4("ThreeRight", ($v1_6)->{'value0'}, ($v1_6)->{'value1'}, ($v1_6)->{'value2'}, ($v1_6)->{'value3'}), $v_5);
+$__tco_11 = ($v1_6)->{'value4'};
+$__tco_var_down_4_1_1_v_5 = $__tco_10;
+$__tco_var_down_4_1_1_v1_6 = $__tco_11;
+$__tco_done_down_4_1_1 = false;
+$__res = null;
+goto __end;;
+$__t12 = null;
 };
 };
 };
+$__t17 = $__t12;
 };
-};
-$__t1 = $__t2;
+$__t1 = $__t17;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t1 = null;
 };
 };
-$__res = $__t1;
-goto __end;;
 };
+  $__res = $__t1;
+  goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
 })();
-  $down_4_9 = null;
-  $down_4_9 = (function() use ($comp_0, &$down_4_9, $k_1, $orig_2, &$up_3_0) {
-  $__fn = function($v_5, $v1_6 = null) use ($comp_0, &$down_4_9, $k_1, $orig_2, &$up_3_0, &$__fn) {
-  $__num = \func_num_args();
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "down_4_9"), recVars=["up_3_0","down_4_9"];
-  while (true) {
-if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Leaf"))) {
-$__t10 = (object)["found" => false, "result" => (($up_3_0)($v_5))(new Phpurs_Data3("KickUp", new Phpurs_Data0("Leaf"), $k_1, new Phpurs_Data0("Leaf")))];
-} else {
-if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Two"))) {
-$v2_7_11 = (($comp_0)($k_1))(($v1_6)->{'value1'});
-if ((is_object($v2_7_11) && (($v2_7_11)->{'tag'} === "EQ"))) {
-$__t14 = (object)["found" => true, "result" => $orig_2];
-} else {
-if ((is_object($v2_7_11) && (($v2_7_11)->{'tag'} === "LT"))) {
-$__tco_15 = new Phpurs_Data2("Cons", new Phpurs_Data2("TwoLeft", ($v1_6)->{'value1'}, ($v1_6)->{'value2'}), $v_5);
-$__tco_16 = ($v1_6)->{'value0'};
-$v_5 = $__tco_15;
-$v1_6 = $__tco_16;
-continue ;
-$__t14 = null;
-} else {
-$__tco_12 = new Phpurs_Data2("Cons", new Phpurs_Data2("TwoRight", ($v1_6)->{'value0'}, ($v1_6)->{'value1'}), $v_5);
-$__tco_13 = ($v1_6)->{'value2'};
-$v_5 = $__tco_12;
-$v1_6 = $__tco_13;
-continue ;
-$__t14 = null;
+  while (!$__tco_done_down_4_1_1) {
+$__tco_res_down_4_1_1 = ($__tco_loop_down_4_1_1)($__tco_var_down_4_1_1_v_5, $__tco_var_down_4_1_1_v1_6);
 };
-};
-$__t10 = $__t14;
-} else {
-if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Three"))) {
-$v2_7_17 = (($comp_0)($k_1))(($v1_6)->{'value1'});
-if ((is_object($v2_7_17) && (($v2_7_17)->{'tag'} === "EQ"))) {
-$__t26 = (object)["found" => true, "result" => $orig_2];
-} else {
-$v3_8_18 = (($comp_0)($k_1))(($v1_6)->{'value3'});
-if ((is_object($v3_8_18) && (($v3_8_18)->{'tag'} === "EQ"))) {
-$__t21 = (object)["found" => true, "result" => $orig_2];
-} else {
-if ((is_object($v2_7_17) && (($v2_7_17)->{'tag'} === "LT"))) {
-$__tco_22 = new Phpurs_Data2("Cons", new Phpurs_Data4("ThreeLeft", ($v1_6)->{'value1'}, ($v1_6)->{'value2'}, ($v1_6)->{'value3'}, ($v1_6)->{'value4'}), $v_5);
-$__tco_23 = ($v1_6)->{'value0'};
-$v_5 = $__tco_22;
-$v1_6 = $__tco_23;
-continue ;
-$__t21 = null;
-} else {
-if (((is_object($v2_7_17) && (($v2_7_17)->{'tag'} === "GT")) && (is_object($v3_8_18) && (($v3_8_18)->{'tag'} === "LT")))) {
-$__tco_24 = new Phpurs_Data2("Cons", new Phpurs_Data4("ThreeMiddle", ($v1_6)->{'value0'}, ($v1_6)->{'value1'}, ($v1_6)->{'value3'}, ($v1_6)->{'value4'}), $v_5);
-$__tco_25 = ($v1_6)->{'value2'};
-$v_5 = $__tco_24;
-$v1_6 = $__tco_25;
-continue ;
-$__t21 = null;
-} else {
-$__tco_19 = new Phpurs_Data2("Cons", new Phpurs_Data4("ThreeRight", ($v1_6)->{'value0'}, ($v1_6)->{'value1'}, ($v1_6)->{'value2'}, ($v1_6)->{'value3'}), $v_5);
-$__tco_20 = ($v1_6)->{'value4'};
-$v_5 = $__tco_19;
-$v1_6 = $__tco_20;
-continue ;
-$__t21 = null;
-};
-};
-};
-$__t26 = $__t21;
-};
-$__t10 = $__t26;
-} else {
-throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
-$__t10 = null;
-};
-};
-};
-$__res = $__t10;
-goto __end;;
-};
+  $__res = $__tco_res_down_4_1_1;
+  goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
 })();
-  $__res = (($down_4_9)(new Phpurs_Data0("Nil")))($orig_2);
+  $__res = (($down_4_1)(new Phpurs_Data0("Nil")))($orig_2);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;

@@ -98,21 +98,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Op_Op'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Op_Op'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Op_Op"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Op_semigroupoidOp'] = function() { $v = (object)["compose" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($v1_1))($v_0);
   goto __end;;
   __end:
@@ -120,16 +118,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Op_semigroupOp'] = function() { $v = function($dictSemigroup_0) {
+\PhpursThunks::$thunks['Data_Op_semigroupOp'] = function() { $v = function($dictSemigroup_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Op_semigroupOp"), recVars=[];
   $__res = (object)["append" => (function() use ($dictSemigroup_0) {
-  $__fn = function($f_1, $g_2 = null, $x_3 = null) use ($dictSemigroup_0, &$__fn) {
+  $__fn = function($f_1 = null, $g_2 = null, $x_3 = null) use ($dictSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictSemigroup_0)->{'append'})(($f_1)($x_3)))(($g_2)($x_3));
   goto __end;;
   __end:
@@ -141,29 +137,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Op_newtypeOp'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Op_newtypeOp'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Op_monoidOp'] = function() { $v = function($dictMonoid_0) {
+\PhpursThunks::$thunks['Data_Op_monoidOp'] = function() { $v = function($dictMonoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Op_monoidOp"), recVars=[];
   $__res = (($GLOBALS['Data_Monoid_monoidFn'] ?? \PhpursThunks::eval('Data_Monoid_monoidFn')))($dictMonoid_0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Op_contravariantOp'] = function() { $v = (object)["cmap" => (function() {
-  $__fn = function($f_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($v_1))($f_0);
   goto __end;;
   __end:
@@ -171,9 +164,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Op_categoryOp'] = function() { $v = (object)["identity" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}, "Semigroupoid0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Op_categoryOp'] = function() { $v = (object)["identity" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}, "Semigroupoid0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Op_semigroupoidOp'] ?? \PhpursThunks::eval('Data_Op_semigroupoidOp'));
   goto __end;;
   __end:

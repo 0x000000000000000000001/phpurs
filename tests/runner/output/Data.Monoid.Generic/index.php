@@ -94,37 +94,32 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidNoArguments'] = function() { $v = (object)["genericMempty__prime__" => new Phpurs_Data0("NoArguments")]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidArgument'] = function() { $v = function($dictMonoid_0) {
+\PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidArgument'] = function() { $v = function($dictMonoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Generic_genericMonoidArgument"), recVars=[];
   $__res = (object)["genericMempty__prime__" => ($dictMonoid_0)->{'mempty'}];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Generic_genericMempty__prime__'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Monoid_Generic_genericMempty__prime__'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Generic_genericMempty'"), recVars=[];
   $__res = ($dict_0)->{'genericMempty__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidConstructor'] = function() { $v = function($dictGenericMonoid_0) {
+\PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidConstructor'] = function() { $v = function($dictGenericMonoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Generic_genericMonoidConstructor"), recVars=[];
   $__res = (object)["genericMempty__prime__" => ($dictGenericMonoid_0)->{'genericMempty__prime__'}];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidProduct'] = function() { $v = function($dictGenericMonoid_0) {
+\PhpursThunks::$thunks['Data_Monoid_Generic_genericMonoidProduct'] = function() { $v = function($dictGenericMonoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Generic_genericMonoidProduct"), recVars=[];
   $genericMempty__prime__1_1_0 = ($dictGenericMonoid_0)->{'genericMempty__prime__'};
-  $__res = function($dictGenericMonoid1_2) use ($genericMempty__prime__1_1_0) {
+  $__res = function($dictGenericMonoid1_2 = null) use ($genericMempty__prime__1_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)["genericMempty__prime__" => new Phpurs_Data2("Product", $genericMempty__prime__1_1_0, ($dictGenericMonoid1_2)->{'genericMempty__prime__'})];
   goto __end;;
   __end:
@@ -135,12 +130,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Generic_genericMempty'] = function() { $v = (function() {
-  $__fn = function($dictGeneric_0, $dictGenericMonoid_1 = null) use (&$__fn) {
+  $__fn = function($dictGeneric_0 = null, $dictGenericMonoid_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Generic_genericMempty"), recVars=[];
   $__res = (($dictGeneric_0)->{'to'})(($dictGenericMonoid_1)->{'genericMempty__prime__'});
   goto __end;;
   __end:

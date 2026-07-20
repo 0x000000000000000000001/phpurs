@@ -102,15 +102,13 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Decide_choosePredicate'] = function() { $v = (object)["choose" => (function() {
-  $__fn = function($f_0, $v_1 = null, $v1_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null, $v1_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(function($v2_3) use ($v1_2, $v_1) {
+  $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(function($v2_3 = null) use ($v1_2, $v_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_3) && (($v2_3)->{'tag'} === "Left"))) {
 $__t0 = ($v_1)(($v2_3)->{'value0'});
 } else {
@@ -131,28 +129,24 @@ $__t0 = null;
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
   };
   return $__fn;
-})(), "Divide0" => function($dollar__unused_0) {
+})(), "Divide0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Divide_dividePredicate'] ?? \PhpursThunks::eval('Data_Divide_dividePredicate'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Decide_chooseOp'] = function() { $v = function($dictSemigroup_0) {
+\PhpursThunks::$thunks['Data_Decide_chooseOp'] = function() { $v = function($dictSemigroup_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Decide_chooseOp"), recVars=[];
   $divideOp_1_0 = (($GLOBALS['Data_Divide_divideOp'] ?? \PhpursThunks::eval('Data_Divide_divideOp')))($dictSemigroup_0);
   $__res = (object)["choose" => (function() {
-  $__fn = function($f_2, $v_3 = null, $v1_4 = null) use (&$__fn) {
+  $__fn = function($f_2 = null, $v_3 = null, $v1_4 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(function($v2_5) use ($v1_4, $v_3) {
+  $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(function($v2_5 = null) use ($v1_4, $v_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_5) && (($v2_5)->{'tag'} === "Left"))) {
 $__t1 = ($v_3)(($v2_5)->{'value0'});
 } else {
@@ -173,9 +167,8 @@ $__t1 = null;
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
   };
   return $__fn;
-})(), "Divide0" => function($dollar__unused_2) use ($divideOp_1_0) {
+})(), "Divide0" => function($dollar__unused_2 = null) use ($divideOp_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $divideOp_1_0;
   goto __end;;
   __end:
@@ -186,12 +179,11 @@ $__t1 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Decide_chooseEquivalence'] = function() { $v = (object)["choose" => (function() {
-  $__fn = function($f_0, $v_1 = null, $v1_2 = null, $a_3 = null, $b_4 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null, $v1_2 = null, $a_3 = null, $b_4 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_5_0 = ($f_0)($a_3);
   if ((is_object($v2_5_0) && (($v2_5_0)->{'tag'} === "Left"))) {
 $v3_6_2 = ($f_0)($b_4);
@@ -231,21 +223,19 @@ $__t1 = null;
   return $__num > 5 ? $__res(...\array_slice(\func_get_args(), 5)) : $__res;
   };
   return $__fn;
-})(), "Divide0" => function($dollar__unused_0) {
+})(), "Divide0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Divide_divideEquivalence'] ?? \PhpursThunks::eval('Data_Divide_divideEquivalence'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Decide_chooseComparison'] = function() { $v = (object)["choose" => (function() {
-  $__fn = function($f_0, $v_1 = null, $v1_2 = null, $a_3 = null, $b_4 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null, $v1_2 = null, $a_3 = null, $b_4 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_5_0 = ($f_0)($a_3);
   if ((is_object($v2_5_0) && (($v2_5_0)->{'tag'} === "Left"))) {
 $v3_6_2 = ($f_0)($b_4);
@@ -285,25 +275,22 @@ $__t1 = null;
   return $__num > 5 ? $__res(...\array_slice(\func_get_args(), 5)) : $__res;
   };
   return $__fn;
-})(), "Divide0" => function($dollar__unused_0) {
+})(), "Divide0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Divide_divideComparison'] ?? \PhpursThunks::eval('Data_Divide_divideComparison'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Decide_choose'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Decide_choose'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Decide_choose"), recVars=[];
   $__res = ($dict_0)->{'choose'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Decide_chosen'] = function() { $v = function($dictDecide_0) {
+\PhpursThunks::$thunks['Data_Decide_chosen'] = function() { $v = function($dictDecide_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Decide_chosen"), recVars=[];
   $__res = (($dictDecide_0)->{'choose'})((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:

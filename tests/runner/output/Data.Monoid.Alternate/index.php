@@ -109,20 +109,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Monoid_Alternate_Alternate'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_Alternate'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_Alternate"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_showAlternate'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_showAlternate'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_showAlternate"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Alternate "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
@@ -132,16 +129,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_semigroupAlternate'] = function() { $v = function($dictAlt_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_semigroupAlternate'] = function() { $v = function($dictAlt_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_semigroupAlternate"), recVars=[];
   $__res = (object)["append" => (function() use ($dictAlt_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictAlt_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictAlt_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictAlt_0)->{'alt'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -153,49 +148,43 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_plusAlternate'] = function() { $v = function($dictPlus_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_plusAlternate'] = function() { $v = function($dictPlus_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_plusAlternate"), recVars=[];
   $__res = $dictPlus_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_ordAlternate'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_ordAlternate'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_ordAlternate"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_ord1Alternate'] = function() { $v = function($dictOrd1_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_ord1Alternate'] = function() { $v = function($dictOrd1_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_ord1Alternate"), recVars=[];
   $__res = $dictOrd1_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_newtypeAlternate'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_newtypeAlternate'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_monoidAlternate'] = function() { $v = function($dictPlus_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_monoidAlternate'] = function() { $v = function($dictPlus_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_monoidAlternate"), recVars=[];
   $__local_var_1_0 = (($dictPlus_0)->{'Alt0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $semigroupAlternate1_2_1 = (object)["append" => (function() use ($__local_var_1_0) {
-  $__fn = function($v_2, $v1_3 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($v_2 = null, $v1_3 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($__local_var_1_0)->{'alt'})($v_2))($v1_3);
   goto __end;;
   __end:
@@ -203,9 +192,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => ($dictPlus_0)->{'empty'}, "Semigroup0" => function($dollar__unused_3) use ($semigroupAlternate1_2_1) {
+  $__res = (object)["mempty" => ($dictPlus_0)->{'empty'}, "Semigroup0" => function($dollar__unused_3 = null) use ($semigroupAlternate1_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupAlternate1_2_1;
   goto __end;;
   __end:
@@ -215,97 +203,85 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_monadAlternate'] = function() { $v = function($dictMonad_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_monadAlternate'] = function() { $v = function($dictMonad_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_monadAlternate"), recVars=[];
   $__res = $dictMonad_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_functorAlternate'] = function() { $v = function($dictFunctor_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_functorAlternate'] = function() { $v = function($dictFunctor_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_functorAlternate"), recVars=[];
   $__res = $dictFunctor_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_extendAlternate'] = function() { $v = function($dictExtend_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_extendAlternate'] = function() { $v = function($dictExtend_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_extendAlternate"), recVars=[];
   $__res = $dictExtend_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_eqAlternate'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_eqAlternate'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_eqAlternate"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_eq1Alternate'] = function() { $v = function($dictEq1_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_eq1Alternate'] = function() { $v = function($dictEq1_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_eq1Alternate"), recVars=[];
   $__res = $dictEq1_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_comonadAlternate'] = function() { $v = function($dictComonad_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_comonadAlternate'] = function() { $v = function($dictComonad_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_comonadAlternate"), recVars=[];
   $__res = $dictComonad_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_boundedAlternate'] = function() { $v = function($dictBounded_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_boundedAlternate'] = function() { $v = function($dictBounded_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_boundedAlternate"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_bindAlternate'] = function() { $v = function($dictBind_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_bindAlternate'] = function() { $v = function($dictBind_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_bindAlternate"), recVars=[];
   $__res = $dictBind_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_applyAlternate'] = function() { $v = function($dictApply_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_applyAlternate'] = function() { $v = function($dictApply_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_applyAlternate"), recVars=[];
   $__res = $dictApply_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_applicativeAlternate'] = function() { $v = function($dictApplicative_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_applicativeAlternate'] = function() { $v = function($dictApplicative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_applicativeAlternate"), recVars=[];
   $__res = $dictApplicative_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_alternativeAlternate'] = function() { $v = function($dictAlternative_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_alternativeAlternate'] = function() { $v = function($dictAlternative_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_alternativeAlternate"), recVars=[];
   $__res = $dictAlternative_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Alternate_altAlternate'] = function() { $v = function($dictAlt_0) {
+\PhpursThunks::$thunks['Data_Monoid_Alternate_altAlternate'] = function() { $v = function($dictAlt_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Alternate_altAlternate"), recVars=[];
   $__res = $dictAlt_0;
   goto __end;;
   __end:

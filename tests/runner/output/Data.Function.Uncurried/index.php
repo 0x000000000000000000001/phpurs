@@ -91,17 +91,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Function_Uncurried_runFn1'] = function() { $v = function($f_0) {
+\PhpursThunks::$thunks['Data_Function_Uncurried_runFn1'] = function() { $v = function($f_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_Uncurried_runFn1"), recVars=[];
   $__res = $f_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Function_Uncurried_mkFn1'] = function() { $v = function($f_0) {
+\PhpursThunks::$thunks['Data_Function_Uncurried_mkFn1'] = function() { $v = function($f_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Function_Uncurried_mkFn1"), recVars=[];
   $__res = $f_0;
   goto __end;;
   __end:

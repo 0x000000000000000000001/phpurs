@@ -109,12 +109,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Control_Monad_Gen_Common_max'] = function() { $v = (function() {
-  $__fn = function($x_0, $y_1 = null) use (&$__fn) {
+  $__fn = function($x_0 = null, $y_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_max"), recVars=[];
   $v_2_0 = (((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($x_0))($y_1);
   if ((is_object($v_2_0) && (($v_2_0)->{'tag'} === "LT"))) {
 $__t1 = $y_1;
@@ -137,33 +136,28 @@ $__t1 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Control_Monad_Gen_Common_genTuple'] = function() { $v = function($dictApply_0) {
+\PhpursThunks::$thunks['Control_Monad_Gen_Common_genTuple'] = function() { $v = function($dictApply_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genTuple"), recVars=[];
   $__res = ((($GLOBALS['Control_Apply_lift2'] ?? \PhpursThunks::eval('Control_Apply_lift2')))($dictApply_0))(($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple')));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Gen_Common_genNonEmpty'] = function() { $v = (function() {
-  $__fn = function($dictMonadRec_0, $dictMonadGen_1 = null) use (&$__fn) {
+  $__fn = function($dictMonadRec_0 = null, $dictMonadGen_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genNonEmpty"), recVars=[];
   $Apply0_2_0 = (((((($dictMonadGen_1)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $unfoldable1_3_1 = ((($GLOBALS['Control_Monad_Gen_unfoldable'] ?? \PhpursThunks::eval('Control_Monad_Gen_unfoldable')))($dictMonadRec_0))($dictMonadGen_1);
-  $__res = function($dictUnfoldable_4) use ($Apply0_2_0, $dictMonadGen_1, $unfoldable1_3_1) {
+  $__res = function($dictUnfoldable_4 = null) use ($Apply0_2_0, $dictMonadGen_1, $unfoldable1_3_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $unfoldable2_5_2 = ($unfoldable1_3_1)($dictUnfoldable_4);
-  $__res = function($gen_6) use ($Apply0_2_0, $dictMonadGen_1, $unfoldable2_5_2) {
+  $__res = function($gen_6 = null) use ($Apply0_2_0, $dictMonadGen_1, $unfoldable2_5_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($Apply0_2_0)->{'apply'})(((((($Apply0_2_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_NonEmpty_NonEmpty'] ?? \PhpursThunks::eval('Data_NonEmpty_NonEmpty'))))($gen_6)))(((($dictMonadGen_1)->{'resize'})(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((($GLOBALS['Control_Monad_Gen_Common_max'] ?? \PhpursThunks::eval('Control_Monad_Gen_Common_max')))(0)))(function($v_7) {
+  $__res = ((($Apply0_2_0)->{'apply'})(((((($Apply0_2_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_NonEmpty_NonEmpty'] ?? \PhpursThunks::eval('Data_NonEmpty_NonEmpty'))))($gen_6)))(((($dictMonadGen_1)->{'resize'})(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))((($GLOBALS['Control_Monad_Gen_Common_max'] ?? \PhpursThunks::eval('Control_Monad_Gen_Common_max')))(0)))(function($v_7 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($v_7))(1);
   goto __end;;
   __end:
@@ -183,21 +177,18 @@ $__t1 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Control_Monad_Gen_Common_genMaybe__prime__'] = function() { $v = function($dictMonadGen_0) {
+\PhpursThunks::$thunks['Control_Monad_Gen_Common_genMaybe__prime__'] = function() { $v = function($dictMonadGen_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genMaybe'"), recVars=[];
   $Monad0_1_0 = (($dictMonadGen_0)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $Bind1_2_1 = (($Monad0_1_0)->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $__res = (function() use ($Bind1_2_1, $Monad0_1_0, $dictMonadGen_0) {
-  $__fn = function($bias_3, $gen_4 = null) use ($Bind1_2_1, $Monad0_1_0, $dictMonadGen_0, &$__fn) {
+  $__fn = function($bias_3 = null, $gen_4 = null) use ($Bind1_2_1, $Monad0_1_0, $dictMonadGen_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($Bind1_2_1)->{'bind'})(((($dictMonadGen_0)->{'chooseFloat'})(0.0))(1.0)))(function($n_5) use ($Bind1_2_1, $Monad0_1_0, $bias_3, $gen_4) {
+  $__res = ((($Bind1_2_1)->{'bind'})(((($dictMonadGen_0)->{'chooseFloat'})(0.0))(1.0)))(function($n_5 = null) use ($Bind1_2_1, $Monad0_1_0, $bias_3, $gen_4) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($n_5))($bias_3)) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($n_5))($bias_3))->{'tag'} === "LT"))) {
 $__t2 = ((((((($Bind1_2_1)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))($gen_4);
 } else {
@@ -218,37 +209,32 @@ $__t2 = (((($Monad0_1_0)->{'Applicative0'})(($GLOBALS['Prim_undefined'] ?? \Phpu
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Gen_Common_genMaybe'] = function() { $v = function($dictMonadGen_0) {
+\PhpursThunks::$thunks['Control_Monad_Gen_Common_genMaybe'] = function() { $v = function($dictMonadGen_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genMaybe"), recVars=[];
   $__res = ((($GLOBALS['Control_Monad_Gen_Common_genMaybe__prime__'] ?? \PhpursThunks::eval('Control_Monad_Gen_Common_genMaybe__prime__')))($dictMonadGen_0))(0.75);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Gen_Common_genIdentity'] = function() { $v = function($dictFunctor_0) {
+\PhpursThunks::$thunks['Control_Monad_Gen_Common_genIdentity'] = function() { $v = function($dictFunctor_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genIdentity"), recVars=[];
   $__res = (($dictFunctor_0)->{'map'})(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity')));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Gen_Common_genEither__prime__'] = function() { $v = function($dictMonadGen_0) {
+\PhpursThunks::$thunks['Control_Monad_Gen_Common_genEither__prime__'] = function() { $v = function($dictMonadGen_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genEither'"), recVars=[];
   $Bind1_1_0 = (((($dictMonadGen_0)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $__local_var_2_1 = (((($Bind1_1_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $__res = (function() use ($Bind1_1_0, $__local_var_2_1, $dictMonadGen_0) {
-  $__fn = function($bias_3, $genA_4 = null, $genB_5 = null) use ($Bind1_1_0, $__local_var_2_1, $dictMonadGen_0, &$__fn) {
+  $__fn = function($bias_3 = null, $genA_4 = null, $genB_5 = null) use ($Bind1_1_0, $__local_var_2_1, $dictMonadGen_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($Bind1_1_0)->{'bind'})(((($dictMonadGen_0)->{'chooseFloat'})(0.0))(1.0)))(function($n_6) use ($__local_var_2_1, $bias_3, $genA_4, $genB_5) {
+  $__res = ((($Bind1_1_0)->{'bind'})(((($dictMonadGen_0)->{'chooseFloat'})(0.0))(1.0)))(function($n_6 = null) use ($__local_var_2_1, $bias_3, $genA_4, $genB_5) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($n_6))($bias_3)) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($n_6))($bias_3))->{'tag'} === "LT"))) {
 $__t2 = ((($__local_var_2_1)->{'map'})(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))))($genA_4);
 } else {
@@ -269,9 +255,8 @@ $__t2 = ((($__local_var_2_1)->{'map'})(($GLOBALS['Data_Either_Right'] ?? \Phpurs
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Gen_Common_genEither'] = function() { $v = function($dictMonadGen_0) {
+\PhpursThunks::$thunks['Control_Monad_Gen_Common_genEither'] = function() { $v = function($dictMonadGen_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Gen_Common_genEither"), recVars=[];
   $__res = ((($GLOBALS['Control_Monad_Gen_Common_genEither__prime__'] ?? \PhpursThunks::eval('Control_Monad_Gen_Common_genEither__prime__')))($dictMonadGen_0))(0.5);
   goto __end;;
   __end:

@@ -108,38 +108,35 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_Loop'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_Loop'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Loop", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_Done'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_Done'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Done", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRecM'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRecM'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_tailRecM"), recVars=[];
   $__res = ($dict_0)->{'tailRecM'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRecM2'] = function() { $v = (function() {
-  $__fn = function($dictMonadRec_0, $f_1 = null, $a_2 = null, $b_3 = null) use (&$__fn) {
+  $__fn = function($dictMonadRec_0 = null, $f_1 = null, $a_2 = null, $b_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_tailRecM2"), recVars=[];
-  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($o_4) use ($f_1) {
+  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($o_4 = null) use ($f_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($f_1)(($o_4)->{'a'}))(($o_4)->{'b'});
   goto __end;;
   __end:
@@ -152,15 +149,13 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRecM3'] = function() { $v = (function() {
-  $__fn = function($dictMonadRec_0, $f_1 = null, $a_2 = null, $b_3 = null, $c_4 = null) use (&$__fn) {
+  $__fn = function($dictMonadRec_0 = null, $f_1 = null, $a_2 = null, $b_3 = null, $c_4 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_tailRecM3"), recVars=[];
-  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($o_5) use ($f_1) {
+  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($o_5 = null) use ($f_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($f_1)(($o_5)->{'a'}))(($o_5)->{'b'}))(($o_5)->{'c'});
   goto __end;;
   __end:
@@ -172,19 +167,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_untilJust'] = function() { $v = function($dictMonadRec_0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_untilJust'] = function() { $v = function($dictMonadRec_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_untilJust"), recVars=[];
   $__local_var_1_0 = (((((((($dictMonadRec_0)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($m_2) use ($__local_var_1_0, $dictMonadRec_0) {
+  $__res = function($m_2 = null) use ($__local_var_1_0, $dictMonadRec_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($v_3) use ($__local_var_1_0, $m_2) {
+  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($v_3 = null) use ($__local_var_1_0, $m_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($__local_var_1_0)->{'map'})(function($v1_4) {
+  $__res = ((($__local_var_1_0)->{'map'})(function($v1_4 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_4) && (($v1_4)->{'tag'} === "Nothing"))) {
 $__t1 = new Phpurs_Data1("Loop", ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit')));
 } else {
@@ -212,23 +203,18 @@ $__t1 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_whileJust'] = function() { $v = function($dictMonoid_0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_whileJust'] = function() { $v = function($dictMonoid_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_whileJust"), recVars=[];
   $mempty_1_0 = ($dictMonoid_0)->{'mempty'};
-  $__res = function($dictMonadRec_2) use ($dictMonoid_0, $mempty_1_0) {
+  $__res = function($dictMonadRec_2 = null) use ($dictMonoid_0, $mempty_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_3_1 = (((((((($dictMonadRec_2)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($m_4) use ($__local_var_3_1, $dictMonadRec_2, $dictMonoid_0, $mempty_1_0) {
+  $__res = function($m_4 = null) use ($__local_var_3_1, $dictMonadRec_2, $dictMonoid_0, $mempty_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($dictMonadRec_2)->{'tailRecM'})(function($v_5) use ($__local_var_3_1, $dictMonoid_0, $m_4) {
+  $__res = ((($dictMonadRec_2)->{'tailRecM'})(function($v_5 = null) use ($__local_var_3_1, $dictMonoid_0, $m_4) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($__local_var_3_1)->{'map'})(function($v1_6) use ($dictMonoid_0, $v_5) {
+  $__res = ((($__local_var_3_1)->{'map'})(function($v1_6 = null) use ($dictMonoid_0, $v_5) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_6) && (($v1_6)->{'tag'} === "Nothing"))) {
 $__t2 = new Phpurs_Data1("Done", $v_5);
 } else {
@@ -260,30 +246,43 @@ $__t2 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRec'] = function() { $v = function($f_0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRec'] = function() { $v = function($f_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_tailRec"), recVars=[];
   $go_1_0 = null;
-  $go_1_0 = function($v_2) use ($f_0, &$go_1_0) {
+  $go_1_0 = function($v_2 = null) use ($f_0, &$go_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "go_1_0"), recVars=["go_1_0"];
-  while (true) {
-if ((is_object($v_2) && (($v_2)->{'tag'} === "Loop"))) {
-$__tco_2 = ($f_0)(($v_2)->{'value0'});
-$v_2 = $__tco_2;
-continue ;
-$__t1 = null;
+  $__tco_var_go_1_0_0_v_2 = $v_2;
+  $__tco_done_go_1_0_0 = false;
+  $__tco_res_go_1_0_0 = null;
+  $__tco_loop_go_1_0_0 = function($v_2 = null) use (&$__tco_done_go_1_0_0, &$__tco_var_go_1_0_0_v_2, $f_0, &$go_1_0) {
+  $__num = \func_num_args();
+  $__tco_done_go_1_0_0 = true;
+  $v_2 = $__tco_var_go_1_0_0_v_2;
+  if ((is_object($v_2) && (($v_2)->{'tag'} === "Loop"))) {
+$__tco_1 = ($f_0)(($v_2)->{'value0'});
+$__tco_var_go_1_0_0_v_2 = $__tco_1;
+$__tco_done_go_1_0_0 = false;
+$__res = null;
+goto __end;;
+$__t0 = null;
 } else {
 if ((is_object($v_2) && (($v_2)->{'tag'} === "Done"))) {
-$__t1 = ($v_2)->{'value0'};
+$__t0 = ($v_2)->{'value0'};
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
-$__t1 = null;
+$__t0 = null;
 };
 };
-$__res = $__t1;
-goto __end;;
+  $__res = $__t0;
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
+  while (!$__tco_done_go_1_0_0) {
+$__tco_res_go_1_0_0 = ($__tco_loop_go_1_0_0)($__tco_var_go_1_0_0_v_2);
+};
+  $__res = $__tco_res_go_1_0_0;
+  goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 };
@@ -293,15 +292,13 @@ goto __end;;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRec2'] = function() { $v = (function() {
-  $__fn = function($f_0, $a_1 = null, $b_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a_1 = null, $b_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_tailRec2"), recVars=[];
-  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($o_3) use ($f_0) {
+  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($o_3 = null) use ($f_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($f_0)(($o_3)->{'a'}))(($o_3)->{'b'});
   goto __end;;
   __end:
@@ -314,15 +311,13 @@ goto __end;;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_tailRec3'] = function() { $v = (function() {
-  $__fn = function($f_0, $a_1 = null, $b_2 = null, $c_3 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a_1 = null, $b_2 = null, $c_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_tailRec3"), recVars=[];
-  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($o_4) use ($f_0) {
+  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($o_4 = null) use ($f_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($f_0)(($o_4)->{'a'}))(($o_4)->{'b'}))(($o_4)->{'c'});
   goto __end;;
   __end:
@@ -335,15 +330,13 @@ goto __end;;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_monadRecMaybe'] = function() { $v = (object)["tailRecM" => (function() {
-  $__fn = function($f_0, $a0_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a0_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($v_2) use ($f_0) {
+  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($v_2 = null) use ($f_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_2) && (($v_2)->{'tag'} === "Nothing"))) {
 $__t0 = new Phpurs_Data1("Done", new Phpurs_Data0("Nothing"));
 } else {
@@ -374,20 +367,17 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Monad0" => function($dollar__unused_0) {
+})(), "Monad0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_monadMaybe'] ?? \PhpursThunks::eval('Data_Maybe_monadMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_monadRecIdentity'] = function() { $v = (object)["tailRecM" => function($f_0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_monadRecIdentity'] = function() { $v = (object)["tailRecM" => function($f_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(function($v_1) {
+  $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(function($v_1 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v_1;
   goto __end;;
   __end:
@@ -396,24 +386,21 @@ $__t0 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Monad0" => function($dollar__unused_0) {
+}, "Monad0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Identity_monadIdentity'] ?? \PhpursThunks::eval('Data_Identity_monadIdentity'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_monadRecFunction'] = function() { $v = (object)["tailRecM" => (function() {
-  $__fn = function($f_0, $a0_1 = null, $e_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a0_1 = null, $e_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($a_3) use ($e_2, $f_0) {
+  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($a_3 = null) use ($e_2, $f_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($f_0)($a_3))($e_2);
   goto __end;;
   __end:
@@ -424,24 +411,21 @@ $__t0 = null;
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
   };
   return $__fn;
-})(), "Monad0" => function($dollar__unused_0) {
+})(), "Monad0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Control_Monad_monadFn'] ?? \PhpursThunks::eval('Control_Monad_monadFn'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_monadRecEither'] = function() { $v = (object)["tailRecM" => (function() {
-  $__fn = function($f_0, $a0_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a0_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($v_2) use ($f_0) {
+  $__res = ((($GLOBALS['Control_Monad_Rec_Class_tailRec'] ?? \PhpursThunks::eval('Control_Monad_Rec_Class_tailRec')))(function($v_2 = null) use ($f_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_2) && (($v_2)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Done", new Phpurs_Data1("Left", ($v_2)->{'value0'}));
 } else {
@@ -472,28 +456,25 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Monad0" => function($dollar__unused_0) {
+})(), "Monad0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_monadEither'] ?? \PhpursThunks::eval('Data_Either_monadEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_monadRecEffect'] = function() { $v = (object)["tailRecM" => (function() {
-  $__fn = function($f_0, $a_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $a_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $fromDone_2_0 = (($GLOBALS['Partial_Unsafe__unsafePartial'] ?? \PhpursThunks::eval('Partial_Unsafe__unsafePartial')))((function() {
-  $__fn = function($dollar__unused_2, $v_3 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_2 = null, $v_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_3) && (($v_3)->{'tag'} === "Done"))) {
 $__t0 = ($v_3)->{'value0'};
 } else {
@@ -507,19 +488,15 @@ $__t0 = null;
   };
   return $__fn;
 })());
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($f_0)($a_1)))(($GLOBALS['Effect_Ref__new'] ?? \PhpursThunks::eval('Effect_Ref__new')))))(function($r_3) use ($f_0, $fromDone_2_0) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($f_0)($a_1)))(($GLOBALS['Effect_Ref__new'] ?? \PhpursThunks::eval('Effect_Ref__new')))))(function($r_3 = null) use ($f_0, $fromDone_2_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_untilE'] ?? \PhpursThunks::eval('Effect_untilE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_Ref_read'] ?? \PhpursThunks::eval('Effect_Ref_read')))($r_3)))(function($v_4) use ($f_0, $r_3) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_untilE'] ?? \PhpursThunks::eval('Effect_untilE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_Ref_read'] ?? \PhpursThunks::eval('Effect_Ref_read')))($r_3)))(function($v_4 = null) use ($f_0, $r_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_4) && (($v_4)->{'tag'} === "Loop"))) {
-$__t2 = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($f_0)(($v_4)->{'value0'})))(function($e_5) use ($r_3) {
+$__t2 = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($f_0)(($v_4)->{'value0'})))(function($e_5 = null) use ($r_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_Ref_write'] ?? \PhpursThunks::eval('Effect_Ref_write')))($e_5))($r_3)))(function($dollar__unused_6) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_Ref_write'] ?? \PhpursThunks::eval('Effect_Ref_write')))($e_5))($r_3)))(function($dollar__unused_6 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Effect_pureE'] ?? \PhpursThunks::eval('Effect_pureE')))(false);
   goto __end;;
   __end:
@@ -541,9 +518,8 @@ $__t2 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))))(function($dollar__unused_4) use ($fromDone_2_0, $r_3) {
+}))))(function($dollar__unused_4 = null) use ($fromDone_2_0, $r_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($GLOBALS['Effect_applyEffect'] ?? \PhpursThunks::eval('Effect_applyEffect')))->{'apply'})((($GLOBALS['Effect_pureE'] ?? \PhpursThunks::eval('Effect_pureE')))($fromDone_2_0)))((($GLOBALS['Effect_Ref_read'] ?? \PhpursThunks::eval('Effect_Ref_read')))($r_3));
   goto __end;;
   __end:
@@ -558,21 +534,19 @@ $__t2 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Monad0" => function($dollar__unused_0) {
+})(), "Monad0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Effect_monadEffect'] ?? \PhpursThunks::eval('Effect_monadEffect'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_loop3'] = function() { $v = (function() {
-  $__fn = function($a_0, $b_1 = null, $c_2 = null) use (&$__fn) {
+  $__fn = function($a_0 = null, $b_1 = null, $c_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_loop3"), recVars=[];
   $__res = new Phpurs_Data1("Loop", (object)["a" => $a_0, "b" => $b_1, "c" => $c_2]);
   goto __end;;
   __end:
@@ -581,12 +555,11 @@ $__t2 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_loop2'] = function() { $v = (function() {
-  $__fn = function($a_0, $b_1 = null) use (&$__fn) {
+  $__fn = function($a_0 = null, $b_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_loop2"), recVars=[];
   $__res = new Phpurs_Data1("Loop", (object)["a" => $a_0, "b" => $b_1]);
   goto __end;;
   __end:
@@ -595,12 +568,11 @@ $__t2 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_functorStep'] = function() { $v = (object)["map" => (function() {
-  $__fn = function($f_0, $m_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $m_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($m_1) && (($m_1)->{'tag'} === "Loop"))) {
 $__t0 = new Phpurs_Data1("Loop", ($m_1)->{'value0'});
 } else {
@@ -618,19 +590,15 @@ $__t0 = null;
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Control_Monad_Rec_Class_forever'] = function() { $v = function($dictMonadRec_0) {
+\PhpursThunks::$thunks['Control_Monad_Rec_Class_forever'] = function() { $v = function($dictMonadRec_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Monad_Rec_Class_forever"), recVars=[];
   $__local_var_1_0 = (((((((($dictMonadRec_0)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($ma_2) use ($__local_var_1_0, $dictMonadRec_0) {
+  $__res = function($ma_2 = null) use ($__local_var_1_0, $dictMonadRec_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($u_3) use ($__local_var_1_0, $ma_2) {
+  $__res = ((($dictMonadRec_0)->{'tailRecM'})(function($u_3 = null) use ($__local_var_1_0, $ma_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($__local_var_1_0)->{'map'})(function($v_4) use ($u_3) {
+  $__res = ((($__local_var_1_0)->{'map'})(function($v_4 = null) use ($u_3) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data1("Loop", $u_3);
   goto __end;;
   __end:
@@ -649,12 +617,11 @@ $__t0 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Control_Monad_Rec_Class_bifunctorStep'] = function() { $v = (object)["bimap" => (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_2) && (($v2_2)->{'tag'} === "Loop"))) {
 $__t0 = new Phpurs_Data1("Loop", ($v_0)(($v2_2)->{'value0'}));
 } else {

@@ -96,14 +96,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Generic_Rep_Inl'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_Inl'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Inl", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_Inr'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_Inr'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Inr", $value0);
   goto __end;;
@@ -111,7 +111,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Generic_Rep_Product'] = function() { $v = (function() {
-  $__fn = function($value0, $value1 = null) use (&$__fn) {
+  $__fn = function($value0 = null, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
@@ -124,40 +124,35 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Generic_Rep_NoArguments'] = function() { $v = ($GLOBALS['__phpurs_data0_NoArguments'] ??= new Phpurs_Data0("NoArguments")); return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_Constructor'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_Constructor'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_Constructor"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_Argument'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_Argument'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_Argument"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_to'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_to'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_to"), recVars=[];
   $__res = ($dict_0)->{'to'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Generic_Rep_showSum'] = function() { $v = (function() {
-  $__fn = function($dictShow_0, $dictShow1_1 = null) use (&$__fn) {
+  $__fn = function($dictShow_0 = null, $dictShow1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_showSum"), recVars=[];
-  $__res = (object)["show" => function($v_2) use ($dictShow1_1, $dictShow_0) {
+  $__res = (object)["show" => function($v_2 = null) use ($dictShow1_1, $dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_2) && (($v_2)->{'tag'} === "Inl"))) {
 $__t0 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Inl "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})(($v_2)->{'value0'})))(")"));
 } else {
@@ -180,15 +175,13 @@ $__t0 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Generic_Rep_showProduct'] = function() { $v = (function() {
-  $__fn = function($dictShow_0, $dictShow1_1 = null) use (&$__fn) {
+  $__fn = function($dictShow_0 = null, $dictShow1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_showProduct"), recVars=[];
-  $__res = (object)["show" => function($v_2) use ($dictShow1_1, $dictShow_0) {
+  $__res = (object)["show" => function($v_2 = null) use ($dictShow1_1, $dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Product "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})(($v_2)->{'value0'})))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow1_1)->{'show'})(($v_2)->{'value1'})))(")"))));
   goto __end;;
   __end:
@@ -200,24 +193,21 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_showNoArguments'] = function() { $v = (object)["show" => function($v_0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_showNoArguments'] = function() { $v = (object)["show" => function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = "NoArguments";
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Generic_Rep_showConstructor'] = function() { $v = (function() {
-  $__fn = function($dictIsSymbol_0, $dictShow_1 = null) use (&$__fn) {
+  $__fn = function($dictIsSymbol_0 = null, $dictShow_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_showConstructor"), recVars=[];
-  $__res = (object)["show" => function($v_2) use ($dictIsSymbol_0, $dictShow_1) {
+  $__res = (object)["show" => function($v_2 = null) use ($dictIsSymbol_0, $dictShow_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Constructor @"))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_Show_showStringImpl'] ?? \PhpursThunks::eval('Data_Show_showStringImpl')))((($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy")))))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_1)->{'show'})($v_2)))(")"))));
   goto __end;;
   __end:
@@ -229,12 +219,10 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_showArgument'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_showArgument'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_showArgument"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Argument "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
@@ -245,12 +233,11 @@ $__t0 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Generic_Rep_repOf'] = function() { $v = (function() {
-  $__fn = function($dictGeneric_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dictGeneric_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_repOf"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -258,9 +245,8 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Generic_Rep_from'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_Generic_Rep_from'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Generic_Rep_from"), recVars=[];
   $__res = ($dict_0)->{'from'};
   goto __end;;
   __end:

@@ -115,19 +115,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_Maybe_Nothing'] = function() { $v = ($GLOBALS['__phpurs_data0_Nothing'] ??= new Phpurs_Data0("Nothing")); return $v; };
-\PhpursThunks::$thunks['Data_Maybe_Just'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Maybe_Just'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Just", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_showMaybe'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Maybe_showMaybe'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_showMaybe"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Just"))) {
 $__t0 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Just "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})(($v_1)->{'value0'})))(")"));
 } else {
@@ -147,16 +145,14 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_semigroupMaybe'] = function() { $v = function($dictSemigroup_0) {
+\PhpursThunks::$thunks['Data_Maybe_semigroupMaybe'] = function() { $v = function($dictSemigroup_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_semigroupMaybe"), recVars=[];
   $__res = (object)["append" => (function() use ($dictSemigroup_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemigroup_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Nothing"))) {
 $__t0 = $v1_2;
 } else {
@@ -183,12 +179,11 @@ $__t0 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_optional'] = function() { $v = (function() {
-  $__fn = function($dictAlt_0, $dictApplicative_1 = null, $a_2 = null) use (&$__fn) {
+  $__fn = function($dictAlt_0 = null, $dictApplicative_1 = null, $a_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_optional"), recVars=[];
   $__res = ((($dictAlt_0)->{'alt'})(((((($dictAlt_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))($a_2)))((($dictApplicative_1)->{'pure'})(new Phpurs_Data0("Nothing")));
   goto __end;;
   __end:
@@ -196,16 +191,14 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Maybe_monoidMaybe'] = function() { $v = function($dictSemigroup_0) {
+\PhpursThunks::$thunks['Data_Maybe_monoidMaybe'] = function() { $v = function($dictSemigroup_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_monoidMaybe"), recVars=[];
   $semigroupMaybe1_1_0 = (object)["append" => (function() use ($dictSemigroup_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemigroup_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Nothing"))) {
 $__t0 = $v1_2;
 } else {
@@ -227,9 +220,8 @@ $__t0 = null;
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => new Phpurs_Data0("Nothing"), "Semigroup0" => function($dollar__unused_2) use ($semigroupMaybe1_1_0) {
+  $__res = (object)["mempty" => new Phpurs_Data0("Nothing"), "Semigroup0" => function($dollar__unused_2 = null) use ($semigroupMaybe1_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupMaybe1_1_0;
   goto __end;;
   __end:
@@ -240,12 +232,11 @@ $__t0 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_maybe__prime__'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_maybe'"), recVars=[];
   if ((is_object($v2_2) && (($v2_2)->{'tag'} === "Nothing"))) {
 $__t0 = ($v_0)(($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit')));
 } else {
@@ -264,12 +255,11 @@ $__t0 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Maybe_maybe'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_maybe"), recVars=[];
   if ((is_object($v2_2) && (($v2_2)->{'tag'} === "Nothing"))) {
 $__t0 = $v_0;
 } else {
@@ -287,9 +277,8 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Maybe_isNothing'] = function() { $v = function($v2_0) {
+\PhpursThunks::$thunks['Data_Maybe_isNothing'] = function() { $v = function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_isNothing"), recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Nothing"))) {
 $__t0 = true;
 } else {
@@ -305,9 +294,8 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_isJust'] = function() { $v = function($v2_0) {
+\PhpursThunks::$thunks['Data_Maybe_isJust'] = function() { $v = function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_isJust"), recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Nothing"))) {
 $__t0 = false;
 } else {
@@ -323,9 +311,8 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_genericMaybe'] = function() { $v = (object)["to" => function($x_0) {
+\PhpursThunks::$thunks['Data_Maybe_genericMaybe'] = function() { $v = (object)["to" => function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_0) && (($x_0)->{'tag'} === "Inl"))) {
 $__t0 = new Phpurs_Data0("Nothing");
 } else {
@@ -340,9 +327,8 @@ $__t0 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "from" => function($x_0) {
+}, "from" => function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_0) && (($x_0)->{'tag'} === "Nothing"))) {
 $__t1 = new Phpurs_Data1("Inl", new Phpurs_Data0("NoArguments"));
 } else {
@@ -359,12 +345,11 @@ $__t1 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_functorMaybe'] = function() { $v = (object)["map" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Just"))) {
 $__t0 = new Phpurs_Data1("Just", ($v_0)(($v1_1)->{'value0'}));
 } else {
@@ -378,12 +363,11 @@ $__t0 = new Phpurs_Data0("Nothing");
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_invariantMaybe'] = function() { $v = (object)["imap" => (function() {
-  $__fn = function($f_0, $v_1 = null, $v1_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null, $v1_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_2) && (($v1_2)->{'tag'} === "Just"))) {
 $__t0 = new Phpurs_Data1("Just", ($f_0)(($v1_2)->{'value0'}));
 } else {
@@ -396,21 +380,19 @@ $__t0 = new Phpurs_Data0("Nothing");
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_fromMaybe__prime__'] = function() { $v = function($a_0) {
+\PhpursThunks::$thunks['Data_Maybe_fromMaybe__prime__'] = function() { $v = function($a_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_fromMaybe'"), recVars=[];
   $__res = ((($GLOBALS['Data_Maybe_maybe__prime__'] ?? \PhpursThunks::eval('Data_Maybe_maybe__prime__')))($a_0))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_fromMaybe'] = function() { $v = (function() {
-  $__fn = function($a_0, $v2_1 = null) use (&$__fn) {
+  $__fn = function($a_0 = null, $v2_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_fromMaybe"), recVars=[];
   if ((is_object($v2_1) && (($v2_1)->{'tag'} === "Nothing"))) {
 $__t0 = $a_0;
 } else {
@@ -429,12 +411,11 @@ $__t0 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Maybe_fromJust'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_fromJust"), recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Just"))) {
 $__t0 = ($v_1)->{'value0'};
 } else {
@@ -449,12 +430,11 @@ $__t0 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Maybe_extendMaybe'] = function() { $v = (object)["extend" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Nothing"))) {
 $__t0 = new Phpurs_Data0("Nothing");
 } else {
@@ -466,24 +446,21 @@ $__t0 = new Phpurs_Data1("Just", ($v_0)($v1_1));
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_functorMaybe'] ?? \PhpursThunks::eval('Data_Maybe_functorMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_eqMaybe'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Maybe_eqMaybe'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_eqMaybe"), recVars=[];
   $__res = (object)["eq" => (function() use ($dictEq_0) {
-  $__fn = function($x_1, $y_2 = null) use ($dictEq_0, &$__fn) {
+  $__fn = function($x_1 = null, $y_2 = null) use ($dictEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_1) && (($x_1)->{'tag'} === "Nothing"))) {
 $__t0 = (is_object($y_2) && (($y_2)->{'tag'} === "Nothing"));
 } else {
@@ -500,17 +477,15 @@ $__t0 = ((is_object($x_1) && (($x_1)->{'tag'} === "Just")) && ((is_object($y_2) 
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_ordMaybe'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Maybe_ordMaybe'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_ordMaybe"), recVars=[];
   $__local_var_1_0 = (($dictOrd_0)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $eqMaybe1_2_1 = (object)["eq" => (function() use ($__local_var_1_0) {
-  $__fn = function($x_2, $y_3 = null) use ($__local_var_1_0, &$__fn) {
+  $__fn = function($x_2 = null, $y_3 = null) use ($__local_var_1_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_2) && (($x_2)->{'tag'} === "Nothing"))) {
 $__t1 = (is_object($y_3) && (($y_3)->{'tag'} === "Nothing"));
 } else {
@@ -524,12 +499,11 @@ $__t1 = ((is_object($x_2) && (($x_2)->{'tag'} === "Just")) && ((is_object($y_3) 
   return $__fn;
 })()];
   $__res = (object)["compare" => (function() use ($dictOrd_0) {
-  $__fn = function($x_3, $y_4 = null) use ($dictOrd_0, &$__fn) {
+  $__fn = function($x_3 = null, $y_4 = null) use ($dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_3) && (($x_3)->{'tag'} === "Nothing"))) {
 if ((is_object($y_4) && (($y_4)->{'tag'} === "Nothing"))) {
 $__t4 = new Phpurs_Data0("EQ");
@@ -555,9 +529,8 @@ $__t3 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Eq0" => function($dollar__unused_3) use ($eqMaybe1_2_1) {
+})(), "Eq0" => function($dollar__unused_3 = null) use ($eqMaybe1_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $eqMaybe1_2_1;
   goto __end;;
   __end:
@@ -568,12 +541,11 @@ $__t3 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_eq1Maybe'] = function() { $v = (object)["eq1" => (function() {
-  $__fn = function($dictEq_0, $x_1 = null, $y_2 = null) use (&$__fn) {
+  $__fn = function($dictEq_0 = null, $x_1 = null, $y_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_1) && (($x_1)->{'tag'} === "Nothing"))) {
 $__t0 = (is_object($y_2) && (($y_2)->{'tag'} === "Nothing"));
 } else {
@@ -586,28 +558,24 @@ $__t0 = ((is_object($x_1) && (($x_1)->{'tag'} === "Just")) && ((is_object($y_2) 
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_ord1Maybe'] = function() { $v = (object)["compare1" => function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Maybe_ord1Maybe'] = function() { $v = (object)["compare1" => function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Maybe_ordMaybe'] ?? \PhpursThunks::eval('Data_Maybe_ordMaybe')))($dictOrd_0))->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Eq10" => function($dollar__unused_0) {
+}, "Eq10" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_eq1Maybe'] ?? \PhpursThunks::eval('Data_Maybe_eq1Maybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_boundedMaybe'] = function() { $v = function($dictBounded_0) {
+\PhpursThunks::$thunks['Data_Maybe_boundedMaybe'] = function() { $v = function($dictBounded_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_boundedMaybe"), recVars=[];
   $ordMaybe1_1_0 = (($GLOBALS['Data_Maybe_ordMaybe'] ?? \PhpursThunks::eval('Data_Maybe_ordMaybe')))((($dictBounded_0)->{'Ord0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = (object)["top" => new Phpurs_Data1("Just", ($dictBounded_0)->{'top'}), "bottom" => new Phpurs_Data0("Nothing"), "Ord0" => function($dollar__unused_2) use ($ordMaybe1_1_0) {
+  $__res = (object)["top" => new Phpurs_Data1("Just", ($dictBounded_0)->{'top'}), "bottom" => new Phpurs_Data0("Nothing"), "Ord0" => function($dollar__unused_2 = null) use ($ordMaybe1_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $ordMaybe1_1_0;
   goto __end;;
   __end:
@@ -618,12 +586,11 @@ $__t0 = ((is_object($x_1) && (($x_1)->{'tag'} === "Just")) && ((is_object($y_2) 
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_applyMaybe'] = function() { $v = (object)["apply" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_0) && (($v_0)->{'tag'} === "Just"))) {
 if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Just"))) {
 $__t1 = new Phpurs_Data1("Just", (($v_0)->{'value0'})(($v1_1)->{'value0'}));
@@ -645,21 +612,19 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_functorMaybe'] ?? \PhpursThunks::eval('Data_Maybe_functorMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_bindMaybe'] = function() { $v = (object)["bind" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_0) && (($v_0)->{'tag'} === "Just"))) {
 $__t0 = ($v1_1)(($v_0)->{'value0'});
 } else {
@@ -676,24 +641,21 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Apply0" => function($dollar__unused_0) {
+})(), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_applyMaybe'] ?? \PhpursThunks::eval('Data_Maybe_applyMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_semiringMaybe'] = function() { $v = function($dictSemiring_0) {
+\PhpursThunks::$thunks['Data_Maybe_semiringMaybe'] = function() { $v = function($dictSemiring_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Maybe_semiringMaybe"), recVars=[];
   $__res = (object)["zero" => new Phpurs_Data0("Nothing"), "one" => new Phpurs_Data1("Just", ($dictSemiring_0)->{'one'}), "add" => (function() use ($dictSemiring_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Nothing"))) {
 $__t0 = $v1_2;
 } else {
@@ -715,12 +677,11 @@ $__t0 = null;
   };
   return $__fn;
 })(), "mul" => (function() use ($dictSemiring_0) {
-  $__fn = function($x_1, $y_2 = null) use ($dictSemiring_0, &$__fn) {
+  $__fn = function($x_1 = null, $y_2 = null) use ($dictSemiring_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if (((is_object($x_1) && (($x_1)->{'tag'} === "Just")) && (is_object($y_2) && (($y_2)->{'tag'} === "Just")))) {
 $__t1 = new Phpurs_Data1("Just", ((($dictSemiring_0)->{'mul'})(($x_1)->{'value0'}))(($y_2)->{'value0'}));
 } else {
@@ -737,36 +698,32 @@ $__t1 = new Phpurs_Data0("Nothing");
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_applicativeMaybe'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just')), "Apply0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Maybe_applicativeMaybe'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just')), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_applyMaybe'] ?? \PhpursThunks::eval('Data_Maybe_applyMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_monadMaybe'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Maybe_monadMaybe'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_applicativeMaybe'] ?? \PhpursThunks::eval('Data_Maybe_applicativeMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bind1" => function($dollar__unused_0) {
+}, "Bind1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_bindMaybe'] ?? \PhpursThunks::eval('Data_Maybe_bindMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Maybe_altMaybe'] = function() { $v = (object)["alt" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_0) && (($v_0)->{'tag'} === "Nothing"))) {
 $__t0 = $v1_1;
 } else {
@@ -778,32 +735,28 @@ $__t0 = $v_0;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_functorMaybe'] ?? \PhpursThunks::eval('Data_Maybe_functorMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_plusMaybe'] = function() { $v = (object)["empty" => new Phpurs_Data0("Nothing"), "Alt0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Maybe_plusMaybe'] = function() { $v = (object)["empty" => new Phpurs_Data0("Nothing"), "Alt0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_altMaybe'] ?? \PhpursThunks::eval('Data_Maybe_altMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Maybe_alternativeMaybe'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Maybe_alternativeMaybe'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_applicativeMaybe'] ?? \PhpursThunks::eval('Data_Maybe_applicativeMaybe'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Plus1" => function($dollar__unused_0) {
+}, "Plus1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Maybe_plusMaybe'] ?? \PhpursThunks::eval('Data_Maybe_plusMaybe'));
   goto __end;;
   __end:

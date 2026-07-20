@@ -111,14 +111,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Either_Left'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Either_Left'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Left", $value0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_Right'] = function() { $v = function($value0) {
+\PhpursThunks::$thunks['Data_Either_Right'] = function() { $v = function($value0 = null) {
   $__num = \func_num_args();
   $__res = new Phpurs_Data1("Right", $value0);
   goto __end;;
@@ -126,15 +126,13 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Either_showEither'] = function() { $v = (function() {
-  $__fn = function($dictShow_0, $dictShow1_1 = null) use (&$__fn) {
+  $__fn = function($dictShow_0 = null, $dictShow1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_showEither"), recVars=[];
-  $__res = (object)["show" => function($v_2) use ($dictShow1_1, $dictShow_0) {
+  $__res = (object)["show" => function($v_2 = null) use ($dictShow1_1, $dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_2) && (($v_2)->{'tag'} === "Left"))) {
 $__t0 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Left "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})(($v_2)->{'value0'})))(")"));
 } else {
@@ -156,21 +154,19 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Either_note__prime__'] = function() { $v = function($f_0) {
+\PhpursThunks::$thunks['Data_Either_note__prime__'] = function() { $v = function($f_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_note'"), recVars=[];
   $__res = ((($GLOBALS['Data_Maybe_maybe__prime__'] ?? \PhpursThunks::eval('Data_Maybe_maybe__prime__')))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))))($f_0)))(($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right')));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Either_note'] = function() { $v = (function() {
-  $__fn = function($a_0, $v2_1 = null) use (&$__fn) {
+  $__fn = function($a_0 = null, $v2_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_note"), recVars=[];
   if ((is_object($v2_1) && (($v2_1)->{'tag'} === "Nothing"))) {
 $__t0 = new Phpurs_Data1("Left", $a_0);
 } else {
@@ -188,9 +184,8 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Either_genericEither'] = function() { $v = (object)["to" => function($x_0) {
+\PhpursThunks::$thunks['Data_Either_genericEither'] = function() { $v = (object)["to" => function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_0) && (($x_0)->{'tag'} === "Inl"))) {
 $__t0 = new Phpurs_Data1("Left", ($x_0)->{'value0'});
 } else {
@@ -205,9 +200,8 @@ $__t0 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "from" => function($x_0) {
+}, "from" => function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_0) && (($x_0)->{'tag'} === "Left"))) {
 $__t1 = new Phpurs_Data1("Inl", ($x_0)->{'value0'});
 } else {
@@ -224,12 +218,11 @@ $__t1 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Either_functorEither'] = function() { $v = (object)["map" => (function() {
-  $__fn = function($f_0, $m_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $m_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($m_1) && (($m_1)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Left", ($m_1)->{'value0'});
 } else {
@@ -248,12 +241,11 @@ $__t0 = null;
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Either_invariantEither'] = function() { $v = (object)["imap" => (function() {
-  $__fn = function($f_0, $v_1 = null, $m_2 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $v_1 = null, $m_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($m_2) && (($m_2)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Left", ($m_2)->{'value0'});
 } else {
@@ -272,12 +264,11 @@ $__t0 = null;
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Either_fromRight__prime__'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_fromRight'"), recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Right"))) {
 $__t0 = ($v1_1)->{'value0'};
 } else {
@@ -291,12 +282,11 @@ $__t0 = ($v_0)(($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_uni
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Either_fromRight'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_fromRight"), recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Right"))) {
 $__t0 = ($v1_1)->{'value0'};
 } else {
@@ -310,12 +300,11 @@ $__t0 = $v_0;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Either_fromLeft__prime__'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_fromLeft'"), recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Left"))) {
 $__t0 = ($v1_1)->{'value0'};
 } else {
@@ -329,12 +318,11 @@ $__t0 = ($v_0)(($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_uni
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Either_fromLeft'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_fromLeft"), recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Left"))) {
 $__t0 = ($v1_1)->{'value0'};
 } else {
@@ -348,12 +336,11 @@ $__t0 = $v_0;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Either_extendEither'] = function() { $v = (object)["extend" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Left", ($v1_1)->{'value0'});
 } else {
@@ -365,28 +352,25 @@ $__t0 = new Phpurs_Data1("Right", ($v_0)($v1_1));
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Either_eqEither'] = function() { $v = (function() {
-  $__fn = function($dictEq_0, $dictEq1_1 = null) use (&$__fn) {
+  $__fn = function($dictEq_0 = null, $dictEq1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_eqEither"), recVars=[];
   $__res = (object)["eq" => (function() use ($dictEq1_1, $dictEq_0) {
-  $__fn = function($x_2, $y_3 = null) use ($dictEq1_1, $dictEq_0, &$__fn) {
+  $__fn = function($x_2 = null, $y_3 = null) use ($dictEq1_1, $dictEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_2) && (($x_2)->{'tag'} === "Left"))) {
 $__t0 = ((is_object($y_3) && (($y_3)->{'tag'} === "Left")) && ((($dictEq_0)->{'eq'})(($x_2)->{'value0'}))(($y_3)->{'value0'}));
 } else {
@@ -405,21 +389,18 @@ $__t0 = ((is_object($x_2) && (($x_2)->{'tag'} === "Right")) && ((is_object($y_3)
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Either_ordEither'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Either_ordEither'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_ordEither"), recVars=[];
   $__local_var_1_0 = (($dictOrd_0)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = function($dictOrd1_2) use ($__local_var_1_0, $dictOrd_0) {
+  $__res = function($dictOrd1_2 = null) use ($__local_var_1_0, $dictOrd_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_3_1 = (($dictOrd1_2)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $eqEither2_4_2 = (object)["eq" => (function() use ($__local_var_1_0, $__local_var_3_1) {
-  $__fn = function($x_4, $y_5 = null) use ($__local_var_1_0, $__local_var_3_1, &$__fn) {
+  $__fn = function($x_4 = null, $y_5 = null) use ($__local_var_1_0, $__local_var_3_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_4) && (($x_4)->{'tag'} === "Left"))) {
 $__t2 = ((is_object($y_5) && (($y_5)->{'tag'} === "Left")) && ((($__local_var_1_0)->{'eq'})(($x_4)->{'value0'}))(($y_5)->{'value0'}));
 } else {
@@ -433,12 +414,11 @@ $__t2 = ((is_object($x_4) && (($x_4)->{'tag'} === "Right")) && ((is_object($y_5)
   return $__fn;
 })()];
   $__res = (object)["compare" => (function() use ($dictOrd1_2, $dictOrd_0) {
-  $__fn = function($x_5, $y_6 = null) use ($dictOrd1_2, $dictOrd_0, &$__fn) {
+  $__fn = function($x_5 = null, $y_6 = null) use ($dictOrd1_2, $dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_5) && (($x_5)->{'tag'} === "Left"))) {
 if ((is_object($y_6) && (($y_6)->{'tag'} === "Left"))) {
 $__t5 = ((($dictOrd_0)->{'compare'})(($x_5)->{'value0'}))(($y_6)->{'value0'});
@@ -464,9 +444,8 @@ $__t4 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Eq0" => function($dollar__unused_5) use ($eqEither2_4_2) {
+})(), "Eq0" => function($dollar__unused_5 = null) use ($eqEither2_4_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $eqEither2_4_2;
   goto __end;;
   __end:
@@ -480,16 +459,14 @@ $__t4 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_eq1Either'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Either_eq1Either'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_eq1Either"), recVars=[];
   $__res = (object)["eq1" => (function() use ($dictEq_0) {
-  $__fn = function($dictEq1_1, $x_2 = null, $y_3 = null) use ($dictEq_0, &$__fn) {
+  $__fn = function($dictEq1_1 = null, $x_2 = null, $y_3 = null) use ($dictEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_2) && (($x_2)->{'tag'} === "Left"))) {
 $__t0 = ((is_object($y_3) && (($y_3)->{'tag'} === "Left")) && ((($dictEq_0)->{'eq'})(($x_2)->{'value0'}))(($y_3)->{'value0'}));
 } else {
@@ -506,18 +483,16 @@ $__t0 = ((is_object($x_2) && (($x_2)->{'tag'} === "Right")) && ((is_object($y_3)
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_ord1Either'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Either_ord1Either'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_ord1Either"), recVars=[];
   $ordEither1_1_0 = (($GLOBALS['Data_Either_ordEither'] ?? \PhpursThunks::eval('Data_Either_ordEither')))($dictOrd_0);
   $__local_var_2_1 = (($dictOrd_0)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $eq1Either1_3_2 = (object)["eq1" => (function() use ($__local_var_2_1) {
-  $__fn = function($dictEq1_3, $x_4 = null, $y_5 = null) use ($__local_var_2_1, &$__fn) {
+  $__fn = function($dictEq1_3 = null, $x_4 = null, $y_5 = null) use ($__local_var_2_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_4) && (($x_4)->{'tag'} === "Left"))) {
 $__t2 = ((is_object($y_5) && (($y_5)->{'tag'} === "Left")) && ((($__local_var_2_1)->{'eq'})(($x_4)->{'value0'}))(($y_5)->{'value0'}));
 } else {
@@ -530,16 +505,14 @@ $__t2 = ((is_object($x_4) && (($x_4)->{'tag'} === "Right")) && ((is_object($y_5)
   };
   return $__fn;
 })()];
-  $__res = (object)["compare1" => function($dictOrd1_4) use ($ordEither1_1_0) {
+  $__res = (object)["compare1" => function($dictOrd1_4 = null) use ($ordEither1_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($ordEither1_1_0)($dictOrd1_4))->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Eq10" => function($dollar__unused_4) use ($eq1Either1_3_2) {
+}, "Eq10" => function($dollar__unused_4 = null) use ($eq1Either1_3_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $eq1Either1_3_2;
   goto __end;;
   __end:
@@ -550,12 +523,11 @@ $__t2 = ((is_object($x_4) && (($x_4)->{'tag'} === "Right")) && ((is_object($y_5)
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Either_either'] = function() { $v = (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_either"), recVars=[];
   if ((is_object($v2_2) && (($v2_2)->{'tag'} === "Left"))) {
 $__t0 = ($v_0)(($v2_2)->{'value0'});
 } else {
@@ -573,9 +545,8 @@ $__t0 = null;
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_Either_hush'] = function() { $v = function($v2_0) {
+\PhpursThunks::$thunks['Data_Either_hush'] = function() { $v = function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_hush"), recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data0("Nothing");
 } else {
@@ -591,9 +562,8 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_isLeft'] = function() { $v = function($v2_0) {
+\PhpursThunks::$thunks['Data_Either_isLeft'] = function() { $v = function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_isLeft"), recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Left"))) {
 $__t0 = true;
 } else {
@@ -609,9 +579,8 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_isRight'] = function() { $v = function($v2_0) {
+\PhpursThunks::$thunks['Data_Either_isRight'] = function() { $v = function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_isRight"), recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Left"))) {
 $__t0 = false;
 } else {
@@ -627,17 +596,15 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_choose'] = function() { $v = function($dictAlt_0) {
+\PhpursThunks::$thunks['Data_Either_choose'] = function() { $v = function($dictAlt_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_choose"), recVars=[];
   $__local_var_1_0 = (($dictAlt_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $__res = (function() use ($__local_var_1_0, $dictAlt_0) {
-  $__fn = function($a_2, $b_3 = null) use ($__local_var_1_0, $dictAlt_0, &$__fn) {
+  $__fn = function($a_2 = null, $b_3 = null) use ($__local_var_1_0, $dictAlt_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictAlt_0)->{'alt'})(((($__local_var_1_0)->{'map'})(($GLOBALS['Data_Either_Left'] ?? \PhpursThunks::eval('Data_Either_Left'))))($a_2)))(((($__local_var_1_0)->{'map'})(($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right'))))($b_3));
   goto __end;;
   __end:
@@ -649,18 +616,15 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_boundedEither'] = function() { $v = function($dictBounded_0) {
+\PhpursThunks::$thunks['Data_Either_boundedEither'] = function() { $v = function($dictBounded_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_boundedEither"), recVars=[];
   $bottom_1_0 = ($dictBounded_0)->{'bottom'};
   $ordEither1_2_1 = (($GLOBALS['Data_Either_ordEither'] ?? \PhpursThunks::eval('Data_Either_ordEither')))((($dictBounded_0)->{'Ord0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = function($dictBounded1_3) use ($bottom_1_0, $ordEither1_2_1) {
+  $__res = function($dictBounded1_3 = null) use ($bottom_1_0, $ordEither1_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $ordEither2_4_2 = ($ordEither1_2_1)((($dictBounded1_3)->{'Ord0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = (object)["top" => new Phpurs_Data1("Right", ($dictBounded1_3)->{'top'}), "bottom" => new Phpurs_Data1("Left", $bottom_1_0), "Ord0" => function($dollar__unused_5) use ($ordEither2_4_2) {
+  $__res = (object)["top" => new Phpurs_Data1("Right", ($dictBounded1_3)->{'top'}), "bottom" => new Phpurs_Data1("Left", $bottom_1_0), "Ord0" => function($dollar__unused_5 = null) use ($ordEither2_4_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $ordEither2_4_2;
   goto __end;;
   __end:
@@ -674,9 +638,8 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_blush'] = function() { $v = function($v2_0) {
+\PhpursThunks::$thunks['Data_Either_blush'] = function() { $v = function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_blush"), recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Just", ($v2_0)->{'value0'});
 } else {
@@ -693,12 +656,11 @@ $__t0 = null;
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Either_applyEither'] = function() { $v = (object)["apply" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_0) && (($v_0)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Left", ($v_0)->{'value0'});
 } else {
@@ -725,22 +687,19 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Either_bindEither'] = function() { $v = (object)["bind" => function($v2_0) {
+\PhpursThunks::$thunks['Data_Either_bindEither'] = function() { $v = (object)["bind" => function($v2_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Left"))) {
 $__local_var_1_1 = ($v2_0)->{'value0'};
-$__t0 = function($v_2) use ($__local_var_1_1) {
+$__t0 = function($v_2 = null) use ($__local_var_1_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data1("Left", $__local_var_1_1);
   goto __end;;
   __end:
@@ -749,9 +708,8 @@ $__t0 = function($v_2) use ($__local_var_1_1) {
 } else {
 if ((is_object($v2_0) && (($v2_0)->{'tag'} === "Right"))) {
 $__local_var_1_2 = ($v2_0)->{'value0'};
-$__t0 = function($f_2) use ($__local_var_1_2) {
+$__t0 = function($f_2 = null) use ($__local_var_1_2) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_2)($__local_var_1_2);
   goto __end;;
   __end:
@@ -766,24 +724,21 @@ $__t0 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Apply0" => function($dollar__unused_0) {
+}, "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_applyEither'] ?? \PhpursThunks::eval('Data_Either_applyEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Either_semigroupEither'] = function() { $v = function($dictSemigroup_0) {
+\PhpursThunks::$thunks['Data_Either_semigroupEither'] = function() { $v = function($dictSemigroup_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Either_semigroupEither"), recVars=[];
   $__res = (object)["append" => (function() use ($dictSemigroup_0) {
-  $__fn = function($x_1, $y_2 = null) use ($dictSemigroup_0, &$__fn) {
+  $__fn = function($x_1 = null, $y_2 = null) use ($dictSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($x_1) && (($x_1)->{'tag'} === "Left"))) {
 $__t0 = new Phpurs_Data1("Left", ($x_1)->{'value0'});
 } else {
@@ -815,36 +770,32 @@ $__t0 = null;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Either_applicativeEither'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right')), "Apply0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Either_applicativeEither'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Either_Right'] ?? \PhpursThunks::eval('Data_Either_Right')), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_applyEither'] ?? \PhpursThunks::eval('Data_Either_applyEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Either_monadEither'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Either_monadEither'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_applicativeEither'] ?? \PhpursThunks::eval('Data_Either_applicativeEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bind1" => function($dollar__unused_0) {
+}, "Bind1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_bindEither'] ?? \PhpursThunks::eval('Data_Either_bindEither'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Either_altEither'] = function() { $v = (object)["alt" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((is_object($v_0) && (($v_0)->{'tag'} === "Left"))) {
 $__t0 = $v1_1;
 } else {
@@ -856,9 +807,8 @@ $__t0 = $v_0;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither'));
   goto __end;;
   __end:

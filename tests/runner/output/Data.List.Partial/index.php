@@ -94,12 +94,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Data_List_Partial_tail'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_List_Partial_tail"), recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Cons"))) {
 $__t0 = ($v_1)->{'value1'};
 } else {
@@ -114,46 +113,36 @@ $__t0 = null;
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Partial_last'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_List_Partial_last"), recVars=["Data_List_Partial_last"];
-  while (true) {
-if ((is_object($v_1) && (($v_1)->{'tag'} === "Cons"))) {
+  if ((is_object($v_1) && (($v_1)->{'tag'} === "Cons"))) {
 if ((is_object(($v_1)->{'value1'}) && ((($v_1)->{'value1'})->{'tag'} === "Nil"))) {
-$__t3 = ($v_1)->{'value0'};
+$__t1 = ($v_1)->{'value0'};
 } else {
-$__tco_1 = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
-$__tco_2 = ($v_1)->{'value1'};
-$dollar__unused_0 = $__tco_1;
-$v_1 = $__tco_2;
-continue ;
-$__t3 = null;
+$__t1 = ((($GLOBALS['Data_List_Partial_last'] ?? \PhpursThunks::eval('Data_List_Partial_last')))(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))(($v_1)->{'value1'});
 };
-$__t0 = $__t3;
+$__t0 = $__t1;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t0 = null;
 };
-$__res = $__t0;
-goto __end;;
-};
+  $__res = $__t0;
+  goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Partial_init'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_List_Partial_init"), recVars=["Data_List_Partial_init"];
-  while (true) {
-if ((is_object($v_1) && (($v_1)->{'tag'} === "Cons"))) {
+  if ((is_object($v_1) && (($v_1)->{'tag'} === "Cons"))) {
 if ((is_object(($v_1)->{'value1'}) && ((($v_1)->{'value1'})->{'tag'} === "Nil"))) {
 $__t1 = new Phpurs_Data0("Nil");
 } else {
@@ -164,21 +153,19 @@ $__t0 = $__t1;
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t0 = null;
 };
-$__res = $__t0;
-goto __end;;
-};
+  $__res = $__t0;
+  goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_List_Partial_head'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_List_Partial_head"), recVars=[];
   if ((is_object($v_1) && (($v_1)->{'tag'} === "Cons"))) {
 $__t0 = ($v_1)->{'value0'};
 } else {

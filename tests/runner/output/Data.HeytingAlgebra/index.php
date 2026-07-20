@@ -95,61 +95,54 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_HeytingAlgebra_ttRecord'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_ttRecord'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_ttRecord"), recVars=[];
   $__res = ($dict_0)->{'ttRecord'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_tt'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_tt'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_tt"), recVars=[];
   $__res = ($dict_0)->{'tt'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_notRecord'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_notRecord'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_notRecord"), recVars=[];
   $__res = ($dict_0)->{'notRecord'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_not'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_not'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_not"), recVars=[];
   $__res = ($dict_0)->{'not'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_impliesRecord'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_impliesRecord'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_impliesRecord"), recVars=[];
   $__res = ($dict_0)->{'impliesRecord'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_implies'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_implies'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_implies"), recVars=[];
   $__res = ($dict_0)->{'implies'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraUnit'] = function() { $v = (object)["ff" => ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit')), "tt" => ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit')), "implies" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'));
   goto __end;;
   __end:
@@ -157,12 +150,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "conj" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'));
   goto __end;;
   __end:
@@ -170,33 +162,30 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "disj" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "not" => function($v_0) {
+})(), "not" => function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraRecordNil'] = function() { $v = (object)["conjRecord" => (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -204,12 +193,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "disjRecord" => (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -217,12 +205,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "ffRecord" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -230,12 +217,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "impliesRecord" => (function() {
-  $__fn = function($v_0, $v1_1 = null, $v2_2 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null, $v2_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -243,12 +229,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "notRecord" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -256,12 +241,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "ttRecord" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -270,12 +254,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraProxy'] = function() { $v = (object)["conj" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -283,12 +266,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "disj" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -296,65 +278,58 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "implies" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "ff" => new Phpurs_Data0("Proxy"), "not" => function($v_0) {
+})(), "ff" => new Phpurs_Data0("Proxy"), "not" => function($v_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "tt" => new Phpurs_Data0("Proxy")]; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_ffRecord'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_ffRecord'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_ffRecord"), recVars=[];
   $__res = ($dict_0)->{'ffRecord'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_ff'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_ff'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_ff"), recVars=[];
   $__res = ($dict_0)->{'ff'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_disjRecord'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_disjRecord'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_disjRecord"), recVars=[];
   $__res = ($dict_0)->{'disjRecord'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_disj'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_disj'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_disj"), recVars=[];
   $__res = ($dict_0)->{'disj'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraBoolean'] = function() { $v = (object)["ff" => false, "tt" => true, "implies" => (function() {
-  $__fn = function($a_0, $b_1 = null) use (&$__fn) {
+  $__fn = function($a_0 = null, $b_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_HeytingAlgebra_heytingAlgebraBoolean"];
   $__res = (((($GLOBALS['Data_HeytingAlgebra_heytingAlgebraBoolean'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_heytingAlgebraBoolean')))->{'disj'})(((($GLOBALS['Data_HeytingAlgebra_heytingAlgebraBoolean'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_heytingAlgebraBoolean')))->{'not'})($a_0)))($b_1);
   goto __end;;
   __end:
@@ -362,21 +337,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "conj" => ($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')), "disj" => ($GLOBALS['Data_HeytingAlgebra_boolDisj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolDisj')), "not" => ($GLOBALS['Data_HeytingAlgebra_boolNot'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolNot'))]; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_conjRecord'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_conjRecord'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_conjRecord"), recVars=[];
   $__res = ($dict_0)->{'conjRecord'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraRecord'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $dictHeytingAlgebraRecord_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $dictHeytingAlgebraRecord_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_heytingAlgebraRecord"), recVars=[];
   $__res = (object)["ff" => ((($dictHeytingAlgebraRecord_1)->{'ffRecord'})(new Phpurs_Data0("Proxy")))(new Phpurs_Data0("Proxy")), "tt" => ((($dictHeytingAlgebraRecord_1)->{'ttRecord'})(new Phpurs_Data0("Proxy")))(new Phpurs_Data0("Proxy")), "conj" => (($dictHeytingAlgebraRecord_1)->{'conjRecord'})(new Phpurs_Data0("Proxy")), "disj" => (($dictHeytingAlgebraRecord_1)->{'disjRecord'})(new Phpurs_Data0("Proxy")), "implies" => (($dictHeytingAlgebraRecord_1)->{'impliesRecord'})(new Phpurs_Data0("Proxy")), "not" => (($dictHeytingAlgebraRecord_1)->{'notRecord'})(new Phpurs_Data0("Proxy"))];
   goto __end;;
   __end:
@@ -384,40 +357,35 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(); return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_conj'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_conj'] = function() { $v = function($dict_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_conj"), recVars=[];
   $__res = ($dict_0)->{'conj'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraFunction'] = function() { $v = function($dictHeytingAlgebra_0) {
+\PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraFunction'] = function() { $v = function($dictHeytingAlgebra_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_heytingAlgebraFunction"), recVars=[];
   $ff1_1_0 = ($dictHeytingAlgebra_0)->{'ff'};
   $tt1_2_1 = ($dictHeytingAlgebra_0)->{'tt'};
-  $__res = (object)["ff" => function($v_3) use ($ff1_1_0) {
+  $__res = (object)["ff" => function($v_3 = null) use ($ff1_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $ff1_1_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "tt" => function($v_3) use ($tt1_2_1) {
+}, "tt" => function($v_3 = null) use ($tt1_2_1) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $tt1_2_1;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "implies" => (function() use ($dictHeytingAlgebra_0) {
-  $__fn = function($f_3, $g_4 = null, $a_5 = null) use ($dictHeytingAlgebra_0, &$__fn) {
+  $__fn = function($f_3 = null, $g_4 = null, $a_5 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictHeytingAlgebra_0)->{'implies'})(($f_3)($a_5)))(($g_4)($a_5));
   goto __end;;
   __end:
@@ -425,12 +393,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "conj" => (function() use ($dictHeytingAlgebra_0) {
-  $__fn = function($f_3, $g_4 = null, $a_5 = null) use ($dictHeytingAlgebra_0, &$__fn) {
+  $__fn = function($f_3 = null, $g_4 = null, $a_5 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictHeytingAlgebra_0)->{'conj'})(($f_3)($a_5)))(($g_4)($a_5));
   goto __end;;
   __end:
@@ -438,12 +405,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "disj" => (function() use ($dictHeytingAlgebra_0) {
-  $__fn = function($f_3, $g_4 = null, $a_5 = null) use ($dictHeytingAlgebra_0, &$__fn) {
+  $__fn = function($f_3 = null, $g_4 = null, $a_5 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictHeytingAlgebra_0)->{'disj'})(($f_3)($a_5)))(($g_4)($a_5));
   goto __end;;
   __end:
@@ -451,12 +417,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "not" => (function() use ($dictHeytingAlgebra_0) {
-  $__fn = function($f_3, $a_4 = null) use ($dictHeytingAlgebra_0, &$__fn) {
+  $__fn = function($f_3 = null, $a_4 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($dictHeytingAlgebra_0)->{'not'})(($f_3)($a_4));
   goto __end;;
   __end:
@@ -469,21 +434,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_HeytingAlgebra_heytingAlgebraRecordCons'] = function() { $v = (function() {
-  $__fn = function($dictIsSymbol_0, $dollar__unused_1 = null, $dictHeytingAlgebraRecord_2 = null, $dictHeytingAlgebra_3 = null) use (&$__fn) {
+  $__fn = function($dictIsSymbol_0 = null, $dollar__unused_1 = null, $dictHeytingAlgebraRecord_2 = null, $dictHeytingAlgebra_3 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_HeytingAlgebra_heytingAlgebraRecordCons"), recVars=[];
   $ff1_4_0 = ($dictHeytingAlgebra_3)->{'ff'};
   $tt1_5_1 = ($dictHeytingAlgebra_3)->{'tt'};
   $__res = (object)["conjRecord" => (function() use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0) {
-  $__fn = function($v_6, $ra_7 = null, $rb_8 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
+  $__fn = function($v_6 = null, $ra_7 = null, $rb_8 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $key_9_2 = (($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
   $get_10_3 = (($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_9_2);
   $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))($key_9_2))(((($dictHeytingAlgebra_3)->{'conj'})(($get_10_3)($ra_7)))(($get_10_3)($rb_8))))((((($dictHeytingAlgebraRecord_2)->{'conjRecord'})(new Phpurs_Data0("Proxy")))($ra_7))($rb_8));
@@ -493,12 +456,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "disjRecord" => (function() use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0) {
-  $__fn = function($v_6, $ra_7 = null, $rb_8 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
+  $__fn = function($v_6 = null, $ra_7 = null, $rb_8 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $key_9_4 = (($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
   $get_10_5 = (($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_9_4);
   $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))($key_9_4))(((($dictHeytingAlgebra_3)->{'disj'})(($get_10_5)($ra_7)))(($get_10_5)($rb_8))))((((($dictHeytingAlgebraRecord_2)->{'disjRecord'})(new Phpurs_Data0("Proxy")))($ra_7))($rb_8));
@@ -508,12 +470,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "impliesRecord" => (function() use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0) {
-  $__fn = function($v_6, $ra_7 = null, $rb_8 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
+  $__fn = function($v_6 = null, $ra_7 = null, $rb_8 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $key_9_6 = (($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
   $get_10_7 = (($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_9_6);
   $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))($key_9_6))(((($dictHeytingAlgebra_3)->{'implies'})(($get_10_7)($ra_7)))(($get_10_7)($rb_8))))((((($dictHeytingAlgebraRecord_2)->{'impliesRecord'})(new Phpurs_Data0("Proxy")))($ra_7))($rb_8));
@@ -523,12 +484,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "ffRecord" => (function() use ($dictHeytingAlgebraRecord_2, $dictIsSymbol_0, $ff1_4_0) {
-  $__fn = function($v_6, $row_7 = null) use ($dictHeytingAlgebraRecord_2, $dictIsSymbol_0, $ff1_4_0, &$__fn) {
+  $__fn = function($v_6 = null, $row_7 = null) use ($dictHeytingAlgebraRecord_2, $dictIsSymbol_0, $ff1_4_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"))))($ff1_4_0))(((($dictHeytingAlgebraRecord_2)->{'ffRecord'})(new Phpurs_Data0("Proxy")))($row_7));
   goto __end;;
   __end:
@@ -536,12 +496,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "notRecord" => (function() use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0) {
-  $__fn = function($v_6, $row_7 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
+  $__fn = function($v_6 = null, $row_7 = null) use ($dictHeytingAlgebraRecord_2, $dictHeytingAlgebra_3, $dictIsSymbol_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $key_8_8 = (($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
   $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))($key_8_8))((($dictHeytingAlgebra_3)->{'not'})(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_8_8))($row_7))))(((($dictHeytingAlgebraRecord_2)->{'notRecord'})(new Phpurs_Data0("Proxy")))($row_7));
   goto __end;;
@@ -550,12 +509,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })(), "ttRecord" => (function() use ($dictHeytingAlgebraRecord_2, $dictIsSymbol_0, $tt1_5_1) {
-  $__fn = function($v_6, $row_7 = null) use ($dictHeytingAlgebraRecord_2, $dictIsSymbol_0, $tt1_5_1, &$__fn) {
+  $__fn = function($v_6 = null, $row_7 = null) use ($dictHeytingAlgebraRecord_2, $dictIsSymbol_0, $tt1_5_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"))))($tt1_5_1))(((($dictHeytingAlgebraRecord_2)->{'ttRecord'})(new Phpurs_Data0("Proxy")))($row_7));
   goto __end;;
   __end:

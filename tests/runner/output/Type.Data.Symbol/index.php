@@ -95,12 +95,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   }
 }
 \PhpursThunks::$thunks['Type_Data_Symbol_uncons'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Symbol_uncons"), recVars=[];
   $__res = (object)["head" => new Phpurs_Data0("Proxy"), "tail" => new Phpurs_Data0("Proxy")];
   goto __end;;
   __end:
@@ -109,12 +108,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Type_Data_Symbol_equalsSymbol'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $dollar__unused_1 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $dollar__unused_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Symbol_equalsSymbol"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -123,12 +121,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Type_Data_Symbol_equals'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null, $v1_2 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null, $v1_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Symbol_equals"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -137,12 +134,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Type_Data_Symbol_compare'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null, $v1_2 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null, $v1_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Symbol_compare"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -151,12 +147,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(); return $v; };
 \PhpursThunks::$thunks['Type_Data_Symbol_append'] = function() { $v = (function() {
-  $__fn = function($dollar__unused_0, $v_1 = null, $v1_2 = null) use (&$__fn) {
+  $__fn = function($dollar__unused_0 = null, $v_1 = null, $v1_2 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Symbol_append"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:

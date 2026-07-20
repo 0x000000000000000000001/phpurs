@@ -104,20 +104,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Data_Monoid_Additive_Additive'] = function() { $v = function($x_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_Additive'] = function() { $v = function($x_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_Additive"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_showAdditive'] = function() { $v = function($dictShow_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_showAdditive'] = function() { $v = function($dictShow_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_showAdditive"), recVars=[];
-  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
+  $__res = (object)["show" => function($v_1 = null) use ($dictShow_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Additive "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
@@ -127,16 +124,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_semigroupAdditive'] = function() { $v = function($dictSemiring_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_semigroupAdditive'] = function() { $v = function($dictSemiring_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_semigroupAdditive"), recVars=[];
   $__res = (object)["append" => (function() use ($dictSemiring_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictSemiring_0)->{'add'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -148,24 +143,21 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_ordAdditive'] = function() { $v = function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_ordAdditive'] = function() { $v = function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_ordAdditive"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_monoidAdditive'] = function() { $v = function($dictSemiring_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_monoidAdditive'] = function() { $v = function($dictSemiring_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_monoidAdditive"), recVars=[];
   $semigroupAdditive1_1_0 = (object)["append" => (function() use ($dictSemiring_0) {
-  $__fn = function($v_1, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
+  $__fn = function($v_1 = null, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($dictSemiring_0)->{'add'})($v_1))($v1_2);
   goto __end;;
   __end:
@@ -173,9 +165,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => ($dictSemiring_0)->{'zero'}, "Semigroup0" => function($dollar__unused_2) use ($semigroupAdditive1_1_0) {
+  $__res = (object)["mempty" => ($dictSemiring_0)->{'zero'}, "Semigroup0" => function($dollar__unused_2 = null) use ($semigroupAdditive1_1_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupAdditive1_1_0;
   goto __end;;
   __end:
@@ -186,12 +177,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Additive_functorAdditive'] = function() { $v = (object)["map" => (function() {
-  $__fn = function($f_0, $m_1 = null) use (&$__fn) {
+  $__fn = function($f_0 = null, $m_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($m_1);
   goto __end;;
   __end:
@@ -199,105 +189,93 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_eqAdditive'] = function() { $v = function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_eqAdditive'] = function() { $v = function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_eqAdditive"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_eq1Additive'] = function() { $v = (object)["eq1" => function($dictEq_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_eq1Additive'] = function() { $v = (object)["eq1" => function($dictEq_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($dictEq_0)->{'eq'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_ord1Additive'] = function() { $v = (object)["compare1" => function($dictOrd_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_ord1Additive'] = function() { $v = (object)["compare1" => function($dictOrd_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($dictOrd_0)->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Eq10" => function($dollar__unused_0) {
+}, "Eq10" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Additive_eq1Additive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_eq1Additive'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_boundedAdditive'] = function() { $v = function($dictBounded_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_boundedAdditive'] = function() { $v = function($dictBounded_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Additive_boundedAdditive"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Additive_applyAdditive'] = function() { $v = (object)["apply" => (function() {
-  $__fn = function($v_0, $v1_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $v1_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v_0)($v1_1);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Functor0" => function($dollar__unused_0) {
+})(), "Functor0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Additive_functorAdditive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_functorAdditive'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Additive_bindAdditive'] = function() { $v = (object)["bind" => (function() {
-  $__fn = function($v_0, $f_1 = null) use (&$__fn) {
+  $__fn = function($v_0 = null, $f_1 = null) use (&$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_0);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Apply0" => function($dollar__unused_0) {
+})(), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Additive_applyAdditive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_applyAdditive'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_applicativeAdditive'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Monoid_Additive_Additive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_Additive')), "Apply0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_applicativeAdditive'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Monoid_Additive_Additive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_Additive')), "Apply0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Additive_applyAdditive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_applyAdditive'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Monoid_Additive_monadAdditive'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Monoid_Additive_monadAdditive'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Additive_applicativeAdditive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_applicativeAdditive'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}, "Bind1" => function($dollar__unused_0) {
+}, "Bind1" => function($dollar__unused_0 = null) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Additive_bindAdditive'] ?? \PhpursThunks::eval('Data_Monoid_Additive_bindAdditive'));
   goto __end;;
   __end:

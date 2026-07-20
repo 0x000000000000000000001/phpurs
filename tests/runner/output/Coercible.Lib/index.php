@@ -1,10 +1,10 @@
 <?php
 
-namespace Lib;
+namespace Coercible\Lib;
 
-// ALL IMPORTS: Lib, Prim
-// TO REQUIRE: Lib
-require_once __DIR__ . '/../Lib/index.php';
+// ALL IMPORTS: Coercible.Lib2, Prim
+// TO REQUIRE: Coercible.Lib2
+require_once __DIR__ . '/../Coercible.Lib2/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -85,15 +85,24 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Lib_go'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Coercible_Lib_NTLib3'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_go"), recVars=[];
-  $__res = ($dict_0)->{'go'};
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Coercible_Lib_NTLib3"), recVars=[];
+  $__res = $x_0;
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+}; return $v; };
+\PhpursThunks::$thunks['Coercible_Lib_NTLib1'] = function() { $v = function($x_0) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Coercible_Lib_NTLib1"), recVars=[];
+  $__res = $x_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+
 
 
 

@@ -3,7 +3,6 @@ module Main where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-import Data.Tuple (Tuple)
 import Data.Tuple.Nested ((/\), type (/\))
 import Effect (Effect)
 import Effect.Console (log)
@@ -16,16 +15,16 @@ multiArgument :: forall @a @b. a -> b -> Unit
 multiArgument _ _ = unit
 
 singleApplication :: Int /\ Number -> Unit
-singleApplication = singleArgument @(Tuple Int Number)
+singleApplication = singleArgument @(Int /\ Number)
 
 -- Like expression applications, visible type applications are left-associative.
 -- This test accounts for subsequent type applications nested in this manner.
 appNestingWorks :: Int /\ Number -> Number /\ Int -> Unit
-appNestingWorks = multiArgument @(Tuple Int Number) @(Tuple Number Int)
+appNestingWorks = multiArgument @(Int /\ Number) @(Number /\ Int)
 
 -- This test accounts for type applications nested within other AST nodes.
 otherNestingWorks :: Array (Maybe (Int /\ Number))
-otherNestingWorks = [Just @(Tuple Int Number) (0 /\ 0.0), Just @(Tuple Int Number) (1 /\ 1.0)]
+otherNestingWorks = [Just @(Int /\ Number) (0 /\ 0.0), Just @(Int /\ Number) (1 /\ 1.0)]
 
 type InSynonym = Int /\ Number
 
@@ -37,9 +36,8 @@ inSynonym :: InSynonym -> Unit
 inSynonym = singleArgument @InSynonym
 
 -- This test accounts for type operators used as type arguments directly.
--- (Bypassed due to purs compiler crash on type operator VTA)
 operatorAsArgument :: Proxy (/\)
-operatorAsArgument = Proxy -- @(/\)
+operatorAsArgument = Proxy @(/\)
 
 main :: Effect Unit
 main = log "Done"

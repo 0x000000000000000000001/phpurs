@@ -2,42 +2,52 @@ module Main where
 
 import Prelude
 
-import Data.Maybe (Maybe(..))
-import Data.Tuple.Nested ((/\), type (/\))
+import Data.Bifunctor (class Bifunctor, bimap)
+import Data.Generic.Rep (class Generic)
+import Data.Newtype (class Newtype)
+import Data.Foldable (class Foldable, foldMap)
+import Data.Traversable (class Traversable)
 import Effect (Effect)
 import Effect.Console (log)
-import Type.Proxy (Proxy(..))
+import Test.Assert
 
-singleArgument :: forall @a. a -> Unit
-singleArgument _ = unit
+data Color = Red | Green | Blue
+  derive (Eq, Ord)
 
-multiArgument :: forall @a @b. a -> b -> Unit
-multiArgument _ _ = unit
+newtype Name = Name String
+  derive (Eq, Ord)
 
-singleApplication :: Int /\ Number -> Unit
-singleApplication = singleArgument @(Int /\ Number)
+data List a = Nil | Cons a (List a)
+  derive (Functor, Foldable, Traversable)
 
--- Like expression applications, visible type applications are left-associative.
--- This test accounts for subsequent type applications nested in this manner.
-appNestingWorks :: Int /\ Number -> Number /\ Int -> Unit
-appNestingWorks = multiArgument @(Int /\ Number) @(Number /\ Int)
+data Either2 a b = Left2 a | Right2 b
+  derive (Bifunctor)
 
--- This test accounts for type applications nested within other AST nodes.
-otherNestingWorks :: Array (Maybe (Int /\ Number))
-otherNestingWorks = [Just @(Int /\ Number) (0 /\ 0.0), Just @(Int /\ Number) (1 /\ 1.0)]
+derive instance Eq a => Eq (Either2 a a)
 
-type InSynonym = Int /\ Number
+data Direction = North | South | East | West
+  derive (Generic)
 
--- This test accounts for type synonyms used as type arguments.
--- Since expansion happens during checking, InSynonym would expand
--- to an already-desugared type operator. This test exists for the
--- sake of redundancy.
-inSynonym :: InSynonym -> Unit
-inSynonym = singleArgument @InSynonym
+newtype Wrapper = Wrapper String
+  derive (Newtype)
 
--- This test accounts for type operators used as type arguments directly.
-operatorAsArgument :: Proxy (/\)
-operatorAsArgument = Proxy @(/\)
+data Pair a = Pair a a
+  derive (Functor)
+
+data Box a = Empty | Full a
+  derive (Functor)
+
+derive instance Eq a => Eq (Box a)
 
 main :: Effect Unit
-main = log "Done"
+main = do
+  assert $ Red == Red
+  assert $ Red < Green
+  assert $ Name "Alice" == Name "Alice"
+  assert $ foldMap show (Cons 1 (Cons 2 Nil)) == "12"
+  assert $ bimap (_ + 1) (_ * 2) (Left2 3) == Left2 4
+  assert $ map (_ + 1) (Full 1) == Full 2
+  assert $ case map (_ + 1) (Pair 1 2) of
+    Pair 2 3 -> true
+    _ -> false
+  log "Done"

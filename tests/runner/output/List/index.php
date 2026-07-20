@@ -1,10 +1,10 @@
 <?php
 
-namespace Lib;
+namespace List;
 
-// ALL IMPORTS: Lib, Prim
-// TO REQUIRE: Lib
-require_once __DIR__ . '/../Lib/index.php';
+// ALL IMPORTS: List, Prim
+// TO REQUIRE: List
+require_once __DIR__ . '/../List/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -85,15 +85,22 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Lib_go'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['List_Cons'] = function() { $v = (function() {
+  $__fn = function($value0, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_go"), recVars=[];
-  $__res = ($dict_0)->{'go'};
+  if ($__num < 2) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
+  }
+  $__res = new Phpurs_Data2("Cons", $value0, $value1);
   goto __end;;
   __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}; return $v; };
+  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
+  };
+  return $__fn;
+})(); return $v; };
+\PhpursThunks::$thunks['List_Nil'] = function() { $v = ($GLOBALS['__phpurs_data0_Nil'] ??= new Phpurs_Data0("Nil")); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+
 
 
 

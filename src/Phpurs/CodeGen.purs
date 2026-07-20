@@ -392,7 +392,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
                   
                   innerFunc = PhpAssign ctx.loopFuncVar (PhpFunction useVarsInner fn.args innerFuncBody)
                   
-                  whileLoop = PhpWhile (PhpRaw ("!$" <> ctx.doneVar))
+                  whileLoop = PhpWhile (PhpBinOp "===" (PhpVar ctx.doneVar) (PhpBoolean false))
                     [ PhpAssign ctx.resultVar (PhpCall (PhpVar ctx.loopFuncVar) (map PhpVar loopVars)) ]
                     
                 in

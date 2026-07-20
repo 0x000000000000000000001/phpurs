@@ -8,5 +8,4 @@ output.php
 .purs-repl
 purs_files.txt
 .DS_Store
-bin/phpurs.js
 .phpurs-cache.json

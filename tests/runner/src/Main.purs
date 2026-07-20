@@ -3,10 +3,6 @@ module Main where
 import Prelude
 import Effect.Console (log)
 
-class Foo a where
-  foo :: a -> String
+s = \x y z -> x z (y z)
 
-instance fooString :: Foo String where
-  foo s = s
-
-main = log $ foo "Done"
+main = log "Done"

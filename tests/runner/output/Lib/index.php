@@ -1,11 +1,10 @@
 <?php
 
-namespace Main;
+namespace Lib;
 
-// ALL IMPORTS: Effect.Console, Prelude, Prim
-// TO REQUIRE: Effect.Console, Prelude
-require_once __DIR__ . '/../Effect.Console/index.php';
-require_once __DIR__ . '/../Prelude/index.php';
+// ALL IMPORTS: Prim
+// TO REQUIRE: 
+
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -92,22 +91,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Main_s'] = function() { $v = (function() {
-  $__fn = function($x_0 = null, $y_1 = null, $z_2 = null) use (&$__fn) {
-  $__num = \func_num_args();
-  if ($__num < 3) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 3);
-  }
-  $__res = (($x_0)($z_2))(($y_1)($z_2));
-  goto __end;;
-  __end:
-  return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
-  };
-  return $__fn;
-})(); return $v; };
-\PhpursThunks::$thunks['Main_main'] = function() { $v = (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))("Done"); return $v; };
-$GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
+$GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 
 

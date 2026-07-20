@@ -1,0 +1,15 @@
+# Idées à conserver pour phpurs et phpurs-aff (Post-reset)
+
+## 1. phpurs-aff (Effect/Aff.php)
+- **Le bug `PhpursAffBracket` (ArgumentCountError)** : La classe `PhpursAffBracket` ne prenait que 2 arguments dans son constructeur (`$acq`, `$use`) alors que `generalBracket` lui en passait 3 (`$acq`, `$cond`, `$use`).
+- **L'appel des callbacks de Bracket (`$cond->completed`)** : Dans la représentation des Records PureScript en PHP (qui deviennent des `stdClass`), les fonctions stockées dans les champs (`completed`, `failed`, `killed`) ne sont pas de vraies méthodes de classe, mais des closures affectées à des propriétés publiques. L'appel correct est obligatoirement **`($cond->completed)($res)($acq_res)`**, car la syntaxe `$cond->completed(...)` renvoie une erreur fatale (`Call to undefined method stdClass::completed`).
+- **Gestion de l'état asynchrone des Brackets dans le Trampoline** : Le résultat de l'acquisition (`$acq_res`) était correctement traité, mais lorsque `$cond->completed` s'exécutait en asynchrone, le trampoline perdait le résultat d'origine (`$res`) généré par le `use`. L'idée était d'ajouter une "map frame" à la volée avant de traiter `completed` : `$stack[] = ['type' => 'map', 'f' => function($_ignored) use ($res) { return $res; }];`. 
+*Attention : l'ajout de frames `map` dynamiques crée des closures supplémentaires, il faudra le coder de façon plus optimisée (sans clôture PHP `use ()`) pour éviter la perte de perfs de 8s à 9s.*
+
+## 2. phpurs (Compilateur)
+- **Optimisation `UncurriedEffectAbs []`** : Éviter les appels redondants de `function($unused)` pour les effets purs était une bonne idée conceptuellement, mais ça casse de manière silencieuse l'interface FFI vers le monde extérieur (Ex: les listeners EventLoop/RabbitMQ qui passent automatiquement des arguments aux callbacks). L'idée serait de limiter cette uncurryfication au code 100% PureScript (via le type checker) et d'utiliser l'ancienne signature pour le code interagissant avec le FFI.
+- **TCO (Tail Call Optimization) overhead** : L'implémentation de la TCO sous forme de `while(true)` et vérification de tableau `is_array($res) && $res['type'] === 'tco_call'` coûte environ 15% de performances brutes. Pour la restaurer sans tuer les perfs, il faudrait que la TCO soit directement gérée par l'analyse syntaxique (remplacement par de vraies boucles natives type `while`) plutôt que par une surcouche de contrôle au niveau des retours de toutes les fonctions.
+
+## 3. Autres dépôts liés (phpurs-effect & purescript-backend-optimizer)
+- **phpurs-effect (`Effect.php` & `Effect/Unsafe.php`)** : Modification des fichiers natifs pour supprimer les arguments passés par les appels (`function() {}` au lieu de `function($ignored) {}`) afin de s'aligner avec l'optimisation `UncurriedEffectAbs`. Reset pour retrouver la stabilité FFI d'origine.
+- **purescript-backend-optimizer (`Semantics.purs`)** : Ajout de la prise en charge de `EffectPure` (`Just (EffectPure _) -> true`) dans l'analyseur de sémantique. À réintégrer si l'on souhaite optimiser le constructeur `pure` des effets.

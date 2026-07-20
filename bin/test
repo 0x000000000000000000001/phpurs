@@ -107,7 +107,7 @@ failed=0
 
 # Clean output (now handled inside the loop)
 
-SKIP_BEFORE="RowUnion"
+SKIP_BEFORE="TCO"
 TEST_FILES=()
 
 if [ $# -gt 0 ]; then

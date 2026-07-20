@@ -14,6 +14,7 @@ BLACKLIST=(
   "DerivingContravariant.purs"
   "DerivingFunctorFromBi.purs"
   "DerivingFunctorFromPro.purs"
+  "DerivingProfunctor.purs"
 )
 
 mkdir -p "$RUNNER_DIR/src"

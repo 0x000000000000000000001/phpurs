@@ -195,3 +195,6 @@ While `phpurs` could have been built around powerful daemonized extensions like 
 
 To support lightning-fast **incremental compilation**, the `phpurs` compiler itself is compiled using `purs-backend-es`. This architectural choice translates PureScript's in-memory data structures into plain JavaScript objects (instead of ES6 classes). Because of this, the compiler's internal AST state becomes perfectly isomorphic to native JSON, allowing `phpurs` to seamlessly dump and reload its optimization cache (`.phpurs-cache.json`) to disk without writing any complex parsing logic.
 
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.

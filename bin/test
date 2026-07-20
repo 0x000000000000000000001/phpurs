@@ -181,7 +181,19 @@ for test_file in "${TEST_FILES[@]}"; do
   fi
   
   # Try to build with spago (just generating corefn)
-  if spago build -q > /dev/null 2>&1; then
+  retry=0
+  max_retries=2
+  build_success=0
+  while [ $retry -le $max_retries ]; do
+    if spago build -q > /dev/null 2>&1; then
+      build_success=1
+      break
+    fi
+    retry=$((retry+1))
+    sleep 0.5
+  done
+
+  if [ $build_success -eq 1 ]; then
     # Generate PHP code
     node ../../bin/phpurs.js > /dev/null 2>&1
     
@@ -199,6 +211,7 @@ for test_file in "${TEST_FILES[@]}"; do
     failed=$((failed+1))
     break
   fi
+  sleep 0.2 # Just to let the computer breathe, and avoid sigsegv...
 done
 
 echo ""

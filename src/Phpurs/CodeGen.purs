@@ -344,7 +344,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
       combinedRecVars = recVars <> newRecVars
       
       isLoop = (unwrap (tcoAnalysisOf tcoExpr)).role.isLoop
-      mutRecBinds = if isLoop then
+      mutRecBinds = if isLoop && Array.length (toArray binds) == 1 then
         traverse (\(Tuple ident val) -> case extractUncurriedAbs val of
             Just abs -> Just { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs }
             Nothing -> Nothing
@@ -562,7 +562,7 @@ translate imports mod =
           let
             recVars = if group.recursive then map (\(Tuple (Ident name) _) -> modPrefix <> name) group.bindings else []
           in
-            if group.recursive then
+            if group.recursive && Array.length group.bindings == 1 then
               let
                 mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs }) (extractUncurriedAbs val)) group.bindings
               in case mutRecBinds of

@@ -5223,7 +5223,7 @@ var translateExprImpl = (recVars) => (namedBound) => (bound) => (_currentBinding
       return { oldName, newName: oldName + "_" + showIntImpl(nextId) };
     })(v._2._2);
     const newBound = foldlArray((acc) => (pair) => insert(ordString)(pair.oldName)(pair.newName)(acc))(bound)(oldNewPairs);
-    const mutRecBinds = v._1.role.isLoop ? traverse2((v1) => {
+    const mutRecBinds = v._1.role.isLoop && v._2._2.length === 1 ? traverse2((v1) => {
       const v2 = extractUncurriedAbs(v1._2);
       if (v2.tag === "Just") {
         return $Maybe("Just", { ident: localId($Maybe("Just", v1._1))($0), args: v2._1.args, body: v2._1.body, fvs: v2._1.fvs });
@@ -5588,7 +5588,7 @@ var translate = (imports) => (mod) => {
       };
     })($Tuple([], []))(mod.bindings)._2)((group2) => {
       const recVars = group2.recursive ? arrayMap((v1) => modPrefix + v1._1)(group2.bindings) : [];
-      if (group2.recursive) {
+      if (group2.recursive && group2.bindings.length === 1) {
         const mutRecBinds = traverse2((v1) => {
           const $0 = extractUncurriedAbs(v1._2);
           if ($0.tag === "Just") {

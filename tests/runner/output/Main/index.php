@@ -161,6 +161,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+$ffi_Main = \call_user_func(function() {
+  $exports = [];
+$exports['showImpl'] = function($showFn) {
+    return function($val) use ($showFn) {
+        return $showFn($val);
+    };
+};
+  return $exports;
+});
+\PhpursThunks::$thunks['Main_showImpl'] = function() use (&$ffi_Main) { return $ffi_Main['showImpl']; };
 
 
 

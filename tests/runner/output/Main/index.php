@@ -2,18 +2,10 @@
 
 namespace Main;
 
-// ALL IMPORTS: Control.Bind, Data.Array, Data.Array.Partial, Data.Semiring, Data.Show, Effect, Effect.Console, Main, Partial.Unsafe, Prelude, Prim
-// TO REQUIRE: Control.Bind, Data.Array, Data.Array.Partial, Data.Semiring, Data.Show, Effect, Effect.Console, Main, Partial.Unsafe, Prelude
-require_once __DIR__ . '/../Control.Bind/index.php';
-require_once __DIR__ . '/../Data.Array/index.php';
-require_once __DIR__ . '/../Data.Array.Partial/index.php';
-require_once __DIR__ . '/../Data.Semiring/index.php';
-require_once __DIR__ . '/../Data.Show/index.php';
-require_once __DIR__ . '/../Effect/index.php';
+// ALL IMPORTS: Effect.Console, Lib, Prim
+// TO REQUIRE: Effect.Console, Lib
 require_once __DIR__ . '/../Effect.Console/index.php';
-require_once __DIR__ . '/../Main/index.php';
-require_once __DIR__ . '/../Partial.Unsafe/index.php';
-require_once __DIR__ . '/../Prelude/index.php';
+require_once __DIR__ . '/../Lib/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -94,43 +86,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Main_length'] = function() { $v = (function() use (&$__fn) {
-$go_0_0 = null;
-$go_0_0 = (function() use (&$go_0_0) {
-  $__fn = function($acc_1, $arr_2 = null) use (&$go_0_0, &$__fn) {
-  $__num = \func_num_args();
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  if (((($GLOBALS['Data_Eq_eqIntImpl'] ?? \PhpursThunks::eval('Data_Eq_eqIntImpl')))((($GLOBALS['Data_Array_length'] ?? \PhpursThunks::eval('Data_Array_length')))($arr_2)))(0)) {
-$__t1 = $acc_1;
-} else {
-$__t1 = (($go_0_0)(((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))($acc_1))(1)))(((($GLOBALS['Partial_Unsafe__unsafePartial'] ?? \PhpursThunks::eval('Partial_Unsafe__unsafePartial')))(function($dollar__unused_3) {
-  $__num = \func_num_args();
-  $__res = (($GLOBALS['Data_Array_Partial_tail'] ?? \PhpursThunks::eval('Data_Array_Partial_tail')))(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))($arr_2));
-};
-  $__res = $__t1;
-  goto __end;;
-  __end:
-  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
-  };
-  return $__fn;
-})();
-return ($go_0_0)(0);
+\PhpursThunks::$thunks['Main_main'] = function() { $v = (function() use (&$__fn) {
+// DEBUG isFlatTailCall: false, isTail: false, loopCtx: None, flatArgsLen: 1;
+return (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))("Done");
 })(); return $v; };
-\PhpursThunks::$thunks['Main_main'] = function() { $v = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))((($GLOBALS['Data_Show_showIntImpl'] ?? \PhpursThunks::eval('Data_Show_showIntImpl')))((($GLOBALS['Main_length'] ?? \PhpursThunks::eval('Main_length')))(((($GLOBALS['Data_Array_range'] ?? \PhpursThunks::eval('Data_Array_range')))(1))(10000))))))(function($dollar__unused_0) {
-  $__num = \func_num_args();
-  $__res = (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))("Done");
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
-
 
 
 

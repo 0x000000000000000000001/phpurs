@@ -103,6 +103,14 @@ translateOperator2 (OpStringOrd OpLte) l r = PhpBinOp "<=" l r
 
 type LoopCtx = { ident :: String, params :: Array String }
 
+flattenApp :: BackendSyntax NeutralExpr -> Tuple (BackendSyntax NeutralExpr) (Array NeutralExpr)
+flattenApp (App fn args) =
+  let
+    Tuple innerFn innerArgs = flattenApp (unwrapExpr fn)
+  in
+    Tuple innerFn (innerArgs <> toArray args)
+flattenApp other = Tuple other []
+
 translateExprImpl :: Array String -> Map String String -> Map String String -> Maybe String -> Maybe LoopCtx -> Boolean -> Int -> BackendSyntax NeutralExpr -> TranslationRes
 translateExprImpl recVars namedBound bound currentBindingName loopCtx isTail nextId syntax = case syntax of
   Lit lit ->
@@ -157,11 +165,14 @@ translateExprImpl recVars namedBound bound currentBindingName loopCtx isTail nex
       resFn = translateExprImpl recVars namedBound bound Nothing Nothing false nextId (unwrapExpr fn)
       argsArr = toArray args
       
-      isTailCall = isTail && case loopCtx, resFn.expr of
+      Tuple flatFn flatArgs = flattenApp (App fn args)
+      flatResFn = translateExprImpl recVars namedBound bound Nothing Nothing false nextId flatFn
+      
+      isFlatTailCall = isTail && case loopCtx, flatResFn.expr of
         Just ctx, PhpGlobalVar mbMod name ->
           let fullName = fromMaybe "" (map (\m -> String.joinWith "_" m <> "_") mbMod) <> name
-          in fullName == ctx.ident && Array.length argsArr == Array.length ctx.params
-        Just ctx, PhpVar v -> v == ctx.ident && Array.length argsArr == Array.length ctx.params
+          in fullName == ctx.ident && Array.length flatArgs == Array.length ctx.params
+        Just ctx, PhpVar v -> v == ctx.ident && Array.length flatArgs == Array.length ctx.params
         _, _ -> false
 
       accFinal = foldl
@@ -174,14 +185,24 @@ translateExprImpl recVars namedBound bound currentBindingName loopCtx isTail nex
         { stmts: resFn.stmts, exprs: [], nextId: resFn.nextId }
         argsArr
 
-      finalRes = if isTailCall then
+      flatAccFinal = foldl
+        ( \acc (NeutralExpr arg) ->
+            let
+              argRes = translateExprImpl recVars namedBound bound Nothing Nothing false acc.nextId arg
+            in
+              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
+        )
+        { stmts: flatResFn.stmts, exprs: [], nextId: flatResFn.nextId }
+        flatArgs
+
+      finalRes = if isFlatTailCall then
         case loopCtx of
           Just ctx ->
             let
-              tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (accFinal.nextId + i)) e) accFinal.exprs
-              assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (fromMaybe "" (Array.index ctx.params i)) (PhpVar ("__tco_" <> show (accFinal.nextId + i)))) accFinal.exprs
-              finalStmts = accFinal.stmts <> tcoStmts <> assignStmts <> [ PhpContinue ]
-            in { stmts: finalStmts, expr: PhpRaw "null", nextId: accFinal.nextId + Array.length argsArr }
+              tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (flatAccFinal.nextId + i)) e) flatAccFinal.exprs
+              assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (fromMaybe "" (Array.index ctx.params i)) (PhpVar ("__tco_" <> show (flatAccFinal.nextId + i)))) flatAccFinal.exprs
+              finalStmts = flatAccFinal.stmts <> tcoStmts <> assignStmts <> [ PhpContinue ]
+            in { stmts: finalStmts, expr: PhpRaw "null", nextId: flatAccFinal.nextId + Array.length flatArgs }
           Nothing -> 
             let curriedCall = foldl (\acc e -> PhpCall acc [e]) resFn.expr accFinal.exprs
             in { stmts: accFinal.stmts, expr: curriedCall, nextId: accFinal.nextId }

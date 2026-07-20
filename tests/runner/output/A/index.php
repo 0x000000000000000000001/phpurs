@@ -87,6 +87,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['A_foo'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "A_foo"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:

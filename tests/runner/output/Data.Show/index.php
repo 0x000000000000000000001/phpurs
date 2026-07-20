@@ -252,42 +252,10 @@ $ffi_Data_Show = \call_user_func(function() {
 $showIntImpl = function($i) use (&$showIntImpl) { return (string)$i; };
 $showStringImpl = function($s) use (&$showStringImpl) { return json_encode($s); };
 $showNumberImpl = function($n) use (&$showNumberImpl) {
-    if (is_nan($n)) return 'NaN';
-    if (!is_finite($n)) return $n < 0 ? '-Infinity' : 'Infinity';
-    
-    $str = json_encode($n);
-    
-    $str = str_replace(['.0e', '.0E'], 'e', $str);
-    $str = str_replace('E', 'e', $str);
-    
-    if (preg_match('/^(-?\d)(?:\.(\d+))?e-([1-6])$/', $str, $matches)) {
-        $sign = $matches[1][0] === '-' ? '-' : '';
-        $digit = ltrim($matches[1], '-');
-        $frac = $matches[2] ?? '';
-        $exp = (int)$matches[3];
-        
-        $str = $sign . '0.' . str_repeat('0', $exp - 1) . $digit . $frac;
-    } else if (preg_match('/^(-?\d)(?:\.(\d+))?e\+([0-9]+)$/', $str, $matches)) {
-        $sign = $matches[1][0] === '-' ? '-' : '';
-        $digit = ltrim($matches[1], '-');
-        $frac = $matches[2] ?? '';
-        $exp = (int)$matches[3];
-        
-        if ($exp < 21) {
-             if (strlen($frac) <= $exp) {
-                 $str = $sign . $digit . $frac . str_repeat('0', $exp - strlen($frac));
-             } else {
-                 $str = $sign . $digit . substr($frac, 0, $exp) . '.' . substr($frac, $exp);
-             }
-        } else {
-             $str = $sign . $digit . ($frac !== '' ? '.' . $frac : '') . 'e+' . $exp;
-        }
-    }
-    
-    if (strpos($str, '.') === false && strpos($str, 'e') === false && strpos($str, 'E') === false) {
+    $str = (string)$n;
+    if (strpos($str, '.') === false && strpos($str, 'e') === false && strpos($str, 'E') === false && !is_nan($n)) {
         return $str . '.0';
     }
-    
     return $str;
 };
 $showCharImpl = function($c) use (&$showCharImpl) {

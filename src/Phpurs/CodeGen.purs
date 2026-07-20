@@ -166,13 +166,14 @@ translateExprImpl recVars namedBound bound currentBindingName loopCtx isTail nex
       argsArr = toArray args
       
       Tuple flatFn flatArgs = flattenApp (App fn args)
-      flatResFn = translateExprImpl recVars namedBound bound Nothing Nothing false nextId flatFn
       
-      isFlatTailCall = isTail && case loopCtx, flatResFn.expr of
-        Just ctx, PhpGlobalVar mbMod name ->
-          let fullName = fromMaybe "" (map (\m -> String.joinWith "_" m <> "_") mbMod) <> name
+      isFlatTailCall = isTail && case loopCtx, flatFn of
+        Just ctx, Var (Qualified mbMod (Ident name)) ->
+          let fullName = fromMaybe "" (map (\(ModuleName m) -> String.joinWith "_" (String.split (Pattern ".") m) <> "_") mbMod) <> name
           in fullName == ctx.ident && Array.length flatArgs == Array.length ctx.params
-        Just ctx, PhpVar v -> v == ctx.ident && Array.length flatArgs == Array.length ctx.params
+        Just ctx, Local mbIdent (Level l) ->
+          let v = fromMaybe (localId mbIdent (Level l)) (Map.lookup (localId mbIdent (Level l)) bound)
+          in v == ctx.ident && Array.length flatArgs == Array.length ctx.params
         _, _ -> false
 
       accFinal = foldl
@@ -185,20 +186,19 @@ translateExprImpl recVars namedBound bound currentBindingName loopCtx isTail nex
         { stmts: resFn.stmts, exprs: [], nextId: resFn.nextId }
         argsArr
 
-      flatAccFinal = foldl
-        ( \acc (NeutralExpr arg) ->
-            let
-              argRes = translateExprImpl recVars namedBound bound Nothing Nothing false acc.nextId arg
-            in
-              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
-        )
-        { stmts: flatResFn.stmts, exprs: [], nextId: flatResFn.nextId }
-        flatArgs
-
       finalRes = if isFlatTailCall then
         case loopCtx of
           Just ctx ->
             let
+              flatAccFinal = foldl
+                ( \acc (NeutralExpr arg) ->
+                    let
+                      argRes = translateExprImpl recVars namedBound bound Nothing Nothing false acc.nextId arg
+                    in
+                      { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
+                )
+                { stmts: [], exprs: [], nextId: nextId }
+                flatArgs
               tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (flatAccFinal.nextId + i)) e) flatAccFinal.exprs
               assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (fromMaybe "" (Array.index ctx.params i)) (PhpVar ("__tco_" <> show (flatAccFinal.nextId + i)))) flatAccFinal.exprs
               finalStmts = flatAccFinal.stmts <> tcoStmts <> assignStmts <> [ PhpContinue ]

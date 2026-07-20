@@ -14,4 +14,4 @@ if (!\class_exists('\\PhpursThunks', false)) {
   }
 }
 require_once __DIR__ . '/output/Main/index.php';
-var_dump(\PhpursThunks::eval('Main_showFFI')("string"));
+var_dump(\PhpursThunks::eval('Main_showFFI2')((object)["a" => 1, "b" => true, "c" => "d", "e" => 4.0]));

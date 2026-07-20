@@ -2,9 +2,9 @@
 
 namespace M1;
 
-// ALL IMPORTS: M1, Prim
-// TO REQUIRE: M1
-require_once __DIR__ . '/../M1/index.php';
+// ALL IMPORTS: M2, Prim
+// TO REQUIRE: M2
+require_once __DIR__ . '/../M2/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -91,7 +91,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['M1_bar'] = function() { $v = 0; return $v; };
+\PhpursThunks::$thunks['M1_foo'] = function() { $v = 1; return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 

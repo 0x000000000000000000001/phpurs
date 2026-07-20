@@ -2,9 +2,9 @@
 
 namespace A;
 
-// ALL IMPORTS: B, Prim
-// TO REQUIRE: B
-require_once __DIR__ . '/../B/index.php';
+// ALL IMPORTS: Prelude, Prim
+// TO REQUIRE: Prelude
+require_once __DIR__ . '/../Prelude/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -91,14 +91,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['A_foo'] = function() { $v = function($x_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "A_foo"), recVars=[];
-  $__res = $x_0;
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}; return $v; };
+
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 

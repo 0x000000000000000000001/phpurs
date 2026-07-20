@@ -2,9 +2,13 @@
 
 namespace Lib;
 
-// ALL IMPORTS: Lib, Prim
-// TO REQUIRE: Lib
+// ALL IMPORTS: Control.Applicative, Data.Unit, Effect, Lib, Prelude, Prim
+// TO REQUIRE: Control.Applicative, Data.Unit, Effect, Lib, Prelude
+require_once __DIR__ . '/../Control.Applicative/index.php';
+require_once __DIR__ . '/../Data.Unit/index.php';
+require_once __DIR__ . '/../Effect/index.php';
 require_once __DIR__ . '/../Lib/index.php';
+require_once __DIR__ . '/../Prelude/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -91,15 +95,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Lib_go'] = function() { $v = function($dict_0) {
+\PhpursThunks::$thunks['Lib_namedExportStillWorksUnit1'] = function() { $v = (object)["doTest" => (($GLOBALS['Effect_pureE'] ?? \PhpursThunks::eval('Effect_pureE')))(($GLOBALS['Data_Unit_unit'] ?? \PhpursThunks::eval('Data_Unit_unit')))]; return $v; };
+\PhpursThunks::$thunks['Lib_doTest'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_go"), recVars=[];
-  $__res = ($dict_0)->{'go'};
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_doTest"), recVars=[];
+  $__res = ($dict_0)->{'doTest'};
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+}; return $v; };
+\PhpursThunks::$thunks['Lib_namedExportStillWorksUnit'] = function() { $v = function($v_0) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Lib_namedExportStillWorksUnit"), recVars=[];
+  $__res = (($GLOBALS['Lib_namedExportStillWorksUnit1'] ?? \PhpursThunks::eval('Lib_namedExportStillWorksUnit1')))->{'doTest'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+
+
 
 
 

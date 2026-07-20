@@ -2,9 +2,9 @@
 
 namespace B;
 
-// ALL IMPORTS: Prim
-// TO REQUIRE: 
-
+// ALL IMPORTS: Prelude, Prim
+// TO REQUIRE: Prelude
+require_once __DIR__ . '/../Prelude/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -91,10 +91,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['B_X'] = function() { $v = ($GLOBALS['__phpurs_data0_X'] ??= new Phpurs_Data0("X")); return $v; };
-\PhpursThunks::$thunks['B_Y'] = function() { $v = ($GLOBALS['__phpurs_data0_Y'] ??= new Phpurs_Data0("Y")); return $v; };
-$GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
+$GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 
 

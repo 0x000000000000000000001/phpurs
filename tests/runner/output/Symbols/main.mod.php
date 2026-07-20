@@ -16,5 +16,5 @@ if (!\class_exists('\\PhpursThunks', false)) {
 }
 set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n"; exit(1); });
 require_once __DIR__ . '/index.php';
-($GLOBALS['Main_main'] ?? \PhpursThunks::eval('Main_main'))();
+($GLOBALS['Symbols_main'] ?? \PhpursThunks::eval('Symbols_main'))();
 if (class_exists('\\Revolt\\EventLoop')) { \Revolt\EventLoop::run(); }

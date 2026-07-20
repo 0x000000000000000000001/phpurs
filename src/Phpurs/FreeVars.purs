@@ -9,7 +9,7 @@ import Data.Tuple (Tuple(..))
 import Data.Array (foldl)
 
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendOperator(..))
-import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
+import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..))
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), Prop(..), Literal(..))
 import Data.Array.NonEmpty (toArray)
 
@@ -17,9 +17,9 @@ localId :: Maybe Ident -> Level -> String
 localId (Just (Ident i)) (Level l) = i <> "_" <> show l
 localId Nothing (Level l) = "__local_var_" <> show l
 
--- | Computes the set of free variables (by unique localId) in a given `NeutralExpr`.
-freeVars :: NeutralExpr -> Set String
-freeVars (NeutralExpr syntax) = case syntax of
+-- | Computes the set of free variables (by unique localId) in a given `TcoExpr`.
+freeVars :: TcoExpr -> Set String
+freeVars (TcoExpr _ syntax) = case syntax of
   Var _ -> Set.empty
   Local mbIdent lvl -> Set.singleton (localId mbIdent lvl)
   Lit lit -> case lit of

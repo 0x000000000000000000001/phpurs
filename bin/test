@@ -8,7 +8,17 @@ TEST_DIR="$ROOT_DIR/tests"
 PASSING_DIR="$TEST_DIR/passing"
 RUNNER_DIR="$TEST_DIR/runner"
 
+# Tests to skip (e.g. tests using experimental compiler features not supported by our purs version)
+BLACKLIST=(
+  "DerivingClause.purs"
+  "DerivingContravariant.purs"
+)
+
 mkdir -p "$RUNNER_DIR/src"
+
+echo "Building phpurs compiler..."
+cd "$ROOT_DIR"
+npm run build --silent || { echo -e "\n\033[0;31m[FAILED]\033[0m phpurs build failed!"; exit 1; }
 
 cd "$RUNNER_DIR"
 
@@ -91,24 +101,62 @@ failed=0
 
 # Clean output (now handled inside the loop)
 
+SKIP_BEFORE="DeriveNewtype"
+TEST_FILES=()
+
 if [ $# -gt 0 ]; then
-  TEST_FILES=()
   for arg in "$@"; do
-    if [ -f "$PASSING_DIR/$arg" ]; then
-      TEST_FILES+=("$PASSING_DIR/$arg")
-    elif [ -f "$PASSING_DIR/$arg.purs" ]; then
-      TEST_FILES+=("$PASSING_DIR/$arg.purs")
+    if [[ "$arg" == skip_before=* ]]; then
+      SKIP_BEFORE="${arg#skip_before=}"
+    elif [[ "$arg" == --skip-before=* ]]; then
+      SKIP_BEFORE="${arg#--skip-before=}"
     else
-      echo "Test file $arg not found."
+      if [ -f "$PASSING_DIR/$arg" ]; then
+        TEST_FILES+=("$PASSING_DIR/$arg")
+      elif [ -f "$PASSING_DIR/$arg.purs" ]; then
+        TEST_FILES+=("$PASSING_DIR/$arg.purs")
+      else
+        echo "Test file $arg not found."
+      fi
     fi
   done
-else
+fi
+
+if [ ${#TEST_FILES[@]} -eq 0 ]; then
   # Use an array to store files safely
   TEST_FILES=("$PASSING_DIR"/*.purs)
 fi
 
+skipping_until=0
+if [ -n "$SKIP_BEFORE" ]; then
+  skipping_until=1
+fi
+
 for test_file in "${TEST_FILES[@]}"; do
   test_name=$(basename "$test_file")
+  
+  if [ $skipping_until -eq 1 ]; then
+    if [[ "$test_name" == "$SKIP_BEFORE" || "$test_name" == "$SKIP_BEFORE.purs" ]]; then
+      skipping_until=0
+    else
+      continue
+    fi
+  fi
+  
+  # Check blacklist
+  skip_test=0
+  for b in "${BLACKLIST[@]}"; do
+    if [ "$test_name" = "$b" ]; then
+      skip_test=1
+      break
+    fi
+  done
+  
+  if [ $skip_test -eq 1 ]; then
+    echo "=> Skipping $test_name (blacklisted)"
+    continue
+  fi
+
   echo "=> Testing $test_name"
   
   # Clean output and src for this specific test

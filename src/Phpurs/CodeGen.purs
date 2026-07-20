@@ -378,13 +378,12 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
                   resBodyMut = translateExprImpl combinedRecVars namedBound newBound Nothing combinedLoopCtx true nextId fn.body
                   
                   mappedFvs = map (\v -> fromMaybe v (Map.lookup v newBound)) (Array.fromFoldable fn.fvs)
-                  useVarsLoopRaw = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
-                  useVarsLoop = Debug.trace { msg: "debug_fvs", newBound, fvs: Array.fromFoldable fn.fvs, mappedFvs, combinedRecVars, useVarsLoopRaw } (\_ -> useVarsLoopRaw)
+                  useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
                   
                   allLoopCtxs = loopCtx <> loopCtxs
                   mutVarsToCapture = foldMap (\c -> Array.cons ("&" <> c.doneVar) (map (\p -> "&" <> c.varPrefix <> p) c.params)) allLoopCtxs
                   
-                  useVarsInner = mutVarsToCapture <> useVarsLoopRaw
+                  useVarsInner = mutVarsToCapture <> useVarsLoop
                   
                   mutVarsToCaptureOuter = foldMap (\c -> Array.cons ("&" <> c.doneVar) (map (\p -> "&" <> c.varPrefix <> p) c.params)) loopCtx
                   useVarsOuter = mutVarsToCaptureOuter <> useVarsLoop

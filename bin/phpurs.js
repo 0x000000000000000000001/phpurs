@@ -2008,7 +2008,7 @@ var Aff = (function() {
       }
     };
   })();
-  function Supervisor(util2) {
+  function Supervisor(util) {
     var fibers = {};
     var fiberId = 0;
     var count = 0;
@@ -2042,9 +2042,9 @@ var Aff = (function() {
               return function() {
                 delete kills[fid];
                 killCount--;
-                if (util2.isLeft(result) && util2.fromLeft(result)) {
+                if (util.isLeft(result) && util.fromLeft(result)) {
                   setTimeout(function() {
-                    throw util2.fromLeft(result);
+                    throw util.fromLeft(result);
                   }, 0);
                 }
                 if (killCount === 0) {
@@ -2082,7 +2082,7 @@ var Aff = (function() {
   var PENDING = 4;
   var RETURN = 5;
   var COMPLETED = 6;
-  function Fiber(util2, supervisor, aff) {
+  function Fiber(util, supervisor, aff) {
     var runTick = 0;
     var status = SUSPENDED;
     var step = aff;
@@ -2114,12 +2114,12 @@ var Aff = (function() {
               }
             } catch (e) {
               status = RETURN;
-              fail2 = util2.left(e);
+              fail2 = util.left(e);
               step = null;
             }
             break;
           case STEP_RESULT:
-            if (util2.isLeft(step)) {
+            if (util.isLeft(step)) {
               status = RETURN;
               fail2 = step;
               step = null;
@@ -2127,7 +2127,7 @@ var Aff = (function() {
               status = RETURN;
             } else {
               status = STEP_BIND;
-              step = util2.fromRight(step);
+              step = util.fromRight(step);
             }
             break;
           case CONTINUE:
@@ -2143,7 +2143,7 @@ var Aff = (function() {
               case PURE:
                 if (bhead === null) {
                   status = RETURN;
-                  step = util2.right(step._1);
+                  step = util.right(step._1);
                 } else {
                   status = STEP_BIND;
                   step = step._1;
@@ -2151,11 +2151,11 @@ var Aff = (function() {
                 break;
               case SYNC:
                 status = STEP_RESULT;
-                step = runSync(util2.left, util2.right, step._1);
+                step = runSync(util.left, util.right, step._1);
                 break;
               case ASYNC:
                 status = PENDING;
-                step = runAsync(util2.left, step._1, function(result2) {
+                step = runAsync(util.left, step._1, function(result2) {
                   return function() {
                     if (runTick !== localRunTick) {
                       return;
@@ -2174,7 +2174,7 @@ var Aff = (function() {
                 return;
               case THROW:
                 status = RETURN;
-                fail2 = util2.left(step._1);
+                fail2 = util.left(step._1);
                 step = null;
                 break;
               // Enqueue the Catch so that we can call the error handler later on
@@ -2206,18 +2206,18 @@ var Aff = (function() {
                 break;
               case FORK:
                 status = STEP_RESULT;
-                tmp = Fiber(util2, supervisor, step._2);
+                tmp = Fiber(util, supervisor, step._2);
                 if (supervisor) {
                   supervisor.register(tmp);
                 }
                 if (step._1) {
                   tmp.run();
                 }
-                step = util2.right(tmp);
+                step = util.right(tmp);
                 break;
               case SEQ:
                 status = CONTINUE;
-                step = sequential(util2, supervisor, step._1);
+                step = sequential(util, supervisor, step._1);
                 break;
             }
             break;
@@ -2240,7 +2240,7 @@ var Aff = (function() {
                     status = RETURN;
                   } else if (fail2) {
                     status = CONTINUE;
-                    step = attempt._2(util2.fromLeft(fail2));
+                    step = attempt._2(util.fromLeft(fail2));
                     fail2 = null;
                   }
                   break;
@@ -2252,7 +2252,7 @@ var Aff = (function() {
                     bhead = attempt._1;
                     btail = attempt._2;
                     status = STEP_BIND;
-                    step = util2.fromRight(step);
+                    step = util.fromRight(step);
                   }
                   break;
                 // If we have a bracket, we should enqueue the handlers,
@@ -2262,7 +2262,7 @@ var Aff = (function() {
                 case BRACKET:
                   bracketCount--;
                   if (fail2 === null) {
-                    result = util2.fromRight(step);
+                    result = util.fromRight(step);
                     attempts = new Aff2(CONS, new Aff2(RELEASE, attempt._2, result), attempts, tmp);
                     if (interrupt === tmp || bracketCount > 0) {
                       status = CONTINUE;
@@ -2276,11 +2276,11 @@ var Aff = (function() {
                   attempts = new Aff2(CONS, new Aff2(FINALIZED, step, fail2), attempts, interrupt);
                   status = CONTINUE;
                   if (interrupt && interrupt !== tmp && bracketCount === 0) {
-                    step = attempt._1.killed(util2.fromLeft(interrupt))(attempt._2);
+                    step = attempt._1.killed(util.fromLeft(interrupt))(attempt._2);
                   } else if (fail2) {
-                    step = attempt._1.failed(util2.fromLeft(fail2))(attempt._2);
+                    step = attempt._1.failed(util.fromLeft(fail2))(attempt._2);
                   } else {
-                    step = attempt._1.completed(util2.fromRight(step))(attempt._2);
+                    step = attempt._1.completed(util.fromRight(step))(attempt._2);
                   }
                   fail2 = null;
                   bracketCount++;
@@ -2310,12 +2310,12 @@ var Aff = (function() {
             joins = null;
             if (interrupt && fail2) {
               setTimeout(function() {
-                throw util2.fromLeft(fail2);
+                throw util.fromLeft(fail2);
               }, 0);
-            } else if (util2.isLeft(step) && rethrow) {
+            } else if (util.isLeft(step) && rethrow) {
               setTimeout(function() {
                 if (rethrow) {
-                  throw util2.fromLeft(step);
+                  throw util.fromLeft(step);
                 }
               }, 0);
             }
@@ -2349,26 +2349,26 @@ var Aff = (function() {
     function kill(error3, cb) {
       return function() {
         if (status === COMPLETED) {
-          cb(util2.right(void 0))();
+          cb(util.right(void 0))();
           return function() {
           };
         }
         var canceler = onComplete({
           rethrow: false,
           handler: function() {
-            return cb(util2.right(void 0));
+            return cb(util.right(void 0));
           }
         })();
         switch (status) {
           case SUSPENDED:
-            interrupt = util2.left(error3);
+            interrupt = util.left(error3);
             status = COMPLETED;
             step = interrupt;
             run2(runTick);
             break;
           case PENDING:
             if (interrupt === null) {
-              interrupt = util2.left(error3);
+              interrupt = util.left(error3);
             }
             if (bracketCount === 0) {
               if (status === PENDING) {
@@ -2382,7 +2382,7 @@ var Aff = (function() {
             break;
           default:
             if (interrupt === null) {
-              interrupt = util2.left(error3);
+              interrupt = util.left(error3);
             }
             if (bracketCount === 0) {
               status = RETURN;
@@ -2425,7 +2425,7 @@ var Aff = (function() {
       }
     };
   }
-  function runPar(util2, supervisor, par, cb) {
+  function runPar(util, supervisor, par, cb) {
     var fiberId = 0;
     var fibers = {};
     var killId = 0;
@@ -2480,7 +2480,7 @@ var Aff = (function() {
         }
       }
       if (count === 0) {
-        cb2(util2.right(void 0))();
+        cb2(util.right(void 0))();
       } else {
         kid = 0;
         tmp = count;
@@ -2492,7 +2492,7 @@ var Aff = (function() {
     }
     function join(result, head2, tail) {
       var fail2, step, lhs, rhs, tmp, kid;
-      if (util2.isLeft(result)) {
+      if (util.isLeft(result)) {
         fail2 = result;
         step = null;
       } else {
@@ -2517,7 +2517,7 @@ var Aff = (function() {
         switch (head2.tag) {
           case MAP:
             if (fail2 === null) {
-              head2._3 = util2.right(head2._1(util2.fromRight(step)));
+              head2._3 = util.right(head2._1(util.fromRight(step)));
               step = head2._3;
             } else {
               head2._3 = fail2;
@@ -2549,17 +2549,17 @@ var Aff = (function() {
             } else if (lhs === EMPTY || rhs === EMPTY) {
               return;
             } else {
-              step = util2.right(util2.fromRight(lhs)(util2.fromRight(rhs)));
+              step = util.right(util.fromRight(lhs)(util.fromRight(rhs)));
               head2._3 = step;
             }
             break;
           case ALT:
             lhs = head2._1._3;
             rhs = head2._2._3;
-            if (lhs === EMPTY && util2.isLeft(rhs) || rhs === EMPTY && util2.isLeft(lhs)) {
+            if (lhs === EMPTY && util.isLeft(rhs) || rhs === EMPTY && util.isLeft(lhs)) {
               return;
             }
-            if (lhs !== EMPTY && util2.isLeft(lhs) && rhs !== EMPTY && util2.isLeft(rhs)) {
+            if (lhs !== EMPTY && util.isLeft(lhs) && rhs !== EMPTY && util.isLeft(rhs)) {
               fail2 = step === lhs ? rhs : lhs;
               step = null;
               head2._3 = fail2;
@@ -2641,7 +2641,7 @@ var Aff = (function() {
                 status = RETURN;
                 tmp = step;
                 step = new Aff2(FORKED, fid, new Aff2(CONS, head2, tail), EMPTY);
-                tmp = Fiber(util2, supervisor, tmp);
+                tmp = Fiber(util, supervisor, tmp);
                 tmp.onComplete({
                   rethrow: false,
                   handler: resolve(step)
@@ -2679,7 +2679,7 @@ var Aff = (function() {
       }
     }
     function cancel(error3, cb2) {
-      interrupt = util2.left(error3);
+      interrupt = util.left(error3);
       var innerKills;
       for (var kid in kills) {
         if (kills.hasOwnProperty(kid)) {
@@ -2715,10 +2715,10 @@ var Aff = (function() {
       });
     };
   }
-  function sequential(util2, supervisor, par) {
+  function sequential(util, supervisor, par) {
     return new Aff2(ASYNC, function(cb) {
       return function() {
-        return runPar(util2, supervisor, par, cb);
+        return runPar(util, supervisor, par, cb);
       };
     });
   }
@@ -2766,9 +2766,9 @@ function _bind(aff) {
 }
 var _liftEffect = Aff.Sync;
 var makeAff = Aff.Async;
-function _makeFiber(util2, aff) {
+function _makeFiber(util, aff) {
   return function() {
-    return Aff.Fiber(util2, null, aff);
+    return Aff.Fiber(util, null, aff);
   };
 }
 var _sequential = Aff.Seq;
@@ -3043,38 +3043,6 @@ var power = (dictMonoid) => {
     return go;
   };
 };
-
-// output-es/Debug/foreign.js
-var req = typeof module === "undefined" ? void 0 : module.require;
-var util = (function() {
-  try {
-    return req === void 0 ? void 0 : req("util");
-  } catch (e) {
-    return void 0;
-  }
-})();
-function _trace(x, k) {
-  if (util !== void 0) {
-    console.log(util.inspect(x, { depth: null, colors: true }));
-  } else {
-    console.log(x);
-  }
-  return k({});
-}
-var now2 = (function() {
-  var perf;
-  if (typeof performance !== "undefined") {
-    perf = performance;
-  } else if (req) {
-    try {
-      perf = req("perf_hooks").performance;
-    } catch (e) {
-    }
-  }
-  return (function() {
-    return (perf || Date).now();
-  });
-})();
 
 // output-es/Phpurs.FreeVars/index.js
 var localId = (v) => (v1) => {
@@ -5304,7 +5272,12 @@ var translateExprImpl = (recVars) => (namedBound) => (bound) => (_currentBinding
               }
               fail();
             })();
-            const mappedFvs = arrayMap((v1) => {
+            const useVarsLoop = nubBy(ordString.compare)(arrayMap((mapped) => {
+              if (elem(eqString)(mapped)(combinedRecVars)) {
+                return "&" + mapped;
+              }
+              return mapped;
+            })(arrayMap((v1) => {
               const $22 = lookup3(v1)(newBound);
               if ($22.tag === "Nothing") {
                 return v1;
@@ -5313,13 +5286,7 @@ var translateExprImpl = (recVars) => (namedBound) => (bound) => (_currentBinding
                 return $22._1;
               }
               fail();
-            })(fromFoldableImpl(foldableSet.foldr, fn.fvs));
-            const useVarsLoopRaw = nubBy(ordString.compare)(arrayMap((mapped) => {
-              if (elem(eqString)(mapped)(combinedRecVars)) {
-                return "&" + mapped;
-              }
-              return mapped;
-            })(mappedFvs));
+            })(fromFoldableImpl(foldableSet.foldr, fn.fvs))));
             const $2 = find((c) => c.ident === newName)(loopCtxs);
             const ctx = (() => {
               if ($2.tag === "Nothing") {
@@ -5336,13 +5303,7 @@ var translateExprImpl = (recVars) => (namedBound) => (bound) => (_currentBinding
               newName,
               $PhpExpr(
                 "PhpFunction",
-                [
-                  ...foldMap((c) => ["&" + c.doneVar, ...arrayMap((p) => "&" + c.varPrefix + p)(c.params)])(loopCtx),
-                  ..._trace(
-                    { msg: "debug_fvs", newBound, fvs: fromFoldableImpl(foldableSet.foldr, fn.fvs), mappedFvs, combinedRecVars, useVarsLoopRaw },
-                    (v1) => useVarsLoopRaw
-                  )
-                ],
+                [...foldMap((c) => ["&" + c.doneVar, ...arrayMap((p) => "&" + c.varPrefix + p)(c.params)])(loopCtx), ...useVarsLoop],
                 fn.args,
                 [
                   ...mapWithIndexArray((i) => (p) => $PhpExpr(
@@ -5357,7 +5318,7 @@ var translateExprImpl = (recVars) => (namedBound) => (bound) => (_currentBinding
                     ctx.loopFuncVar,
                     $PhpExpr(
                       "PhpFunction",
-                      [...foldMap((c) => ["&" + c.doneVar, ...arrayMap((p) => "&" + c.varPrefix + p)(c.params)])([...loopCtx, ...loopCtxs]), ...useVarsLoopRaw],
+                      [...foldMap((c) => ["&" + c.doneVar, ...arrayMap((p) => "&" + c.varPrefix + p)(c.params)])([...loopCtx, ...loopCtxs]), ...useVarsLoop],
                       fn.args,
                       [
                         $PhpExpr("PhpAssign", ctx.doneVar, $PhpExpr("PhpRaw", "true")),

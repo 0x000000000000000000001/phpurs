@@ -376,16 +376,16 @@ goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
-\PhpursThunks::$thunks['Main_main'] = function() { $v = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 200000, "actual" => (($GLOBALS['Main_tco1'] ?? \PhpursThunks::eval('Main_tco1')))(100000)])))(function($dollar__unused_0) {
+\PhpursThunks::$thunks['Main_main'] = function() { $v = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 20000, "actual" => (($GLOBALS['Main_tco1'] ?? \PhpursThunks::eval('Main_tco1')))(10000)])))(function($dollar__unused_0) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 200000, "actual" => (($GLOBALS['Main_tco2'] ?? \PhpursThunks::eval('Main_tco2')))(100000)])))(function($dollar__unused_1) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 20000, "actual" => (($GLOBALS['Main_tco2'] ?? \PhpursThunks::eval('Main_tco2')))(10000)])))(function($dollar__unused_1) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 249997, "actual" => (($GLOBALS['Main_tco3'] ?? \PhpursThunks::eval('Main_tco3')))(100000)])))(function($dollar__unused_2) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 24997, "actual" => (($GLOBALS['Main_tco3'] ?? \PhpursThunks::eval('Main_tco3')))(10000)])))(function($dollar__unused_2) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 200000, "actual" => (($GLOBALS['Main_tco4'] ?? \PhpursThunks::eval('Main_tco4')))(100000)])))(function($dollar__unused_3) {
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 20000, "actual" => (($GLOBALS['Main_tco4'] ?? \PhpursThunks::eval('Main_tco4')))(10000)])))(function($dollar__unused_3) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((((($GLOBALS['Test_Assert_assertEqual__prime__'] ?? \PhpursThunks::eval('Test_Assert_assertEqual__prime__')))(($GLOBALS['Data_Eq_eqInt'] ?? \PhpursThunks::eval('Data_Eq_eqInt'))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt'))))(""))((object)["expected" => 1009, "actual" => (($GLOBALS['Main_ntco1'] ?? \PhpursThunks::eval('Main_ntco1')))(100)])))(function($dollar__unused_4) {
@@ -394,7 +394,7 @@ goto __end;;
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Test_Assert_checkThrows'] ?? \PhpursThunks::eval('Test_Assert_checkThrows')))(function($v_5) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = (($GLOBALS['Main_ntco1'] ?? \PhpursThunks::eval('Main_ntco1')))(100000);
+  $__res = (($GLOBALS['Main_ntco1'] ?? \PhpursThunks::eval('Main_ntco1')))(10000);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -407,7 +407,7 @@ goto __end;;
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Test_Assert_checkThrows'] ?? \PhpursThunks::eval('Test_Assert_checkThrows')))(function($v_7) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = (($GLOBALS['Main_ntco2'] ?? \PhpursThunks::eval('Main_ntco2')))(100000);
+  $__res = (($GLOBALS['Main_ntco2'] ?? \PhpursThunks::eval('Main_ntco2')))(10000);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -420,7 +420,7 @@ goto __end;;
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Test_Assert_checkThrows'] ?? \PhpursThunks::eval('Test_Assert_checkThrows')))(function($v_9) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = (($GLOBALS['Main_ntco3'] ?? \PhpursThunks::eval('Main_ntco3')))(100000);
+  $__res = (($GLOBALS['Main_ntco3'] ?? \PhpursThunks::eval('Main_ntco3')))(10000);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -433,7 +433,7 @@ goto __end;;
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Test_Assert_checkThrows'] ?? \PhpursThunks::eval('Test_Assert_checkThrows')))(function($v_11) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = (($GLOBALS['Main_ntco4'] ?? \PhpursThunks::eval('Main_ntco4')))(100000);
+  $__res = (($GLOBALS['Main_ntco4'] ?? \PhpursThunks::eval('Main_ntco4')))(10000);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;

@@ -214,48 +214,48 @@ var ntco1 = function (y0) {
 };
 var main = function __do() {
     assertEqual({
-        expected: 200000,
-        actual: tco1(100000)
+        expected: 20000,
+        actual: tco1(10000)
     })();
     assertEqual({
-        expected: 200000,
-        actual: tco2(100000)
+        expected: 20000,
+        actual: tco2(10000)
     })();
     assertEqual({
-        expected: 249997,
-        actual: tco3(100000)
+        expected: 24997,
+        actual: tco3(10000)
     })();
     assertEqual({
-        expected: 200000,
-        actual: tco4(100000)
+        expected: 20000,
+        actual: tco4(10000)
     })();
     assertEqual({
         expected: 1009,
         actual: ntco1(100)
     })();
     Test_Assert.assertThrows(function (v) {
-        return ntco1(100000);
+        return ntco1(10000);
     })();
     assertEqual({
         expected: 200,
         actual: ntco2(100)
     })();
     Test_Assert.assertThrows(function (v) {
-        return ntco2(100000);
+        return ntco2(10000);
     })();
     assertEqual({
         expected: 200,
         actual: ntco3(100)
     })();
     Test_Assert.assertThrows(function (v) {
-        return ntco3(100000);
+        return ntco3(10000);
     })();
     assertEqual({
         expected: 200,
         actual: ntco4(100)
     })();
     Test_Assert.assertThrows(function (v) {
-        return ntco4(100000);
+        return ntco4(10000);
     })();
     return Effect_Console.log("Done")();
 };

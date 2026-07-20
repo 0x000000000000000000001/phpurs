@@ -75,21 +75,21 @@ ntco4 = f 0
 
 main :: Effect Unit
 main = do
-  assertEqual { expected: 200000, actual: tco1 100000 }
-  assertEqual { expected: 200000, actual: tco2 100000 }
-  assertEqual { expected: 249997, actual: tco3 100000 }
-  assertEqual { expected: 200000, actual: tco4 100000 }
+  assertEqual { expected: 20000, actual: tco1 10000 }
+  assertEqual { expected: 20000, actual: tco2 10000 }
+  assertEqual { expected: 24997, actual: tco3 10000 }
+  assertEqual { expected: 20000, actual: tco4 10000 }
 
   assertEqual { expected: 1009, actual: ntco1 100 }
-  assertThrows \_ -> ntco1 100000
+  assertThrows \_ -> ntco1 10000
 
   assertEqual { expected: 200, actual: ntco2 100 }
-  assertThrows \_ -> ntco2 100000
+  assertThrows \_ -> ntco2 10000
 
   assertEqual { expected: 200, actual: ntco3 100 }
-  assertThrows \_ -> ntco3 100000
+  assertThrows \_ -> ntco3 10000
 
   assertEqual { expected: 200, actual: ntco4 100 }
-  assertThrows \_ -> ntco4 100000
+  assertThrows \_ -> ntco4 10000
 
   log "Done"

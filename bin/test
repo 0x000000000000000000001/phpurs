@@ -16,8 +16,6 @@ BLACKLIST=(
   "DerivingFunctorFromBi.purs"
   "DerivingFunctorFromPro.purs"
   "DerivingProfunctor.purs"
-  "TCOMutRec.purs"
-
 )
 
 mkdir -p "$RUNNER_DIR/src"

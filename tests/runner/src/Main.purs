@@ -1,12 +1,9 @@
 module Main where
 
-import Effect.Console (log)
+import Prelude
+import Records as Records
+import Symbols as Symbols
 
-data Proxy a = Proxy
-
-type Prozy = Proxy
-
-test1 = Proxy :: Prozy Int
-test2 = Proxy :: Prozy "foo"
-
-main = log "Done"
+main = do
+  Records.main
+  Symbols.main

@@ -97,14 +97,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (((($GLOBALS['Data_Reflectable_unsafeCoerce'] ?? \PhpursThunks::eval('Data_Reflectable_unsafeCoerce')))(function($dictReflectable_3) use (&$f_2) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Reflectable_reifyType"), recVars=[];
+  $__res = (((($GLOBALS['Data_Reflectable_unsafeCoerce'] ?? \PhpursThunks::eval('Data_Reflectable_unsafeCoerce')))(function($dictReflectable_3) use ($f_2) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_2)($dictReflectable_3);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))((object)["reflectType" => function($v_3) use (&$s_1) {
+}))((object)["reflectType" => function($v_3) use ($s_1) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $s_1;
   goto __end;;
   __end:
@@ -118,7 +121,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Reflectable_reflectType'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->reflectType;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Reflectable_reflectType"), recVars=[];
+  $__res = ($dict_0)->{'reflectType'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;

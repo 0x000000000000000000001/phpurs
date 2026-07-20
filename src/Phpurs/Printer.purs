@@ -135,7 +135,7 @@ printExpr expr = case expr of
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
   PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"
-  PhpPropertyAccess e prop -> "(" <> printExpr e <> ")->" <> safeName prop
+  PhpPropertyAccess e prop -> "(" <> printExpr e <> ")->{'" <> safeName prop <> "'}"
   PhpArrayIndex arr i -> "(" <> printExpr arr <> ")[" <> show i <> "]"
   PhpClone obj -> "clone " <> printExpr obj
   PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr v

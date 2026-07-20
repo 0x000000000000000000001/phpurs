@@ -94,6 +94,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListSetImpl"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -108,6 +109,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListRemoveCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -122,6 +124,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListNubCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -131,6 +134,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Type_RowList_rowListAppendNil'] = function() { $v = function($dictTypeEquals_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListAppendNil"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -142,6 +146,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_rowListAppendCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -156,6 +161,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_RowList_listToRowCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:

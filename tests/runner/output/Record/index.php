@@ -100,6 +100,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_union"), recVars=[];
   $__res = (((($GLOBALS['Data_Function_Uncurried_runFn2'] ?? \PhpursThunks::eval('Data_Function_Uncurried_runFn2')))(($GLOBALS['Record_Unsafe_Union_unsafeUnionFn'] ?? \PhpursThunks::eval('Record_Unsafe_Union_unsafeUnionFn'))))($l_1))($r_2);
   goto __end;;
   __end:
@@ -113,7 +114,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 6) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 6);
   }
-  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->reflectSymbol)($l_3)))($b_4))($r_5);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_set"), recVars=[];
+  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_3)))($b_4))($r_5);
   goto __end;;
   __end:
   return $__num > 6 ? $__res(...\array_slice(\func_get_args(), 6)) : $__res;
@@ -122,6 +124,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Record_nub'] = function() { $v = function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_nub"), recVars=[];
   $__res = ($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce'));
   goto __end;;
   __end:
@@ -133,6 +136,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_merge"), recVars=[];
   $__res = (((($GLOBALS['Data_Function_Uncurried_runFn2'] ?? \PhpursThunks::eval('Data_Function_Uncurried_runFn2')))(($GLOBALS['Record_Unsafe_Union_unsafeUnionFn'] ?? \PhpursThunks::eval('Record_Unsafe_Union_unsafeUnionFn'))))($l_2))($r_3);
   goto __end;;
   __end:
@@ -146,7 +150,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 6) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 6);
   }
-  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->reflectSymbol)($l_3)))($a_4))($r_5);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_insert"), recVars=[];
+  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_3)))($a_4))($r_5);
   goto __end;;
   __end:
   return $__num > 6 ? $__res(...\array_slice(\func_get_args(), 6)) : $__res;
@@ -159,7 +164,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->reflectSymbol)($l_2)))($r_3);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_get"), recVars=[];
+  $__res = ((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_2)))($r_3);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -172,7 +178,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 6) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 6);
   }
-  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->reflectSymbol)($l_3)))(($f_4)(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->reflectSymbol)($l_3)))($r_5))))($r_5);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_modify"), recVars=[];
+  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_3)))(($f_4)(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_3)))($r_5))))($r_5);
   goto __end;;
   __end:
   return $__num > 6 ? $__res(...\array_slice(\func_get_args(), 6)) : $__res;
@@ -185,6 +192,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = true;
   goto __end;;
   __end:
@@ -194,7 +202,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Record_equalFields'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->equalFields;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_equalFields"), recVars=[];
+  $__res = ($dict_0)->{'equalFields'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -205,13 +214,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = (object)["equalFields" => (function() use (&$dictEq_1, &$dictEqualFields_3, &$dictIsSymbol_0) {
-  $__fn = function($v_4, $a_5 = null, $b_6 = null) use (&$dictEq_1, &$dictEqualFields_3, &$dictIsSymbol_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_equalFieldsCons"), recVars=[];
+  $__res = (object)["equalFields" => (function() use ($dictEq_1, $dictEqualFields_3, $dictIsSymbol_0) {
+  $__fn = function($v_4, $a_5 = null, $b_6 = null) use ($dictEq_1, $dictEqualFields_3, $dictIsSymbol_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(((($dictEq_1)->eq)(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->reflectSymbol)(new Phpurs_Data0("Proxy"))))($a_5)))(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->reflectSymbol)(new Phpurs_Data0("Proxy"))))($b_6))))((((($dictEqualFields_3)->equalFields)(new Phpurs_Data0("Proxy")))($a_5))($b_6));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(((($dictEq_1)->{'eq'})(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"))))($a_5)))(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"))))($b_6))))((((($dictEqualFields_3)->{'equalFields'})(new Phpurs_Data0("Proxy")))($a_5))($b_6));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -230,7 +241,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = (((($dictEqualFields_1)->equalFields)(new Phpurs_Data0("Proxy")))($a_2))($b_3);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_equal"), recVars=[];
+  $__res = (((($dictEqualFields_1)->{'equalFields'})(new Phpurs_Data0("Proxy")))($a_2))($b_3);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -243,6 +255,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_disjointUnion"), recVars=[];
   $__res = (((($GLOBALS['Data_Function_Uncurried_runFn2'] ?? \PhpursThunks::eval('Data_Function_Uncurried_runFn2')))(($GLOBALS['Record_Unsafe_Union_unsafeUnionFn'] ?? \PhpursThunks::eval('Record_Unsafe_Union_unsafeUnionFn'))))($l_2))($r_3);
   goto __end;;
   __end:
@@ -256,7 +269,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
-  $__res = ((($GLOBALS['Record_Unsafe_unsafeDelete'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeDelete')))((($dictIsSymbol_0)->reflectSymbol)($l_3)))($r_4);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_delete"), recVars=[];
+  $__res = ((($GLOBALS['Record_Unsafe_unsafeDelete'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeDelete')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_3)))($r_4);
   goto __end;;
   __end:
   return $__num > 5 ? $__res(...\array_slice(\func_get_args(), 5)) : $__res;
@@ -269,7 +283,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 9) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 9);
   }
-  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol1_1)->reflectSymbol)($next_7)))(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->reflectSymbol)($prev_6)))($record_8)))(((($GLOBALS['Record_Unsafe_unsafeDelete'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeDelete')))((($dictIsSymbol_0)->reflectSymbol)($prev_6)))($record_8));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_rename"), recVars=[];
+  $__res = (((($GLOBALS['Record_Unsafe_unsafeSet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeSet')))((($dictIsSymbol1_1)->{'reflectSymbol'})($next_7)))(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))((($dictIsSymbol_0)->{'reflectSymbol'})($prev_6)))($record_8)))(((($GLOBALS['Record_Unsafe_unsafeDelete'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeDelete')))((($dictIsSymbol_0)->{'reflectSymbol'})($prev_6)))($record_8));
   goto __end;;
   __end:
   return $__num > 9 ? $__res(...\array_slice(\func_get_args(), 9)) : $__res;

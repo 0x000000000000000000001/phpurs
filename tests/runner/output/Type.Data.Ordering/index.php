@@ -90,13 +90,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Type_Data_Ordering_reflectOrdering'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->reflectOrdering;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Ordering_reflectOrdering"), recVars=[];
+  $__res = ($dict_0)->{'reflectOrdering'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Type_Data_Ordering_isOrderingLT'] = function() { $v = (object)["reflectOrdering" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("LT");
   goto __end;;
   __end:
@@ -104,6 +106,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Type_Data_Ordering_isOrderingGT'] = function() { $v = (object)["reflectOrdering" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("GT");
   goto __end;;
   __end:
@@ -111,6 +114,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Type_Data_Ordering_isOrderingEQ'] = function() { $v = (object)["reflectOrdering" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("EQ");
   goto __end;;
   __end:
@@ -122,13 +126,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($v_0) && (($v_0)->tag === "LT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Ordering_reifyOrdering"), recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "LT"))) {
 $__t0 = (($v1_1)(($GLOBALS['Type_Data_Ordering_isOrderingLT'] ?? \PhpursThunks::eval('Type_Data_Ordering_isOrderingLT'))))(new Phpurs_Data0("Proxy"));
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "EQ"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "EQ"))) {
 $__t0 = (($v1_1)(($GLOBALS['Type_Data_Ordering_isOrderingEQ'] ?? \PhpursThunks::eval('Type_Data_Ordering_isOrderingEQ'))))(new Phpurs_Data0("Proxy"));
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "GT"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "GT"))) {
 $__t0 = (($v1_1)(($GLOBALS['Type_Data_Ordering_isOrderingGT'] ?? \PhpursThunks::eval('Type_Data_Ordering_isOrderingGT'))))(new Phpurs_Data0("Proxy"));
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -152,6 +157,7 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Ordering_invert"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -174,6 +180,7 @@ $__t0 = null;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Ordering_equals"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -190,6 +197,7 @@ $__t0 = null;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Ordering_append"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:

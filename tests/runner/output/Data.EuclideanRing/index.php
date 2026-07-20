@@ -93,7 +93,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_EuclideanRing_mod'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->mod;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_EuclideanRing_mod"), recVars=[];
+  $__res = ($dict_0)->{'mod'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -104,17 +105,20 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $zero_2_0 = ((((((($dictEuclideanRing_1)->CommutativeRing0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->Ring0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->Semiring0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->zero;
-  $__res = (function() use (&$dictEq_0, &$dictEuclideanRing_1, &$zero_2_0) {
-  $__fn = function($a_3, $b_4 = null) use (&$dictEq_0, &$dictEuclideanRing_1, &$zero_2_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_EuclideanRing_gcd"), recVars=["Data_EuclideanRing_gcd"];
+  while (true) {
+$zero_2_0 = ((((((($dictEuclideanRing_1)->{'CommutativeRing0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Ring0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Semiring0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'zero'};
+$__res = (function() use ($dictEq_0, $dictEuclideanRing_1, $zero_2_0) {
+  $__fn = function($a_3, $b_4 = null) use ($dictEq_0, $dictEuclideanRing_1, $zero_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if (((($dictEq_0)->eq)($b_4))($zero_2_0)) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_EuclideanRing_gcd"];
+  if (((($dictEq_0)->{'eq'})($b_4))($zero_2_0)) {
 $__t1 = $a_3;
 } else {
-$__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_EuclideanRing_gcd')))($dictEq_0))($dictEuclideanRing_1))($b_4))(((($dictEuclideanRing_1)->mod)($a_3))($b_4));
+$__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_EuclideanRing_gcd')))($dictEq_0))($dictEuclideanRing_1))($b_4))(((($dictEuclideanRing_1)->{'mod'})($a_3))($b_4));
 };
   $__res = $__t1;
   goto __end;;
@@ -123,7 +127,8 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
   };
   return $__fn;
 })();
-  goto __end;;
+goto __end;;
+};
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
@@ -131,6 +136,7 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
 })(); return $v; };
 \PhpursThunks::$thunks['Data_EuclideanRing_euclideanRingNumber'] = function() { $v = (object)["degree" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = 1;
   goto __end;;
   __end:
@@ -141,6 +147,7 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = 0.0;
   goto __end;;
   __end:
@@ -149,6 +156,7 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
   return $__fn;
 })(), "CommutativeRing0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_CommutativeRing_commutativeRingNumber'] ?? \PhpursThunks::eval('Data_CommutativeRing_commutativeRingNumber'));
   goto __end;;
   __end:
@@ -156,6 +164,7 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
 }]; return $v; };
 \PhpursThunks::$thunks['Data_EuclideanRing_euclideanRingInt'] = function() { $v = (object)["degree" => ($GLOBALS['Data_EuclideanRing_intDegree'] ?? \PhpursThunks::eval('Data_EuclideanRing_intDegree')), "div" => ($GLOBALS['Data_EuclideanRing_intDiv'] ?? \PhpursThunks::eval('Data_EuclideanRing_intDiv')), "mod" => ($GLOBALS['Data_EuclideanRing_intMod'] ?? \PhpursThunks::eval('Data_EuclideanRing_intMod')), "CommutativeRing0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_CommutativeRing_commutativeRingInt'] ?? \PhpursThunks::eval('Data_CommutativeRing_commutativeRingInt'));
   goto __end;;
   __end:
@@ -163,7 +172,8 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
 }]; return $v; };
 \PhpursThunks::$thunks['Data_EuclideanRing_div'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->div;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_EuclideanRing_div"), recVars=[];
+  $__res = ($dict_0)->{'div'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -174,19 +184,21 @@ $__t1 = ((((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_Euc
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $Semiring0_2_0 = (((((($dictEuclideanRing_1)->CommutativeRing0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->Ring0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->Semiring0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $zero_3_1 = ($Semiring0_2_0)->zero;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_EuclideanRing_lcm"), recVars=[];
+  $Semiring0_2_0 = (((((($dictEuclideanRing_1)->{'CommutativeRing0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Ring0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Semiring0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
+  $zero_3_1 = ($Semiring0_2_0)->{'zero'};
   $gcd2_4_2 = ((($GLOBALS['Data_EuclideanRing_gcd'] ?? \PhpursThunks::eval('Data_EuclideanRing_gcd')))($dictEq_0))($dictEuclideanRing_1);
-  $__res = (function() use (&$Semiring0_2_0, &$dictEq_0, &$dictEuclideanRing_1, &$gcd2_4_2, &$zero_3_1) {
-  $__fn = function($a_5, $b_6 = null) use (&$Semiring0_2_0, &$dictEq_0, &$dictEuclideanRing_1, &$gcd2_4_2, &$zero_3_1, &$__fn) {
+  $__res = (function() use ($Semiring0_2_0, $dictEq_0, $dictEuclideanRing_1, $gcd2_4_2, $zero_3_1) {
+  $__fn = function($a_5, $b_6 = null) use ($Semiring0_2_0, $dictEq_0, $dictEuclideanRing_1, $gcd2_4_2, $zero_3_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if (((($GLOBALS['Data_HeytingAlgebra_boolDisj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolDisj')))(((($dictEq_0)->eq)($a_5))($zero_3_1)))(((($dictEq_0)->eq)($b_6))($zero_3_1))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if (((($GLOBALS['Data_HeytingAlgebra_boolDisj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolDisj')))(((($dictEq_0)->{'eq'})($a_5))($zero_3_1)))(((($dictEq_0)->{'eq'})($b_6))($zero_3_1))) {
 $__t3 = $zero_3_1;
 } else {
-$__t3 = ((($dictEuclideanRing_1)->div)(((($Semiring0_2_0)->mul)($a_5))($b_6)))((($gcd2_4_2)($a_5))($b_6));
+$__t3 = ((($dictEuclideanRing_1)->{'div'})(((($Semiring0_2_0)->{'mul'})($a_5))($b_6)))((($gcd2_4_2)($a_5))($b_6));
 };
   $__res = $__t3;
   goto __end;;
@@ -203,7 +215,8 @@ $__t3 = ((($dictEuclideanRing_1)->div)(((($Semiring0_2_0)->mul)($a_5))($b_6)))((
 })(); return $v; };
 \PhpursThunks::$thunks['Data_EuclideanRing_degree'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->degree;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_EuclideanRing_degree"), recVars=[];
+  $__res = ($dict_0)->{'degree'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;

@@ -6,6 +6,7 @@
         "core": {
           "dependencies": [
             "arrays",
+            "assert",
             "console",
             "effect",
             "enums",
@@ -627,6 +628,9 @@
       "arrays": {
         "path": "../../../phpurs-arrays"
       },
+      "assert": {
+        "path": "../../../phpurs-assert"
+      },
       "console": {
         "path": "../../../phpurs-console"
       },
@@ -702,6 +706,15 @@
         "tuples",
         "unfoldable",
         "unsafe-coerce"
+      ]
+    },
+    "assert": {
+      "type": "local",
+      "path": "../../../phpurs-assert",
+      "dependencies": [
+        "console",
+        "effect",
+        "prelude"
       ]
     },
     "bifunctors": {

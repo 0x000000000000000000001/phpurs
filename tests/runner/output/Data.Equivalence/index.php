@@ -97,6 +97,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Equivalence_Equivalence'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Equivalence_Equivalence"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -108,6 +109,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))((($v_0)($a_2))($b_3)))((($v1_1)($a_2))($b_3));
   goto __end;;
   __end:
@@ -117,6 +119,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Equivalence_newtypeEquivalence'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
@@ -128,6 +131,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = true;
   goto __end;;
   __end:
@@ -136,6 +140,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Semigroup0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Equivalence_semigroupEquivalence'] ?? \PhpursThunks::eval('Data_Equivalence_semigroupEquivalence'));
   goto __end;;
   __end:
@@ -143,7 +148,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Equivalence_defaultEquivalence'] = function() { $v = function($dictEq_0) {
   $__num = \func_num_args();
-  $__res = ($dictEq_0)->eq;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Equivalence_defaultEquivalence"), recVars=[];
+  $__res = ($dictEq_0)->{'eq'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -154,6 +160,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($v_1)(($f_0)($x_2)))(($f_0)($y_3));
   goto __end;;
   __end:
@@ -167,7 +174,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (is_object((($v_0)($a_1))($b_2)) && (((($v_0)($a_1))($b_2))->tag === "EQ"));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Equivalence_comparisonEquivalence"), recVars=[];
+  $__res = (is_object((($v_0)($a_1))($b_2)) && (((($v_0)($a_1))($b_2))->{'tag'} === "EQ"));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;

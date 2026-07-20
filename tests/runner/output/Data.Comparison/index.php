@@ -95,6 +95,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Comparison_Comparison'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Comparison_Comparison"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -106,19 +107,21 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_3_0 = ($v_0)($x_2);
   $__local_var_4_1 = ($v1_1)($x_2);
-  $__res = function($x_5) use (&$__local_var_3_0, &$__local_var_4_1) {
+  $__res = function($x_5) use ($__local_var_3_0, $__local_var_4_1) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__local_var_6_2 = ($__local_var_3_0)($x_5);
   $__local_var_7_3 = ($__local_var_4_1)($x_5);
-  if ((is_object($__local_var_6_2) && (($__local_var_6_2)->tag === "LT"))) {
+  if ((is_object($__local_var_6_2) && (($__local_var_6_2)->{'tag'} === "LT"))) {
 $__t4 = new Phpurs_Data0("LT");
 } else {
-if ((is_object($__local_var_6_2) && (($__local_var_6_2)->tag === "GT"))) {
+if ((is_object($__local_var_6_2) && (($__local_var_6_2)->{'tag'} === "GT"))) {
 $__t4 = new Phpurs_Data0("GT");
 } else {
-if ((is_object($__local_var_6_2) && (($__local_var_6_2)->tag === "EQ"))) {
+if ((is_object($__local_var_6_2) && (($__local_var_6_2)->{'tag'} === "EQ"))) {
 $__t4 = $__local_var_7_3;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -139,6 +142,7 @@ $__t4 = null;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Comparison_newtypeComparison'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
@@ -150,6 +154,7 @@ $__t4 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("EQ");
   goto __end;;
   __end:
@@ -158,6 +163,7 @@ $__t4 = null;
   return $__fn;
 })(), "Semigroup0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Comparison_semigroupComparison'] ?? \PhpursThunks::eval('Data_Comparison_semigroupComparison'));
   goto __end;;
   __end:
@@ -165,7 +171,8 @@ $__t4 = null;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Comparison_defaultComparison'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
-  $__res = ($dictOrd_0)->compare;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Comparison_defaultComparison"), recVars=[];
+  $__res = ($dictOrd_0)->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -176,6 +183,7 @@ $__t4 = null;
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($v_1)(($f_0)($x_2)))(($f_0)($y_3));
   goto __end;;
   __end:

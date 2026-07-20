@@ -110,6 +110,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_String_CodePoints_CodePoint'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_CodePoint"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -121,6 +122,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_unsurrogate"), recVars=[];
   $__res = ((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))(((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))(((($GLOBALS['Data_Semiring_intMul'] ?? \PhpursThunks::eval('Data_Semiring_intMul')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($lead_0))(55296)))(1024)))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($trail_1))(56320))))(65536);
   goto __end;;
   __end:
@@ -130,6 +132,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_showCodePoint'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(CodePoint 0x"))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_String_Common_toUpper'] ?? \PhpursThunks::eval('Data_String_Common_toUpper')))(((($GLOBALS['Data_Int_toStringAs'] ?? \PhpursThunks::eval('Data_Int_toStringAs')))(16))($v_0))))(")"));
   goto __end;;
   __end:
@@ -137,20 +140,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_isTrail'] = function() { $v = function($cu_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)(56320))($cu_0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)(56320))($cu_0))->tag === "GT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($cu_0))(57343)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($cu_0))(57343))->tag === "GT"))));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_isTrail"), recVars=[];
+  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})(56320))($cu_0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})(56320))($cu_0))->{'tag'} === "GT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($cu_0))(57343)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($cu_0))(57343))->{'tag'} === "GT"))));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_isLead'] = function() { $v = function($cu_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)(55296))($cu_0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)(55296))($cu_0))->tag === "GT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($cu_0))(56319)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($cu_0))(56319))->tag === "GT"))));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_isLead"), recVars=[];
+  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})(55296))($cu_0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})(55296))($cu_0))->{'tag'} === "GT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($cu_0))(56319)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($cu_0))(56319))->{'tag'} === "GT"))));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_uncons'] = function() { $v = function($s_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_uncons"), recVars=[];
   $v_1_0 = (($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_0);
   switch ($v_1_0) {
 case 0:
@@ -177,9 +183,10 @@ break;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_unconsButWithTuple'] = function() { $v = function($s_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_unconsButWithTuple"), recVars=[];
   $__local_var_1_0 = (($GLOBALS['Data_String_CodePoints_uncons'] ?? \PhpursThunks::eval('Data_String_CodePoints_uncons')))($s_0);
-  if ((is_object($__local_var_1_0) && (($__local_var_1_0)->tag === "Just"))) {
-$__t1 = new Phpurs_Data1("Just", new Phpurs_Data2("Tuple", (($__local_var_1_0)->value0)->head, (($__local_var_1_0)->value0)->tail));
+  if ((is_object($__local_var_1_0) && (($__local_var_1_0)->{'tag'} === "Just"))) {
+$__t1 = new Phpurs_Data1("Just", new Phpurs_Data2("Tuple", (($__local_var_1_0)->{'value0'})->{'head'}, (($__local_var_1_0)->{'value0'})->{'tail'}));
 } else {
 $__t1 = new Phpurs_Data0("Nothing");
 };
@@ -190,15 +197,17 @@ $__t1 = new Phpurs_Data0("Nothing");
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_toCodePointArrayFallback'] = function() { $v = function($s_0) {
   $__num = \func_num_args();
-  $__res = (((($GLOBALS['Data_Unfoldable_unfoldableArray'] ?? \PhpursThunks::eval('Data_Unfoldable_unfoldableArray')))->unfoldr)(($GLOBALS['Data_String_CodePoints_unconsButWithTuple'] ?? \PhpursThunks::eval('Data_String_CodePoints_unconsButWithTuple'))))($s_0);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_toCodePointArrayFallback"), recVars=[];
+  $__res = (((($GLOBALS['Data_Unfoldable_unfoldableArray'] ?? \PhpursThunks::eval('Data_Unfoldable_unfoldableArray')))->{'unfoldr'})(($GLOBALS['Data_String_CodePoints_unconsButWithTuple'] ?? \PhpursThunks::eval('Data_String_CodePoints_unconsButWithTuple'))))($s_0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_unsafeCodePointAt0Fallback'] = function() { $v = function($s_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_unsafeCodePointAt0Fallback"), recVars=[];
   $cu0_1_0 = (($GLOBALS['Data_Enum_toCharCode'] ?? \PhpursThunks::eval('Data_Enum_toCharCode')))(((($GLOBALS['Data_String_Unsafe_charAt'] ?? \PhpursThunks::eval('Data_String_Unsafe_charAt')))(0))($s_0));
-  if (((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))((($GLOBALS['Data_String_CodePoints_isLead'] ?? \PhpursThunks::eval('Data_String_CodePoints_isLead')))($cu0_1_0)))((is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_0)))(1)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_0)))(1))->tag === "GT")))) {
+  if (((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))((($GLOBALS['Data_String_CodePoints_isLead'] ?? \PhpursThunks::eval('Data_String_CodePoints_isLead')))($cu0_1_0)))((is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_0)))(1)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($s_0)))(1))->{'tag'} === "GT")))) {
 $cu1_2_2 = (($GLOBALS['Data_Enum_toCharCode'] ?? \PhpursThunks::eval('Data_Enum_toCharCode')))(((($GLOBALS['Data_String_Unsafe_charAt'] ?? \PhpursThunks::eval('Data_String_Unsafe_charAt')))(1))($s_0));
 if ((($GLOBALS['Data_String_CodePoints_isTrail'] ?? \PhpursThunks::eval('Data_String_CodePoints_isTrail')))($cu1_2_2)) {
 $__t3 = ((($GLOBALS['Data_String_CodePoints_unsurrogate'] ?? \PhpursThunks::eval('Data_String_CodePoints_unsurrogate')))($cu0_1_0))($cu1_2_2);
@@ -223,9 +232,10 @@ $__t1 = $cu0_1_0;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_lastIndexOf"), recVars=[];
   $__local_var_2_0 = ((($GLOBALS['Data_String_CodeUnits_lastIndexOf'] ?? \PhpursThunks::eval('Data_String_CodeUnits_lastIndexOf')))($p_0))($s_1);
-  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->tag === "Just"))) {
-$__t1 = new Phpurs_Data1("Just", (($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_2_0)->value0))($s_1)));
+  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Just"))) {
+$__t1 = new Phpurs_Data1("Just", (($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_2_0)->{'value0'}))($s_1)));
 } else {
 $__t1 = new Phpurs_Data0("Nothing");
 };
@@ -242,9 +252,10 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_indexOf"), recVars=[];
   $__local_var_2_0 = ((($GLOBALS['Data_String_CodeUnits_indexOf'] ?? \PhpursThunks::eval('Data_String_CodeUnits_indexOf')))($p_0))($s_1);
-  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->tag === "Just"))) {
-$__t1 = new Phpurs_Data1("Just", (($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_2_0)->value0))($s_1)));
+  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Just"))) {
+$__t1 = new Phpurs_Data1("Just", (($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_2_0)->{'value0'}))($s_1)));
 } else {
 $__t1 = new Phpurs_Data0("Nothing");
 };
@@ -258,7 +269,8 @@ $__t1 = new Phpurs_Data0("Nothing");
 \PhpursThunks::$thunks['Data_String_CodePoints_fromCharCode'] = function() { $v = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_String_CodeUnits_singleton'] ?? \PhpursThunks::eval('Data_String_CodeUnits_singleton'))))((((($GLOBALS['Data_Enum_toEnumWithDefaults'] ?? \PhpursThunks::eval('Data_Enum_toEnumWithDefaults')))(($GLOBALS['Data_Enum_boundedEnumChar'] ?? \PhpursThunks::eval('Data_Enum_boundedEnumChar'))))(($GLOBALS['Data_Bounded_bottomChar'] ?? \PhpursThunks::eval('Data_Bounded_bottomChar'))))(($GLOBALS['Data_Bounded_topChar'] ?? \PhpursThunks::eval('Data_Bounded_topChar')))); return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_singletonFallback'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
-  if (( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($v_0))(65535)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($v_0))(65535))->tag === "GT")))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_singletonFallback"), recVars=[];
+  if (( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($v_0))(65535)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($v_0))(65535))->{'tag'} === "GT")))) {
 $__t0 = (($GLOBALS['Data_String_CodePoints_fromCharCode'] ?? \PhpursThunks::eval('Data_String_CodePoints_fromCharCode')))($v_0);
 } else {
 $__t0 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_String_CodePoints_fromCharCode'] ?? \PhpursThunks::eval('Data_String_CodePoints_fromCharCode')))(((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))(((($GLOBALS['Data_EuclideanRing_intDiv'] ?? \PhpursThunks::eval('Data_EuclideanRing_intDiv')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($v_0))(65536)))(1024)))(55296))))((($GLOBALS['Data_String_CodePoints_fromCharCode'] ?? \PhpursThunks::eval('Data_String_CodePoints_fromCharCode')))(((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))(((($GLOBALS['Data_EuclideanRing_intMod'] ?? \PhpursThunks::eval('Data_EuclideanRing_intMod')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($v_0))(65536)))(1024)))(56320)));
@@ -276,19 +288,22 @@ $__t0 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($v_0))(1)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($v_0))(1))->tag === "LT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_takeFallback"), recVars=["Data_String_CodePoints_takeFallback"];
+  while (true) {
+if ((is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($v_0))(1)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($v_0))(1))->{'tag'} === "LT"))) {
 $__t2 = "";
 } else {
 $v2_2_0 = (($GLOBALS['Data_String_CodePoints_uncons'] ?? \PhpursThunks::eval('Data_String_CodePoints_uncons')))($v1_1);
-if ((is_object($v2_2_0) && (($v2_2_0)->tag === "Just"))) {
-$__t1 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_String_CodePoints_singleton'] ?? \PhpursThunks::eval('Data_String_CodePoints_singleton')))((($v2_2_0)->value0)->head)))(((($GLOBALS['Data_String_CodePoints_takeFallback'] ?? \PhpursThunks::eval('Data_String_CodePoints_takeFallback')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($v_0))(1)))((($v2_2_0)->value0)->tail));
+if ((is_object($v2_2_0) && (($v2_2_0)->{'tag'} === "Just"))) {
+$__t1 = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_String_CodePoints_singleton'] ?? \PhpursThunks::eval('Data_String_CodePoints_singleton')))((($v2_2_0)->{'value0'})->{'head'})))(((($GLOBALS['Data_String_CodePoints_takeFallback'] ?? \PhpursThunks::eval('Data_String_CodePoints_takeFallback')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($v_0))(1)))((($v2_2_0)->{'value0'})->{'tail'}));
 } else {
 $__t1 = $v1_1;
 };
 $__t2 = $__t1;
 };
-  $__res = $__t2;
-  goto __end;;
+$__res = $__t2;
+goto __end;;
+};
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
@@ -301,9 +316,10 @@ $__t2 = $__t1;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_lastIndexOf'"), recVars=[];
   $__local_var_3_0 = (((($GLOBALS['Data_String_CodeUnits_lastIndexOf__prime__'] ?? \PhpursThunks::eval('Data_String_CodeUnits_lastIndexOf__prime__')))($p_0))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))(((($GLOBALS['Data_String_CodePoints_take'] ?? \PhpursThunks::eval('Data_String_CodePoints_take')))($i_1))($s_2))))($s_2);
-  if ((is_object($__local_var_3_0) && (($__local_var_3_0)->tag === "Just"))) {
-$__t1 = new Phpurs_Data1("Just", (($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_3_0)->value0))($s_2)));
+  if ((is_object($__local_var_3_0) && (($__local_var_3_0)->{'tag'} === "Just"))) {
+$__t1 = new Phpurs_Data1("Just", (($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_3_0)->{'value0'}))($s_2)));
 } else {
 $__t1 = new Phpurs_Data0("Nothing");
 };
@@ -320,6 +336,7 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_splitAt"), recVars=[];
   $before_2_0 = ((($GLOBALS['Data_String_CodePoints_take'] ?? \PhpursThunks::eval('Data_String_CodePoints_take')))($i_0))($s_1);
   $__res = (object)["before" => $before_2_0, "after" => ((($GLOBALS['Data_String_CodeUnits_drop'] ?? \PhpursThunks::eval('Data_String_CodeUnits_drop')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))($before_2_0)))($s_1)];
   goto __end;;
@@ -334,6 +351,7 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Eq_eqIntImpl'] ?? \PhpursThunks::eval('Data_Eq_eqIntImpl')))($x_0))($y_1);
   goto __end;;
   __end:
@@ -347,7 +365,8 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($x_0))($y_1);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($x_0))($y_1);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -355,6 +374,7 @@ $__t1 = new Phpurs_Data0("Nothing");
   return $__fn;
 })(), "Eq0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_String_CodePoints_eqCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_eqCodePoint'));
   goto __end;;
   __end:
@@ -366,6 +386,7 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_drop"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodeUnits_drop'] ?? \PhpursThunks::eval('Data_String_CodeUnits_drop')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))(((($GLOBALS['Data_String_CodePoints_take'] ?? \PhpursThunks::eval('Data_String_CodePoints_take')))($n_0))($s_1))))($s_1);
   goto __end;;
   __end:
@@ -379,10 +400,11 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_indexOf'"), recVars=[];
   $s__prime___3_0 = ((($GLOBALS['Data_String_CodeUnits_drop'] ?? \PhpursThunks::eval('Data_String_CodeUnits_drop')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))(((($GLOBALS['Data_String_CodePoints_take'] ?? \PhpursThunks::eval('Data_String_CodePoints_take')))($i_1))($s_2))))($s_2);
   $__local_var_4_1 = ((($GLOBALS['Data_String_CodeUnits_indexOf'] ?? \PhpursThunks::eval('Data_String_CodeUnits_indexOf')))($p_0))($s__prime___3_0);
-  if ((is_object($__local_var_4_1) && (($__local_var_4_1)->tag === "Just"))) {
-$__t2 = new Phpurs_Data1("Just", ((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))($i_1))((($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_4_1)->value0))($s__prime___3_0))));
+  if ((is_object($__local_var_4_1) && (($__local_var_4_1)->{'tag'} === "Just"))) {
+$__t2 = new Phpurs_Data1("Just", ((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))($i_1))((($GLOBALS['Data_String_CodePoints_length'] ?? \PhpursThunks::eval('Data_String_CodePoints_length')))(((($GLOBALS['Data_String_CodeUnits_take'] ?? \PhpursThunks::eval('Data_String_CodeUnits_take')))(($__local_var_4_1)->{'value0'}))($s__prime___3_0))));
 } else {
 $__t2 = new Phpurs_Data0("Nothing");
 };
@@ -399,14 +421,24 @@ $__t2 = new Phpurs_Data0("Nothing");
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $v_3_0 = (($GLOBALS['Data_String_CodePoints_uncons'] ?? \PhpursThunks::eval('Data_String_CodePoints_uncons')))($s_1);
-  if (((is_object($v_3_0) && (($v_3_0)->tag === "Just")) && ($p_0)((($v_3_0)->value0)->head))) {
-$__t1 = (((($GLOBALS['Data_String_CodePoints_countTail'] ?? \PhpursThunks::eval('Data_String_CodePoints_countTail')))($p_0))((($v_3_0)->value0)->tail))(((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))($accum_2))(1));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_countTail"), recVars=["Data_String_CodePoints_countTail"];
+  while (true) {
+$v_3_0 = (($GLOBALS['Data_String_CodePoints_uncons'] ?? \PhpursThunks::eval('Data_String_CodePoints_uncons')))($s_1);
+if (((is_object($v_3_0) && (($v_3_0)->{'tag'} === "Just")) && ($p_0)((($v_3_0)->{'value0'})->{'head'}))) {
+$__tco_2 = $p_0;
+$__tco_3 = (($v_3_0)->{'value0'})->{'tail'};
+$__tco_4 = ((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))($accum_2))(1);
+$p_0 = $__tco_2;
+$s_1 = $__tco_3;
+$accum_2 = $__tco_4;
+continue ;
+$__t1 = null;
 } else {
 $__t1 = $accum_2;
 };
-  $__res = $__t1;
-  goto __end;;
+$__res = $__t1;
+goto __end;;
+};
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
   };
@@ -418,6 +450,7 @@ $__t1 = $accum_2;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_countFallback"), recVars=[];
   $__res = (((($GLOBALS['Data_String_CodePoints_countTail'] ?? \PhpursThunks::eval('Data_String_CodePoints_countTail')))($p_0))($s_1))(0);
   goto __end;;
   __end:
@@ -432,6 +465,7 @@ $__t1 = $accum_2;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_dropWhile"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodeUnits_drop'] ?? \PhpursThunks::eval('Data_String_CodeUnits_drop')))((($GLOBALS['Data_String_CodeUnits_length'] ?? \PhpursThunks::eval('Data_String_CodeUnits_length')))(((($GLOBALS['Data_String_CodePoints_take'] ?? \PhpursThunks::eval('Data_String_CodePoints_take')))(((($GLOBALS['Data_String_CodePoints_countPrefix'] ?? \PhpursThunks::eval('Data_String_CodePoints_countPrefix')))($p_0))($s_1)))($s_1))))($s_1);
   goto __end;;
   __end:
@@ -445,6 +479,7 @@ $__t1 = $accum_2;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_takeWhile"), recVars=[];
   $__res = ((($GLOBALS['Data_String_CodePoints_take'] ?? \PhpursThunks::eval('Data_String_CodePoints_take')))(((($GLOBALS['Data_String_CodePoints_countPrefix'] ?? \PhpursThunks::eval('Data_String_CodePoints_countPrefix')))($p_0))($s_1)))($s_1);
   goto __end;;
   __end:
@@ -459,19 +494,27 @@ $__t1 = $accum_2;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $v_2_0 = (($GLOBALS['Data_String_CodePoints_uncons'] ?? \PhpursThunks::eval('Data_String_CodePoints_uncons')))($s_1);
-  if ((is_object($v_2_0) && (($v_2_0)->tag === "Just"))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_codePointAtFallback"), recVars=["Data_String_CodePoints_codePointAtFallback"];
+  while (true) {
+$v_2_0 = (($GLOBALS['Data_String_CodePoints_uncons'] ?? \PhpursThunks::eval('Data_String_CodePoints_uncons')))($s_1);
+if ((is_object($v_2_0) && (($v_2_0)->{'tag'} === "Just"))) {
 if (((($GLOBALS['Data_Eq_eqIntImpl'] ?? \PhpursThunks::eval('Data_Eq_eqIntImpl')))($n_0))(0)) {
-$__t2 = new Phpurs_Data1("Just", (($v_2_0)->value0)->head);
+$__t4 = new Phpurs_Data1("Just", (($v_2_0)->{'value0'})->{'head'});
 } else {
-$__t2 = ((($GLOBALS['Data_String_CodePoints_codePointAtFallback'] ?? \PhpursThunks::eval('Data_String_CodePoints_codePointAtFallback')))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($n_0))(1)))((($v_2_0)->value0)->tail);
+$__tco_2 = ((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))($n_0))(1);
+$__tco_3 = (($v_2_0)->{'value0'})->{'tail'};
+$n_0 = $__tco_2;
+$s_1 = $__tco_3;
+continue ;
+$__t4 = null;
 };
-$__t1 = $__t2;
+$__t1 = $__t4;
 } else {
 $__t1 = new Phpurs_Data0("Nothing");
 };
-  $__res = $__t1;
-  goto __end;;
+$__res = $__t1;
+goto __end;;
+};
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
@@ -483,7 +526,8 @@ $__t1 = new Phpurs_Data0("Nothing");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($v_0))(0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($v_0))(0))->tag === "LT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CodePoints_codePointAt"), recVars=[];
+  if ((is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($v_0))(0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($v_0))(0))->{'tag'} === "LT"))) {
 $__t0 = new Phpurs_Data0("Nothing");
 } else {
 switch ($v_0) {
@@ -512,6 +556,7 @@ break;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_boundedCodePoint'] = function() { $v = (object)["bottom" => 0, "top" => 1114111, "Ord0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_String_CodePoints_ordCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_ordCodePoint'));
   goto __end;;
   __end:
@@ -519,13 +564,15 @@ break;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_String_CodePoints_boundedEnumCodePoint'] = function() { $v = (object)["cardinality" => ((($GLOBALS['Data_Semiring_intAdd'] ?? \PhpursThunks::eval('Data_Semiring_intAdd')))(1114111))(1), "fromEnum" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_String_CodePoints_boundedEnumCodePoint","Data_String_CodePoints_enumCodePoint"];
   $__res = $v_0;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "toEnum" => function($n_0) {
   $__num = \func_num_args();
-  if (((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(0))->tag === "LT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(1114111)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(1114111))->tag === "GT"))))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_String_CodePoints_boundedEnumCodePoint","Data_String_CodePoints_enumCodePoint"];
+  if (((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(0)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(0))->{'tag'} === "LT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(1114111)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(1114111))->{'tag'} === "GT"))))) {
 $__t0 = new Phpurs_Data1("Just", $n_0);
 } else {
 $__t0 = new Phpurs_Data0("Nothing");
@@ -536,19 +583,22 @@ $__t0 = new Phpurs_Data0("Nothing");
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Bounded0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_String_CodePoints_boundedEnumCodePoint","Data_String_CodePoints_enumCodePoint"];
   $__res = ($GLOBALS['Data_String_CodePoints_boundedCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedCodePoint'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Enum1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_String_CodePoints_boundedEnumCodePoint","Data_String_CodePoints_enumCodePoint"];
   $__res = ($GLOBALS['Data_String_CodePoints_enumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_enumCodePoint'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_String_CodePoints_enumCodePoint'] = function() { $v = (object)["succ" => ((($GLOBALS['Data_Enum_defaultSucc'] ?? \PhpursThunks::eval('Data_Enum_defaultSucc')))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->toEnum))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->fromEnum), "pred" => ((($GLOBALS['Data_Enum_defaultPred'] ?? \PhpursThunks::eval('Data_Enum_defaultPred')))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->toEnum))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->fromEnum), "Ord0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_String_CodePoints_enumCodePoint'] = function() { $v = (object)["succ" => ((($GLOBALS['Data_Enum_defaultSucc'] ?? \PhpursThunks::eval('Data_Enum_defaultSucc')))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->{'toEnum'}))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->{'fromEnum'}), "pred" => ((($GLOBALS['Data_Enum_defaultPred'] ?? \PhpursThunks::eval('Data_Enum_defaultPred')))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->{'toEnum'}))((($GLOBALS['Data_String_CodePoints_boundedEnumCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_boundedEnumCodePoint')))->{'fromEnum'}), "Ord0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_String_CodePoints_boundedEnumCodePoint","Data_String_CodePoints_enumCodePoint"];
   $__res = ($GLOBALS['Data_String_CodePoints_ordCodePoint'] ?? \PhpursThunks::eval('Data_String_CodePoints_ordCodePoint'));
   goto __end;;
   __end:

@@ -96,14 +96,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = new Phpurs_Data2("Tuple", ($a2b_0)(($v_1)->value0), ($v_1)->value1);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = new Phpurs_Data2("Tuple", ($a2b_0)(($v_1)->{'value0'}), ($v_1)->{'value1'});
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "second" => (($GLOBALS['Data_Tuple_functorTuple'] ?? \PhpursThunks::eval('Data_Tuple_functorTuple')))->map, "Profunctor0" => function($dollar__unused_0) {
+})(), "second" => (($GLOBALS['Data_Tuple_functorTuple'] ?? \PhpursThunks::eval('Data_Tuple_functorTuple')))->{'map'}, "Profunctor0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Profunctor_profunctorFn'] ?? \PhpursThunks::eval('Data_Profunctor_profunctorFn'));
   goto __end;;
   __end:
@@ -111,14 +113,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Profunctor_Strong_second'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->second;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Strong_second"), recVars=[];
+  $__res = ($dict_0)->{'second'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Profunctor_Strong_first'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->first;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Strong_first"), recVars=[];
+  $__res = ($dict_0)->{'first'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -129,7 +133,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictSemigroupoid_0)->compose)((($dictStrong_1)->second)($r_3)))((($dictStrong_1)->first)($l_2));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Strong_splitStrong"), recVars=[];
+  $__res = ((($dictSemigroupoid_0)->{'compose'})((($dictStrong_1)->{'second'})($r_3)))((($dictStrong_1)->{'first'})($l_2));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -142,20 +147,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $lcmap_2_0 = (($GLOBALS['Data_Profunctor_lcmap'] ?? \PhpursThunks::eval('Data_Profunctor_lcmap')))((($dictStrong_1)->Profunctor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = (function() use (&$dictSemigroupoid_0, &$dictStrong_1, &$lcmap_2_0) {
-  $__fn = function($l_3, $r_4 = null) use (&$dictSemigroupoid_0, &$dictStrong_1, &$lcmap_2_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Strong_fanout"), recVars=[];
+  $lcmap_2_0 = (($GLOBALS['Data_Profunctor_lcmap'] ?? \PhpursThunks::eval('Data_Profunctor_lcmap')))((($dictStrong_1)->{'Profunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
+  $__res = (function() use ($dictSemigroupoid_0, $dictStrong_1, $lcmap_2_0) {
+  $__fn = function($l_3, $r_4 = null) use ($dictSemigroupoid_0, $dictStrong_1, $lcmap_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($lcmap_2_0)(function($a_5) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data2("Tuple", $a_5, $a_5);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))(((($dictSemigroupoid_0)->compose)((($dictStrong_1)->second)($r_4)))((($dictStrong_1)->first)($l_3)));
+}))(((($dictSemigroupoid_0)->{'compose'})((($dictStrong_1)->{'second'})($r_4)))((($dictStrong_1)->{'first'})($l_3)));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

@@ -98,6 +98,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Array_ST_unshiftAll'] = function() { $v = (($GLOBALS['Control_Monad_ST_Uncurried_runSTFn2'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn2')))(($GLOBALS['Data_Array_ST_unshiftAllImpl'] ?? \PhpursThunks::eval('Data_Array_ST_unshiftAllImpl'))); return $v; };
 \PhpursThunks::$thunks['Data_Array_ST_unshift'] = function() { $v = function($a_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_unshift"), recVars=[];
   $__res = ((($GLOBALS['Control_Monad_ST_Uncurried_runSTFn2'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn2')))(($GLOBALS['Data_Array_ST_unshiftAllImpl'] ?? \PhpursThunks::eval('Data_Array_ST_unshiftAllImpl'))))([$a_0]);
   goto __end;;
   __end:
@@ -113,10 +114,13 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))((($GLOBALS['Data_Array_ST_thaw'] ?? \PhpursThunks::eval('Data_Array_ST_thaw')))($xs_1)))(function($result_2) use (&$f_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_withArray"), recVars=[];
+  $__res = ((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))((($GLOBALS['Data_Array_ST_thaw'] ?? \PhpursThunks::eval('Data_Array_ST_thaw')))($xs_1)))(function($result_2) use ($f_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))(($f_0)($result_2)))(function($dollar__unused_3) use (&$result_2) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))(($f_0)($result_2)))(function($dollar__unused_3) use ($result_2) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Data_Array_ST_unsafeFreeze'] ?? \PhpursThunks::eval('Data_Array_ST_unsafeFreeze')))($result_2);
   goto __end;;
   __end:
@@ -135,15 +139,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Array_ST_splice'] = function() { $v = (($GLOBALS['Control_Monad_ST_Uncurried_runSTFn4'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn4')))(($GLOBALS['Data_Array_ST_spliceImpl'] ?? \PhpursThunks::eval('Data_Array_ST_spliceImpl'))); return $v; };
 \PhpursThunks::$thunks['Data_Array_ST_sortBy'] = function() { $v = function($comp_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_sortBy"), recVars=[];
   $__res = (((($GLOBALS['Control_Monad_ST_Uncurried_runSTFn3'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn3')))(($GLOBALS['Data_Array_ST_sortByImpl'] ?? \PhpursThunks::eval('Data_Array_ST_sortByImpl'))))($comp_0))(function($v_1) {
   $__num = \func_num_args();
-  if ((is_object($v_1) && (($v_1)->tag === "GT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_1) && (($v_1)->{'tag'} === "GT"))) {
 $__t0 = 1;
 } else {
-if ((is_object($v_1) && (($v_1)->tag === "EQ"))) {
+if ((is_object($v_1) && (($v_1)->{'tag'} === "EQ"))) {
 $__t0 = 0;
 } else {
-if ((is_object($v_1) && (($v_1)->tag === "LT"))) {
+if ((is_object($v_1) && (($v_1)->{'tag'} === "LT"))) {
 $__t0 = ((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))(0))(1);
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -166,13 +172,15 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($GLOBALS['Data_Array_ST_sortBy'] ?? \PhpursThunks::eval('Data_Array_ST_sortBy')))((function() use (&$dictOrd_0, &$f_1) {
-  $__fn = function($x_2, $y_3 = null) use (&$dictOrd_0, &$f_1, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_sortWith"), recVars=[];
+  $__res = (($GLOBALS['Data_Array_ST_sortBy'] ?? \PhpursThunks::eval('Data_Array_ST_sortBy')))((function() use ($dictOrd_0, $f_1) {
+  $__fn = function($x_2, $y_3 = null) use ($dictOrd_0, $f_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictOrd_0)->compare)(($f_1)($x_2)))(($f_1)($y_3));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictOrd_0)->{'compare'})(($f_1)($x_2)))(($f_1)($y_3));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -187,7 +195,8 @@ $__t0 = null;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Array_ST_sort'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
-  $__res = (($GLOBALS['Data_Array_ST_sortBy'] ?? \PhpursThunks::eval('Data_Array_ST_sortBy')))(($dictOrd_0)->compare);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_sort"), recVars=[];
+  $__res = (($GLOBALS['Data_Array_ST_sortBy'] ?? \PhpursThunks::eval('Data_Array_ST_sortBy')))(($dictOrd_0)->{'compare'});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -195,6 +204,7 @@ $__t0 = null;
 \PhpursThunks::$thunks['Data_Array_ST_shift'] = function() { $v = (((($GLOBALS['Control_Monad_ST_Uncurried_runSTFn3'] ?? \PhpursThunks::eval('Control_Monad_ST_Uncurried_runSTFn3')))(($GLOBALS['Data_Array_ST_shiftImpl'] ?? \PhpursThunks::eval('Data_Array_ST_shiftImpl'))))(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))(new Phpurs_Data0("Nothing")); return $v; };
 \PhpursThunks::$thunks['Data_Array_ST_run'] = function() { $v = function($st_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_run"), recVars=[];
   $__res = (($GLOBALS['Control_Monad_ST_Internal_run'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_run')))(((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))($st_0))(($GLOBALS['Data_Array_ST_unsafeFreeze'] ?? \PhpursThunks::eval('Data_Array_ST_unsafeFreeze'))));
   goto __end;;
   __end:
@@ -211,12 +221,14 @@ $__t0 = null;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))(((($GLOBALS['Data_Array_ST_peek'] ?? \PhpursThunks::eval('Data_Array_ST_peek')))($i_0))($xs_2)))(function($entry_3) use (&$f_1, &$i_0, &$xs_2) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_ST_modify"), recVars=[];
+  $__res = ((($GLOBALS['Control_Monad_ST_Internal_bind_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_bind_')))(((($GLOBALS['Data_Array_ST_peek'] ?? \PhpursThunks::eval('Data_Array_ST_peek')))($i_0))($xs_2)))(function($entry_3) use ($f_1, $i_0, $xs_2) {
   $__num = \func_num_args();
-  if ((is_object($entry_3) && (($entry_3)->tag === "Just"))) {
-$__t0 = (((($GLOBALS['Data_Array_ST_poke'] ?? \PhpursThunks::eval('Data_Array_ST_poke')))($i_0))(($f_1)(($entry_3)->value0)))($xs_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($entry_3) && (($entry_3)->{'tag'} === "Just"))) {
+$__t0 = (((($GLOBALS['Data_Array_ST_poke'] ?? \PhpursThunks::eval('Data_Array_ST_poke')))($i_0))(($f_1)(($entry_3)->{'value0'})))($xs_2);
 } else {
-if ((is_object($entry_3) && (($entry_3)->tag === "Nothing"))) {
+if ((is_object($entry_3) && (($entry_3)->{'tag'} === "Nothing"))) {
 $__t0 = (($GLOBALS['Control_Monad_ST_Internal_pure_'] ?? \PhpursThunks::eval('Control_Monad_ST_Internal_pure_')))(false);
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);

@@ -95,6 +95,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $v1_1;
   goto __end;;
   __end:
@@ -104,7 +105,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Functor_Contravariant_cmap'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->cmap;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_cmap"), recVars=[];
+  $__res = ($dict_0)->{'cmap'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -115,7 +117,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((($dictContravariant_0)->cmap)($f_2))($x_1);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_cmapFlipped"), recVars=[];
+  $__res = ((($dictContravariant_0)->{'cmap'})($f_2))($x_1);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -128,7 +131,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((($dictFunctor_1)->map)(($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))))(((($dictContravariant_0)->cmap)(($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))))($a_2));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_coerce"), recVars=[];
+  $__res = ((($dictFunctor_1)->{'map'})(($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))))(((($dictContravariant_0)->{'cmap'})(($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))))($a_2));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -141,7 +145,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (($dictContravariant_0)->cmap)($f_2);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Contravariant_imapC"), recVars=[];
+  $__res = (($dictContravariant_0)->{'cmap'})($f_2);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;

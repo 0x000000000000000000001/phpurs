@@ -107,10 +107,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Int_Odd'] = function() { $v = ($GLOBALS['__phpurs_data0_Odd'] ??= new Phpurs_Data0("Odd")); return $v; };
 \PhpursThunks::$thunks['Data_Int_showParity'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
-  if ((is_object($v_0) && (($v_0)->tag === "Even"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "Even"))) {
 $__t0 = "Even";
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "Odd"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "Odd"))) {
 $__t0 = "Odd";
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -124,7 +125,8 @@ $__t0 = null;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Int_radix'] = function() { $v = function($n_0) {
   $__num = \func_num_args();
-  if (((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(2)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(2))->tag === "LT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(36)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->compare)($n_0))(36))->tag === "GT"))))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Int_radix"), recVars=[];
+  if (((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(2)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(2))->{'tag'} === "LT")))))(( ! (is_object((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(36)) && (((((($GLOBALS['Data_Ord_ordInt'] ?? \PhpursThunks::eval('Data_Ord_ordInt')))->{'compare'})($n_0))(36))->{'tag'} === "GT"))))) {
 $__t0 = new Phpurs_Data1("Just", $n_0);
 } else {
 $__t0 = new Phpurs_Data0("Nothing");
@@ -136,6 +138,7 @@ $__t0 = new Phpurs_Data0("Nothing");
 }; return $v; };
 \PhpursThunks::$thunks['Data_Int_odd'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Int_odd"), recVars=[];
   $__res = ((($GLOBALS['Data_Eq_eqBooleanImpl'] ?? \PhpursThunks::eval('Data_Eq_eqBooleanImpl')))(((($GLOBALS['Data_Eq_eqIntImpl'] ?? \PhpursThunks::eval('Data_Eq_eqIntImpl')))(((($GLOBALS['Data_Int_Bits_and'] ?? \PhpursThunks::eval('Data_Int_Bits_and')))($x_0))(1)))(0)))(false);
   goto __end;;
   __end:
@@ -148,21 +151,22 @@ $__t0 = new Phpurs_Data0("Nothing");
 \PhpursThunks::$thunks['Data_Int_fromNumber'] = function() { $v = ((($GLOBALS['Data_Int_fromNumberImpl'] ?? \PhpursThunks::eval('Data_Int_fromNumberImpl')))(($GLOBALS['Data_Maybe_Just'] ?? \PhpursThunks::eval('Data_Maybe_Just'))))(new Phpurs_Data0("Nothing")); return $v; };
 \PhpursThunks::$thunks['Data_Int_unsafeClamp'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Int_unsafeClamp"), recVars=[];
   if ((($GLOBALS['Data_HeytingAlgebra_boolNot'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolNot')))((($GLOBALS['Data_Number_isFinite'] ?? \PhpursThunks::eval('Data_Number_isFinite')))($x_0))) {
 $__t2 = 0;
 } else {
-if (( ! (is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->compare)($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_topInt'] ?? \PhpursThunks::eval('Data_Bounded_topInt'))))) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->compare)($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_topInt'] ?? \PhpursThunks::eval('Data_Bounded_topInt')))))->tag === "LT")))) {
+if (( ! (is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_topInt'] ?? \PhpursThunks::eval('Data_Bounded_topInt'))))) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_topInt'] ?? \PhpursThunks::eval('Data_Bounded_topInt')))))->{'tag'} === "LT")))) {
 $__t2 = ($GLOBALS['Data_Bounded_topInt'] ?? \PhpursThunks::eval('Data_Bounded_topInt'));
 } else {
-if (( ! (is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->compare)($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_bottomInt'] ?? \PhpursThunks::eval('Data_Bounded_bottomInt'))))) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->compare)($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_bottomInt'] ?? \PhpursThunks::eval('Data_Bounded_bottomInt')))))->tag === "GT")))) {
+if (( ! (is_object((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_bottomInt'] ?? \PhpursThunks::eval('Data_Bounded_bottomInt'))))) && (((((($GLOBALS['Data_Ord_ordNumber'] ?? \PhpursThunks::eval('Data_Ord_ordNumber')))->{'compare'})($x_0))((($GLOBALS['Data_Int_toNumber'] ?? \PhpursThunks::eval('Data_Int_toNumber')))(($GLOBALS['Data_Bounded_bottomInt'] ?? \PhpursThunks::eval('Data_Bounded_bottomInt')))))->{'tag'} === "GT")))) {
 $__t2 = ($GLOBALS['Data_Bounded_bottomInt'] ?? \PhpursThunks::eval('Data_Bounded_bottomInt'));
 } else {
 $__local_var_1_0 = (($GLOBALS['Data_Int_fromNumber'] ?? \PhpursThunks::eval('Data_Int_fromNumber')))($x_0);
-if ((is_object($__local_var_1_0) && (($__local_var_1_0)->tag === "Nothing"))) {
+if ((is_object($__local_var_1_0) && (($__local_var_1_0)->{'tag'} === "Nothing"))) {
 $__t1 = 0;
 } else {
-if ((is_object($__local_var_1_0) && (($__local_var_1_0)->tag === "Just"))) {
-$__t1 = ($__local_var_1_0)->value0;
+if ((is_object($__local_var_1_0) && (($__local_var_1_0)->{'tag'} === "Just"))) {
+$__t1 = ($__local_var_1_0)->{'value0'};
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t1 = null;
@@ -182,6 +186,7 @@ $__t2 = $__t1;
 \PhpursThunks::$thunks['Data_Int_floor'] = function() { $v = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Int_unsafeClamp'] ?? \PhpursThunks::eval('Data_Int_unsafeClamp'))))(($GLOBALS['Data_Number_floor'] ?? \PhpursThunks::eval('Data_Number_floor'))); return $v; };
 \PhpursThunks::$thunks['Data_Int_even'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Int_even"), recVars=[];
   $__res = ((($GLOBALS['Data_Eq_eqIntImpl'] ?? \PhpursThunks::eval('Data_Eq_eqIntImpl')))(((($GLOBALS['Data_Int_Bits_and'] ?? \PhpursThunks::eval('Data_Int_Bits_and')))($x_0))(1)))(0);
   goto __end;;
   __end:
@@ -189,6 +194,7 @@ $__t2 = $__t1;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Int_parity'] = function() { $v = function($n_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Int_parity"), recVars=[];
   if (((($GLOBALS['Data_Eq_eqIntImpl'] ?? \PhpursThunks::eval('Data_Eq_eqIntImpl')))(((($GLOBALS['Data_Int_Bits_and'] ?? \PhpursThunks::eval('Data_Int_Bits_and')))($n_0))(1)))(0)) {
 $__t0 = new Phpurs_Data0("Even");
 } else {
@@ -205,10 +211,11 @@ $__t0 = new Phpurs_Data0("Odd");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($x_0) && (($x_0)->tag === "Even"))) {
-$__t0 = (is_object($y_1) && (($y_1)->tag === "Even"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($x_0) && (($x_0)->{'tag'} === "Even"))) {
+$__t0 = (is_object($y_1) && (($y_1)->{'tag'} === "Even"));
 } else {
-$__t0 = ((is_object($x_0) && (($x_0)->tag === "Odd")) && (is_object($y_1) && (($y_1)->tag === "Odd")));
+$__t0 = ((is_object($x_0) && (($x_0)->{'tag'} === "Odd")) && (is_object($y_1) && (($y_1)->{'tag'} === "Odd")));
 };
   $__res = $__t0;
   goto __end;;
@@ -223,18 +230,19 @@ $__t0 = ((is_object($x_0) && (($x_0)->tag === "Odd")) && (is_object($y_1) && (($
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($x_0) && (($x_0)->tag === "Even"))) {
-if ((is_object($y_1) && (($y_1)->tag === "Even"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($x_0) && (($x_0)->{'tag'} === "Even"))) {
+if ((is_object($y_1) && (($y_1)->{'tag'} === "Even"))) {
 $__t1 = new Phpurs_Data0("EQ");
 } else {
 $__t1 = new Phpurs_Data0("LT");
 };
 $__t0 = $__t1;
 } else {
-if ((is_object($y_1) && (($y_1)->tag === "Even"))) {
+if ((is_object($y_1) && (($y_1)->{'tag'} === "Even"))) {
 $__t0 = new Phpurs_Data0("GT");
 } else {
-if (((is_object($x_0) && (($x_0)->tag === "Odd")) && (is_object($y_1) && (($y_1)->tag === "Odd")))) {
+if (((is_object($x_0) && (($x_0)->{'tag'} === "Odd")) && (is_object($y_1) && (($y_1)->{'tag'} === "Odd")))) {
 $__t0 = new Phpurs_Data0("EQ");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -250,6 +258,7 @@ $__t0 = null;
   return $__fn;
 })(), "Eq0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Int_eqParity'] ?? \PhpursThunks::eval('Data_Int_eqParity'));
   goto __end;;
   __end:
@@ -261,11 +270,12 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ((function() use ($x_0, $y_1, &$__fn) {
-if ((is_object($x_0) && (($x_0)->tag === "Even"))) {
-$__t1 = (is_object($y_1) && (($y_1)->tag === "Even"));
+if ((is_object($x_0) && (($x_0)->{'tag'} === "Even"))) {
+$__t1 = (is_object($y_1) && (($y_1)->{'tag'} === "Even"));
 } else {
-$__t1 = ((is_object($x_0) && (($x_0)->tag === "Odd")) && (is_object($y_1) && (($y_1)->tag === "Odd")));
+$__t1 = ((is_object($x_0) && (($x_0)->{'tag'} === "Odd")) && (is_object($y_1) && (($y_1)->{'tag'} === "Odd")));
 };
 return $__t1;
 })()) {
@@ -285,7 +295,8 @@ $__t0 = new Phpurs_Data0("Odd");
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if (((is_object($v_0) && (($v_0)->tag === "Odd")) && (is_object($v1_1) && (($v1_1)->tag === "Odd")))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if (((is_object($v_0) && (($v_0)->{'tag'} === "Odd")) && (is_object($v1_1) && (($v1_1)->{'tag'} === "Odd")))) {
 $__t2 = new Phpurs_Data0("Odd");
 } else {
 $__t2 = new Phpurs_Data0("Even");
@@ -297,15 +308,17 @@ $__t2 = new Phpurs_Data0("Even");
   };
   return $__fn;
 })()]; return $v; };
-\PhpursThunks::$thunks['Data_Int_ringParity'] = function() { $v = (object)["sub" => (($GLOBALS['Data_Int_semiringParity'] ?? \PhpursThunks::eval('Data_Int_semiringParity')))->add, "Semiring0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Int_ringParity'] = function() { $v = (object)["sub" => (($GLOBALS['Data_Int_semiringParity'] ?? \PhpursThunks::eval('Data_Int_semiringParity')))->{'add'}, "Semiring0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Int_semiringParity'] ?? \PhpursThunks::eval('Data_Int_semiringParity'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
-\PhpursThunks::$thunks['Data_Int_divisionRingParity'] = function() { $v = (object)["recip" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->identity, "Ring0" => function($dollar__unused_0) {
+\PhpursThunks::$thunks['Data_Int_divisionRingParity'] = function() { $v = (object)["recip" => (($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'}, "Ring0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Int_ringParity'] ?? \PhpursThunks::eval('Data_Int_ringParity'));
   goto __end;;
   __end:
@@ -314,6 +327,7 @@ $__t2 = new Phpurs_Data0("Even");
 \PhpursThunks::$thunks['Data_Int_decimal'] = function() { $v = 10; return $v; };
 \PhpursThunks::$thunks['Data_Int_commutativeRingParity'] = function() { $v = (object)["Ring0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Int_ringParity'] ?? \PhpursThunks::eval('Data_Int_ringParity'));
   goto __end;;
   __end:
@@ -321,10 +335,11 @@ $__t2 = new Phpurs_Data0("Even");
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Int_euclideanRingParity'] = function() { $v = (object)["degree" => function($v_0) {
   $__num = \func_num_args();
-  if ((is_object($v_0) && (($v_0)->tag === "Even"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "Even"))) {
 $__t0 = 0;
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "Odd"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "Odd"))) {
 $__t0 = 1;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -341,6 +356,7 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -353,6 +369,7 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("Even");
   goto __end;;
   __end:
@@ -361,6 +378,7 @@ $__t0 = null;
   return $__fn;
 })(), "CommutativeRing0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Int_commutativeRingParity'] ?? \PhpursThunks::eval('Data_Int_commutativeRingParity'));
   goto __end;;
   __end:
@@ -369,6 +387,7 @@ $__t0 = null;
 \PhpursThunks::$thunks['Data_Int_ceil'] = function() { $v = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_Int_unsafeClamp'] ?? \PhpursThunks::eval('Data_Int_unsafeClamp'))))(($GLOBALS['Data_Number_ceil'] ?? \PhpursThunks::eval('Data_Number_ceil'))); return $v; };
 \PhpursThunks::$thunks['Data_Int_boundedParity'] = function() { $v = (object)["bottom" => new Phpurs_Data0("Even"), "top" => new Phpurs_Data0("Odd"), "Ord0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Int_ordParity'] ?? \PhpursThunks::eval('Data_Int_ordParity'));
   goto __end;;
   __end:

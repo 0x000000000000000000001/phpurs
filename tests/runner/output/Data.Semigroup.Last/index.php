@@ -98,6 +98,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Semigroup_Last_Last'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Last_Last"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -105,9 +106,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_showLast'] = function() { $v = function($dictShow_0) {
   $__num = \func_num_args();
-  $__res = (object)["show" => function($v_1) use (&$dictShow_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Last_showLast"), recVars=[];
+  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Last "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->show)($v_1)))(")"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Last "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -122,6 +125,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $x_1;
   goto __end;;
   __end:
@@ -131,6 +135,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_ordLast'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Last_ordLast"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
@@ -142,6 +147,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($m_1);
   goto __end;;
   __end:
@@ -151,6 +157,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_eqLast'] = function() { $v = function($dictEq_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Last_eqLast"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
@@ -158,19 +165,22 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_eq1Last'] = function() { $v = (object)["eq1" => function($dictEq_0) {
   $__num = \func_num_args();
-  $__res = ($dictEq_0)->eq;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictEq_0)->{'eq'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_ord1Last'] = function() { $v = (object)["compare1" => function($dictOrd_0) {
   $__num = \func_num_args();
-  $__res = ($dictOrd_0)->compare;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictOrd_0)->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Eq10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Last_eq1Last'] ?? \PhpursThunks::eval('Data_Semigroup_Last_eq1Last'));
   goto __end;;
   __end:
@@ -178,6 +188,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_boundedLast'] = function() { $v = function($dictBounded_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Last_boundedLast"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:
@@ -189,6 +200,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v_0)($v1_1);
   goto __end;;
   __end:
@@ -197,6 +209,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Functor0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Last_functorLast'] ?? \PhpursThunks::eval('Data_Semigroup_Last_functorLast'));
   goto __end;;
   __end:
@@ -208,6 +221,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_0);
   goto __end;;
   __end:
@@ -216,6 +230,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Last_applyLast'] ?? \PhpursThunks::eval('Data_Semigroup_Last_applyLast'));
   goto __end;;
   __end:
@@ -223,6 +238,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_applicativeLast'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Semigroup_Last_Last'] ?? \PhpursThunks::eval('Data_Semigroup_Last_Last')), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Last_applyLast'] ?? \PhpursThunks::eval('Data_Semigroup_Last_applyLast'));
   goto __end;;
   __end:
@@ -230,12 +246,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Last_monadLast'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Last_applicativeLast'] ?? \PhpursThunks::eval('Data_Semigroup_Last_applicativeLast'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Bind1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Last_bindLast'] ?? \PhpursThunks::eval('Data_Semigroup_Last_bindLast'));
   goto __end;;
   __end:

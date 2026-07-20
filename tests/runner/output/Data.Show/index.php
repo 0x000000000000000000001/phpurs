@@ -94,6 +94,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Show_showVoid'] = function() { $v = (object)["show" => ($GLOBALS['Data_Void_absurd'] ?? \PhpursThunks::eval('Data_Void_absurd'))]; return $v; };
 \PhpursThunks::$thunks['Data_Show_showUnit'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = "unit";
   goto __end;;
   __end:
@@ -106,6 +107,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = "";
   goto __end;;
   __end:
@@ -115,7 +117,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Show_showRecordFields'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->showRecordFields;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_showRecordFields"), recVars=[];
+  $__res = ($dict_0)->{'showRecordFields'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -126,9 +129,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (object)["show" => function($record_3) use (&$dictShowRecordFields_2) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_showRecord"), recVars=[];
+  $__res = (object)["show" => function($record_3) use ($dictShowRecordFields_2) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("{"))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(((($dictShowRecordFields_2)->showRecordFields)(new Phpurs_Data0("Proxy")))($record_3)))("}"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("{"))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(((($dictShowRecordFields_2)->{'showRecordFields'})(new Phpurs_Data0("Proxy")))($record_3)))("}"));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -141,6 +146,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Show_showProxy'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = "Proxy";
   goto __end;;
   __end:
@@ -151,6 +157,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Show_showChar'] = function() { $v = (object)["show" => ($GLOBALS['Data_Show_showCharImpl'] ?? \PhpursThunks::eval('Data_Show_showCharImpl'))]; return $v; };
 \PhpursThunks::$thunks['Data_Show_showBoolean'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ($v_0) {
 $__t0 = "true";
 } else {
@@ -163,14 +170,16 @@ $__t0 = "false";
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Show_show'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->show;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_show"), recVars=[];
+  $__res = ($dict_0)->{'show'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Show_showArray'] = function() { $v = function($dictShow_0) {
   $__num = \func_num_args();
-  $__res = (object)["show" => (($GLOBALS['Data_Show_showArrayImpl'] ?? \PhpursThunks::eval('Data_Show_showArrayImpl')))(($dictShow_0)->show)];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_showArray"), recVars=[];
+  $__res = (object)["show" => (($GLOBALS['Data_Show_showArrayImpl'] ?? \PhpursThunks::eval('Data_Show_showArrayImpl')))(($dictShow_0)->{'show'})];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -181,14 +190,16 @@ $__t0 = "false";
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (object)["showRecordFields" => (function() use (&$dictIsSymbol_0, &$dictShowRecordFields_1, &$dictShow_2) {
-  $__fn = function($v_3, $record_4 = null) use (&$dictIsSymbol_0, &$dictShowRecordFields_1, &$dictShow_2, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_showRecordFieldsCons"), recVars=[];
+  $__res = (object)["showRecordFields" => (function() use ($dictIsSymbol_0, $dictShowRecordFields_1, $dictShow_2) {
+  $__fn = function($v_3, $record_4 = null) use ($dictIsSymbol_0, $dictShowRecordFields_1, $dictShow_2, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $key_5_0 = (($dictIsSymbol_0)->reflectSymbol)(new Phpurs_Data0("Proxy"));
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))($key_5_0))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(": "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_2)->show)(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_5_0))($record_4))))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(","))(((($dictShowRecordFields_1)->showRecordFields)(new Phpurs_Data0("Proxy")))($record_4))))));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $key_5_0 = (($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))($key_5_0))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(": "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_2)->{'show'})(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_5_0))($record_4))))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(","))(((($dictShowRecordFields_1)->{'showRecordFields'})(new Phpurs_Data0("Proxy")))($record_4))))));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -207,14 +218,16 @@ $__t0 = "false";
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["showRecordFields" => (function() use (&$dictIsSymbol_0, &$dictShow_1) {
-  $__fn = function($v_2, $record_3 = null) use (&$dictIsSymbol_0, &$dictShow_1, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_showRecordFieldsConsNil"), recVars=[];
+  $__res = (object)["showRecordFields" => (function() use ($dictIsSymbol_0, $dictShow_1) {
+  $__fn = function($v_2, $record_3 = null) use ($dictIsSymbol_0, $dictShow_1, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $key_4_0 = (($dictIsSymbol_0)->reflectSymbol)(new Phpurs_Data0("Proxy"));
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))($key_4_0))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(": "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_1)->show)(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_4_0))($record_3))))(" "))));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $key_4_0 = (($dictIsSymbol_0)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(" "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))($key_4_0))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(": "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_1)->{'show'})(((($GLOBALS['Record_Unsafe_unsafeGet'] ?? \PhpursThunks::eval('Record_Unsafe_unsafeGet')))($key_4_0))($record_3))))(" "))));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

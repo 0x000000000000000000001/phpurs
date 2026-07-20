@@ -95,6 +95,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_String_CaseInsensitive_CaseInsensitiveString'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_CaseInsensitive_CaseInsensitiveString"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -102,6 +103,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_CaseInsensitive_showCaseInsensitiveString'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(CaseInsensitiveString "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_Show_showStringImpl'] ?? \PhpursThunks::eval('Data_Show_showStringImpl')))($v_0)))(")"));
   goto __end;;
   __end:
@@ -109,6 +111,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_String_CaseInsensitive_newtypeCaseInsensitiveString'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
@@ -120,6 +123,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))((($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v_0)))((($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v1_1));
   goto __end;;
   __end:
@@ -133,7 +137,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (((($GLOBALS['Data_Ord_ordString'] ?? \PhpursThunks::eval('Data_Ord_ordString')))->compare)((($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v_0)))((($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v1_1));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (((($GLOBALS['Data_Ord_ordString'] ?? \PhpursThunks::eval('Data_Ord_ordString')))->{'compare'})((($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v_0)))((($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v1_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -141,6 +146,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Eq0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_String_CaseInsensitive_eqCaseInsensitiveString'] ?? \PhpursThunks::eval('Data_String_CaseInsensitive_eqCaseInsensitiveString'));
   goto __end;;
   __end:

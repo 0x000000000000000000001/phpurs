@@ -94,6 +94,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_Partial_tail"), recVars=[];
   $__res = (((($GLOBALS['Data_Array_slice'] ?? \PhpursThunks::eval('Data_Array_slice')))(1))((($GLOBALS['Data_Array_length'] ?? \PhpursThunks::eval('Data_Array_length')))($xs_1)))($xs_1);
   goto __end;;
   __end:
@@ -107,6 +108,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_Partial_last"), recVars=[];
   $__res = ((($GLOBALS['Data_Array_Partial_unsafeIndex'] ?? \PhpursThunks::eval('Data_Array_Partial_unsafeIndex')))($xs_1))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))((($GLOBALS['Data_Array_length'] ?? \PhpursThunks::eval('Data_Array_length')))($xs_1)))(1));
   goto __end;;
   __end:
@@ -120,6 +122,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_Partial_init"), recVars=[];
   $__res = (((($GLOBALS['Data_Array_slice'] ?? \PhpursThunks::eval('Data_Array_slice')))(0))(((($GLOBALS['Data_Ring_intSub'] ?? \PhpursThunks::eval('Data_Ring_intSub')))((($GLOBALS['Data_Array_length'] ?? \PhpursThunks::eval('Data_Array_length')))($xs_1)))(1)))($xs_1);
   goto __end;;
   __end:
@@ -133,6 +136,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Array_Partial_head"), recVars=[];
   $__res = ((($GLOBALS['Data_Array_Partial_unsafeIndex'] ?? \PhpursThunks::eval('Data_Array_Partial_unsafeIndex')))($xs_1))(0);
   goto __end;;
   __end:

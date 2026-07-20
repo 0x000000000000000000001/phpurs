@@ -94,14 +94,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Profunctor_Choice_right'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->right;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_right"), recVars=[];
+  $__res = ($dict_0)->{'right'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Profunctor_Choice_left'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->left;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_left"), recVars=[];
+  $__res = ($dict_0)->{'left'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -112,7 +114,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictSemigroupoid_0)->compose)((($dictChoice_1)->right)($r_3)))((($dictChoice_1)->left)($l_2));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_splitChoice"), recVars=[];
+  $__res = ((($dictSemigroupoid_0)->{'compose'})((($dictChoice_1)->{'right'})($r_3)))((($dictChoice_1)->{'left'})($l_2));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -125,20 +128,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $rmap_2_0 = (($GLOBALS['Data_Profunctor_rmap'] ?? \PhpursThunks::eval('Data_Profunctor_rmap')))((($dictChoice_1)->Profunctor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = (function() use (&$dictChoice_1, &$dictSemigroupoid_0, &$rmap_2_0) {
-  $__fn = function($l_3, $r_4 = null) use (&$dictChoice_1, &$dictSemigroupoid_0, &$rmap_2_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Profunctor_Choice_fanin"), recVars=[];
+  $rmap_2_0 = (($GLOBALS['Data_Profunctor_rmap'] ?? \PhpursThunks::eval('Data_Profunctor_rmap')))((($dictChoice_1)->{'Profunctor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
+  $__res = (function() use ($dictChoice_1, $dictSemigroupoid_0, $rmap_2_0) {
+  $__fn = function($l_3, $r_4 = null) use ($dictChoice_1, $dictSemigroupoid_0, $rmap_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($rmap_2_0)(function($v2_5) {
   $__num = \func_num_args();
-  if ((is_object($v2_5) && (($v2_5)->tag === "Left"))) {
-$__t1 = ($v2_5)->value0;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v2_5) && (($v2_5)->{'tag'} === "Left"))) {
+$__t1 = ($v2_5)->{'value0'};
 } else {
-if ((is_object($v2_5) && (($v2_5)->tag === "Right"))) {
-$__t1 = ($v2_5)->value0;
+if ((is_object($v2_5) && (($v2_5)->{'tag'} === "Right"))) {
+$__t1 = ($v2_5)->{'value0'};
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t1 = null;
@@ -148,7 +154,7 @@ $__t1 = null;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))(((($dictSemigroupoid_0)->compose)((($dictChoice_1)->right)($r_4)))((($dictChoice_1)->left)($l_3)));
+}))(((($dictSemigroupoid_0)->{'compose'})((($dictChoice_1)->{'right'})($r_4)))((($dictChoice_1)->{'left'})($l_3)));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -167,11 +173,12 @@ $__t1 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($v1_1) && (($v1_1)->tag === "Left"))) {
-$__t0 = new Phpurs_Data1("Left", ($v_0)(($v1_1)->value0));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Left"))) {
+$__t0 = new Phpurs_Data1("Left", ($v_0)(($v1_1)->{'value0'}));
 } else {
-if ((is_object($v1_1) && (($v1_1)->tag === "Right"))) {
-$__t0 = new Phpurs_Data1("Right", ($v1_1)->value0);
+if ((is_object($v1_1) && (($v1_1)->{'tag'} === "Right"))) {
+$__t0 = new Phpurs_Data1("Right", ($v1_1)->{'value0'});
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t0 = null;
@@ -183,8 +190,9 @@ $__t0 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "right" => (($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither')))->map, "Profunctor0" => function($dollar__unused_0) {
+})(), "right" => (($GLOBALS['Data_Either_functorEither'] ?? \PhpursThunks::eval('Data_Either_functorEither')))->{'map'}, "Profunctor0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Profunctor_profunctorFn'] ?? \PhpursThunks::eval('Data_Profunctor_profunctorFn'));
   goto __end;;
   __end:

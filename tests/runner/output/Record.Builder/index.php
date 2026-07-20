@@ -100,6 +100,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_union"), recVars=[];
   $__res = (((($GLOBALS['Data_Function_Uncurried_runFn2'] ?? \PhpursThunks::eval('Data_Function_Uncurried_runFn2')))(($GLOBALS['Record_Unsafe_Union_unsafeUnionFn'] ?? \PhpursThunks::eval('Record_Unsafe_Union_unsafeUnionFn'))))($r1_1))($r2_2);
   goto __end;;
   __end:
@@ -114,7 +115,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 9) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 9);
   }
-  $__res = (((($GLOBALS['Record_Builder_unsafeRename'] ?? \PhpursThunks::eval('Record_Builder_unsafeRename')))((($dictIsSymbol_0)->reflectSymbol)($l1_6)))((($dictIsSymbol1_1)->reflectSymbol)($l2_7)))($r1_8);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_rename"), recVars=[];
+  $__res = (((($GLOBALS['Record_Builder_unsafeRename'] ?? \PhpursThunks::eval('Record_Builder_unsafeRename')))((($dictIsSymbol_0)->{'reflectSymbol'})($l1_6)))((($dictIsSymbol1_1)->{'reflectSymbol'})($l2_7)))($r1_8);
   goto __end;;
   __end:
   return $__num > 9 ? $__res(...\array_slice(\func_get_args(), 9)) : $__res;
@@ -123,6 +125,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Record_Builder_nub'] = function() { $v = function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_nub"), recVars=[];
   $__res = ($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce'));
   goto __end;;
   __end:
@@ -134,7 +137,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 6) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 6);
   }
-  $__res = (((($GLOBALS['Record_Builder_unsafeModify'] ?? \PhpursThunks::eval('Record_Builder_unsafeModify')))((($dictIsSymbol_2)->reflectSymbol)($l_3)))($f_4))($r1_5);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_modify"), recVars=[];
+  $__res = (((($GLOBALS['Record_Builder_unsafeModify'] ?? \PhpursThunks::eval('Record_Builder_unsafeModify')))((($dictIsSymbol_2)->{'reflectSymbol'})($l_3)))($f_4))($r1_5);
   goto __end;;
   __end:
   return $__num > 6 ? $__res(...\array_slice(\func_get_args(), 6)) : $__res;
@@ -147,6 +151,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_merge"), recVars=[];
   $__res = (((($GLOBALS['Data_Function_Uncurried_runFn2'] ?? \PhpursThunks::eval('Data_Function_Uncurried_runFn2')))(($GLOBALS['Record_Unsafe_Union_unsafeUnionFn'] ?? \PhpursThunks::eval('Record_Unsafe_Union_unsafeUnionFn'))))($r1_2))($r2_3);
   goto __end;;
   __end:
@@ -160,7 +165,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 6) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 6);
   }
-  $__res = (((($GLOBALS['Record_Builder_unsafeInsert'] ?? \PhpursThunks::eval('Record_Builder_unsafeInsert')))((($dictIsSymbol_2)->reflectSymbol)($l_3)))($a_4))($r1_5);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_insert"), recVars=[];
+  $__res = (((($GLOBALS['Record_Builder_unsafeInsert'] ?? \PhpursThunks::eval('Record_Builder_unsafeInsert')))((($dictIsSymbol_2)->{'reflectSymbol'})($l_3)))($a_4))($r1_5);
   goto __end;;
   __end:
   return $__num > 6 ? $__res(...\array_slice(\func_get_args(), 6)) : $__res;
@@ -173,6 +179,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_disjointUnion"), recVars=[];
   $__res = (((($GLOBALS['Data_Function_Uncurried_runFn2'] ?? \PhpursThunks::eval('Data_Function_Uncurried_runFn2')))(($GLOBALS['Record_Unsafe_Union_unsafeUnionFn'] ?? \PhpursThunks::eval('Record_Unsafe_Union_unsafeUnionFn'))))($r1_2))($r2_3);
   goto __end;;
   __end:
@@ -186,7 +193,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
-  $__res = ((($GLOBALS['Record_Builder_unsafeDelete'] ?? \PhpursThunks::eval('Record_Builder_unsafeDelete')))((($dictIsSymbol_0)->reflectSymbol)($l_3)))($r2_4);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_delete"), recVars=[];
+  $__res = ((($GLOBALS['Record_Builder_unsafeDelete'] ?? \PhpursThunks::eval('Record_Builder_unsafeDelete')))((($dictIsSymbol_0)->{'reflectSymbol'})($l_3)))($r2_4);
   goto __end;;
   __end:
   return $__num > 5 ? $__res(...\array_slice(\func_get_args(), 5)) : $__res;
@@ -200,6 +208,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_build"), recVars=[];
   $__res = ($v_0)((($GLOBALS['Record_Builder_copyRecord'] ?? \PhpursThunks::eval('Record_Builder_copyRecord')))($r1_1));
   goto __end;;
   __end:
@@ -209,6 +218,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Record_Builder_buildFromScratch'] = function() { $v = function($a_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_buildFromScratch"), recVars=[];
   $__res = ($a_0)((($GLOBALS['Record_Builder_copyRecord'] ?? \PhpursThunks::eval('Record_Builder_copyRecord')))((object)[]));
   goto __end;;
   __end:
@@ -220,6 +230,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Record_Builder_flip"), recVars=[];
   $__res = (($f_0)($a_2))((($GLOBALS['Record_Builder_copyRecord'] ?? \PhpursThunks::eval('Record_Builder_copyRecord')))($b_1));
   goto __end;;
   __end:

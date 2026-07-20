@@ -103,27 +103,32 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $Bind1_2_0 = (((($dictMonadGen_1)->Monad0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->Bind1)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $Apply0_3_1 = (($Bind1_2_0)->Apply0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__local_var_4_2 = (($Apply0_3_1)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Foreign_Object_Gen_genForeignObject"), recVars=[];
+  $Bind1_2_0 = (((($dictMonadGen_1)->{'Monad0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Bind1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
+  $Apply0_3_1 = (($Bind1_2_0)->{'Apply0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
+  $__local_var_4_2 = (($Apply0_3_1)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
   $unfoldable1_5_3 = (((($GLOBALS['Control_Monad_Gen_unfoldable'] ?? \PhpursThunks::eval('Control_Monad_Gen_unfoldable')))($dictMonadRec_0))($dictMonadGen_1))(($GLOBALS['Data_List_Types_unfoldableList'] ?? \PhpursThunks::eval('Data_List_Types_unfoldableList')));
-  $__res = (function() use (&$Apply0_3_1, &$Bind1_2_0, &$__local_var_4_2, &$dictMonadGen_1, &$unfoldable1_5_3) {
-  $__fn = function($genKey_6, $genValue_7 = null) use (&$Apply0_3_1, &$Bind1_2_0, &$__local_var_4_2, &$dictMonadGen_1, &$unfoldable1_5_3, &$__fn) {
+  $__res = (function() use ($Apply0_3_1, $Bind1_2_0, $__local_var_4_2, $dictMonadGen_1, $unfoldable1_5_3) {
+  $__fn = function($genKey_6, $genValue_7 = null) use ($Apply0_3_1, $Bind1_2_0, $__local_var_4_2, $dictMonadGen_1, $unfoldable1_5_3, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($dictMonadGen_1)->sized)(function($size_8) use (&$Apply0_3_1, &$Bind1_2_0, &$__local_var_4_2, &$dictMonadGen_1, &$genKey_6, &$genValue_7, &$unfoldable1_5_3) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (($dictMonadGen_1)->{'sized'})(function($size_8) use ($Apply0_3_1, $Bind1_2_0, $__local_var_4_2, $dictMonadGen_1, $genKey_6, $genValue_7, $unfoldable1_5_3) {
   $__num = \func_num_args();
-  $__res = ((($Bind1_2_0)->bind)(((($dictMonadGen_1)->chooseInt)(0))($size_8)))(function($newSize_9) use (&$Apply0_3_1, &$__local_var_4_2, &$dictMonadGen_1, &$genKey_6, &$genValue_7, &$unfoldable1_5_3) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($Bind1_2_0)->{'bind'})(((($dictMonadGen_1)->{'chooseInt'})(0))($size_8)))(function($newSize_9) use ($Apply0_3_1, $__local_var_4_2, $dictMonadGen_1, $genKey_6, $genValue_7, $unfoldable1_5_3) {
   $__num = \func_num_args();
-  $__res = ((($dictMonadGen_1)->resize)(function($v_10) use (&$newSize_9) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictMonadGen_1)->{'resize'})(function($v_10) use ($newSize_9) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $newSize_9;
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}))(((($__local_var_4_2)->map)(($GLOBALS['Foreign_Object_Gen_fromFoldable'] ?? \PhpursThunks::eval('Foreign_Object_Gen_fromFoldable'))))(($unfoldable1_5_3)(((($Apply0_3_1)->apply)(((($__local_var_4_2)->map)(($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple'))))($genKey_6)))($genValue_7))));
+}))(((($__local_var_4_2)->{'map'})(($GLOBALS['Foreign_Object_Gen_fromFoldable'] ?? \PhpursThunks::eval('Foreign_Object_Gen_fromFoldable'))))(($unfoldable1_5_3)(((($Apply0_3_1)->{'apply'})(((($__local_var_4_2)->{'map'})(($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple'))))($genKey_6)))($genValue_7))));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;

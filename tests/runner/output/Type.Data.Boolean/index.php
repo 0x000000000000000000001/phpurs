@@ -88,7 +88,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Type_Data_Boolean_reflectBoolean'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->reflectBoolean;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Boolean_reflectBoolean"), recVars=[];
+  $__res = ($dict_0)->{'reflectBoolean'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -101,6 +102,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Boolean_or"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -116,6 +118,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Boolean_not"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -125,6 +128,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Type_Data_Boolean_isBooleanTrue'] = function() { $v = (object)["reflectBoolean" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = true;
   goto __end;;
   __end:
@@ -132,6 +136,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Type_Data_Boolean_isBooleanFalse'] = function() { $v = (object)["reflectBoolean" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = false;
   goto __end;;
   __end:
@@ -143,6 +148,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Boolean_reifyBoolean"), recVars=[];
   if ($v_0) {
 $__t0 = (($v1_1)(($GLOBALS['Type_Data_Boolean_isBooleanTrue'] ?? \PhpursThunks::eval('Type_Data_Boolean_isBooleanTrue'))))(new Phpurs_Data0("Proxy"));
 } else {
@@ -161,6 +167,7 @@ $__t0 = (($v1_1)(($GLOBALS['Type_Data_Boolean_isBooleanFalse'] ?? \PhpursThunks:
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Boolean_if_"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -178,6 +185,7 @@ $__t0 = (($v1_1)(($GLOBALS['Type_Data_Boolean_isBooleanFalse'] ?? \PhpursThunks:
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Data_Boolean_and"), recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:

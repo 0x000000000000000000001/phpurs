@@ -100,6 +100,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_Multiplicative'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_Multiplicative"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -107,9 +108,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_showMultiplicative'] = function() { $v = function($dictShow_0) {
   $__num = \func_num_args();
-  $__res = (object)["show" => function($v_1) use (&$dictShow_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_showMultiplicative"), recVars=[];
+  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Multiplicative "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->show)($v_1)))(")"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Multiplicative "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -120,13 +123,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_semigroupMultiplicative'] = function() { $v = function($dictSemiring_0) {
   $__num = \func_num_args();
-  $__res = (object)["append" => (function() use (&$dictSemiring_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictSemiring_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_semigroupMultiplicative"), recVars=[];
+  $__res = (object)["append" => (function() use ($dictSemiring_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictSemiring_0)->mul)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictSemiring_0)->{'mul'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -139,6 +144,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_ordMultiplicative'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_ordMultiplicative"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
@@ -146,21 +152,24 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_monoidMultiplicative'] = function() { $v = function($dictSemiring_0) {
   $__num = \func_num_args();
-  $semigroupMultiplicative1_1_0 = (object)["append" => (function() use (&$dictSemiring_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictSemiring_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_monoidMultiplicative"), recVars=[];
+  $semigroupMultiplicative1_1_0 = (object)["append" => (function() use ($dictSemiring_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictSemiring_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictSemiring_0)->mul)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictSemiring_0)->{'mul'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => ($dictSemiring_0)->one, "Semigroup0" => function($dollar__unused_2) use (&$semigroupMultiplicative1_1_0) {
+  $__res = (object)["mempty" => ($dictSemiring_0)->{'one'}, "Semigroup0" => function($dollar__unused_2) use ($semigroupMultiplicative1_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupMultiplicative1_1_0;
   goto __end;;
   __end:
@@ -176,6 +185,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($m_1);
   goto __end;;
   __end:
@@ -185,6 +195,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_eqMultiplicative'] = function() { $v = function($dictEq_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_eqMultiplicative"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
@@ -192,19 +203,22 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_eq1Multiplicative'] = function() { $v = (object)["eq1" => function($dictEq_0) {
   $__num = \func_num_args();
-  $__res = ($dictEq_0)->eq;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictEq_0)->{'eq'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_ord1Multiplicative'] = function() { $v = (object)["compare1" => function($dictOrd_0) {
   $__num = \func_num_args();
-  $__res = ($dictOrd_0)->compare;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictOrd_0)->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Eq10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Multiplicative_eq1Multiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_eq1Multiplicative'));
   goto __end;;
   __end:
@@ -212,6 +226,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_boundedMultiplicative'] = function() { $v = function($dictBounded_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Multiplicative_boundedMultiplicative"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:
@@ -223,6 +238,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v_0)($v1_1);
   goto __end;;
   __end:
@@ -231,6 +247,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Functor0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Multiplicative_functorMultiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_functorMultiplicative'));
   goto __end;;
   __end:
@@ -242,6 +259,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_0);
   goto __end;;
   __end:
@@ -250,6 +268,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Multiplicative_applyMultiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_applyMultiplicative'));
   goto __end;;
   __end:
@@ -257,6 +276,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_applicativeMultiplicative'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Monoid_Multiplicative_Multiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_Multiplicative')), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Multiplicative_applyMultiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_applyMultiplicative'));
   goto __end;;
   __end:
@@ -264,12 +284,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Multiplicative_monadMultiplicative'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Multiplicative_applicativeMultiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_applicativeMultiplicative'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Bind1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Multiplicative_bindMultiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_bindMultiplicative'));
   goto __end;;
   __end:

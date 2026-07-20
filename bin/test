@@ -35,9 +35,12 @@ package:
     - functions
     - unfoldable
     - record
+    - assert
   name: runner
 workspace:
   extraPackages:
+    assert:
+      path: "../../../phpurs-assert"
     prelude:
       path: "../../../phpurs-prelude"
     effect:
@@ -86,8 +89,7 @@ echo "Running tests from $PASSING_DIR..."
 passed=0
 failed=0
 
-# Clean output
-rm -rf output/Main src/*
+# Clean output (now handled inside the loop)
 
 if [ $# -gt 0 ]; then
   TEST_FILES=()
@@ -108,6 +110,9 @@ fi
 for test_file in "${TEST_FILES[@]}"; do
   test_name=$(basename "$test_file")
   echo "=> Testing $test_name"
+  
+  # Clean output and src for this specific test
+  rm -rf output/Main src/*
   
   cp "$test_file" "src/Main.purs"
   

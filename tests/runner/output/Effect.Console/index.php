@@ -96,7 +96,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($GLOBALS['Effect_Console_warn'] ?? \PhpursThunks::eval('Effect_Console_warn')))((($dictShow_0)->show)($a_1));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Console_warnShow"), recVars=[];
+  $__res = (($GLOBALS['Effect_Console_warn'] ?? \PhpursThunks::eval('Effect_Console_warn')))((($dictShow_0)->{'show'})($a_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -109,7 +110,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))((($dictShow_0)->show)($a_1));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Console_logShow"), recVars=[];
+  $__res = (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))((($dictShow_0)->{'show'})($a_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -122,7 +124,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($GLOBALS['Effect_Console_info'] ?? \PhpursThunks::eval('Effect_Console_info')))((($dictShow_0)->show)($a_1));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Console_infoShow"), recVars=[];
+  $__res = (($GLOBALS['Effect_Console_info'] ?? \PhpursThunks::eval('Effect_Console_info')))((($dictShow_0)->{'show'})($a_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -135,12 +138,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_Console_group'] ?? \PhpursThunks::eval('Effect_Console_group')))($name_0)))(function($dollar__unused_2) use (&$inner_1) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Console_grouped"), recVars=[];
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))((($GLOBALS['Effect_Console_group'] ?? \PhpursThunks::eval('Effect_Console_group')))($name_0)))(function($dollar__unused_2) use ($inner_1) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))($inner_1))(function($result_3) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($GLOBALS['Effect_Console_groupEnd'] ?? \PhpursThunks::eval('Effect_Console_groupEnd'))))(function($dollar__unused_4) use (&$result_3) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($GLOBALS['Effect_Console_groupEnd'] ?? \PhpursThunks::eval('Effect_Console_groupEnd'))))(function($dollar__unused_4) use ($result_3) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Effect_pureE'] ?? \PhpursThunks::eval('Effect_pureE')))($result_3);
   goto __end;;
   __end:
@@ -166,7 +173,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($GLOBALS['Effect_Console_error'] ?? \PhpursThunks::eval('Effect_Console_error')))((($dictShow_0)->show)($a_1));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Console_errorShow"), recVars=[];
+  $__res = (($GLOBALS['Effect_Console_error'] ?? \PhpursThunks::eval('Effect_Console_error')))((($dictShow_0)->{'show'})($a_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -179,7 +187,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($GLOBALS['Effect_Console_debug'] ?? \PhpursThunks::eval('Effect_Console_debug')))((($dictShow_0)->show)($a_1));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Effect_Console_debugShow"), recVars=[];
+  $__res = (($GLOBALS['Effect_Console_debug'] ?? \PhpursThunks::eval('Effect_Console_debug')))((($dictShow_0)->{'show'})($a_1));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

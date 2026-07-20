@@ -95,6 +95,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("EQ");
   goto __end;;
   __end:
@@ -108,6 +109,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("EQ");
   goto __end;;
   __end:
@@ -117,13 +119,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericOrdArgument'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericCompare__prime__" => (function() use (&$dictOrd_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictOrd_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdArgument"), recVars=[];
+  $__res = (object)["genericCompare__prime__" => (function() use ($dictOrd_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictOrd_0)->compare)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictOrd_0)->{'compare'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -136,20 +140,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericCompare__prime__'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericCompare__prime__;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericCompare'"), recVars=[];
+  $__res = ($dict_0)->{'genericCompare__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Generic_genericOrdConstructor'] = function() { $v = function($dictGenericOrd_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericCompare__prime__" => (function() use (&$dictGenericOrd_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictGenericOrd_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdConstructor"), recVars=[];
+  $__res = (object)["genericCompare__prime__" => (function() use ($dictGenericOrd_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictGenericOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictGenericOrd_0)->genericCompare__prime__)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictGenericOrd_0)->{'genericCompare__prime__'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -166,15 +173,17 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericCompare__prime__" => (function() use (&$dictGenericOrd1_1, &$dictGenericOrd_0) {
-  $__fn = function($v_2, $v1_3 = null) use (&$dictGenericOrd1_1, &$dictGenericOrd_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdProduct"), recVars=[];
+  $__res = (object)["genericCompare__prime__" => (function() use ($dictGenericOrd1_1, $dictGenericOrd_0) {
+  $__fn = function($v_2, $v1_3 = null) use ($dictGenericOrd1_1, $dictGenericOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $v2_4_0 = ((($dictGenericOrd_0)->genericCompare__prime__)(($v_2)->value0))(($v1_3)->value0);
-  if ((is_object($v2_4_0) && (($v2_4_0)->tag === "EQ"))) {
-$__t1 = ((($dictGenericOrd1_1)->genericCompare__prime__)(($v_2)->value1))(($v1_3)->value1);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $v2_4_0 = ((($dictGenericOrd_0)->{'genericCompare__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'});
+  if ((is_object($v2_4_0) && (($v2_4_0)->{'tag'} === "EQ"))) {
+$__t1 = ((($dictGenericOrd1_1)->{'genericCompare__prime__'})(($v_2)->{'value1'}))(($v1_3)->{'value1'});
 } else {
 $__t1 = $v2_4_0;
 };
@@ -197,17 +206,19 @@ $__t1 = $v2_4_0;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericCompare__prime__" => (function() use (&$dictGenericOrd1_1, &$dictGenericOrd_0) {
-  $__fn = function($v_2, $v1_3 = null) use (&$dictGenericOrd1_1, &$dictGenericOrd_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericOrdSum"), recVars=[];
+  $__res = (object)["genericCompare__prime__" => (function() use ($dictGenericOrd1_1, $dictGenericOrd_0) {
+  $__fn = function($v_2, $v1_3 = null) use ($dictGenericOrd1_1, $dictGenericOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($v_2) && (($v_2)->tag === "Inl"))) {
-if ((is_object($v1_3) && (($v1_3)->tag === "Inl"))) {
-$__t1 = ((($dictGenericOrd_0)->genericCompare__prime__)(($v_2)->value0))(($v1_3)->value0);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_2) && (($v_2)->{'tag'} === "Inl"))) {
+if ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inl"))) {
+$__t1 = ((($dictGenericOrd_0)->{'genericCompare__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'});
 } else {
-if ((is_object($v1_3) && (($v1_3)->tag === "Inr"))) {
+if ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inr"))) {
 $__t1 = new Phpurs_Data0("LT");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -216,11 +227,11 @@ $__t1 = null;
 };
 $__t0 = $__t1;
 } else {
-if ((is_object($v_2) && (($v_2)->tag === "Inr"))) {
-if ((is_object($v1_3) && (($v1_3)->tag === "Inr"))) {
-$__t2 = ((($dictGenericOrd1_1)->genericCompare__prime__)(($v_2)->value0))(($v1_3)->value0);
+if ((is_object($v_2) && (($v_2)->{'tag'} === "Inr"))) {
+if ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inr"))) {
+$__t2 = ((($dictGenericOrd1_1)->{'genericCompare__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'});
 } else {
-if ((is_object($v1_3) && (($v1_3)->tag === "Inl"))) {
+if ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inl"))) {
 $__t2 = new Phpurs_Data0("GT");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -252,7 +263,8 @@ $__t0 = null;
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictGenericOrd_1)->genericCompare__prime__)((($dictGeneric_0)->from)($x_2)))((($dictGeneric_0)->from)($y_3));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Generic_genericCompare"), recVars=[];
+  $__res = ((($dictGenericOrd_1)->{'genericCompare__prime__'})((($dictGeneric_0)->{'from'})($x_2)))((($dictGeneric_0)->{'from'})($y_3));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;

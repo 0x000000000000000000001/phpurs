@@ -93,13 +93,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Ordering_EQ'] = function() { $v = ($GLOBALS['__phpurs_data0_EQ'] ??= new Phpurs_Data0("EQ")); return $v; };
 \PhpursThunks::$thunks['Data_Ordering_showOrdering'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
-  if ((is_object($v_0) && (($v_0)->tag === "LT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "LT"))) {
 $__t0 = "LT";
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "GT"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "GT"))) {
 $__t0 = "GT";
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "EQ"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "EQ"))) {
 $__t0 = "EQ";
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -118,13 +119,14 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($v_0) && (($v_0)->tag === "LT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "LT"))) {
 $__t0 = new Phpurs_Data0("LT");
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "GT"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "GT"))) {
 $__t0 = new Phpurs_Data0("GT");
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "EQ"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "EQ"))) {
 $__t0 = $v1_1;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -141,13 +143,14 @@ $__t0 = null;
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Ordering_invert'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
-  if ((is_object($v_0) && (($v_0)->tag === "GT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ordering_invert"), recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "GT"))) {
 $__t0 = new Phpurs_Data0("LT");
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "EQ"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "EQ"))) {
 $__t0 = new Phpurs_Data0("EQ");
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "LT"))) {
+if ((is_object($v_0) && (($v_0)->{'tag'} === "LT"))) {
 $__t0 = new Phpurs_Data0("GT");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -166,13 +169,14 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($v_0) && (($v_0)->tag === "LT"))) {
-$__t0 = (is_object($v1_1) && (($v1_1)->tag === "LT"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "LT"))) {
+$__t0 = (is_object($v1_1) && (($v1_1)->{'tag'} === "LT"));
 } else {
-if ((is_object($v_0) && (($v_0)->tag === "GT"))) {
-$__t0 = (is_object($v1_1) && (($v1_1)->tag === "GT"));
+if ((is_object($v_0) && (($v_0)->{'tag'} === "GT"))) {
+$__t0 = (is_object($v1_1) && (($v1_1)->{'tag'} === "GT"));
 } else {
-$__t0 = ((is_object($v_0) && (($v_0)->tag === "EQ")) && (is_object($v1_1) && (($v1_1)->tag === "EQ")));
+$__t0 = ((is_object($v_0) && (($v_0)->{'tag'} === "EQ")) && (is_object($v1_1) && (($v1_1)->{'tag'} === "EQ")));
 };
 };
   $__res = $__t0;

@@ -105,8 +105,9 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_fromJust'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
-  if ((is_object($v_0) && (($v_0)->tag === "Just"))) {
-$__t0 = ($v_0)->value0;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_fromJust"), recVars=[];
+  if ((is_object($v_0) && (($v_0)->{'tag'} === "Just"))) {
+$__t0 = ($v_0)->{'value0'};
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t0 = null;
@@ -118,6 +119,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_NonEmptyString'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_NonEmptyString"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -125,6 +127,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_NonEmptyReplacement'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_NonEmptyReplacement"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -132,6 +135,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_toUpper'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_toUpper"), recVars=[];
   $__res = (($GLOBALS['Data_String_Common_toUpper'] ?? \PhpursThunks::eval('Data_String_Common_toUpper')))($v_0);
   goto __end;;
   __end:
@@ -139,6 +143,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_toString'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_toString"), recVars=[];
   $__res = $v_0;
   goto __end;;
   __end:
@@ -146,6 +151,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_toLower'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_toLower"), recVars=[];
   $__res = (($GLOBALS['Data_String_Common_toLower'] ?? \PhpursThunks::eval('Data_String_Common_toLower')))($v_0);
   goto __end;;
   __end:
@@ -153,6 +159,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_showNonEmptyString'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(NonEmptyString.unsafeFromString "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_Show_showStringImpl'] ?? \PhpursThunks::eval('Data_Show_showStringImpl')))($v_0)))(")"));
   goto __end;;
   __end:
@@ -160,6 +167,7 @@ $__t0 = null;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_showNonEmptyReplacement'] = function() { $v = (object)["show" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(NonEmptyReplacement "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(NonEmptyString.unsafeFromString "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($GLOBALS['Data_Show_showStringImpl'] ?? \PhpursThunks::eval('Data_Show_showStringImpl')))($v_0)))(")"))))(")"));
   goto __end;;
   __end:
@@ -173,6 +181,7 @@ $__t0 = null;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_replaceAll"), recVars=[];
   $__res = (((($GLOBALS['Data_String_Common_replaceAll'] ?? \PhpursThunks::eval('Data_String_Common_replaceAll')))($pat_0))($v_1))($v1_2);
   goto __end;;
   __end:
@@ -186,6 +195,7 @@ $__t0 = null;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_replace"), recVars=[];
   $__res = (((($GLOBALS['Data_String_Common_replace'] ?? \PhpursThunks::eval('Data_String_Common_replace')))($pat_0))($v_1))($v1_2);
   goto __end;;
   __end:
@@ -199,6 +209,7 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_prependString"), recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))($s1_0))($v_1);
   goto __end;;
   __end:
@@ -210,9 +221,11 @@ $__t0 = null;
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_ordNonEmptyReplacement'] = function() { $v = ($GLOBALS['Data_Ord_ordString'] ?? \PhpursThunks::eval('Data_Ord_ordString')); return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_nonEmptyNonEmpty'] = function() { $v = function($dictIsSymbol_0) {
   $__num = \func_num_args();
-  $__res = (object)["nes" => function($p_1) use (&$dictIsSymbol_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_nonEmptyNonEmpty"), recVars=[];
+  $__res = (object)["nes" => function($p_1) use ($dictIsSymbol_0) {
   $__num = \func_num_args();
-  $__res = (($dictIsSymbol_0)->reflectSymbol)($p_1);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (($dictIsSymbol_0)->{'reflectSymbol'})($p_1);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -223,15 +236,18 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_nes'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->nes;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_nes"), recVars=[];
+  $__res = ($dict_0)->{'nes'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_makeNonEmptyBad'] = function() { $v = function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_makeNonEmptyBad"), recVars=[];
   $__res = (object)["nes" => function($v_1) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = "";
   goto __end;;
   __end:
@@ -247,6 +263,7 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_localeCompare"), recVars=[];
   $__res = ((($GLOBALS['Data_String_Common_localeCompare'] ?? \PhpursThunks::eval('Data_String_Common_localeCompare')))($v_0))($v1_1);
   goto __end;;
   __end:
@@ -260,6 +277,7 @@ $__t0 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_liftS"), recVars=[];
   $__res = ($f_0)($v_1);
   goto __end;;
   __end:
@@ -270,9 +288,11 @@ $__t0 = null;
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_startsWith'] = function() { $v = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_String_NonEmpty_Internal_liftS'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_liftS'))))(($GLOBALS['Data_String_CodeUnits_startsWith'] ?? \PhpursThunks::eval('Data_String_CodeUnits_startsWith'))); return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_joinWith1'] = function() { $v = function($dictFoldable1_0) {
   $__num = \func_num_args();
-  $intercalate_1_0 = ((($GLOBALS['Data_Foldable_intercalate'] ?? \PhpursThunks::eval('Data_Foldable_intercalate')))((($dictFoldable1_0)->Foldable0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')))))(($GLOBALS['Data_Monoid_monoidString'] ?? \PhpursThunks::eval('Data_Monoid_monoidString')));
-  $__res = function($v_2) use (&$intercalate_1_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_joinWith1"), recVars=[];
+  $intercalate_1_0 = ((($GLOBALS['Data_Foldable_intercalate'] ?? \PhpursThunks::eval('Data_Foldable_intercalate')))((($dictFoldable1_0)->{'Foldable0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')))))(($GLOBALS['Data_Monoid_monoidString'] ?? \PhpursThunks::eval('Data_Monoid_monoidString')));
+  $__res = function($v_2) use ($intercalate_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_String_NonEmpty_Internal_NonEmptyString'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_NonEmptyString'))))(($intercalate_1_0)($v_2));
   goto __end;;
   __end:
@@ -284,9 +304,11 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_joinWith'] = function() { $v = function($dictFoldable_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_joinWith"), recVars=[];
   $intercalate_1_0 = ((($GLOBALS['Data_Foldable_intercalate'] ?? \PhpursThunks::eval('Data_Foldable_intercalate')))($dictFoldable_0))(($GLOBALS['Data_Monoid_monoidString'] ?? \PhpursThunks::eval('Data_Monoid_monoidString')));
-  $__res = function($splice_2) use (&$intercalate_1_0) {
+  $__res = function($splice_2) use ($intercalate_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($intercalate_1_0)($splice_2)))(($GLOBALS['Unsafe_Coerce_unsafeCoerce'] ?? \PhpursThunks::eval('Unsafe_Coerce_unsafeCoerce')));
   goto __end;;
   __end:
@@ -298,9 +320,11 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_join1With'] = function() { $v = function($dictFoldable1_0) {
   $__num = \func_num_args();
-  $joinWith2_1_0 = (($GLOBALS['Data_String_NonEmpty_Internal_joinWith'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_joinWith')))((($dictFoldable1_0)->Foldable0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = function($splice_2) use (&$joinWith2_1_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_join1With"), recVars=[];
+  $joinWith2_1_0 = (($GLOBALS['Data_String_NonEmpty_Internal_joinWith'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_joinWith')))((($dictFoldable1_0)->{'Foldable0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
+  $__res = function($splice_2) use ($joinWith2_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_String_NonEmpty_Internal_NonEmptyString'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_NonEmptyString'))))(($joinWith2_1_0)($splice_2));
   goto __end;;
   __end:
@@ -312,6 +336,7 @@ $__t0 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_fromString'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_fromString"), recVars=[];
   switch ($v_0) {
 case "":
 $__t0 = new Phpurs_Data0("Nothing");
@@ -331,19 +356,20 @@ break;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_stripPrefix"), recVars=[];
   $__local_var_2_0 = ((($GLOBALS['Data_String_CodeUnits_stripPrefix'] ?? \PhpursThunks::eval('Data_String_CodeUnits_stripPrefix')))($pat_0))($a_1);
-  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->tag === "Just"))) {
-switch (($__local_var_2_0)->value0) {
+  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Just"))) {
+switch (($__local_var_2_0)->{'value0'}) {
 case "":
 $__t2 = new Phpurs_Data0("Nothing");
 break;
 default:
-$__t2 = new Phpurs_Data1("Just", ($__local_var_2_0)->value0);
+$__t2 = new Phpurs_Data1("Just", ($__local_var_2_0)->{'value0'});
 break;
 };
 $__t1 = $__t2;
 } else {
-if ((is_object($__local_var_2_0) && (($__local_var_2_0)->tag === "Nothing"))) {
+if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Nothing"))) {
 $__t1 = new Phpurs_Data0("Nothing");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -363,19 +389,20 @@ $__t1 = null;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_stripSuffix"), recVars=[];
   $__local_var_2_0 = ((($GLOBALS['Data_String_CodeUnits_stripSuffix'] ?? \PhpursThunks::eval('Data_String_CodeUnits_stripSuffix')))($pat_0))($a_1);
-  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->tag === "Just"))) {
-switch (($__local_var_2_0)->value0) {
+  if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Just"))) {
+switch (($__local_var_2_0)->{'value0'}) {
 case "":
 $__t2 = new Phpurs_Data0("Nothing");
 break;
 default:
-$__t2 = new Phpurs_Data1("Just", ($__local_var_2_0)->value0);
+$__t2 = new Phpurs_Data1("Just", ($__local_var_2_0)->{'value0'});
 break;
 };
 $__t1 = $__t2;
 } else {
-if ((is_object($__local_var_2_0) && (($__local_var_2_0)->tag === "Nothing"))) {
+if ((is_object($__local_var_2_0) && (($__local_var_2_0)->{'tag'} === "Nothing"))) {
 $__t1 = new Phpurs_Data0("Nothing");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -391,6 +418,7 @@ $__t1 = null;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_trim'] = function() { $v = function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_trim"), recVars=[];
   $__local_var_1_0 = (($GLOBALS['Data_String_Common_trim'] ?? \PhpursThunks::eval('Data_String_Common_trim')))($v_0);
   switch ($__local_var_1_0) {
 case "":
@@ -407,6 +435,7 @@ break;
 }; return $v; };
 \PhpursThunks::$thunks['Data_String_NonEmpty_Internal_unsafeFromString'] = function() { $v = function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_unsafeFromString"), recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))(($GLOBALS['Data_String_NonEmpty_Internal_fromJust'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_fromJust'))))(($GLOBALS['Data_String_NonEmpty_Internal_fromString'] ?? \PhpursThunks::eval('Data_String_NonEmpty_Internal_fromString')));
   goto __end;;
   __end:
@@ -422,6 +451,7 @@ break;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_String_NonEmpty_Internal_appendString"), recVars=[];
   $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))($v_0))($s2_1);
   goto __end;;
   __end:

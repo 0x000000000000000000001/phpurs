@@ -95,6 +95,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = true;
   goto __end;;
   __end:
@@ -108,6 +109,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = true;
   goto __end;;
   __end:
@@ -117,13 +119,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Eq_Generic_genericEqArgument'] = function() { $v = function($dictEq_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericEq__prime__" => (function() use (&$dictEq_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictEq_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Eq_Generic_genericEqArgument"), recVars=[];
+  $__res = (object)["genericEq__prime__" => (function() use ($dictEq_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictEq_0)->eq)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictEq_0)->{'eq'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -136,20 +140,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Eq_Generic_genericEq__prime__'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericEq__prime__;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Eq_Generic_genericEq'"), recVars=[];
+  $__res = ($dict_0)->{'genericEq__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Eq_Generic_genericEqConstructor'] = function() { $v = function($dictGenericEq_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericEq__prime__" => (function() use (&$dictGenericEq_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictGenericEq_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Eq_Generic_genericEqConstructor"), recVars=[];
+  $__res = (object)["genericEq__prime__" => (function() use ($dictGenericEq_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictGenericEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictGenericEq_0)->genericEq__prime__)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictGenericEq_0)->{'genericEq__prime__'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -166,13 +173,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericEq__prime__" => (function() use (&$dictGenericEq1_1, &$dictGenericEq_0) {
-  $__fn = function($v_2, $v1_3 = null) use (&$dictGenericEq1_1, &$dictGenericEq_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Eq_Generic_genericEqProduct"), recVars=[];
+  $__res = (object)["genericEq__prime__" => (function() use ($dictGenericEq1_1, $dictGenericEq_0) {
+  $__fn = function($v_2, $v1_3 = null) use ($dictGenericEq1_1, $dictGenericEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(((($dictGenericEq_0)->genericEq__prime__)(($v_2)->value0))(($v1_3)->value0)))(((($dictGenericEq1_1)->genericEq__prime__)(($v_2)->value1))(($v1_3)->value1));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(((($dictGenericEq_0)->{'genericEq__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'})))(((($dictGenericEq1_1)->{'genericEq__prime__'})(($v_2)->{'value1'}))(($v1_3)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -191,16 +200,18 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericEq__prime__" => (function() use (&$dictGenericEq1_1, &$dictGenericEq_0) {
-  $__fn = function($v_2, $v1_3 = null) use (&$dictGenericEq1_1, &$dictGenericEq_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Eq_Generic_genericEqSum"), recVars=[];
+  $__res = (object)["genericEq__prime__" => (function() use ($dictGenericEq1_1, $dictGenericEq_0) {
+  $__fn = function($v_2, $v1_3 = null) use ($dictGenericEq1_1, $dictGenericEq_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  if ((is_object($v_2) && (($v_2)->tag === "Inl"))) {
-$__t0 = ((is_object($v1_3) && (($v1_3)->tag === "Inl")) && ((($dictGenericEq_0)->genericEq__prime__)(($v_2)->value0))(($v1_3)->value0));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_2) && (($v_2)->{'tag'} === "Inl"))) {
+$__t0 = ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inl")) && ((($dictGenericEq_0)->{'genericEq__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'}));
 } else {
-$__t0 = ((is_object($v_2) && (($v_2)->tag === "Inr")) && ((is_object($v1_3) && (($v1_3)->tag === "Inr")) && ((($dictGenericEq1_1)->genericEq__prime__)(($v_2)->value0))(($v1_3)->value0)));
+$__t0 = ((is_object($v_2) && (($v_2)->{'tag'} === "Inr")) && ((is_object($v1_3) && (($v1_3)->{'tag'} === "Inr")) && ((($dictGenericEq1_1)->{'genericEq__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'})));
 };
   $__res = $__t0;
   goto __end;;
@@ -221,7 +232,8 @@ $__t0 = ((is_object($v_2) && (($v_2)->tag === "Inr")) && ((is_object($v1_3) && (
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictGenericEq_1)->genericEq__prime__)((($dictGeneric_0)->from)($x_2)))((($dictGeneric_0)->from)($y_3));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Eq_Generic_genericEq"), recVars=[];
+  $__res = ((($dictGenericEq_1)->{'genericEq__prime__'})((($dictGeneric_0)->{'from'})($x_2)))((($dictGeneric_0)->{'from'})($y_3));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;

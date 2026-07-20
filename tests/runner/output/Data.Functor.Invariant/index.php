@@ -100,6 +100,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($v1_2);
   goto __end;;
   __end:
@@ -113,6 +114,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($ab_0))(((($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($v_2))($ba_1));
   goto __end;;
   __end:
@@ -126,6 +128,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($v1_2);
   goto __end;;
   __end:
@@ -139,6 +142,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($v1_2);
   goto __end;;
   __end:
@@ -152,6 +156,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($v1_2);
   goto __end;;
   __end:
@@ -165,6 +170,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($v1_2);
   goto __end;;
   __end:
@@ -178,7 +184,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (($dictFunctor_0)->map)($f_1);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Invariant_imapF"), recVars=[];
+  $__res = (($dictFunctor_0)->{'map'})($f_1);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -191,6 +198,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Data_Functor_arrayMap'] ?? \PhpursThunks::eval('Data_Functor_arrayMap')))($f_0);
   goto __end;;
   __end:
@@ -204,6 +212,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($GLOBALS['Control_Semigroupoid_composeImpl'] ?? \PhpursThunks::eval('Control_Semigroupoid_composeImpl')))($f_0);
   goto __end;;
   __end:
@@ -213,20 +222,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Functor_Invariant_imap'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->imap;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Invariant_imap"), recVars=[];
+  $__res = ($dict_0)->{'imap'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Functor_Invariant_invariantAlternate'] = function() { $v = function($dictInvariant_0) {
   $__num = \func_num_args();
-  $__res = (object)["imap" => (function() use (&$dictInvariant_0) {
-  $__fn = function($f_1, $g_2 = null, $v_3 = null) use (&$dictInvariant_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Functor_Invariant_invariantAlternate"), recVars=[];
+  $__res = (object)["imap" => (function() use ($dictInvariant_0) {
+  $__fn = function($f_1, $g_2 = null, $v_3 = null) use ($dictInvariant_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (((($dictInvariant_0)->imap)($f_1))($g_2))($v_3);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (((($dictInvariant_0)->{'imap'})($f_1))($g_2))($v_3);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;

@@ -90,31 +90,36 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericTopNoArguments'] = function() { $v = (object)["genericTop__prime__" => new Phpurs_Data0("NoArguments")]; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericTopArgument'] = function() { $v = function($dictBounded_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericTop__prime__" => ($dictBounded_0)->top];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericTopArgument"), recVars=[];
+  $__res = (object)["genericTop__prime__" => ($dictBounded_0)->{'top'}];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericTop__prime__'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericTop__prime__;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericTop'"), recVars=[];
+  $__res = ($dict_0)->{'genericTop__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericTopConstructor'] = function() { $v = function($dictGenericTop_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericTop__prime__" => ($dictGenericTop_0)->genericTop__prime__];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericTopConstructor"), recVars=[];
+  $__res = (object)["genericTop__prime__" => ($dictGenericTop_0)->{'genericTop__prime__'}];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericTopProduct'] = function() { $v = function($dictGenericTop_0) {
   $__num = \func_num_args();
-  $genericTop__prime__1_1_0 = ($dictGenericTop_0)->genericTop__prime__;
-  $__res = function($dictGenericTop1_2) use (&$genericTop__prime__1_1_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericTopProduct"), recVars=[];
+  $genericTop__prime__1_1_0 = ($dictGenericTop_0)->{'genericTop__prime__'};
+  $__res = function($dictGenericTop1_2) use ($genericTop__prime__1_1_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericTop__prime__" => new Phpurs_Data2("Product", $genericTop__prime__1_1_0, ($dictGenericTop1_2)->genericTop__prime__)];
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (object)["genericTop__prime__" => new Phpurs_Data2("Product", $genericTop__prime__1_1_0, ($dictGenericTop1_2)->{'genericTop__prime__'})];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -125,7 +130,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericTopSum'] = function() { $v = function($dictGenericTop_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericTop__prime__" => new Phpurs_Data1("Inr", ($dictGenericTop_0)->genericTop__prime__)];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericTopSum"), recVars=[];
+  $__res = (object)["genericTop__prime__" => new Phpurs_Data1("Inr", ($dictGenericTop_0)->{'genericTop__prime__'})];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -136,7 +142,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($dictGeneric_0)->to)(($dictGenericTop_1)->genericTop__prime__);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericTop"), recVars=[];
+  $__res = (($dictGeneric_0)->{'to'})(($dictGenericTop_1)->{'genericTop__prime__'});
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -146,31 +153,36 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericBottomNoArguments'] = function() { $v = (object)["genericBottom__prime__" => new Phpurs_Data0("NoArguments")]; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericBottomArgument'] = function() { $v = function($dictBounded_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericBottom__prime__" => ($dictBounded_0)->bottom];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericBottomArgument"), recVars=[];
+  $__res = (object)["genericBottom__prime__" => ($dictBounded_0)->{'bottom'}];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericBottom__prime__'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericBottom__prime__;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericBottom'"), recVars=[];
+  $__res = ($dict_0)->{'genericBottom__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericBottomConstructor'] = function() { $v = function($dictGenericBottom_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericBottom__prime__" => ($dictGenericBottom_0)->genericBottom__prime__];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericBottomConstructor"), recVars=[];
+  $__res = (object)["genericBottom__prime__" => ($dictGenericBottom_0)->{'genericBottom__prime__'}];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericBottomProduct'] = function() { $v = function($dictGenericBottom_0) {
   $__num = \func_num_args();
-  $genericBottom__prime__1_1_0 = ($dictGenericBottom_0)->genericBottom__prime__;
-  $__res = function($dictGenericBottom1_2) use (&$genericBottom__prime__1_1_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericBottomProduct"), recVars=[];
+  $genericBottom__prime__1_1_0 = ($dictGenericBottom_0)->{'genericBottom__prime__'};
+  $__res = function($dictGenericBottom1_2) use ($genericBottom__prime__1_1_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericBottom__prime__" => new Phpurs_Data2("Product", $genericBottom__prime__1_1_0, ($dictGenericBottom1_2)->genericBottom__prime__)];
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (object)["genericBottom__prime__" => new Phpurs_Data2("Product", $genericBottom__prime__1_1_0, ($dictGenericBottom1_2)->{'genericBottom__prime__'})];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -181,7 +193,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Bounded_Generic_genericBottomSum'] = function() { $v = function($dictGenericBottom_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericBottom__prime__" => new Phpurs_Data1("Inl", ($dictGenericBottom_0)->genericBottom__prime__)];
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericBottomSum"), recVars=[];
+  $__res = (object)["genericBottom__prime__" => new Phpurs_Data1("Inl", ($dictGenericBottom_0)->{'genericBottom__prime__'})];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -192,7 +205,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (($dictGeneric_0)->to)(($dictGenericBottom_1)->genericBottom__prime__);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Bounded_Generic_genericBottom"), recVars=[];
+  $__res = (($dictGeneric_0)->{'to'})(($dictGenericBottom_1)->{'genericBottom__prime__'});
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

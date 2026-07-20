@@ -95,6 +95,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Ord_Down_Down'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Down_Down"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -102,9 +103,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Down_showDown'] = function() { $v = function($dictShow_0) {
   $__num = \func_num_args();
-  $__res = (object)["show" => function($v_1) use (&$dictShow_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Down_showDown"), recVars=[];
+  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Down "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->show)($v_1)))(")"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Down "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -115,6 +118,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Down_newtypeDown'] = function() { $v = (object)["Coercible0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'));
   goto __end;;
   __end:
@@ -122,6 +126,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Down_eqDown'] = function() { $v = function($dictEq_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Down_eqDown"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
@@ -129,21 +134,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Down_ordDown'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
-  $__local_var_1_0 = (($dictOrd_0)->Eq0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
-  $__res = (object)["compare" => (function() use (&$dictOrd_0) {
-  $__fn = function($v_2, $v1_3 = null) use (&$dictOrd_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Down_ordDown"), recVars=[];
+  $__local_var_1_0 = (($dictOrd_0)->{'Eq0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined')));
+  $__res = (object)["compare" => (function() use ($dictOrd_0) {
+  $__fn = function($v_2, $v1_3 = null) use ($dictOrd_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__local_var_4_1 = ((($dictOrd_0)->compare)($v_2))($v1_3);
-  if ((is_object($__local_var_4_1) && (($__local_var_4_1)->tag === "GT"))) {
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__local_var_4_1 = ((($dictOrd_0)->{'compare'})($v_2))($v1_3);
+  if ((is_object($__local_var_4_1) && (($__local_var_4_1)->{'tag'} === "GT"))) {
 $__t2 = new Phpurs_Data0("LT");
 } else {
-if ((is_object($__local_var_4_1) && (($__local_var_4_1)->tag === "EQ"))) {
+if ((is_object($__local_var_4_1) && (($__local_var_4_1)->{'tag'} === "EQ"))) {
 $__t2 = new Phpurs_Data0("EQ");
 } else {
-if ((is_object($__local_var_4_1) && (($__local_var_4_1)->tag === "LT"))) {
+if ((is_object($__local_var_4_1) && (($__local_var_4_1)->{'tag'} === "LT"))) {
 $__t2 = new Phpurs_Data0("GT");
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -157,8 +164,9 @@ $__t2 = null;
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "Eq0" => function($dollar__unused_2) use (&$__local_var_1_0) {
+})(), "Eq0" => function($dollar__unused_2) use ($__local_var_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $__local_var_1_0;
   goto __end;;
   __end:
@@ -170,9 +178,11 @@ $__t2 = null;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Ord_Down_boundedDown'] = function() { $v = function($dictBounded_0) {
   $__num = \func_num_args();
-  $ordDown1_1_0 = (($GLOBALS['Data_Ord_Down_ordDown'] ?? \PhpursThunks::eval('Data_Ord_Down_ordDown')))((($dictBounded_0)->Ord0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
-  $__res = (object)["top" => ($dictBounded_0)->bottom, "bottom" => ($dictBounded_0)->top, "Ord0" => function($dollar__unused_2) use (&$ordDown1_1_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Ord_Down_boundedDown"), recVars=[];
+  $ordDown1_1_0 = (($GLOBALS['Data_Ord_Down_ordDown'] ?? \PhpursThunks::eval('Data_Ord_Down_ordDown')))((($dictBounded_0)->{'Ord0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))));
+  $__res = (object)["top" => ($dictBounded_0)->{'bottom'}, "bottom" => ($dictBounded_0)->{'top'}, "Ord0" => function($dollar__unused_2) use ($ordDown1_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $ordDown1_1_0;
   goto __end;;
   __end:

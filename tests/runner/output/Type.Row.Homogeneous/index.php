@@ -94,6 +94,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Row_Homogeneous_homogeneousRowListCons"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:
@@ -107,6 +108,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Type_Row_Homogeneous_homogeneous"), recVars=[];
   $__res = (object)[];
   goto __end;;
   __end:

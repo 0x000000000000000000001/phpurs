@@ -94,7 +94,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Control_Bind_discard'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->discard;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_discard"), recVars=[];
+  $__res = ($dict_0)->{'discard'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -105,6 +106,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = new Phpurs_Data0("Proxy");
   goto __end;;
   __end:
@@ -113,6 +115,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Control_Apply_applyProxy'] ?? \PhpursThunks::eval('Control_Apply_applyProxy'));
   goto __end;;
   __end:
@@ -124,6 +127,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = (($f_1)(($m_0)($x_2)))($x_2);
   goto __end;;
   __end:
@@ -132,6 +136,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Control_Apply_applyFn'] ?? \PhpursThunks::eval('Control_Apply_applyFn'));
   goto __end;;
   __end:
@@ -139,6 +144,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Bind_bindArray'] = function() { $v = (object)["bind" => ($GLOBALS['Control_Bind_arrayBind'] ?? \PhpursThunks::eval('Control_Bind_arrayBind')), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Control_Apply_applyArray'] ?? \PhpursThunks::eval('Control_Apply_applyArray'));
   goto __end;;
   __end:
@@ -146,7 +152,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Bind_bind'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->bind;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_bind"), recVars=[];
+  $__res = ($dict_0)->{'bind'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -157,7 +164,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((($dictBind_0)->bind)($a_2))($b_1);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_bindFlipped"), recVars=[];
+  $__res = ((($dictBind_0)->{'bind'})($a_2))($b_1);
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -170,7 +178,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictBind_0)->bind)(($g_2)($a_3)))($f_1);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_composeKleisliFlipped"), recVars=[];
+  $__res = ((($dictBind_0)->{'bind'})(($g_2)($a_3)))($f_1);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -183,7 +192,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictBind_0)->bind)(($f_1)($a_3)))($g_2);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_composeKleisli"), recVars=[];
+  $__res = ((($dictBind_0)->{'bind'})(($f_1)($a_3)))($g_2);
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -192,14 +202,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })(); return $v; };
 \PhpursThunks::$thunks['Control_Bind_discardProxy'] = function() { $v = (object)["discard" => function($dictBind_0) {
   $__num = \func_num_args();
-  $__res = ($dictBind_0)->bind;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictBind_0)->{'bind'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Control_Bind_discardUnit'] = function() { $v = (object)["discard" => function($dictBind_0) {
   $__num = \func_num_args();
-  $__res = ($dictBind_0)->bind;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictBind_0)->{'bind'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -210,8 +222,10 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = ((($dictBind_0)->bind)($cond_1))(function($cond__prime___4) use (&$f_3, &$t_2) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_ifM"), recVars=[];
+  $__res = ((($dictBind_0)->{'bind'})($cond_1))(function($cond__prime___4) use ($f_3, $t_2) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   if ($cond__prime___4) {
 $__t0 = $t_2;
 } else {
@@ -234,7 +248,8 @@ $__t0 = $f_3;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictBind_0)->bind)($m_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->identity);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Control_Bind_join"), recVars=[];
+  $__res = ((($dictBind_0)->{'bind'})($m_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

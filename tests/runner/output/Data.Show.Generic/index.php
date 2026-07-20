@@ -93,6 +93,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Show_Generic_genericShowArgsNoArguments'] = function() { $v = (object)["genericShowArgs" => function($v_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = [];
   goto __end;;
   __end:
@@ -100,9 +101,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Show_Generic_genericShowArgsArgument'] = function() { $v = function($dictShow_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericShowArgs" => function($v_1) use (&$dictShow_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShowArgsArgument"), recVars=[];
+  $__res = (object)["genericShowArgs" => function($v_1) use ($dictShow_0) {
   $__num = \func_num_args();
-  $__res = [(($dictShow_0)->show)($v_1)];
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = [(($dictShow_0)->{'show'})($v_1)];
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -113,7 +116,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Show_Generic_genericShowArgs'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericShowArgs;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShowArgs"), recVars=[];
+  $__res = ($dict_0)->{'genericShowArgs'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -124,9 +128,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericShowArgs" => function($v_2) use (&$dictGenericShowArgs1_1, &$dictGenericShowArgs_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShowArgsProduct"), recVars=[];
+  $__res = (object)["genericShowArgs" => function($v_2) use ($dictGenericShowArgs1_1, $dictGenericShowArgs_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Semigroup_concatArray'] ?? \PhpursThunks::eval('Data_Semigroup_concatArray')))((($dictGenericShowArgs_0)->genericShowArgs)(($v_2)->value0)))((($dictGenericShowArgs1_1)->genericShowArgs)(($v_2)->value1));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_Semigroup_concatArray'] ?? \PhpursThunks::eval('Data_Semigroup_concatArray')))((($dictGenericShowArgs_0)->{'genericShowArgs'})(($v_2)->{'value0'})))((($dictGenericShowArgs1_1)->{'genericShowArgs'})(($v_2)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -143,10 +149,12 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericShow__prime__" => function($v_2) use (&$dictGenericShowArgs_0, &$dictIsSymbol_1) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShowConstructor"), recVars=[];
+  $__res = (object)["genericShow__prime__" => function($v_2) use ($dictGenericShowArgs_0, $dictIsSymbol_1) {
   $__num = \func_num_args();
-  $ctor_3_0 = (($dictIsSymbol_1)->reflectSymbol)(new Phpurs_Data0("Proxy"));
-  $v1_4_1 = (($dictGenericShowArgs_0)->genericShowArgs)($v_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $ctor_3_0 = (($dictIsSymbol_1)->{'reflectSymbol'})(new Phpurs_Data0("Proxy"));
+  $v1_4_1 = (($dictGenericShowArgs_0)->{'genericShowArgs'})($v_2);
   switch (count($v1_4_1)) {
 case 0:
 $__t2 = $ctor_3_0;
@@ -168,14 +176,16 @@ break;
 })(); return $v; };
 \PhpursThunks::$thunks['Data_Show_Generic_genericShow__prime__'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericShow__prime__;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShow'"), recVars=[];
+  $__res = ($dict_0)->{'genericShow__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Show_Generic_genericShowNoConstructors'] = function() { $v = (object)["genericShow__prime__" => function($a_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Show_Generic_genericShowNoConstructors'] ?? \PhpursThunks::eval('Data_Show_Generic_genericShowNoConstructors')))->genericShow__prime__)($a_0);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Show_Generic_genericShowNoConstructors"];
+  $__res = ((($GLOBALS['Data_Show_Generic_genericShowNoConstructors'] ?? \PhpursThunks::eval('Data_Show_Generic_genericShowNoConstructors')))->{'genericShow__prime__'})($a_0);
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -186,13 +196,15 @@ break;
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericShow__prime__" => function($v_2) use (&$dictGenericShow1_1, &$dictGenericShow_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShowSum"), recVars=[];
+  $__res = (object)["genericShow__prime__" => function($v_2) use ($dictGenericShow1_1, $dictGenericShow_0) {
   $__num = \func_num_args();
-  if ((is_object($v_2) && (($v_2)->tag === "Inl"))) {
-$__t0 = (($dictGenericShow_0)->genericShow__prime__)(($v_2)->value0);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  if ((is_object($v_2) && (($v_2)->{'tag'} === "Inl"))) {
+$__t0 = (($dictGenericShow_0)->{'genericShow__prime__'})(($v_2)->{'value0'});
 } else {
-if ((is_object($v_2) && (($v_2)->tag === "Inr"))) {
-$__t0 = (($dictGenericShow1_1)->genericShow__prime__)(($v_2)->value0);
+if ((is_object($v_2) && (($v_2)->{'tag'} === "Inr"))) {
+$__t0 = (($dictGenericShow1_1)->{'genericShow__prime__'})(($v_2)->{'value0'});
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
 $__t0 = null;
@@ -215,7 +227,8 @@ $__t0 = null;
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = (($dictGenericShow_1)->genericShow__prime__)((($dictGeneric_0)->from)($x_2));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Show_Generic_genericShow"), recVars=[];
+  $__res = (($dictGenericShow_1)->{'genericShow__prime__'})((($dictGeneric_0)->{'from'})($x_2));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;

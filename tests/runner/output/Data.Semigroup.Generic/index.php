@@ -94,6 +94,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $a_0;
   goto __end;;
   __end:
@@ -107,6 +108,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $a_0;
   goto __end;;
   __end:
@@ -116,13 +118,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Generic_genericSemigroupArgument'] = function() { $v = function($dictSemigroup_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericAppend__prime__" => (function() use (&$dictSemigroup_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictSemigroup_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Generic_genericSemigroupArgument"), recVars=[];
+  $__res = (object)["genericAppend__prime__" => (function() use ($dictSemigroup_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictSemigroup_0)->append)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictSemigroup_0)->{'append'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -135,20 +139,23 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Generic_genericAppend__prime__'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->genericAppend__prime__;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Generic_genericAppend'"), recVars=[];
+  $__res = ($dict_0)->{'genericAppend__prime__'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Generic_genericSemigroupConstructor'] = function() { $v = function($dictGenericSemigroup_0) {
   $__num = \func_num_args();
-  $__res = (object)["genericAppend__prime__" => (function() use (&$dictGenericSemigroup_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictGenericSemigroup_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Generic_genericSemigroupConstructor"), recVars=[];
+  $__res = (object)["genericAppend__prime__" => (function() use ($dictGenericSemigroup_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictGenericSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictGenericSemigroup_0)->genericAppend__prime__)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictGenericSemigroup_0)->{'genericAppend__prime__'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -165,13 +172,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = (object)["genericAppend__prime__" => (function() use (&$dictGenericSemigroup1_1, &$dictGenericSemigroup_0) {
-  $__fn = function($v_2, $v1_3 = null) use (&$dictGenericSemigroup1_1, &$dictGenericSemigroup_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Generic_genericSemigroupProduct"), recVars=[];
+  $__res = (object)["genericAppend__prime__" => (function() use ($dictGenericSemigroup1_1, $dictGenericSemigroup_0) {
+  $__fn = function($v_2, $v1_3 = null) use ($dictGenericSemigroup1_1, $dictGenericSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = new Phpurs_Data2("Product", ((($dictGenericSemigroup_0)->genericAppend__prime__)(($v_2)->value0))(($v1_3)->value0), ((($dictGenericSemigroup1_1)->genericAppend__prime__)(($v_2)->value1))(($v1_3)->value1));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = new Phpurs_Data2("Product", ((($dictGenericSemigroup_0)->{'genericAppend__prime__'})(($v_2)->{'value0'}))(($v1_3)->{'value0'}), ((($dictGenericSemigroup1_1)->{'genericAppend__prime__'})(($v_2)->{'value1'}))(($v1_3)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -190,7 +199,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
-  $__res = (($dictGeneric_0)->to)(((($dictGenericSemigroup_1)->genericAppend__prime__)((($dictGeneric_0)->from)($x_2)))((($dictGeneric_0)->from)($y_3)));
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Generic_genericAppend"), recVars=[];
+  $__res = (($dictGeneric_0)->{'to'})(((($dictGenericSemigroup_1)->{'genericAppend__prime__'})((($dictGeneric_0)->{'from'})($x_2)))((($dictGeneric_0)->{'from'})($y_3)));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;

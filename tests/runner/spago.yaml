@@ -19,9 +19,12 @@ package:
     - functions
     - unfoldable
     - record
+    - assert
   name: runner
 workspace:
   extraPackages:
+    assert:
+      path: "../../../phpurs-assert"
     prelude:
       path: "../../../phpurs-prelude"
     effect:

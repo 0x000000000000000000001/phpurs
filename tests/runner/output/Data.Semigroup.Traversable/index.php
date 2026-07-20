@@ -96,7 +96,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Semigroup_Traversable_traverse1'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->traverse1;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Traversable_traverse1"), recVars=[];
+  $__res = ($dict_0)->{'traverse1'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -107,7 +108,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((((($dictApply_0)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)((($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple')))(($v_2)->value0)))(($f_1)(($v_2)->value1));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((((($dictApply_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})((($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple')))(($v_2)->{'value0'})))(($f_1)(($v_2)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -119,7 +121,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((((($dictApply_0)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)((($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple')))(($v_1)->value0)))(($v_1)->value1);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((((($dictApply_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})((($GLOBALS['Data_Tuple_Tuple'] ?? \PhpursThunks::eval('Data_Tuple_Tuple')))(($v_1)->{'value0'})))(($v_1)->{'value1'});
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -127,12 +130,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Foldable10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Foldable_foldableTuple'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_foldableTuple'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Traversable1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Traversable_traversableTuple'] ?? \PhpursThunks::eval('Data_Traversable_traversableTuple'));
   goto __end;;
   __end:
@@ -144,7 +149,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((((($dictApply_0)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))(($f_1)($v_2));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((((($dictApply_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))(($f_1)($v_2));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -156,7 +162,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((((($dictApply_0)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))($v_1);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((((($dictApply_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Identity_Identity'] ?? \PhpursThunks::eval('Data_Identity_Identity'))))($v_1);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -164,12 +171,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Foldable10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Semigroup_Foldable_foldableIdentity'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_foldableIdentity'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Traversable1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Traversable_traversableIdentity'] ?? \PhpursThunks::eval('Data_Traversable_traversableIdentity'));
   goto __end;;
   __end:
@@ -181,7 +190,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictTraversable1_0)->traverse1)($dictApply_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->identity);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Traversable_sequence1Default"), recVars=[];
+  $__res = ((($dictTraversable1_0)->{'traverse1'})($dictApply_1))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -194,7 +204,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((((($dictApply_0)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)(($GLOBALS['Data_Monoid_Dual_Dual'] ?? \PhpursThunks::eval('Data_Monoid_Dual_Dual'))))(($f_1)($v_2));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableDual"];
+  $__res = ((((($dictApply_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Monoid_Dual_Dual'] ?? \PhpursThunks::eval('Data_Monoid_Dual_Dual'))))(($f_1)($v_2));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -202,18 +213,21 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "sequence1" => function($dictApply_0) {
   $__num = \func_num_args();
-  $__res = (((($GLOBALS['Data_Semigroup_Traversable_traversableDual'] ?? \PhpursThunks::eval('Data_Semigroup_Traversable_traversableDual')))->traverse1)($dictApply_0))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->identity);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableDual"];
+  $__res = (((($GLOBALS['Data_Semigroup_Traversable_traversableDual'] ?? \PhpursThunks::eval('Data_Semigroup_Traversable_traversableDual')))->{'traverse1'})($dictApply_0))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Foldable10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableDual"];
   $__res = ($GLOBALS['Data_Semigroup_Foldable_foldableDual'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_foldableDual'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Traversable1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableDual"];
   $__res = ($GLOBALS['Data_Traversable_traversableDual'] ?? \PhpursThunks::eval('Data_Traversable_traversableDual'));
   goto __end;;
   __end:
@@ -225,7 +239,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 3) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
-  $__res = ((((($dictApply_0)->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)(($GLOBALS['Data_Monoid_Multiplicative_Multiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_Multiplicative'))))(($f_1)($v_2));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableMultiplicative"];
+  $__res = ((((($dictApply_0)->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})(($GLOBALS['Data_Monoid_Multiplicative_Multiplicative'] ?? \PhpursThunks::eval('Data_Monoid_Multiplicative_Multiplicative'))))(($f_1)($v_2));
   goto __end;;
   __end:
   return $__num > 3 ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
@@ -233,18 +248,21 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "sequence1" => function($dictApply_0) {
   $__num = \func_num_args();
-  $__res = (((($GLOBALS['Data_Semigroup_Traversable_traversableMultiplicative'] ?? \PhpursThunks::eval('Data_Semigroup_Traversable_traversableMultiplicative')))->traverse1)($dictApply_0))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->identity);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableMultiplicative"];
+  $__res = (((($GLOBALS['Data_Semigroup_Traversable_traversableMultiplicative'] ?? \PhpursThunks::eval('Data_Semigroup_Traversable_traversableMultiplicative')))->{'traverse1'})($dictApply_0))((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Foldable10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableMultiplicative"];
   $__res = ($GLOBALS['Data_Semigroup_Foldable_foldableMultiplicative'] ?? \PhpursThunks::eval('Data_Semigroup_Foldable_foldableMultiplicative'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Traversable1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=["Data_Semigroup_Traversable_traversableMultiplicative"];
   $__res = ($GLOBALS['Data_Traversable_traversableMultiplicative'] ?? \PhpursThunks::eval('Data_Traversable_traversableMultiplicative'));
   goto __end;;
   __end:
@@ -252,7 +270,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Semigroup_Traversable_sequence1'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->sequence1;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Traversable_sequence1"), recVars=[];
+  $__res = ($dict_0)->{'sequence1'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -263,14 +282,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $sequence12_2_0 = (($dictTraversable1_0)->sequence1)($dictApply_1);
-  $__res = (function() use (&$dictTraversable1_0, &$sequence12_2_0) {
-  $__fn = function($f_3, $ta_4 = null) use (&$dictTraversable1_0, &$sequence12_2_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Semigroup_Traversable_traverse1Default"), recVars=[];
+  $sequence12_2_0 = (($dictTraversable1_0)->{'sequence1'})($dictApply_1);
+  $__res = (function() use ($dictTraversable1_0, $sequence12_2_0) {
+  $__fn = function($f_3, $ta_4 = null) use ($dictTraversable1_0, $sequence12_2_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ($sequence12_2_0)(((((((($dictTraversable1_0)->Traversable1)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->Functor0)(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->map)($f_3))($ta_4));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($sequence12_2_0)(((((((($dictTraversable1_0)->{'Traversable1'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'Functor0'})(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))->{'map'})($f_3))($ta_4));
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

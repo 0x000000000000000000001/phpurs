@@ -102,8 +102,9 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_4_0 = ($f_0)($a_3);
-  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(($v_1)(($v2_4_0)->value0)))(($v1_2)(($v2_4_0)->value1));
+  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))(($v_1)(($v2_4_0)->{'value0'})))(($v1_2)(($v2_4_0)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -111,6 +112,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Contravariant0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Predicate_contravariantPredicate'] ?? \PhpursThunks::eval('Data_Predicate_contravariantPredicate'));
   goto __end;;
   __end:
@@ -118,14 +120,16 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Divide_divideOp'] = function() { $v = function($dictSemigroup_0) {
   $__num = \func_num_args();
-  $__res = (object)["divide" => (function() use (&$dictSemigroup_0) {
-  $__fn = function($f_1, $v_2 = null, $v1_3 = null, $a_4 = null) use (&$dictSemigroup_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Divide_divideOp"), recVars=[];
+  $__res = (object)["divide" => (function() use ($dictSemigroup_0) {
+  $__fn = function($f_1, $v_2 = null, $v1_3 = null, $a_4 = null) use ($dictSemigroup_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 4) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_5_0 = ($f_1)($a_4);
-  $__res = ((($dictSemigroup_0)->append)(($v_2)(($v2_5_0)->value0)))(($v1_3)(($v2_5_0)->value1));
+  $__res = ((($dictSemigroup_0)->{'append'})(($v_2)(($v2_5_0)->{'value0'})))(($v1_3)(($v2_5_0)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 4 ? $__res(...\array_slice(\func_get_args(), 4)) : $__res;
@@ -133,6 +137,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Contravariant0" => function($dollar__unused_1) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Op_contravariantOp'] ?? \PhpursThunks::eval('Data_Op_contravariantOp'));
   goto __end;;
   __end:
@@ -148,9 +153,10 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_5_0 = ($f_0)($a_3);
   $v3_6_1 = ($f_0)($b_4);
-  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))((($v_1)(($v2_5_0)->value0))(($v3_6_1)->value0)))((($v1_2)(($v2_5_0)->value1))(($v3_6_1)->value1));
+  $__res = ((($GLOBALS['Data_HeytingAlgebra_boolConj'] ?? \PhpursThunks::eval('Data_HeytingAlgebra_boolConj')))((($v_1)(($v2_5_0)->{'value0'}))(($v3_6_1)->{'value0'})))((($v1_2)(($v2_5_0)->{'value1'}))(($v3_6_1)->{'value1'}));
   goto __end;;
   __end:
   return $__num > 5 ? $__res(...\array_slice(\func_get_args(), 5)) : $__res;
@@ -158,6 +164,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Contravariant0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Equivalence_contravariantEquivalence'] ?? \PhpursThunks::eval('Data_Equivalence_contravariantEquivalence'));
   goto __end;;
   __end:
@@ -169,17 +176,18 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 5) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $v2_5_0 = ($f_0)($a_3);
   $v3_6_1 = ($f_0)($b_4);
-  $__local_var_7_2 = (($v_1)(($v2_5_0)->value0))(($v3_6_1)->value0);
-  $__local_var_8_3 = (($v1_2)(($v2_5_0)->value1))(($v3_6_1)->value1);
-  if ((is_object($__local_var_7_2) && (($__local_var_7_2)->tag === "LT"))) {
+  $__local_var_7_2 = (($v_1)(($v2_5_0)->{'value0'}))(($v3_6_1)->{'value0'});
+  $__local_var_8_3 = (($v1_2)(($v2_5_0)->{'value1'}))(($v3_6_1)->{'value1'});
+  if ((is_object($__local_var_7_2) && (($__local_var_7_2)->{'tag'} === "LT"))) {
 $__t4 = new Phpurs_Data0("LT");
 } else {
-if ((is_object($__local_var_7_2) && (($__local_var_7_2)->tag === "GT"))) {
+if ((is_object($__local_var_7_2) && (($__local_var_7_2)->{'tag'} === "GT"))) {
 $__t4 = new Phpurs_Data0("GT");
 } else {
-if ((is_object($__local_var_7_2) && (($__local_var_7_2)->tag === "EQ"))) {
+if ((is_object($__local_var_7_2) && (($__local_var_7_2)->{'tag'} === "EQ"))) {
 $__t4 = $__local_var_8_3;
 } else {
 throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
@@ -195,6 +203,7 @@ $__t4 = null;
   return $__fn;
 })(), "Contravariant0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Comparison_contravariantComparison'] ?? \PhpursThunks::eval('Data_Comparison_contravariantComparison'));
   goto __end;;
   __end:
@@ -202,14 +211,16 @@ $__t4 = null;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Divide_divide'] = function() { $v = function($dict_0) {
   $__num = \func_num_args();
-  $__res = ($dict_0)->divide;
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Divide_divide"), recVars=[];
+  $__res = ($dict_0)->{'divide'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }; return $v; };
 \PhpursThunks::$thunks['Data_Divide_divided'] = function() { $v = function($dictDivide_0) {
   $__num = \func_num_args();
-  $__res = (($dictDivide_0)->divide)((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->identity);
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Divide_divided"), recVars=[];
+  $__res = (($dictDivide_0)->{'divide'})((($GLOBALS['Control_Category_categoryFn'] ?? \PhpursThunks::eval('Control_Category_categoryFn')))->{'identity'});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;

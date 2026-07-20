@@ -101,6 +101,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }
 \PhpursThunks::$thunks['Data_Monoid_Conj_Conj'] = function() { $v = function($x_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_Conj"), recVars=[];
   $__res = $x_0;
   goto __end;;
   __end:
@@ -108,9 +109,11 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_showConj'] = function() { $v = function($dictShow_0) {
   $__num = \func_num_args();
-  $__res = (object)["show" => function($v_1) use (&$dictShow_0) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_showConj"), recVars=[];
+  $__res = (object)["show" => function($v_1) use ($dictShow_0) {
   $__num = \func_num_args();
-  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Conj "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->show)($v_1)))(")"));
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("(Conj "))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))((($dictShow_0)->{'show'})($v_1)))(")"));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -121,25 +124,28 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_semiringConj'] = function() { $v = function($dictHeytingAlgebra_0) {
   $__num = \func_num_args();
-  $__res = (object)["zero" => ($dictHeytingAlgebra_0)->tt, "one" => ($dictHeytingAlgebra_0)->ff, "add" => (function() use (&$dictHeytingAlgebra_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictHeytingAlgebra_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_semiringConj"), recVars=[];
+  $__res = (object)["zero" => ($dictHeytingAlgebra_0)->{'tt'}, "one" => ($dictHeytingAlgebra_0)->{'ff'}, "add" => (function() use ($dictHeytingAlgebra_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictHeytingAlgebra_0)->conj)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictHeytingAlgebra_0)->{'conj'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
-})(), "mul" => (function() use (&$dictHeytingAlgebra_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictHeytingAlgebra_0, &$__fn) {
+})(), "mul" => (function() use ($dictHeytingAlgebra_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictHeytingAlgebra_0)->disj)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictHeytingAlgebra_0)->{'disj'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -152,13 +158,15 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_semigroupConj'] = function() { $v = function($dictHeytingAlgebra_0) {
   $__num = \func_num_args();
-  $__res = (object)["append" => (function() use (&$dictHeytingAlgebra_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictHeytingAlgebra_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_semigroupConj"), recVars=[];
+  $__res = (object)["append" => (function() use ($dictHeytingAlgebra_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictHeytingAlgebra_0)->conj)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictHeytingAlgebra_0)->{'conj'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -171,6 +179,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_ordConj'] = function() { $v = function($dictOrd_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_ordConj"), recVars=[];
   $__res = $dictOrd_0;
   goto __end;;
   __end:
@@ -178,21 +187,24 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_monoidConj'] = function() { $v = function($dictHeytingAlgebra_0) {
   $__num = \func_num_args();
-  $semigroupConj1_1_0 = (object)["append" => (function() use (&$dictHeytingAlgebra_0) {
-  $__fn = function($v_1, $v1_2 = null) use (&$dictHeytingAlgebra_0, &$__fn) {
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_monoidConj"), recVars=[];
+  $semigroupConj1_1_0 = (object)["append" => (function() use ($dictHeytingAlgebra_0) {
+  $__fn = function($v_1, $v1_2 = null) use ($dictHeytingAlgebra_0, &$__fn) {
   $__num = \func_num_args();
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = ((($dictHeytingAlgebra_0)->conj)($v_1))($v1_2);
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($dictHeytingAlgebra_0)->{'conj'})($v_1))($v1_2);
   goto __end;;
   __end:
   return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
   };
   return $__fn;
 })()];
-  $__res = (object)["mempty" => ($dictHeytingAlgebra_0)->tt, "Semigroup0" => function($dollar__unused_2) use (&$semigroupConj1_1_0) {
+  $__res = (object)["mempty" => ($dictHeytingAlgebra_0)->{'tt'}, "Semigroup0" => function($dollar__unused_2) use ($semigroupConj1_1_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = $semigroupConj1_1_0;
   goto __end;;
   __end:
@@ -208,6 +220,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_0)($m_1);
   goto __end;;
   __end:
@@ -217,6 +230,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 })()]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_eqConj'] = function() { $v = function($dictEq_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_eqConj"), recVars=[];
   $__res = $dictEq_0;
   goto __end;;
   __end:
@@ -224,19 +238,22 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_eq1Conj'] = function() { $v = (object)["eq1" => function($dictEq_0) {
   $__num = \func_num_args();
-  $__res = ($dictEq_0)->eq;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictEq_0)->{'eq'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_ord1Conj'] = function() { $v = (object)["compare1" => function($dictOrd_0) {
   $__num = \func_num_args();
-  $__res = ($dictOrd_0)->compare;
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ($dictOrd_0)->{'compare'};
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Eq10" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Conj_eq1Conj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_eq1Conj'));
   goto __end;;
   __end:
@@ -244,6 +261,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_boundedConj'] = function() { $v = function($dictBounded_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=(Just "Data_Monoid_Conj_boundedConj"), recVars=[];
   $__res = $dictBounded_0;
   goto __end;;
   __end:
@@ -255,6 +273,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($v_0)($v1_1);
   goto __end;;
   __end:
@@ -263,6 +282,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Functor0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Conj_functorConj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_functorConj'));
   goto __end;;
   __end:
@@ -274,6 +294,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($f_1)($v_0);
   goto __end;;
   __end:
@@ -282,6 +303,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
   return $__fn;
 })(), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Conj_applyConj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_applyConj'));
   goto __end;;
   __end:
@@ -289,6 +311,7 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_applicativeConj'] = function() { $v = (object)["pure" => ($GLOBALS['Data_Monoid_Conj_Conj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_Conj')), "Apply0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Conj_applyConj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_applyConj'));
   goto __end;;
   __end:
@@ -296,12 +319,14 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
 }]; return $v; };
 \PhpursThunks::$thunks['Data_Monoid_Conj_monadConj'] = function() { $v = (object)["Applicative0" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Conj_applicativeConj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_applicativeConj'));
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }, "Bind1" => function($dollar__unused_0) {
   $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
   $__res = ($GLOBALS['Data_Monoid_Conj_bindConj'] ?? \PhpursThunks::eval('Data_Monoid_Conj_bindConj'));
   goto __end;;
   __end:

@@ -1,22 +1,22 @@
 module Main where
 
 import Prelude
+import Effect
+import Effect.Console
+import Test.Assert
 
-import Effect.Console (log)
-import Effect.Uncurried (EffectFn3, mkEffectFn7, runEffectFn3, runEffectFn7)
-import Test.Assert (assert)
-
-testBothWays = do
-  res <- (runEffectFn7 $ mkEffectFn7 \x1 x2 x3 x4 x5 x6 x7 -> pure 42) 1 2 3 4 5 6 7
-  assert $ res == 42
-
-foreign import add3 :: EffectFn3 String String String String
-
-testRunFn = do
-  str <- runEffectFn3 add3 "a" "b" "c"
-  assert $ str == "abc"
-
+main :: Effect Unit
 main = do
-  testBothWays
-  testRunFn
+  assert' "Showing Int is correct" $ showFFI 4 == "4"
+  assert' "Showing String is correct" $ showFFI "string" == "\"string\""
+  assert' "Showing Record is correct" $
+    showFFI { a: 1, b: true, c: 'd', e: 4.0 } == "{ a: 1, b: true, c: 'd', e: 4.0 }"
   log "Done"
+
+showFFI :: forall a. Show a => a -> String
+showFFI = showImpl show
+
+-- Since type class constraints are not allowed
+-- in FFI declarations, we have to pass members
+-- we want to use into the function itself.
+foreign import showImpl :: forall a. (a -> String) -> a -> String

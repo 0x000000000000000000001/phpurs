@@ -1,1 +1,5 @@
-export var add3 = function (a,b,c) { return a + b + c; };
+export function showImpl(showFn) {
+  return function (val) {
+    return showFn(val);
+  };
+};

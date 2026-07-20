@@ -1,19 +1,10 @@
 <?php
 
-namespace Main;
+namespace Bar;
 
-// ALL IMPORTS: Control.Bind, Data.Eq, Data.Function, Data.Show, Data.Symbol, Effect, Effect.Console, Main, Prelude, Prim, Test.Assert
-// TO REQUIRE: Control.Bind, Data.Eq, Data.Function, Data.Show, Data.Symbol, Effect, Effect.Console, Main, Prelude, Test.Assert
-require_once __DIR__ . '/../Control.Bind/index.php';
-require_once __DIR__ . '/../Data.Eq/index.php';
-require_once __DIR__ . '/../Data.Function/index.php';
-require_once __DIR__ . '/../Data.Show/index.php';
-require_once __DIR__ . '/../Data.Symbol/index.php';
-require_once __DIR__ . '/../Effect/index.php';
-require_once __DIR__ . '/../Effect.Console/index.php';
-require_once __DIR__ . '/../Main/index.php';
-require_once __DIR__ . '/../Prelude/index.php';
-require_once __DIR__ . '/../Test.Assert/index.php';
+// ALL IMPORTS: Foo, Prim
+// TO REQUIRE: Foo
+require_once __DIR__ . '/../Foo/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -100,70 +91,8 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Main_showFFI'] = function() { $v = function($dictShow_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=(Just "Main_showFFI"), recVars=[];
-  $__res = (($GLOBALS['Main_showImpl'] ?? \PhpursThunks::eval('Main_showImpl')))(($dictShow_0)->{'show'});
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}; return $v; };
-\PhpursThunks::$thunks['Main_showFFI1'] = function() { $v = (($GLOBALS['Main_showImpl'] ?? \PhpursThunks::eval('Main_showImpl')))(($GLOBALS['Data_Show_showStringImpl'] ?? \PhpursThunks::eval('Data_Show_showStringImpl'))); return $v; };
-\PhpursThunks::$thunks['Main_showFFI2'] = function() { $v = (($GLOBALS['Main_showImpl'] ?? \PhpursThunks::eval('Main_showImpl')))(((((($GLOBALS['Data_Show_showRecord'] ?? \PhpursThunks::eval('Data_Show_showRecord')))(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))(($GLOBALS['Prim_undefined'] ?? \PhpursThunks::eval('Prim_undefined'))))((((($GLOBALS['Data_Show_showRecordFieldsCons'] ?? \PhpursThunks::eval('Data_Show_showRecordFieldsCons')))((object)["reflectSymbol" => function($dollar__unused_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = "a";
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}]))((((($GLOBALS['Data_Show_showRecordFieldsCons'] ?? \PhpursThunks::eval('Data_Show_showRecordFieldsCons')))((object)["reflectSymbol" => function($dollar__unused_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = "b";
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}]))((((($GLOBALS['Data_Show_showRecordFieldsCons'] ?? \PhpursThunks::eval('Data_Show_showRecordFieldsCons')))((object)["reflectSymbol" => function($dollar__unused_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = "c";
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}]))(((($GLOBALS['Data_Show_showRecordFieldsConsNil'] ?? \PhpursThunks::eval('Data_Show_showRecordFieldsConsNil')))((object)["reflectSymbol" => function($dollar__unused_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = "e";
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}]))(($GLOBALS['Data_Show_showNumber'] ?? \PhpursThunks::eval('Data_Show_showNumber')))))(($GLOBALS['Data_Show_showChar'] ?? \PhpursThunks::eval('Data_Show_showChar')))))(($GLOBALS['Data_Show_showBoolean'] ?? \PhpursThunks::eval('Data_Show_showBoolean')))))(($GLOBALS['Data_Show_showInt'] ?? \PhpursThunks::eval('Data_Show_showInt')))))->{'show'}); return $v; };
-\PhpursThunks::$thunks['Main_main'] = function() { $v = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("Showing Int is correct"))(((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))(((($GLOBALS['Main_showImpl'] ?? \PhpursThunks::eval('Main_showImpl')))(($GLOBALS['Data_Show_showIntImpl'] ?? \PhpursThunks::eval('Data_Show_showIntImpl'))))(4)))("4"))))(function($dollar__unused_0) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("Showing String is correct"))(((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))((($GLOBALS['Main_showFFI1'] ?? \PhpursThunks::eval('Main_showFFI1')))("string")))("\"string\""))))(function($dollar__unused_1) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("Showing Record is correct"))(((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))((($GLOBALS['Main_showFFI2'] ?? \PhpursThunks::eval('Main_showFFI2')))((object)["a" => 1, "b" => true, "c" => "d", "e" => 4.0])))("{ a: 1, b: true, c: 'd', e: 4.0 }"))))(function($dollar__unused_2) {
-  $__num = \func_num_args();
-  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))("Done");
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-});
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-});
-  goto __end;;
-  __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}); return $v; };
+
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
-
-
-
 
 
 

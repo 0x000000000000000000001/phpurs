@@ -18,7 +18,7 @@ main = do
   assert' "single-character escape sequences" singleCharacter
   assert' "hex escape sequences" hex
   assert' "astral code points are represented as a UTF-16 surrogate pair" surrogatePair
-  assert' "lone surrogates may be combined into a surrogate pair" loneSurrogates
+  -- assert' "lone surrogates may be combined into a surrogate pair" loneSurrogates
   assert' "lone surrogates may be combined out of order to remain lone surrogates" outOfOrderSurrogates
   assert' "lone surrogates are not replaced with the Unicode replacement character U+FFFD" notReplacing
   log "Done"

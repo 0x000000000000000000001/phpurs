@@ -2,13 +2,16 @@
 
 namespace Main;
 
-// ALL IMPORTS: Control.Bind, Effect, Prelude, Prim, Records, Symbols
-// TO REQUIRE: Control.Bind, Effect, Prelude, Records, Symbols
+// ALL IMPORTS: Control.Bind, Data.Eq, Data.Semigroup, Effect, Effect.Console, Main, Prelude, Prim, Test.Assert
+// TO REQUIRE: Control.Bind, Data.Eq, Data.Semigroup, Effect, Effect.Console, Main, Prelude, Test.Assert
 require_once __DIR__ . '/../Control.Bind/index.php';
+require_once __DIR__ . '/../Data.Eq/index.php';
+require_once __DIR__ . '/../Data.Semigroup/index.php';
 require_once __DIR__ . '/../Effect/index.php';
+require_once __DIR__ . '/../Effect.Console/index.php';
+require_once __DIR__ . '/../Main/index.php';
 require_once __DIR__ . '/../Prelude/index.php';
-require_once __DIR__ . '/../Records/index.php';
-require_once __DIR__ . '/../Symbols/index.php';
+require_once __DIR__ . '/../Test.Assert/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -95,15 +98,70 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['Main_main'] = function() { $v = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(($GLOBALS['Records_main'] ?? \PhpursThunks::eval('Records_main'))))(function($dollar__unused_0) {
+\PhpursThunks::$thunks['Main_surrogatePair'] = function() { $v = ((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))("𝌆"))("𝌆"); return $v; };
+\PhpursThunks::$thunks['Main_singleCharacter'] = function() { $v = ((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))("	
+\"\\"))("	
+\"\\"); return $v; };
+\PhpursThunks::$thunks['Main_replacement'] = function() { $v = "�"; return $v; };
+\PhpursThunks::$thunks['Main_lowSurrogate'] = function() { $v = "\xED\xBC\x86"; return $v; };
+\PhpursThunks::$thunks['Main_highSurrogate'] = function() { $v = "\xED\xA0\xB4"; return $v; };
+\PhpursThunks::$thunks['Main_loneSurrogates'] = function() { $v = ((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("\xED\xA0\xB4"))("\xED\xBC\x86")))("𝌆"); return $v; };
+\PhpursThunks::$thunks['Main_notReplacing'] = function() { $v = ((($GLOBALS['Data_Eq_eqBooleanImpl'] ?? \PhpursThunks::eval('Data_Eq_eqBooleanImpl')))(((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))("�"))("\xED\xA0\xB4")))(false); return $v; };
+\PhpursThunks::$thunks['Main_outOfOrderSurrogates'] = function() { $v = ((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))(((($GLOBALS['Data_Semigroup_concatString'] ?? \PhpursThunks::eval('Data_Semigroup_concatString')))("\xED\xBC\x86"))("\xED\xA0\xB4")))("\xED\xBC\x86\xED\xA0\xB4"); return $v; };
+\PhpursThunks::$thunks['Main_hex'] = function() { $v = ((($GLOBALS['Data_Eq_eqStringImpl'] ?? \PhpursThunks::eval('Data_Eq_eqStringImpl')))("𝌆☃φà"))("𝌆☃φà"); return $v; };
+\PhpursThunks::$thunks['Main_main'] = function() { $v = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("single-character escape sequences"))(($GLOBALS['Main_singleCharacter'] ?? \PhpursThunks::eval('Main_singleCharacter')))))(function($dollar__unused_0) {
   $__num = \func_num_args();
   // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
-  $__res = ($GLOBALS['Symbols_main'] ?? \PhpursThunks::eval('Symbols_main'));
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("hex escape sequences"))(($GLOBALS['Main_hex'] ?? \PhpursThunks::eval('Main_hex')))))(function($dollar__unused_1) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("astral code points are represented as a UTF-16 surrogate pair"))(($GLOBALS['Main_surrogatePair'] ?? \PhpursThunks::eval('Main_surrogatePair')))))(function($dollar__unused_2) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("lone surrogates may be combined into a surrogate pair"))(($GLOBALS['Main_loneSurrogates'] ?? \PhpursThunks::eval('Main_loneSurrogates')))))(function($dollar__unused_3) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("lone surrogates may be combined out of order to remain lone surrogates"))(($GLOBALS['Main_outOfOrderSurrogates'] ?? \PhpursThunks::eval('Main_outOfOrderSurrogates')))))(function($dollar__unused_4) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = ((($GLOBALS['Effect_bindE'] ?? \PhpursThunks::eval('Effect_bindE')))(((($GLOBALS['Test_Assert_assertImpl'] ?? \PhpursThunks::eval('Test_Assert_assertImpl')))("lone surrogates are not replaced with the Unicode replacement character U+FFFD"))(($GLOBALS['Main_notReplacing'] ?? \PhpursThunks::eval('Main_notReplacing')))))(function($dollar__unused_5) {
+  $__num = \func_num_args();
+  // DEBUG UncurriedAbs: currentBindingName=Nothing, recVars=[];
+  $__res = (($GLOBALS['Effect_Console_log'] ?? \PhpursThunks::eval('Effect_Console_log')))("Done");
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+});
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+});
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+});
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+});
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+});
   goto __end;;
   __end:
   return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+
+
+
+
+
+
+
+
+
 
 
 

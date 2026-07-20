@@ -18,6 +18,7 @@ import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
 foreign import safeNameImpl :: String -> String
 foreign import safeFuncNameImpl :: String -> String
+foreign import escapePhpStringImpl :: String -> String
 
 safeName :: String -> String
 safeName = safeNameImpl
@@ -126,12 +127,7 @@ printExpr expr = case expr of
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
   PhpNumber n -> show n
-  PhpString s -> 
-    let
-      s0 = replaceAll (Pattern "\\") (Replacement "\\\\") s
-      s1 = replaceAll (Pattern "$") (Replacement "\\$") s0
-      s2 = replaceAll (Pattern "\"") (Replacement "\\\"") s1
-    in "\"" <> s2 <> "\""
+  PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
   PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"

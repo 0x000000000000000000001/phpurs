@@ -105,7 +105,7 @@ failed=0
 
 # Clean output (now handled inside the loop)
 
-SKIP_BEFORE="TCO"
+SKIP_BEFORE="" # E.g. "TCO" to run tests after TCO.purs
 TEST_FILES=()
 
 if [ $# -gt 0 ]; then

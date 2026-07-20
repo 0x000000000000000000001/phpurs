@@ -1,10 +1,10 @@
 <?php
 
-namespace A;
+namespace Eg;
 
-// ALL IMPORTS: B, Prim
-// TO REQUIRE: B
-require_once __DIR__ . '/../B/index.php';
+// ALL IMPORTS: Eg, Prim
+// TO REQUIRE: Eg
+require_once __DIR__ . '/../Eg/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
   class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }
@@ -91,13 +91,19 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-\PhpursThunks::$thunks['A_foo'] = function() { $v = function($x_0 = null) {
+\PhpursThunks::$thunks['Eg_Bar__prime__'] = function() { $v = (function() {
+  $__fn = function($value0 = null, $value1 = null) use (&$__fn) {
   $__num = \func_num_args();
-  $__res = $x_0;
+  if ($__num < 2) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
+  }
+  $__res = new Phpurs_Data2("Bar'", $value0, $value1);
   goto __end;;
   __end:
-  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
-}; return $v; };
+  return $__num > 2 ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
+  };
+  return $__fn;
+})(); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 

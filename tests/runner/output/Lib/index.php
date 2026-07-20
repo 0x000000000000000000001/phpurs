@@ -91,8 +91,10 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
-
+\PhpursThunks::$thunks['Lib_B'] = function() { $v = ($GLOBALS['__phpurs_data0_B'] ??= new Phpurs_Data0("B")); return $v; };
+\PhpursThunks::$thunks['Lib_C'] = function() { $v = ($GLOBALS['__phpurs_data0_C'] ??= new Phpurs_Data0("C")); return $v; };
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
+
 
 
 

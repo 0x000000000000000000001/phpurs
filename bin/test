@@ -107,6 +107,7 @@ failed=0
 
 SKIP_BEFORE="" # E.g. "TCO" to run tests after TCO.purs
 TEST_FILES=()
+CLEAN_CACHE=0
 
 if [ $# -gt 0 ]; then
   for arg in "$@"; do
@@ -114,6 +115,8 @@ if [ $# -gt 0 ]; then
       SKIP_BEFORE="${arg#skip_before=}"
     elif [[ "$arg" == --skip-before=* ]]; then
       SKIP_BEFORE="${arg#--skip-before=}"
+    elif [[ "$arg" == "-c" || "$arg" == "--clean" ]]; then
+      CLEAN_CACHE=1
     else
       if [ -f "$PASSING_DIR/$arg" ]; then
         TEST_FILES+=("$PASSING_DIR/$arg")
@@ -124,6 +127,11 @@ if [ $# -gt 0 ]; then
       fi
     fi
   done
+fi
+
+if [ $CLEAN_CACHE -eq 1 ]; then
+  echo "=> Cleaning Spago and output cache..."
+  rm -rf .spago/* output-es/* output/*
 fi
 
 if [ ${#TEST_FILES[@]} -eq 0 ]; then

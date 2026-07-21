@@ -5809,6 +5809,48 @@ var mergeComposersImpl = function(mbFfiDir) {
     fs.writeFileSync(outPath, JSON.stringify(outPkg, null, 4));
   };
 };
+
+// output-es/Phpurs.FfiSupport/foreign.js
+import fs2 from "fs";
+import path2 from "path";
+var cachedScanDirs2 = null;
+function getScanDirs2(mbFfiDir) {
+  if (cachedScanDirs2 !== null) return cachedScanDirs2;
+  const rootDir = process.cwd();
+  const scanDirs = [];
+  const spagoDirs = [
+    path2.join(rootDir, ".spago"),
+    path2.join(rootDir, "spago.d"),
+    path2.join(rootDir, "bak/spago.d/php/p")
+  ];
+  for (const spagoDir of spagoDirs) {
+    if (fs2.existsSync(spagoDir) && fs2.statSync(spagoDir).isDirectory()) {
+      const packages = fs2.readdirSync(spagoDir);
+      for (const pkg of packages) {
+        const pkgDir = path2.join(spagoDir, pkg);
+        if (fs2.statSync(pkgDir).isDirectory()) {
+          let hasVersion = false;
+          const subdirs = fs2.readdirSync(pkgDir);
+          for (const subdir of subdirs) {
+            const versionDir = path2.join(pkgDir, subdir);
+            if (subdir.startsWith("v") && fs2.statSync(versionDir).isDirectory()) {
+              scanDirs.push(versionDir);
+              hasVersion = true;
+            }
+          }
+          if (!hasVersion) {
+            scanDirs.push(pkgDir);
+          }
+        }
+      }
+    }
+  }
+  if (mbFfiDir) {
+    scanDirs.push(path2.join(rootDir, mbFfiDir));
+  }
+  cachedScanDirs2 = scanDirs;
+  return scanDirs;
+}
 var phpFileIndex = null;
 function buildPhpFileIndex(scanDirs) {
   if (phpFileIndex !== null) return;
@@ -5816,12 +5858,12 @@ function buildPhpFileIndex(scanDirs) {
   function walk(dir) {
     let entries;
     try {
-      entries = fs.readdirSync(dir, { withFileTypes: true });
+      entries = fs2.readdirSync(dir, { withFileTypes: true });
     } catch (e) {
       return;
     }
     for (const entry of entries) {
-      const res = path.join(dir, entry.name);
+      const res = path2.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(res);
       } else if (entry.name.endsWith(".php")) {
@@ -5839,17 +5881,17 @@ var findFfiFileImpl = function(mbFfiDir) {
       return function() {
         if (mbModulePath) {
           const phpPath = mbModulePath.replace(/\.purs$/, ".php");
-          if (fs.existsSync(phpPath)) {
+          if (fs2.existsSync(phpPath)) {
             return phpPath;
           }
         }
-        const scanDirs = getScanDirs(mbFfiDir);
+        const scanDirs = getScanDirs2(mbFfiDir);
         buildPhpFileIndex(scanDirs);
         for (const dir of scanDirs) {
           const searchPaths = [
-            path.join(dir, "src", ...modNameStr.split(".")) + ".php",
-            path.join(dir, "src", modNameStr + ".php"),
-            path.join(dir, modNameStr + ".php")
+            path2.join(dir, "src", ...modNameStr.split(".")) + ".php",
+            path2.join(dir, "src", modNameStr + ".php"),
+            path2.join(dir, modNameStr + ".php")
           ];
           for (const p of searchPaths) {
             if (phpFileIndex.has(p)) {
@@ -5863,7 +5905,7 @@ var findFfiFileImpl = function(mbFfiDir) {
   };
 };
 
-// output-es/Phpurs.ComposerMerge/index.js
+// output-es/Phpurs.FfiSupport/index.js
 var findFfiFile = (mbFfiDir) => (modName) => (mbModulePath) => {
   const $0 = findFfiFileImpl((() => {
     if (mbFfiDir.tag === "Nothing") {
@@ -5883,8 +5925,8 @@ var findFfiFile = (mbFfiDir) => (modName) => (mbModulePath) => {
     fail();
   })());
   return () => {
-    const path2 = $0();
-    const v = nullable(path2, Nothing, Just);
+    const path3 = $0();
+    const v = nullable(path3, Nothing, Just);
     if (v.tag === "Nothing") {
       return Nothing;
     }
@@ -15607,7 +15649,7 @@ var decodeSourcePos = (json) => {
   }
   fail();
 };
-var decodeSourceSpan = (path2) => (json) => {
+var decodeSourceSpan = (path3) => (json) => {
   const $0 = decodeJObject(json);
   if ($0.tag === "Left") {
     return $Either("Left", $0._1);
@@ -15623,7 +15665,7 @@ var decodeSourceSpan = (path2) => (json) => {
         return $Either("Left", $2._1);
       }
       if ($2.tag === "Right") {
-        return $Either("Right", { path: path2, start: $1._1, end: $2._1 });
+        return $Either("Right", { path: path3, start: $1._1, end: $2._1 });
       }
     }
   }

@@ -1,6 +1,6 @@
 # phpurs
 
-<img height="160" alt="Screenshot 2026-07-21 at 17 18 26" src="https://github.com/user-attachments/assets/a1d90da5-3c50-445a-be26-b41ea807489f" />
+<img height="160" alt="Screenshot 2026-07-21 at 17 19 55" src="https://github.com/user-attachments/assets/461687af-046a-4b23-a625-ec084710782b" />
 <br />
 <br />
 

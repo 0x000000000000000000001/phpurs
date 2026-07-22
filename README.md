@@ -4,7 +4,7 @@
 <br />
 <br />
 
-A super-optimized **PureScript-to-PHP compiler**, entirely written in PureScript, leveraging PHP's **portability** and **omnipresence on the web**. It successfully passes the official PureScript test suite and is ready for production.
+A super-optimized **PureScript-to-PHP compiler**, entirely written in PureScript, leveraging PHP's **portability**, **omnipresence on the web**, and **huge ecosystem**. It successfully passes the official PureScript test suite and is ready for production.
 
 `phpurs` leverages the intermediate `CoreFn` representation to compile your pure business logic into robust, modern PHP 8.4+ code. It seamlessly integrates into your existing PureScript workflow as a custom backend.
 

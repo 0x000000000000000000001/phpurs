@@ -118,7 +118,11 @@ if [ $# -gt 0 ]; then
     elif [[ "$arg" == "-c" || "$arg" == "--clean" ]]; then
       CLEAN_CACHE=1
     else
-      if [ -f "$PASSING_DIR/$arg" ]; then
+      if [ -f "$ROOT_DIR/$arg" ]; then
+        TEST_FILES+=("$ROOT_DIR/$arg")
+      elif [ -f "$arg" ]; then
+        TEST_FILES+=("$arg")
+      elif [ -f "$PASSING_DIR/$arg" ]; then
         TEST_FILES+=("$PASSING_DIR/$arg")
       elif [ -f "$PASSING_DIR/$arg.purs" ]; then
         TEST_FILES+=("$PASSING_DIR/$arg.purs")

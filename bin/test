@@ -202,7 +202,6 @@ for test_file in "${TEST_FILES[@]}"; do
       break
     fi
     retry=$((retry+1))
-    sleep 0.5
   done
 
   if [ $build_success -eq 1 ]; then
@@ -223,7 +222,6 @@ for test_file in "${TEST_FILES[@]}"; do
     failed=$((failed+1))
     break
   fi
-  sleep 0.2 # Just to let the computer breathe, and avoid sigsegv...
 done
 
 echo ""

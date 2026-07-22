@@ -5426,31 +5426,40 @@ var translateExprImpl = (recVars) => (namedBound) => (bound) => (_currentBinding
   if (v._2.tag === "Branch") {
     const resDef = translateExprImpl(recVars)(namedBound)(bound)(Nothing)(loopCtx)(isTail)(nextId)(v._2._2);
     const tmpVar = "__t" + showIntImpl(resDef.nextId);
+    const labelName = "end_branch_" + showIntImpl(resDef.nextId);
     const accPairs = foldlArray((acc) => (v1) => {
       const resCond = translateExprImpl(recVars)(namedBound)(bound)(Nothing)([])(false)(acc.nextId)(v1._1);
       const resBody = translateExprImpl(recVars)(namedBound)(bound)(Nothing)(loopCtx)(isTail)(resCond.nextId)(v1._2);
       return {
-        ifNodes: snoc(acc.ifNodes)({
-          cond: wrapInStmts(arrayMap((v2) => {
-            const $0 = lookup3(v2)(bound);
-            if ($0.tag === "Nothing") {
-              return v2;
-            }
-            if ($0.tag === "Just") {
-              return $0._1;
-            }
-            fail();
-          })(fromFoldableImpl(foldableSet.foldr, freeVars(v1._1))))(resCond.stmts)(resCond.expr),
-          body: [...resBody.stmts, $PhpExpr("PhpAssign", tmpVar, resBody.expr)]
-        }),
+        stmts: [
+          ...acc.stmts,
+          $PhpExpr(
+            "PhpIf",
+            wrapInStmts(arrayMap((v2) => {
+              const $0 = lookup3(v2)(bound);
+              if ($0.tag === "Nothing") {
+                return v2;
+              }
+              if ($0.tag === "Just") {
+                return $0._1;
+              }
+              fail();
+            })(fromFoldableImpl(foldableSet.foldr, freeVars(v1._1))))(resCond.stmts)(resCond.expr),
+            [...resBody.stmts, $PhpExpr("PhpAssign", tmpVar, resBody.expr), $PhpExpr("PhpRaw", "goto " + labelName + ";")],
+            []
+          )
+        ],
         nextId: resBody.nextId
       };
-    })({ ifNodes: [], nextId: resDef.nextId + 1 | 0 })(v._2._1);
+    })({ stmts: [], nextId: resDef.nextId + 1 | 0 })(v._2._1);
     return {
-      stmts: foldrArray((ifNode) => (accElse) => [$PhpExpr("PhpIf", ifNode.cond, ifNode.body, accElse)])([
+      stmts: [
+        $PhpExpr("PhpRaw", "$" + tmpVar + " = null;"),
+        ...accPairs.stmts,
         ...resDef.stmts,
-        $PhpExpr("PhpAssign", tmpVar, resDef.expr)
-      ])(accPairs.ifNodes),
+        $PhpExpr("PhpAssign", tmpVar, resDef.expr),
+        $PhpExpr("PhpRaw", labelName + ":")
+      ],
       expr: $PhpExpr("PhpVar", tmpVar),
       nextId: accPairs.nextId
     };

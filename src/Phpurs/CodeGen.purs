@@ -453,25 +453,27 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
     in
       { stmts: [], expr: PhpFunction useVars [] (res.stmts <> [ PhpReturn res.expr ]), nextId: res.nextId }
 
-  Branch pairs def ->
+  Branch pairs def -> 
     let
       resDef = translateExprImpl recVars namedBound bound Nothing loopCtx isTail nextId def
       tmpVar = "__t" <> show resDef.nextId
+      labelName = "end_branch_" <> show resDef.nextId
       accPairs = foldl
         ( \acc (Pair condExpr@(TcoExpr _ _cond) bodyExpr@(TcoExpr _ _body)) ->
             let
               resCond = translateExprImpl recVars namedBound bound Nothing [] false acc.nextId condExpr
               resBody = translateExprImpl recVars namedBound bound Nothing loopCtx isTail resCond.nextId bodyExpr
+              condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
+              ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpRaw ("goto " <> labelName <> ";") ]) []
             in
-              { ifNodes: Array.snoc acc.ifNodes { cond: wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr, body: resBody.stmts <> [ PhpAssign tmpVar resBody.expr ] }, nextId: resBody.nextId }
+              { stmts: acc.stmts <> [ifNode], nextId: resBody.nextId }
         )
-        { ifNodes: [], nextId: resDef.nextId + 1 }
+        { stmts: [], nextId: resDef.nextId + 1 }
         (toArray pairs)
 
-      finalElse = resDef.stmts <> [ PhpAssign tmpVar resDef.expr ]
-      nestedIf = foldr (\ifNode accElse -> [ PhpIf ifNode.cond ifNode.body accElse ]) finalElse accPairs.ifNodes
+      finalDef = resDef.stmts <> [ PhpAssign tmpVar resDef.expr, PhpRaw (labelName <> ":") ]
     in
-      { stmts: nestedIf, expr: PhpVar tmpVar, nextId: accPairs.nextId }
+      { stmts: [ PhpRaw ("$" <> tmpVar <> " = null;") ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
 
   Update e props ->
     let

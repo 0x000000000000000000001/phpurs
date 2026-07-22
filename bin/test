@@ -107,7 +107,7 @@ failed=0
 
 # Clean output (now handled inside the loop)
 
-SKIP_BEFORE="2049" # E.g. "TCO" to run tests after TCO.purs
+SKIP_BEFORE="" # E.g. "TCO" to run tests after TCO.purs
 TEST_FILES=()
 CLEAN_CACHE=0
 

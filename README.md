@@ -200,9 +200,14 @@ workspace/
 └── ... (all other core phpurs-* forks)
 ```
 
-To run the test suite:
+To easily clone all these required dependencies, you can simply run the provided setup script:
 ```bash
 cd phpurs
+./bin/setup-siblings
+```
+
+To run the test suite:
+```bash
 ./bin/test
 ```
 

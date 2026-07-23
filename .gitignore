@@ -10,3 +10,4 @@ purs_files.txt
 .DS_Store
 .phpurs-cache.json
 bin/phpurs.js
+/result

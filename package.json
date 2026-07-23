@@ -1,13 +1,13 @@
 {
   "name": "phpurs",
   "version": "0.1.0",
-  "description": "PureScript to PHP backend",
+  "description": "PureScript-to-PHP backend",
   "type": "module",
   "bin": {
     "phpurs": "bin/phpurs.js"
   },
   "scripts": {
-    "build": "spago build && NODE_OPTIONS=\"--no-deprecation\" purs-backend-es bundle-app -p node -m Main --to bin/phpurs.js",
+    "build": "spago build && NODE_OPTIONS=\"--no-deprecation\" npx purs-backend-es bundle-app -p node -m Main --to bin/phpurs.js",
     "prepare": "npm run build"
   },
   "dependencies": {

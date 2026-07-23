@@ -201,7 +201,7 @@ for test_file in "${TEST_FILES[@]}"; do
   max_retries=2
   build_success=0
   while [ $retry -le $max_retries ]; do
-    if spago build -q > /dev/null 2>&1; then
+    if spago build -q; then
       build_success=1
       break
     fi

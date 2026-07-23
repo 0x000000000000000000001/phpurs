@@ -107,11 +107,33 @@
           app = {
             type = "app";
             program = "${self.packages.${system}.default}/bin/phpurs";
+            meta.description = "PureScript compiler backend targeting PHP";
           };
         in
         {
           phpurs = app;
           default = app;
+        });
+
+      checks = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor.${system};
+        in
+        {
+          build = self.packages.${system}.default;
+
+          # The compiler run outside a spago project must fail gracefully
+          # rather than crash the wrapper: nonzero exit, complaining about
+          # the missing output/ directory. This asserts the node wrapper,
+          # the slim runtime, and the bundle are all wired correctly.
+          smoke = pkgs.runCommand "phpurs-smoke" { } ''
+            if ${self.packages.${system}.default}/bin/phpurs 2> err.log; then
+              echo "expected nonzero exit outside a project" >&2
+              exit 1
+            fi
+            grep -q "output" err.log
+            touch $out
+          '';
         });
 
       devShells = forAllSystems (system:
@@ -131,8 +153,8 @@
               pkgs.purescript-language-server
 
               # Bundling and running the compiler itself. Full nodejs here on
-              # purpose: bin/test and bin/dev invoke `npm run build` and
-              # `npx spago`, which nodejs-slim does not provide.
+              # purpose: bin/test invokes `npm run build`, which nodejs-slim
+              # does not provide.
               pkgs.esbuild
               pkgs.nodejs
 

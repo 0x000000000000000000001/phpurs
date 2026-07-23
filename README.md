@@ -203,7 +203,7 @@ workspace/
 To easily clone all these required dependencies, you can simply run the provided setup script:
 ```bash
 cd phpurs
-./bin/setup-siblings
+./bin/setup
 ```
 
 To run the test suite:

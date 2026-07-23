@@ -106,7 +106,7 @@ workspace:
     record:
       path: "../../../phpurs-record"
   packageSet:
-    registry: 73.3.0
+    registry: 77.10.1
 YAML
 fi
 

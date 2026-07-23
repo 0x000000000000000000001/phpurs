@@ -186,7 +186,7 @@ While `phpurs` could have been built around powerful daemonized extensions like 
 
 ## Local Development & Testing
 
-### Nix Environment (Recommended)
+### Nix environment (Recommended)
 
 This repository is fully configured with a [Nix Flake](https://nixos.wiki/wiki/Flakes). If you have Nix installed, you can drop into a fully reproducible development shell containing the exact versions of PureScript, Spago, Node.js, PHP, and Composer needed to work on the compiler:
 ```bash

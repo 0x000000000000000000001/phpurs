@@ -22,7 +22,9 @@ BLACKLIST=(
   "4179.purs"
 )
 
-for pkg in assert prelude effect console arrays partial foldable-traversable st exceptions integers math strings enums foreign-object numbers refs unsafe-coerce functions unfoldable record; do
+source "$(dirname "$0")/pkg"
+
+for pkg in "${CORE_PACKAGES[@]}"; do
   if [ ! -d "$ROOT_DIR/../phpurs-$pkg" ]; then
     echo -e "\033[0;31m[ERROR]\033[0m Missing sibling checkout: phpurs-$pkg"
     echo "Please run ./bin/setup to clone all required repositories automatically."
@@ -39,75 +41,20 @@ npm run build --silent || { echo -e "\n\033[0;31m[FAILED]\033[0m phpurs build fa
 cd "$RUNNER_DIR"
 
 if [ ! -f spago.yaml ]; then
-  cat << 'YAML' > spago.yaml
-package:
-  dependencies:
-    - prelude
-    - effect
-    - console
-    - arrays
-    - partial
-    - foldable-traversable
-    - st
-    - exceptions
-    - integers
-    - math
-    - strings
-    - enums
-    - foreign-object
-    - numbers
-    - refs
-    - unsafe-coerce
-    - functions
-    - unfoldable
-    - record
-    - assert
-  name: runner
-workspace:
-  extraPackages:
-    assert:
-      path: "../../../phpurs-assert"
-    prelude:
-      path: "../../../phpurs-prelude"
-    effect:
-      path: "../../../phpurs-effect"
-    console:
-      path: "../../../phpurs-console"
-    arrays:
-      path: "../../../phpurs-arrays"
-    partial:
-      path: "../../../phpurs-partial"
-    foldable-traversable:
-      path: "../../../phpurs-foldable-traversable"
-    st:
-      path: "../../../phpurs-st"
-    exceptions:
-      path: "../../../phpurs-exceptions"
-    integers:
-      path: "../../../phpurs-integers"
-    math:
-      path: "../../../phpurs-math"
-    strings:
-      path: "../../../phpurs-strings"
-    enums:
-      path: "../../../phpurs-enums"
-    foreign-object:
-      path: "../../../phpurs-foreign-object"
-    numbers:
-      path: "../../../phpurs-numbers"
-    refs:
-      path: "../../../phpurs-refs"
-    unsafe-coerce:
-      path: "../../../phpurs-unsafe-coerce"
-    functions:
-      path: "../../../phpurs-functions"
-    unfoldable:
-      path: "../../../phpurs-unfoldable"
-    record:
-      path: "../../../phpurs-record"
-  packageSet:
-    registry: 77.10.1
-YAML
+  echo "package:" > spago.yaml
+  echo "  name: runner" >> spago.yaml
+  echo "  dependencies:" >> spago.yaml
+  for pkg in "${CORE_PACKAGES[@]}"; do
+    echo "    - $pkg" >> spago.yaml
+  done
+  echo "workspace:" >> spago.yaml
+  echo "  packageSet:" >> spago.yaml
+  echo "    registry: 77.10.1" >> spago.yaml
+  echo "  extraPackages:" >> spago.yaml
+  for pkg in "${CORE_PACKAGES[@]}"; do
+    echo "    $pkg:" >> spago.yaml
+    echo "      path: \"../../../phpurs-$pkg\"" >> spago.yaml
+  done
 fi
 
 echo "Running tests from $PASSING_DIR..."

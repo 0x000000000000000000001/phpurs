@@ -22,6 +22,14 @@ BLACKLIST=(
   "4179.purs"
 )
 
+for pkg in assert prelude effect console arrays partial foldable-traversable st exceptions integers math strings enums foreign-object numbers refs unsafe-coerce functions unfoldable record; do
+  if [ ! -d "$ROOT_DIR/../phpurs-$pkg" ]; then
+    echo -e "\033[0;31m[ERROR]\033[0m Missing sibling checkout: phpurs-$pkg"
+    echo "Please clone all core phpurs-* repositories as siblings of the phpurs directory before running tests."
+    exit 1
+  fi
+done
+
 mkdir -p "$RUNNER_DIR/src"
 
 echo "Building phpurs compiler..."
@@ -201,7 +209,7 @@ for test_file in "${TEST_FILES[@]}"; do
   max_retries=2
   build_success=0
   while [ $retry -le $max_retries ]; do
-    if spago build -q; then
+    if spago build -q > /dev/null 2>&1; then
       build_success=1
       break
     fi

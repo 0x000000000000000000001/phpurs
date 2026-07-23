@@ -184,6 +184,28 @@ A good rule of thumb is to **act exactly as if you were importing Node.js librar
 **Why native Fibers instead of Swoole?**
 While `phpurs` could have been built around powerful daemonized extensions like [Swoole](https://swoole.co.uk/) or FrankenPHP, doing so would have compromised the core promise of the project: the ability to compile and deploy highly-concurrent PureScript into cheap, standard "containerless" environments (like a basic VPS or shared hosting). By relying exclusively on native PHP 8.1+ Fibers, `phpurs` ensures that your asynchronous PureScript code can run natively anywhere PHP runs, without requiring custom C extensions or complex server-side configurations.
 
+## Local Development & Testing
+
+If you plan to contribute to the compiler or run the official test suite locally, you must follow a specific "sibling-checkout" directory layout. 
+
+Because `phpurs` replaces the JS ecosystem with PHP, it requires custom PHP-compatible forks of the core PureScript libraries (e.g. `purescript-prelude` becomes `phpurs-prelude`). The internal test runner (`bin/test`) and development wrapper (`bin/dev`) both expect these core `phpurs-*` repositories to be cloned side-by-side in the same parent directory as the main `phpurs` repository.
+
+```
+workspace/
+├── phpurs/
+├── phpurs-prelude/
+├── phpurs-effect/
+├── phpurs-console/
+├── phpurs-assert/
+└── ... (all other core phpurs-* forks)
+```
+
+To run the test suite:
+```bash
+cd phpurs
+./bin/test
+```
+
 ## Architecture
 
 `phpurs` is built on top of [Arista's purescript-backend-optimizer](https://github.com/aristanetworks/purescript-backend-optimizer) to avoid reinventing the optimization wheel. The compilation pipeline is functionally decoupled:

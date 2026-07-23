@@ -679,7 +679,7 @@
     "extra_packages": {
       "backend-optimizer": {
         "git": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
-        "ref": "main",
+        "ref": "50562d2f3bd46bbfcd887f4ba3567cd162a79e44",
         "dependencies": [
           "argonaut",
           "arrays",
@@ -846,7 +846,7 @@
     "backend-optimizer": {
       "type": "git",
       "url": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
-      "rev": "9c76235b8892e7043ae28a2b3b11c787af66656f",
+      "rev": "50562d2f3bd46bbfcd887f4ba3567cd162a79e44",
       "dependencies": [
         "argonaut",
         "arrays",

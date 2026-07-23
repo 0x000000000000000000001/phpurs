@@ -9,10 +9,10 @@ $exports['runtimeImportImpl'] = function($nothing) {
                             throw new \Exception("File not found");
                         }
                         require_once __DIR__ . '/../' . $moduleName . '/index.php';
-                        return $body($nothing)();
                     } catch (\Throwable $err) {
                         return $body($just($err->getMessage()))();
                     }
+                    return $body($nothing)();
                 };
             };
         };

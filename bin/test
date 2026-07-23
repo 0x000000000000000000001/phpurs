@@ -18,6 +18,8 @@ BLACKLIST=(
   "DerivingProfunctor.purs"
   # Tests 32-bit integer boundary overflow behavior which phpurs natively treats as 64-bit
   "2136.purs"
+  # Tests InitializationError of cyclic dependencies which doesn't apply to PHP lazy loading
+  "4179.purs"
 )
 
 mkdir -p "$RUNNER_DIR/src"

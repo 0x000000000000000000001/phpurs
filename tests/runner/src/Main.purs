@@ -3,6 +3,10 @@ module Main where
 import Prelude
 import Effect.Console (log)
 
-s = \x y z -> x z (y z)
+f1 :: (_ -> _) -> _
+f1 g = g 1
 
-main = log "Done"
+f2 :: _ -> _
+f2 _ = "Done"
+
+main = log $ f1 f2

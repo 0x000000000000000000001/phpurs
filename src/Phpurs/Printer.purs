@@ -112,7 +112,7 @@ genCurry args captures stmts =
 printExpr :: PhpExpr -> String
 printExpr expr = case expr of
   PhpNativeFunction _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
-  PhpValueThunk _ _ -> "/* ERROR: PhpValueThunk inside expression */"
+  PhpGlobalAssign _ _ -> "/* ERROR: PhpGlobalAssign inside expression */"
   PhpFunction captures args stmts ->
     genCurry args captures stmts
   PhpVar ident -> "$" <> safeName ident
@@ -122,7 +122,7 @@ printExpr expr = case expr of
         Just mod -> joinWith "_" mod <> "_"
         Nothing -> ""
       idStr = safeName (modPrefix <> ident)
-    in "($GLOBALS['" <> idStr <> "'] ?? \\PhpursThunks::eval('" <> idStr <> "'))"
+    in "$GLOBALS['" <> idStr <> "']"
   PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i
@@ -130,8 +130,9 @@ printExpr expr = case expr of
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
-  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"
+  PhpAssocArray arr -> "[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"
   PhpPropertyAccess e prop -> "(" <> printExpr e <> ")->{'" <> safeName prop <> "'}"
+  PhpRecordAccess e prop -> "(" <> printExpr e <> ")['" <> safeName prop <> "']"
   PhpArrayIndex arr i -> "(" <> printExpr arr <> ")[" <> show i <> "]"
   PhpClone obj -> "clone " <> printExpr obj
   PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr v
@@ -173,6 +174,13 @@ printExpr expr = case expr of
           (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map printExpr elseStmts) <> ";") <> "\n}" else "")
 
   PhpThrow v -> "throw new \\Exception(" <> printExpr v <> ")"
+  PhpMatch subj cases defExpr ->
+    let
+      printCase { val, body } = printExpr val <> " => " <> printExpr body
+      casesStr = joinWith ", " (map printCase cases)
+      defStr = "default => " <> printExpr defExpr
+    in
+      "match (" <> printExpr subj <> ") { " <> casesStr <> (if length cases > 0 then ", " else "") <> defStr <> " }"
   PhpTernary cond t e -> "(" <> printExpr cond <> " ? " <> printExpr t <> " : " <> printExpr e <> ")"
   PhpReturn v -> "return " <> printExpr v
   PhpBinOp op left right -> "(" <> printExpr left <> " " <> op <> " " <> printExpr right <> ")"
@@ -218,7 +226,8 @@ printDecl decl = resolveContinues $ case decl.expression of
     "// " <> decl.identifier <> "\n" <>
     genNativeCurry (safeFuncName name) args stmts <> "\n" <>
     "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
-  PhpValueThunk _ _ -> ""
+  PhpGlobalAssign name expr ->
+    "// " <> decl.identifier <> "\n$GLOBALS['" <> safeName name <> "'] = " <> printExpr expr <> ";\n"
   expr ->
     "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr expr <> ";\n"
 
@@ -240,15 +249,6 @@ printPhpFile isBundle ffiString file =
     imps = if isBundle then "" else joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
     debugImps = "// ALL IMPORTS: " <> joinWith ", " (map (\i -> joinWith "." i) file.imports) <> "\n" <> "// TO REQUIRE: " <> joinWith ", " (map (\i -> joinWith "." i) importsToRequire) <> "\n"
     decls = joinWith "\n" $ map printDecl file.decls
-    thunks = filter (\d -> case d.expression of
-      PhpValueThunk _ _ -> true
-      _ -> false
-    ) file.decls
-    thunkAssignments = joinWith "\n" $ map (\d -> case d.expression of
-      PhpValueThunk name expr -> "\\PhpursThunks::$thunks['" <> safeName name <> "'] = function() { $v = " <> resolveContinues (printExpr expr) <> "; return $v; };"
-      _ -> ""
-    ) thunks
-    evalThunkStr = ""
     fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
       "  function phpurs_curry_fallback($fn, $args, $expected) {\n" <>
       "    $missing = $expected - \\count($args);\n" <>
@@ -337,4 +337,4 @@ printPhpFile isBundle ffiString file =
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"
   in
-    prefix <> debugImps <> imps <> "\n\n" <> dataClasses <> fallback <> evalThunkStr <> thunkAssignments <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> suffix
+    prefix <> debugImps <> imps <> "\n\n" <> dataClasses <> fallback <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> suffix

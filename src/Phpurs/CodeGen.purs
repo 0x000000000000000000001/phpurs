@@ -106,7 +106,7 @@ translateOperator2 (OpStringOrd OpLt) l r = PhpBinOp "<" l r
 translateOperator2 (OpStringOrd OpLte) l r = PhpBinOp "<=" l r
 
 
-type LoopCtx = { ident :: String, params :: Array String, doneVar :: String, loopFuncVar :: String, resultVar :: String, varPrefix :: String }
+type LoopCtx = { ident :: String, params :: Array String, varPrefix :: String, labelName :: String }
 
 flattenApp :: TcoExpr -> Tuple (TcoExpr) (Array TcoExpr)
 flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
@@ -196,7 +196,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
     in case isTailCallTo of
       Just index ->
         let
-          targetCtx = fromMaybe { ident: "", params: [], doneVar: "", resultVar: "", loopFuncVar: "", varPrefix: "" } (Array.index loopCtx index)
+          targetCtx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.index loopCtx index)
           
           flatAccFinal = foldl
             ( \acc arg@(TcoExpr _ _) ->
@@ -211,9 +211,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
           tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (flatAccFinal.nextId + i)) e) flatAccFinal.exprs
           assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (targetCtx.varPrefix <> (fromMaybe "" (Array.index targetCtx.params i))) (PhpVar ("__tco_" <> show (flatAccFinal.nextId + i)))) flatAccFinal.exprs
           
-          popStmts = map (\ctx -> PhpAssign ctx.doneVar (PhpBoolean true)) (Array.take index loopCtx)
-          
-          finalStmts = flatAccFinal.stmts <> tcoStmts <> assignStmts <> popStmts <> [ PhpAssign targetCtx.doneVar (PhpBoolean false), PhpReturn (PhpRaw "null") ]
+          finalStmts = flatAccFinal.stmts <> tcoStmts <> assignStmts <> [ PhpGoto targetCtx.labelName ]
         in { stmts: finalStmts, expr: PhpRaw "null", nextId: flatAccFinal.nextId + Array.length flatArgs }
       Nothing -> 
         let curriedCall = foldl (\acc e -> PhpCall acc [e]) resFn.expr accFinal.exprs
@@ -245,13 +243,11 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
     in case isTailCallTo of
       Just index ->
         let
-          targetCtx = fromMaybe { ident: "", params: [], doneVar: "", resultVar: "", loopFuncVar: "", varPrefix: "" } (Array.index loopCtx index)
+          targetCtx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.index loopCtx index)
           tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (accArgs.nextId + i)) e) accArgs.exprs
           assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (targetCtx.varPrefix <> (fromMaybe "" (Array.index targetCtx.params i))) (PhpVar ("__tco_" <> show (accArgs.nextId + i)))) accArgs.exprs
           
-          popStmts = map (\ctx -> PhpAssign ctx.doneVar (PhpBoolean true)) (Array.take index loopCtx)
-          
-          finalStmts = accArgs.stmts <> tcoStmts <> assignStmts <> popStmts <> [ PhpAssign targetCtx.doneVar (PhpBoolean false), PhpReturn (PhpRaw "null") ]
+          finalStmts = accArgs.stmts <> tcoStmts <> assignStmts <> [ PhpGoto targetCtx.labelName ]
         in { stmts: finalStmts, expr: PhpRaw "null", nextId: accArgs.nextId + Array.length args }
       Nothing ->
         { stmts: resFn.stmts <> accArgs.stmts, expr: PhpCall resFn.expr accArgs.exprs, nextId: accArgs.nextId }
@@ -305,7 +301,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
       res = translateExprImpl recVars namedBound bound Nothing [] false nextId e
     in
       case acc of
-        GetProp prop -> { stmts: res.stmts, expr: PhpPropertyAccess res.expr prop, nextId: res.nextId }
+        GetProp prop -> { stmts: res.stmts, expr: PhpRecordAccess res.expr prop, nextId: res.nextId }
         GetIndex idx -> { stmts: res.stmts, expr: PhpArrayIndex res.expr idx, nextId: res.nextId }
         GetCtorField _ _ _ _ prop _ -> { stmts: res.stmts, expr: PhpPropertyAccess res.expr prop, nextId: res.nextId }
 
@@ -357,7 +353,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
           
           loopCtxs = map (\fn ->
             let newName = fromMaybe fn.ident (Map.lookup fn.ident newBound)
-            in { ident: newName, params: fn.args, doneVar: "__tco_done_" <> newName <> "_" <> show nextId, resultVar: "__tco_res_" <> newName <> "_" <> show nextId, loopFuncVar: "__tco_loop_" <> newName <> "_" <> show nextId, varPrefix: "__tco_var_" <> newName <> "_" <> show nextId <> "_" }
+            in { ident: newName, params: fn.args, varPrefix: "__tco_var_" <> newName <> "_" <> show nextId <> "_", labelName: "tco_loop_" <> newName <> "_" <> show nextId }
           ) fns
           
           combinedLoopCtx = loopCtxs <> loopCtx
@@ -366,38 +362,25 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
             ( \fn ->
                 let
                   newName = fromMaybe fn.ident (Map.lookup fn.ident newBound)
-                  ctx = fromMaybe { ident: "", params: [], doneVar: "", resultVar: "", loopFuncVar: "", varPrefix: "" } (Array.find (\c -> c.ident == newName) loopCtxs)
+                  ctx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.find (\c -> c.ident == newName) loopCtxs)
                   
                   loopVars = map (\p -> ctx.varPrefix <> p) fn.args
                   
                   initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
-                  
-                  doneAssign = PhpAssign ctx.doneVar (PhpBoolean false)
-                  resAssign = PhpAssign ctx.resultVar (PhpRaw "null")
                   
                   resBodyMut = translateExprImpl combinedRecVars namedBound newBound Nothing combinedLoopCtx true nextId fn.body
                   
                   mappedFvs = map (\v -> fromMaybe v (Map.lookup v newBound)) (Array.fromFoldable fn.fvs)
                   useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
                   
-                  allLoopCtxs = loopCtx <> loopCtxs
-                  mutVarsToCapture = foldMap (\c -> Array.cons ("&" <> c.doneVar) (map (\p -> "&" <> c.varPrefix <> p) c.params)) allLoopCtxs
-                  
-                  useVarsInner = mutVarsToCapture <> useVarsLoop
-                  
-                  mutVarsToCaptureOuter = foldMap (\c -> Array.cons ("&" <> c.doneVar) (map (\p -> "&" <> c.varPrefix <> p) c.params)) loopCtx
+                  mutVarsToCaptureOuter = foldMap (\c -> map (\p -> "&" <> c.varPrefix <> p) c.params) loopCtx
                   useVarsOuter = mutVarsToCaptureOuter <> useVarsLoop
                   
                   innerLoopInit = Array.mapWithIndex (\i p -> PhpAssign p (PhpVar (fromMaybe "" (Array.index loopVars i)))) fn.args
-                  innerFuncBody = Array.cons (PhpAssign ctx.doneVar (PhpRaw "true")) (innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ])
+                  innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
                   
-                  innerFunc = PhpAssign ctx.loopFuncVar (PhpFunction useVarsInner fn.args innerFuncBody)
-                  
-                  whileLoop = PhpWhile (PhpBinOp "===" (PhpVar ctx.doneVar) (PhpBoolean false))
-                    [ PhpAssign ctx.resultVar (PhpCall (PhpVar ctx.loopFuncVar) (map PhpVar loopVars)) ]
-                    
                 in
-                  PhpAssign newName (PhpFunction useVarsOuter fn.args (initVarStmts <> [doneAssign, resAssign, innerFunc, whileLoop, PhpReturn (PhpVar ctx.resultVar)]))
+                  PhpAssign newName (PhpFunction useVarsOuter fn.args (initVarStmts <> innerFuncBody))
             )
             fns
             
@@ -472,8 +455,31 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
         (toArray pairs)
 
       finalDef = resDef.stmts <> [ PhpAssign tmpVar resDef.expr, PhpRaw (labelName <> ":") ]
-    in
-      { stmts: [ PhpRaw ("$" <> tmpVar <> " = null;") ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
+      
+      extractMatch :: Array PhpExpr -> Array PhpExpr -> Maybe PhpExpr
+      extractMatch ifNodes defStmts = case Array.uncons ifNodes of
+        Nothing -> Nothing
+        Just { head: PhpIf (PhpBinOp "===" subj val) [PhpAssign tVar body, PhpRaw _] [], tail } | tVar == tmpVar ->
+            let
+              checkTail :: Array PhpExpr -> Array { val :: PhpExpr, body :: PhpExpr } -> Maybe (Array { val :: PhpExpr, body :: PhpExpr })
+              checkTail rest acc = case Array.uncons rest of
+                Nothing -> Just acc
+                Just { head: PhpIf (PhpBinOp "===" s v) [PhpAssign tVar2 b, PhpRaw _] [], tail: t } | s == subj && tVar2 == tmpVar -> checkTail t (Array.snoc acc { val: v, body: b })
+                _ -> Nothing
+            in case checkTail tail [{ val, body }] of
+              Just validCases ->
+                if Array.length defStmts == 2 then
+                  case Array.index defStmts 0 of
+                    Just (PhpAssign tVar3 defExpr) | tVar3 == tmpVar -> Just (PhpMatch subj validCases defExpr)
+                    _ -> Nothing
+                else Nothing
+              Nothing -> Nothing
+        _ -> Nothing
+        
+    in case extractMatch accPairs.stmts finalDef of
+      Just matchExpr -> { stmts: [], expr: matchExpr, nextId: accPairs.nextId }
+      Nothing ->
+        { stmts: [ PhpRaw ("$" <> tmpVar <> " = null;") ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
 
   Update e props ->
     let
@@ -484,12 +490,12 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
             let
               resVal = translateExprImpl recVars namedBound bound Nothing [] false acc.nextId val
             in
-              { stmts: acc.stmts <> resVal.stmts <> [ PhpAssignExpr (PhpPropertyAccess (PhpVar tmpVar) key) resVal.expr ], nextId: resVal.nextId }
+              { stmts: acc.stmts <> resVal.stmts <> [ PhpAssignExpr (PhpRecordAccess (PhpVar tmpVar) key) resVal.expr ], nextId: resVal.nextId }
         )
         { stmts: [], nextId: resE.nextId + 1 }
         props
     in
-      { stmts: resE.stmts <> [ PhpAssign tmpVar (PhpClone resE.expr) ] <> accProps.stmts, expr: PhpVar tmpVar, nextId: accProps.nextId }
+      { stmts: resE.stmts <> [ PhpAssign tmpVar resE.expr ] <> accProps.stmts, expr: PhpVar tmpVar, nextId: accProps.nextId }
 
   CtorSaturated _ _ _ (Ident ctorName) args ->
     let
@@ -571,36 +577,26 @@ translate imports mod =
                 Just fns ->
                   let
                     loopCtxs = map (\fn ->
-                      { ident: fn.ident, params: fn.args, doneVar: "__tco_done_" <> fn.ident, resultVar: "__tco_res_" <> fn.ident, loopFuncVar: "__tco_loop_" <> fn.ident, varPrefix: "__tco_var_" <> fn.ident <> "_" }
+                      { ident: fn.ident, params: fn.args, varPrefix: "__tco_var_" <> fn.ident <> "_", labelName: "tco_loop_" <> fn.ident }
                     ) fns
                     
                     fnWrapperStmts = map
                       ( \fn ->
                           let
-                            ctx = fromMaybe { ident: "", params: [], doneVar: "", resultVar: "", loopFuncVar: "", varPrefix: "" } (Array.find (\c -> c.ident == fn.ident) loopCtxs)
+                            ctx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.find (\c -> c.ident == fn.ident) loopCtxs)
                             loopVars = map (\p -> ctx.varPrefix <> p) fn.args
                             initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
-                            doneAssign = PhpAssign ctx.doneVar (PhpBoolean false)
-                            resAssign = PhpAssign ctx.resultVar (PhpRaw "null")
                             
                             resBodyMut = translateExprImpl recVars Map.empty Map.empty Nothing loopCtxs true 0 fn.body
                             
                             mappedFvs = map (\v -> v) (Array.fromFoldable fn.fvs)
-                            useVarsLoopRaw = Array.nub (map (\mapped -> if Array.elem mapped recVars then "&" <> mapped else mapped) mappedFvs)
-                            
-                            mutVarsToCapture = foldMap (\c -> Array.cons ("&" <> c.doneVar) (map (\p -> "&" <> c.varPrefix <> p) c.params)) loopCtxs
-                            useVarsInner = mutVarsToCapture <> useVarsLoopRaw
-                            useVarsOuter = useVarsLoopRaw
+                            useVarsOuter = Array.nub (map (\mapped -> if Array.elem mapped recVars then "&" <> mapped else mapped) mappedFvs)
                             
                             innerLoopInit = Array.mapWithIndex (\i p -> PhpAssign p (PhpVar (fromMaybe "" (Array.index loopVars i)))) fn.args
-                            innerFuncBody = Array.cons (PhpAssign ctx.doneVar (PhpRaw "true")) (innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ])
-                            innerFunc = PhpAssign ctx.loopFuncVar (PhpFunction useVarsInner fn.args innerFuncBody)
-                            
-                            whileLoop = PhpWhile (PhpBinOp "===" (PhpVar ctx.doneVar) (PhpBoolean false))
-                              [ PhpAssign ctx.resultVar (PhpCall (PhpVar ctx.loopFuncVar) (map PhpVar loopVars)) ]
+                            innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
                               
                           in
-                            { identifier: fn.ident, expression: PhpValueThunk fn.ident (PhpFunction useVarsOuter fn.args (initVarStmts <> [doneAssign, resAssign, innerFunc, whileLoop, PhpReturn (PhpVar ctx.resultVar)])) }
+                             { identifier: fn.ident, expression: PhpGlobalAssign fn.ident (PhpFunction useVarsOuter fn.args (initVarStmts <> innerFuncBody)) }
                       )
                       fns
                   in
@@ -611,7 +607,7 @@ translate imports mod =
                         let
                           res = translateExprImpl recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
                         in
-                          [ { identifier: modPrefix <> name, expression: PhpValueThunk (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
+                           [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
                     )
                     group.bindings
             else
@@ -620,7 +616,7 @@ translate imports mod =
                     let
                       res = translateExprImpl [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
                     in
-                      [ { identifier: modPrefix <> name, expression: PhpValueThunk (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
+                       [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
                 )
                 group.bindings
       )

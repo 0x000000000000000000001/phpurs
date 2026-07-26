@@ -6,12 +6,14 @@ module Phpurs.PhpAst where
 
 import Prelude
 import Data.Maybe (Maybe)
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
 
 -- | Represents a PHP expression or statement.
 data PhpExpr
   = PhpFunction (Array String) (Array String) (Array PhpExpr)
   | PhpNativeFunction String (Array String) (Array PhpExpr)
-  | PhpValueThunk String PhpExpr
+  | PhpGlobalAssign String PhpExpr
   | PhpVar String
   | PhpGlobalVar (Maybe (Array String)) String
   | PhpCall PhpExpr (Array PhpExpr)
@@ -22,9 +24,11 @@ data PhpExpr
   | PhpArray (Array PhpExpr)
   | PhpAssocArray (Array { key :: String, value :: PhpExpr })
   | PhpPropertyAccess PhpExpr String
+  | PhpRecordAccess PhpExpr String
   | PhpArrayIndex PhpExpr Int
   | PhpAssign String PhpExpr | PhpAssignExpr PhpExpr PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
+  | PhpMatch PhpExpr (Array { val :: PhpExpr, body :: PhpExpr }) PhpExpr -- subject, cases, default
   | PhpThrow PhpExpr
   | PhpTernary PhpExpr PhpExpr PhpExpr
   | PhpReturn PhpExpr
@@ -39,6 +43,8 @@ data PhpExpr
   | PhpLabel String
 
 derive instance eqPhpExpr :: Eq PhpExpr
+derive instance genericPhpExpr :: Generic PhpExpr _
+instance showPhpExpr :: Show PhpExpr where show x = genericShow x
 
 type PhpDecl =
   { identifier :: String

@@ -123,6 +123,15 @@ printExpr expr = case expr of
         Nothing -> ""
       idStr = safeName (modPrefix <> ident)
     in "$GLOBALS['" <> idStr <> "']"
+  PhpCall (PhpGlobalVar mbMod ident) args ->
+    let
+      modPrefix = case mbMod of
+        Just mod -> joinWith "_" mod <> "_"
+        Nothing -> ""
+      idStr = safeName (modPrefix <> ident)
+    in "($GLOBALS['" <> idStr <> "'])(" <> joinWith ", " (map printExpr args) <> ")"
+  PhpCall (PhpCall inner args1) args2 ->
+    printExpr (PhpCall inner (args1 <> args2))
   PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
   PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
   PhpInt i -> show i

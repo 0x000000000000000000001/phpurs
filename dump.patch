@@ -1,0 +1,7 @@
+--- src/Phpurs/CodeGen.purs
++++ src/Phpurs/CodeGen.purs
+@@ -677,6 +677,10 @@
+ extractUncurriedAbs :: TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Set String }
+ extractUncurriedAbs tcoExpr@(TcoExpr _ syntax) = case syntax of
++  _ | let _ = Debug.trace "Extracting:" (\_ -> syntax) -> Nothing
+   UncurriedAbs args body ->

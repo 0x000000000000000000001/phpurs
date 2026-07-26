@@ -626,7 +626,7 @@ translate imports mod =
                             innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
                               
                           in
-                             { identifier: fn.ident, expression: PhpGlobalAssign fn.ident (PhpFunction useVarsOuter fn.args (initVarStmts <> innerFuncBody)) }
+                             { identifier: fn.ident, expression: PhpNativeFunction fn.ident fn.args (initVarStmts <> innerFuncBody) }
                       )
                       fns
                   in
@@ -634,19 +634,40 @@ translate imports mod =
                 Nothing ->
                   Array.concatMap
                     ( \(Tuple (Ident name) expr) ->
-                        let
-                          res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
-                        in
-                           [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
+                        case extractUncurriedAbs expr of
+                          Just fn ->
+                             let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] true 0 fn.body
+                             in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) fn.args (res.stmts <> [ PhpReturn res.expr ]) } ]
+                          Nothing ->
+                             let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
+                             in [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
                     )
                     group.bindings
             else
               Array.concatMap
                 ( \(Tuple (Ident name) expr) ->
                     let
-                      res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
+                      arity = extractTypeArity expr
                     in
-                       [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
+                      case extractUncurriedAbs expr of
+                        Just fn ->
+                           let res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 fn.body
+                           in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) fn.args (res.stmts <> [ PhpReturn res.expr ]) } ]
+                        Nothing ->
+                           let
+                             res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
+                           in
+                             if arity > 0 then
+                               let
+                                 closureName = modPrefix <> name <> "_closure"
+                                 args = Array.mapWithIndex (\i _ -> "v_" <> show i) (Array.replicate arity unit)
+                                 callExpr = PhpCall (PhpGlobalVar Nothing closureName) (map PhpVar args)
+                                 nativeFunc = { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) args [ PhpReturn callExpr ] }
+                                 closureAssign = { identifier: closureName, expression: PhpGlobalAssign closureName (wrapInStmts [] res.stmts res.expr) }
+                               in
+                                 [ closureAssign, nativeFunc ]
+                             else
+                               [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
                 )
                 group.bindings
       )
@@ -678,3 +699,9 @@ extractUncurriedAbs tcoExpr@(TcoExpr _ syntax) = case syntax of
       Nothing -> Just { args: thisArgs, body, fvs: freeVars tcoExpr }
   Typed _ inner -> extractUncurriedAbs inner
   _ -> Nothing
+
+extractTypeArity :: TcoExpr -> Int
+extractTypeArity (TcoExpr _ syntax) = case syntax of
+  Typed (Func args _) _ -> Array.length args
+  Typed _ inner -> extractTypeArity inner
+  _ -> 0

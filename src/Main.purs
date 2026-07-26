@@ -34,13 +34,7 @@ import PureScript.Backend.Optimizer.FfiSupport (findFfiFile)
 import Data.Newtype (unwrap)
 import Data.String (joinWith, replace, replaceAll, trim, length, contains)
 import Effect.Ref as Ref
-import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput)
-
-foreign import stringify :: forall a. String -> a -> String
-foreign import parseImpl :: forall a. (a -> Maybe a) -> Maybe a -> String -> String -> Maybe a
-
-parse :: forall a. String -> String -> Maybe a
-parse version = parseImpl Just Nothing version
+import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, checkCache, writeCache, loadDirectives)
 
 cacheVersion :: String
 cacheVersion = "1.0.0"
@@ -48,32 +42,16 @@ cacheVersion = "1.0.0"
 main :: Effect Unit
 main = launchAff_ do
   argsRaw <- liftEffect Process.argv
-
-  let
-    args = Array.concatMap (\s -> String.split (Pattern " ") s) argsRaw
-    mbMainIndex = Array.elemIndex "--main" args
-    mbMainModule = case mbMainIndex of
-      Just i -> Array.index args (i + 1)
-      Nothing -> Nothing
-
-    mbAutoloadIndex = Array.elemIndex "--autoload-path" args
-    mbAutoloadPath = case mbAutoloadIndex of
-      Just i -> Array.index args (i + 1)
-      Nothing -> Nothing
-
-    mbBundle = isJust (Array.elemIndex "--bundle" args)
-
-    mbFfiIndex = Array.elemIndex "--ffi" args
-    mbFfiDir = case mbFfiIndex of
-      Just i -> Array.index args (i + 1)
-      Nothing -> Nothing
+  let args = parseCLIArgs argsRaw
 
   finalModules <- coreFnModulesFromOutput "output"
 
   bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
 
+  directives <- loadDirectives
+
   buildModules
-    { directives: Map.empty
+    { directives
     , analyzeCustom: \_ _ -> Nothing
     , foreignSemantics: Map.filterKeys (\(Qualified mbMod _) -> case mbMod of
         Just (ModuleName m) -> not (contains (Pattern "Effect") m) && not (contains (Pattern "Control.Monad.ST") m)
@@ -82,27 +60,16 @@ main = launchAff_ do
     , traceIdents: Set.empty
     , onPrepareModule: \_ m -> pure m
     , onSkipModule: \_ (Module coreFnMod) -> do
-        let
-          modNameStr = unwrap coreFnMod.name
-          corefnPath = coreFnMod.path
-          cachePath = "output/" <> modNameStr <> "/.phpurs-cache.json"
-
-        corefnStatRes <- attempt (FS.stat corefnPath)
-        cacheStatRes <- attempt (FS.stat cachePath)
-
-        case corefnStatRes, cacheStatRes of
-          Right corefnStat, Right cacheStat | Stats.modifiedTimeMs cacheStat >= Stats.modifiedTimeMs corefnStat -> do
-            cacheContent <- FS.readTextFile UTF8 cachePath
-            pure (parse cacheVersion cacheContent)
-          _, _ -> pure Nothing
+        let modNameStr = unwrap coreFnMod.name
+        checkCache cacheVersion coreFnMod.path ("output/" <> modNameStr <> "/.phpurs-cache.json")
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
         let modNameStr = unwrap backendMod.name
-        FS.writeTextFile UTF8 ("output/" <> modNameStr <> "/.phpurs-cache.json") (stringify cacheVersion backendMod)
+        writeCache cacheVersion ("output/" <> modNameStr <> "/.phpurs-cache.json") backendMod
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod
 
-        ffiPathMb <- liftEffect $ findFfiFile ".php" ["bak/spago.d/php/p"] mbFfiDir modNameStr (Just coreFnMod.path)
+        ffiPathMb <- liftEffect $ findFfiFile ".php" ["bak/spago.d/php/p"] args.mbFfiDir modNameStr (Just coreFnMod.path)
         ffiCode <- case ffiPathMb of
           Nothing -> pure ""
           Just ffiPath -> do
@@ -125,7 +92,7 @@ main = launchAff_ do
               in
                 mappings <> (if length mappings > 0 then "\n" else "")
 
-        if mbBundle then do
+        if args.bundle then do
           let phpCodeBundle = printPhpFile true wrappedFfiCode phpFile
           liftEffect $ Ref.modify_ (\s -> s <> phpCodeBundle <> "\n") bundleContentRef
         else pure unit
@@ -136,7 +103,7 @@ main = launchAff_ do
     finalModules
 
   let
-    targetMainModules = case mbMainModule of
+    targetMainModules = case args.mbMainModule of
       Just mainMod -> [ mainMod ]
       Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) (Array.fromFoldable finalModules)
 
@@ -146,14 +113,14 @@ main = launchAff_ do
   _ <- traverse
     ( \mainMod -> do
         let
-          autoloadStr = case mbAutoloadPath of
+          autoloadStr = case args.mbAutoloadPath of
             Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
             Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
 
           sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
           callStr = "$GLOBALS['" <> sanitizedMain <> "']();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
 
-        if mbBundle then do
+        if args.bundle then do
           bundleContent <- liftEffect $ Ref.read bundleContentRef
           let entryPoint = "namespace {\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n" <> callStr <> "}\n"
           FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
@@ -164,8 +131,8 @@ main = launchAff_ do
     )
     targetMainModules
 
-  if mbBundle then do
-    case mbMainModule of
+  if args.bundle then do
+    case args.mbMainModule of
       Just _ -> pure unit
       Nothing -> do
         bundleContent <- liftEffect $ Ref.read bundleContentRef

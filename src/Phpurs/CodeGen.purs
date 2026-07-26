@@ -641,5 +641,10 @@ extractUncurriedAbs tcoExpr@(TcoExpr _ syntax) = case syntax of
   UncurriedAbs args body ->
     Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: freeVars tcoExpr }
   Abs args body ->
-    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args), body, fvs: freeVars tcoExpr }
+    let
+      thisArgs = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
+    in case extractUncurriedAbs body of
+      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Set.union (freeVars tcoExpr) inner.fvs }
+      Nothing -> Just { args: thisArgs, body, fvs: freeVars tcoExpr }
+  Typed _ inner -> extractUncurriedAbs inner
   _ -> Nothing

@@ -679,7 +679,7 @@
     "extra_packages": {
       "backend-optimizer": {
         "git": "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git",
-        "ref": "f2e80b20a511fc6fcb90a4dba2aa1c56c7b31cdf",
+        "ref": "9d21c3800b63352b9028a3c47029cb32bb0e29f7",
         "dependencies": [
           "argonaut",
           "arrays",
@@ -846,7 +846,7 @@
     "backend-optimizer": {
       "type": "git",
       "url": "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git",
-      "rev": "f2e80b20a511fc6fcb90a4dba2aa1c56c7b31cdf",
+      "rev": "9d21c3800b63352b9028a3c47029cb32bb0e29f7",
       "dependencies": [
         "argonaut",
         "arrays",

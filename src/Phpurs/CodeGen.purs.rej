@@ -1,0 +1,12 @@
+@@ -259,8 +259,10 @@
+                 funcName = modJoinedClean <> "_" <> ident
+                 mbArity = if isLocal then Map.lookup funcName moduleArities else Nothing
+               in
+                 case mbArity of
+-                  Just arity | arity == Array.length args -> Just (PhpDirectCall funcName accArgs.exprs)
++                  Just arity -> 
++                    if arity == Array.length args then Just (PhpDirectCall funcName accArgs.exprs)
++                    else Just (PhpCall (PhpGlobalVar Nothing ("DEBUG_ARITY_MISMATCH_ARITY_" <> show arity <> "_LEN_" <> show (Array.length args))) [])
+                   _ -> Nothing
+             PhpGlobalVar Nothing ident ->
+               let 

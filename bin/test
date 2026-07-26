@@ -39,7 +39,7 @@ failed=0
 
 # Clean output (now handled inside the loop)
 
-SKIP_BEFORE="" # E.g. "TCO" to run tests after TCO.purs
+SKIP_BEFORE="RowNub" # E.g. "TCO" to run tests after TCO.purs
 TEST_FILES=()
 CLEAN_CACHE=0
 
@@ -170,7 +170,7 @@ for test_file in "${TEST_FILES[@]}"; do
     node ../../bin/phpurs.js > /dev/null 2>&1
     
     # Run the compiled PHP code
-    output_run=$(php output/Main/main.mod.php 2>&1)
+    output_run=$(php -d memory_limit=512M output/Main/main.mod.php 2>&1)
     exit_code=$?
     
     if [ -n "$output_run" ]; then

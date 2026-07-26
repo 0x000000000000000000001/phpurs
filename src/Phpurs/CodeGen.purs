@@ -356,7 +356,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
             in { ident: newName, params: fn.args, varPrefix: "__tco_var_" <> newName <> "_" <> show nextId <> "_", labelName: "tco_loop_" <> newName <> "_" <> show nextId }
           ) fns
           
-          combinedLoopCtx = loopCtxs <> loopCtx
+          combinedLoopCtx = loopCtxs
           
           fnWrapperStmts = map
             ( \fn ->

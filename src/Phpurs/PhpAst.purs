@@ -12,8 +12,8 @@ import Data.Show.Generic (genericShow)
 
 -- | Represents a PHP expression or statement.
 data PhpExpr
-  = PhpFunction (Array String) (Array String) (Array PhpExpr)
-  | PhpNativeFunction String (Array String) (Array PhpExpr)
+  = PhpFunction (Array String) (Array { name :: String, type_ :: String }) String (Array PhpExpr)
+  | PhpNativeFunction String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
   | PhpGlobalAssign String PhpExpr
   | PhpVar String
   | PhpGlobalVar (Maybe (Array String)) String

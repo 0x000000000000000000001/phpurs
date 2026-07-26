@@ -48,10 +48,14 @@ replaceReturn = concatMap replaceExpr
       [PhpSwitch cond (map (\c -> c { stmts = replaceReturn c.stmts }) cases) (map replaceReturn def)]
     replaceExpr other = [other]
 
-genNativeCurry :: String -> Map String Int -> String -> Array String -> Array PhpExpr -> String
-genNativeCurry currentModPrefix allArities name args stmts =
+genNativeCurry :: String -> Map String Int -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
+genNativeCurry currentModPrefix allArities name args retType stmts =
   let
-    argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
+    argStr = joinWith ", " (mapWithIndex (\i a -> 
+      let t = if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
+      in t <> "$" <> safeName a.name <> (if i > 0 then " = null" else "")
+    ) args)
+    retStr = if retType == "mixed" || retType == "" then "" else if retType == "\\Closure" then ": \\Closure" else ": " <> retType <> "|\\Closure"
 
     nStr = show (length args)
     
@@ -71,17 +75,21 @@ genNativeCurry currentModPrefix allArities name args stmts =
       "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
 
   in
-    "function " <> name <> "(" <> argStr <> ") {\n" <> fnBody <> "}"
+    "function " <> name <> "(" <> argStr <> ")" <> retStr <> " {\n" <> fnBody <> "}"
 
-genCurry :: String -> Map String Int -> Array String -> Array String -> Array PhpExpr -> String
-genCurry currentModPrefix allArities args captures stmts =
+genCurry :: String -> Map String Int -> Array { name :: String, type_ :: String } -> String -> Array String -> Array PhpExpr -> String
+genCurry currentModPrefix allArities args retType captures stmts =
   let safeCaptures = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
+      retStr = if retType == "mixed" || retType == "" then "" else if retType == "\\Closure" then ": \\Closure" else ": " <> retType <> "|\\Closure"
   in if length args == 0 then
     let useClause = if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ", &$__fn)" else " use (&$__fn)"
-    in "function()" <> useClause <> " {\n" <> (joinWith ";\n" (map (printExpr currentModPrefix allArities) stmts) <> ";") <> "\n}"
+    in "function()" <> useClause <> retStr <> " {\n" <> (joinWith ";\n" (map (printExpr currentModPrefix allArities) stmts) <> ";") <> "\n}"
   else
     let
-      argStr = joinWith ", " (map (\a -> "$" <> safeName a <> " = null") args)
+      argStr = joinWith ", " (mapWithIndex (\i a -> 
+        let t = if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
+        in t <> "$" <> safeName a.name <> (if i > 0 then " = null" else "")
+      ) args)
       nStr = show (length args)
       nArgs = length args
       safeCaps = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
@@ -113,10 +121,10 @@ genCurry currentModPrefix allArities args captures stmts =
 
 printExpr :: String -> Map String Int -> PhpExpr -> String
 printExpr currentModPrefix allArities expr = case expr of
-  PhpNativeFunction _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
+  PhpNativeFunction _ _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
   PhpGlobalAssign _ _ -> "/* ERROR: PhpGlobalAssign inside expression */"
-  PhpFunction captures args stmts ->
-    genCurry currentModPrefix allArities args captures stmts
+  PhpFunction captures args retType stmts ->
+    genCurry currentModPrefix allArities args retType captures stmts
   PhpVar ident -> "$" <> safeName ident
   PhpGlobalVar mbMod ident -> 
     let
@@ -125,6 +133,10 @@ printExpr currentModPrefix allArities expr = case expr of
         Nothing -> ""
       idStr = safeName (modPrefix <> ident)
     in "$GLOBALS['" <> idStr <> "']"
+  PhpDirectCall name args ->
+    let
+      argsStr = joinWith ", " (map (printExpr currentModPrefix allArities) args)
+    in "$GLOBALS['" <> safeName name <> "'](" <> argsStr <> ")"
   PhpCall (PhpGlobalVar mbMod ident) args ->
     let
       modPrefix = case mbMod of
@@ -234,9 +246,9 @@ resolveContinues str =
 
 printDecl :: String -> Map String Int -> PhpDecl -> String
 printDecl currentModPrefix allArities decl = resolveContinues $ case decl.expression of
-  PhpNativeFunction name args stmts ->
+  PhpNativeFunction name args retType stmts ->
     "// " <> decl.identifier <> "\n" <>
-    genNativeCurry currentModPrefix allArities (safeFuncName name) args stmts <> "\n" <>
+    genNativeCurry currentModPrefix allArities (safeFuncName name) args retType stmts <> "\n" <>
     "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
   PhpGlobalAssign name expr ->
     "// " <> decl.identifier <> "\n$GLOBALS['" <> safeName name <> "'] = " <> printExpr currentModPrefix allArities expr <> ";\n"

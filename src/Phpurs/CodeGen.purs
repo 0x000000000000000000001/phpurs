@@ -37,7 +37,7 @@ type TranslationRes = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: Int }
 
 wrapInStmts :: Array String -> Array PhpExpr -> PhpExpr -> PhpExpr
 wrapInStmts _ [] expr = expr
-wrapInStmts captures stmts expr = PhpCall (PhpFunction captures [] (stmts <> [ PhpReturn expr ])) []
+wrapInStmts captures stmts expr = PhpCall (PhpFunction captures [] "" (stmts <> [ PhpReturn expr ])) []
 
 safeIdent :: Ident -> String
 safeIdent (Ident i) = i
@@ -280,8 +280,11 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
       
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] true nextId body
+      types = extractFuncType tcoExpr
+      argsWithTypes = zipArgsWithTypes argsArray types
+      retType = getRetType (Array.length argsArray) types
     in
-      { stmts: [], expr: PhpFunction useVars argsArray (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
+      { stmts: [], expr: PhpFunction useVars argsWithTypes retType (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
 
   UncurriedAbs args body ->
     let
@@ -290,8 +293,11 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
       
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] true nextId body
+      types = extractFuncType tcoExpr
+      argsWithTypes = zipArgsWithTypes argsArray types
+      retType = getRetType (Array.length argsArray) types
     in
-      { stmts: [], expr: PhpFunction useVars argsArray (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
+      { stmts: [], expr: PhpFunction useVars argsWithTypes retType (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
 
   UncurriedEffectAbs args body ->
     let
@@ -299,8 +305,11 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       fvs = freeVars tcoExpr
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] false nextId body
+      types = extractFuncType tcoExpr
+      argsWithTypes = zipArgsWithTypes argsArray types
+      retType = getRetType (Array.length argsArray) types
     in
-      { stmts: [], expr: PhpFunction useVars argsArray (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
+      { stmts: [], expr: PhpFunction useVars argsWithTypes retType (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
 
   Accessor e acc ->
     let
@@ -348,7 +357,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       isLoop = (unwrap (tcoAnalysisOf tcoExpr)).role.isLoop
       mutRecBinds = if isLoop && Array.length (toArray binds) == 1 then
         traverse (\(Tuple ident val) -> case extractUncurriedAbs val of
-            Just abs -> Just { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs }
+            Just abs -> Just { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }
             Nothing -> Nothing
         ) (toArray binds)
       else Nothing
@@ -386,7 +395,11 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
                   innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
                   
                 in
-                  PhpAssign newName (PhpFunction useVarsOuter fn.args (initVarStmts <> innerFuncBody))
+                  let
+                    types = extractFuncType fn.originalVal
+                    argsWithTypes = zipArgsWithTypes fn.args types
+                    retType = getRetType (Array.length fn.args) types
+                  in PhpAssign newName (PhpFunction useVarsOuter argsWithTypes retType (initVarStmts <> innerFuncBody))
             )
             fns
             
@@ -440,7 +453,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       fvs = freeVars tcoExpr
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
     in
-      { stmts: [], expr: PhpFunction useVars [] (res.stmts <> [ PhpReturn res.expr ]), nextId: res.nextId }
+      { stmts: [], expr: PhpFunction useVars [] "" (res.stmts <> [ PhpReturn res.expr ]), nextId: res.nextId }
 
   Branch pairs def -> 
     let
@@ -529,7 +542,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       safeCtorName = String.replaceAll (Pattern "'") (Replacement "\\'") ctorName
       singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> safeCtorName <> "']")) body
     in
-      if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] fields [ PhpReturn body ], nextId }
+      if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] (map (\n -> { name: n, type_: "" }) fields) "" [ PhpReturn body ], nextId }
 
   PrimOp op -> case op of
     Op1 op1 e@(TcoExpr _ _) ->
@@ -551,15 +564,50 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
 unwrapExpr :: TcoExpr -> BackendSyntax TcoExpr
 unwrapExpr (TcoExpr _ e) = e
 
+
+extractFuncType :: TcoExpr -> Maybe { fArgs :: Array ExprType, fRet :: ExprType }
+extractFuncType (TcoExpr _ (Typed ty inner)) =
+  let
+    flattenFuncType acc (Func args ret) = flattenFuncType (acc <> args) ret
+    flattenFuncType acc ret = { fArgs: acc, fRet: ret }
+    
+    getFunc (Func a r) = Just (flattenFuncType a r)
+    getFunc _ = extractFuncType inner
+  in getFunc ty
+extractFuncType _ = Nothing
+
+getExprType :: TcoExpr -> ExprType
+getExprType (TcoExpr _ syn) = case syn of
+  Typed ty _ -> ty
+  _ -> Any
+
+zipArgsWithTypes :: Array String -> Maybe { fArgs :: Array ExprType, fRet :: ExprType } -> Array { name :: String, type_ :: String }
+zipArgsWithTypes names mbTypes =
+  case mbTypes of
+    Just { fArgs } ->
+      Array.mapWithIndex (\i name ->
+        let t = fromMaybe Any (Array.index fArgs i)
+        in { name: name, type_: exprTypeToPhpType t }
+      ) names
+    Nothing ->
+      map (\name -> { name: name, type_: "" }) names
+
+getRetType :: Int -> Maybe { fArgs :: Array ExprType, fRet :: ExprType } -> String
+getRetType arity mbTypes =
+  case mbTypes of
+    Just { fArgs, fRet } ->
+      if arity < Array.length fArgs then "" else exprTypeToPhpType fRet
+    Nothing -> ""
+
 exprTypeToPhpType :: ExprType -> String
 exprTypeToPhpType = case _ of
   Int -> "int"
   Number -> "float"
   String -> "string"
   Boolean -> "bool"
-  Array _ -> "array"
-  Func _ _ -> "\\Closure"
-  _ -> "mixed"
+  Array _ -> ""
+  Func _ _ -> ""
+  _ -> ""
 
 -- | Main translation function.
 -- | Takes the list of module imports and a `BackendModule` (containing `TcoExpr` bindings)
@@ -602,7 +650,7 @@ translate imports mod =
           in
             if group.recursive && Array.length group.bindings == 1 then
               let
-                mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs }) (extractUncurriedAbs val)) group.bindings
+                mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }) (extractUncurriedAbs val)) group.bindings
               in case mutRecBinds of
                 Just fns ->
                   let
@@ -626,7 +674,12 @@ translate imports mod =
                             innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
                               
                           in
-                             { identifier: fn.ident, expression: PhpNativeFunction fn.ident fn.args (initVarStmts <> innerFuncBody) }
+                             let
+                               types = extractFuncType fn.originalVal
+                               argsWithTypes = zipArgsWithTypes fn.args types
+                               retType = getRetType (Array.length fn.args) types
+                             in
+                             { identifier: fn.ident, expression: PhpNativeFunction fn.ident argsWithTypes retType (initVarStmts <> innerFuncBody) }
                       )
                       fns
                   in
@@ -637,7 +690,10 @@ translate imports mod =
                         case extractUncurriedAbs expr of
                           Just fn ->
                              let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] true 0 fn.body
-                             in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) fn.args (res.stmts <> [ PhpReturn res.expr ]) } ]
+                                 types = extractFuncType expr
+                                 argsWithTypes = zipArgsWithTypes fn.args types
+                                 retType = getRetType (Array.length fn.args) types
+                             in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType (res.stmts <> [ PhpReturn res.expr ]) } ]
                           Nothing ->
                              let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
                              in [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
@@ -652,7 +708,10 @@ translate imports mod =
                       case extractUncurriedAbs expr of
                         Just fn ->
                            let res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 fn.body
-                           in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) fn.args (res.stmts <> [ PhpReturn res.expr ]) } ]
+                               types = extractFuncType expr
+                               argsWithTypes = zipArgsWithTypes fn.args types
+                               retType = getRetType (Array.length fn.args) types
+                           in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType (res.stmts <> [ PhpReturn res.expr ]) } ]
                         Nothing ->
                            let
                              res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
@@ -662,7 +721,10 @@ translate imports mod =
                                  closureName = modPrefix <> name <> "_closure"
                                  args = Array.mapWithIndex (\i _ -> "v_" <> show i) (Array.replicate arity unit)
                                  callExpr = PhpCall (PhpGlobalVar Nothing closureName) (map PhpVar args)
-                                 nativeFunc = { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) args [ PhpReturn callExpr ] }
+                                 types = extractFuncType expr
+                                 argsWithTypes = zipArgsWithTypes args types
+                                 retType = getRetType arity types
+                                 nativeFunc = { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType [ PhpReturn callExpr ] }
                                  closureAssign = { identifier: closureName, expression: PhpGlobalAssign closureName (wrapInStmts [] res.stmts res.expr) }
                                in
                                  [ closureAssign, nativeFunc ]

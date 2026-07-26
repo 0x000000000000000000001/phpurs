@@ -2,8 +2,12 @@ const fs = require('fs');
 let code = fs.readFileSync('src/Phpurs/Printer.purs', 'utf8');
 
 code = code.replace(
-  `import Data.Maybe (Maybe(..), isJust, isNothing)`,
-  `import Data.Maybe (Maybe(..), isJust, isNothing, fromMaybe)`
+  '  PhpCall (PhpGlobalVar mbMod ident) args ->',
+  `  PhpDirectCall name args ->
+    let
+      argsStr = joinWith ", " (map (printExpr currentModPrefix allArities) args)
+    in "$GLOBALS['" <> safeName name <> "'](" <> argsStr <> ")"
+  PhpCall (PhpGlobalVar mbMod ident) args ->`
 );
 
 fs.writeFileSync('src/Phpurs/Printer.purs', code);

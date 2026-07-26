@@ -3,9 +3,6 @@ module Main where
 import Prelude
 import Effect.Console (log)
 
-data Foo r = Foo { | r }
-
-test :: Foo ()
-test = Foo {}
+s = \x y z -> x z (y z)
 
 main = log "Done"

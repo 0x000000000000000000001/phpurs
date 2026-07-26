@@ -237,7 +237,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
             let
               argRes = translateExprImpl recVars namedBound bound Nothing [] false acc.nextId arg
             in
-              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: acc.nextId }
+              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
         )
         { stmts: [], exprs: [], nextId: resFn.nextId }
         args
@@ -264,7 +264,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
             let
               argRes = translateExprImpl recVars namedBound bound Nothing [] false acc.nextId arg
             in
-              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: acc.nextId }
+              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
         )
         { stmts: [], exprs: [], nextId: resFn.nextId }
         args

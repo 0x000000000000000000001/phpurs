@@ -25,13 +25,14 @@ import Data.String as String
 import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
 import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
 import PureScript.Backend.Optimizer.Builder (buildModules)
-import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName)
+import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName, Qualified(..), ModuleName(..))
+import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 import Phpurs.CodeGen (translate)
 import Phpurs.Printer (printPhpFile, safeName)
 import Phpurs.ComposerMerge (mergeComposers)
 import Phpurs.FfiSupport (findFfiFile)
 import Data.Newtype (unwrap)
-import Data.String (joinWith, replace, replaceAll, trim, length)
+import Data.String (joinWith, replace, replaceAll, trim, length, contains)
 import Effect.Ref as Ref
 
 foreign import stringify :: forall a. String -> a -> String
@@ -96,7 +97,10 @@ main = launchAff_ do
   buildModules
     { directives: Map.empty
     , analyzeCustom: \_ _ -> Nothing
-    , foreignSemantics: Map.empty
+    , foreignSemantics: Map.filterKeys (\(Qualified mbMod _) -> case mbMod of
+        Just (ModuleName m) -> not (contains (Pattern "Effect") m) && not (contains (Pattern "Control.Monad.ST") m)
+        _ -> true
+      ) coreForeignSemantics
     , traceIdents: Set.empty
     , onPrepareModule: \_ m -> pure m
     , onSkipModule: \_ (Module coreFnMod) -> do

@@ -678,8 +678,8 @@
     },
     "extra_packages": {
       "backend-optimizer": {
-        "git": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
-        "ref": "50562d2f3bd46bbfcd887f4ba3567cd162a79e44",
+        "git": "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git",
+        "ref": "564e200e8272b709bc824f83fc0aa8978bb65cc1",
         "dependencies": [
           "argonaut",
           "arrays",
@@ -845,8 +845,8 @@
     },
     "backend-optimizer": {
       "type": "git",
-      "url": "https://github.com/0x000000000000000000001/phpurs-backend-optimizer.git",
-      "rev": "50562d2f3bd46bbfcd887f4ba3567cd162a79e44",
+      "url": "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git",
+      "rev": "564e200e8272b709bc824f83fc0aa8978bb65cc1",
       "dependencies": [
         "argonaut",
         "arrays",

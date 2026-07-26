@@ -17,7 +17,7 @@ import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unT
 import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..))
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
-import Phpurs.FreeVars (freeVars, localId)
+import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
 import Data.Tuple (Tuple(..))
@@ -538,7 +538,7 @@ translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail ne
   PrimEffect _ -> { stmts: [], expr: PhpString "TODO_PrimEffect", nextId }
   PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
   Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }
-
+  Typed _ a -> translateExprImpl recVars namedBound bound _currentBindingName loopCtx isTail nextId a
 unwrapExpr :: TcoExpr -> BackendSyntax TcoExpr
 unwrapExpr (TcoExpr _ e) = e
 

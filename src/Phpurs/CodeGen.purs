@@ -14,7 +14,7 @@ import Prelude
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendOperatorNum(..))
 import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr)
-import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..))
+import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..), ExprType(..))
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
@@ -551,6 +551,16 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
 unwrapExpr :: TcoExpr -> BackendSyntax TcoExpr
 unwrapExpr (TcoExpr _ e) = e
 
+exprTypeToPhpType :: ExprType -> String
+exprTypeToPhpType = case _ of
+  Int -> "int"
+  Number -> "float"
+  String -> "string"
+  Boolean -> "bool"
+  Array _ -> "array"
+  Func _ _ -> "\\Closure"
+  _ -> "mixed"
+
 -- | Main translation function.
 -- | Takes the list of module imports and a `BackendModule` (containing `TcoExpr` bindings)
 -- | and returns a fully constructed `PhpFile` ready for printing.
@@ -564,7 +574,7 @@ translate imports mod =
         Array.concatMap (\ctor ->
           let
             structName = modPrefix <> ctor.constructorName
-            argsStr = Array.mapWithIndex (\i _ -> "public mixed $value" <> show i) ctor.fieldTypes
+            argsStr = Array.mapWithIndex (\i typ -> "public " <> exprTypeToPhpType typ <> " $value" <> show i) ctor.fieldTypes
             structDecl = "final class " <> structName <> " { public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
           in
             [ structDecl ]

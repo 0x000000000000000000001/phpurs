@@ -174,6 +174,7 @@ printExpr expr = case expr of
           (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map printExpr elseStmts) <> ";") <> "\n}" else "")
 
   PhpThrow v -> "throw new \\Exception(" <> printExpr v <> ")"
+  PhpInstanceOf v cls -> printExpr v <> " instanceof " <> cls
   PhpMatch subj cases defExpr ->
     let
       printCase { val, body } = printExpr val <> " => " <> printExpr body
@@ -248,6 +249,7 @@ printPhpFile isBundle ffiString file =
       file.imports
     imps = if isBundle then "" else joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
     debugImps = "// ALL IMPORTS: " <> joinWith ", " (map (\i -> joinWith "." i) file.imports) <> "\n" <> "// TO REQUIRE: " <> joinWith ", " (map (\i -> joinWith "." i) importsToRequire) <> "\n"
+    rawDeclsStr = joinWith "\n" file.rawDecls
     decls = joinWith "\n" $ map printDecl file.decls
     fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
       "  function phpurs_curry_fallback($fn, $args, $expected) {\n" <>
@@ -337,4 +339,4 @@ printPhpFile isBundle ffiString file =
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"
   in
-    prefix <> debugImps <> imps <> "\n\n" <> dataClasses <> fallback <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> decls <> suffix
+    prefix <> debugImps <> imps <> "\n\n" <> dataClasses <> fallback <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> rawDeclsStr <> "\n\n" <> decls <> suffix

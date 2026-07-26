@@ -41,6 +41,7 @@ data PhpExpr
   | PhpSwitch PhpExpr (Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr }) (Maybe (Array PhpExpr))
   | PhpGoto String
   | PhpLabel String
+  | PhpInstanceOf PhpExpr String
 
 derive instance eqPhpExpr :: Eq PhpExpr
 derive instance genericPhpExpr :: Generic PhpExpr _
@@ -53,6 +54,7 @@ type PhpDecl =
 
 type PhpFile =
   { namespace :: Array String
+  , rawDecls :: Array String
   , decls :: Array PhpDecl
   , imports :: Array (Array String)
   }

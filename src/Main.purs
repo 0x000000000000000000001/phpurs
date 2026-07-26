@@ -30,10 +30,11 @@ import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 import Phpurs.CodeGen (translate)
 import Phpurs.Printer (printPhpFile, safeName)
 import Phpurs.ComposerMerge (mergeComposers)
-import Phpurs.FfiSupport (findFfiFile)
+import PureScript.Backend.Optimizer.FfiSupport (findFfiFile)
 import Data.Newtype (unwrap)
 import Data.String (joinWith, replace, replaceAll, trim, length, contains)
 import Effect.Ref as Ref
+import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput)
 
 foreign import stringify :: forall a. String -> a -> String
 foreign import parseImpl :: forall a. (a -> Maybe a) -> Maybe a -> String -> String -> Maybe a
@@ -43,19 +44,6 @@ parse version = parseImpl Just Nothing version
 
 cacheVersion :: String
 cacheVersion = "1.0.0"
-
-readCoreFnModule :: String -> Aff (Maybe (Module Ann))
-readCoreFnModule filePath = do
-  statRes <- attempt (FS.stat filePath)
-  if isRight statRes then do
-    contents <- FS.readTextFile UTF8 filePath
-    case jsonParser contents >>= (lmap printJsonDecodeError <<< decodeModule) of
-      Left err -> do
-        liftEffect $ Console.error $ "Failed to decode " <> filePath <> ": " <> err
-        pure Nothing
-      Right mod -> pure (Just mod)
-  else
-    pure Nothing
 
 main :: Effect Unit
 main = launchAff_ do
@@ -80,22 +68,7 @@ main = launchAff_ do
       Just i -> Array.index args (i + 1)
       Nothing -> Nothing
 
-  files <- FS.readdir "output"
-
-  validDirs <- Array.filterA
-    ( \f -> do
-        stat <- FS.stat ("output/" <> f)
-        pure (Stats.isDirectory stat)
-    )
-    files
-
-  mbModules <- traverse (\dir -> readCoreFnModule ("output/" <> dir <> "/corefn.json")) validDirs
-  let modulesArray = Array.catMaybes mbModules
-  let modulesList = List.fromFoldable modulesArray
-
-  let
-    sortedModules = sortModules modulesList
-    finalModules = sortedModules
+  finalModules <- coreFnModulesFromOutput "output"
 
   bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
 
@@ -129,7 +102,7 @@ main = launchAff_ do
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod
 
-        ffiPathMb <- liftEffect $ findFfiFile mbFfiDir modNameStr (Just coreFnMod.path)
+        ffiPathMb <- liftEffect $ findFfiFile ".php" ["bak/spago.d/php/p"] mbFfiDir modNameStr (Just coreFnMod.path)
         ffiCode <- case ffiPathMb of
           Nothing -> pure ""
           Just ffiPath -> do
@@ -165,7 +138,7 @@ main = launchAff_ do
   let
     targetMainModules = case mbMainModule of
       Just mainMod -> [ mainMod ]
-      Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) modulesArray
+      Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) (Array.fromFoldable finalModules)
 
   let requireAllStr = "<?php\n" <> joinWith "" (map (\(Module m) -> "require_once __DIR__ . '/" <> unwrap m.name <> "/index.php';\n") (Array.fromFoldable finalModules))
   FS.writeTextFile UTF8 "output/require_all.php" requireAllStr

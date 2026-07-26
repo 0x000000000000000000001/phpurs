@@ -26,7 +26,7 @@ workspace:
   extraPackages:
     backend-optimizer:
       git: "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git"
-      ref: "564e200e8272b709bc824f83fc0aa8978bb65cc1"
+      ref: "f2e80b20a511fc6fcb90a4dba2aa1c56c7b31cdf"
       dependencies:
         - argonaut
         - arrays

@@ -75,6 +75,11 @@ main = launchAff_ do
 
     mbBundle = isJust (Array.elemIndex "--bundle" args)
 
+    mbFfiIndex = Array.elemIndex "--ffi" args
+    mbFfiDir = case mbFfiIndex of
+      Just i -> Array.index args (i + 1)
+      Nothing -> Nothing
+
   files <- FS.readdir "output"
 
   validDirs <- Array.filterA
@@ -92,7 +97,7 @@ main = launchAff_ do
     sortedModules = sortModules modulesList
     finalModules = sortedModules
 
-  bundleContentRef <- liftEffect $ Ref.new ("<?php\n\n" <> "namespace {\n  if (!\\class_exists('\\\\PhpursThunks', false)) {\n    class PhpursThunks {\n      public static $thunks = [];\n      public static $cache = [];\n      public static function eval($id) {\n        if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n        if (isset(self::$thunks[$id])) {\n          self::$cache[$id] = self::$thunks[$id]();\n          return self::$cache[$id];\n        }\n        throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n      }\n    }\n  }\n}\n")
+  bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
 
   buildModules
     { directives: Map.empty
@@ -124,7 +129,7 @@ main = launchAff_ do
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod
 
-        ffiPathMb <- liftEffect $ findFfiFile Nothing modNameStr (Just coreFnMod.path)
+        ffiPathMb <- liftEffect $ findFfiFile mbFfiDir modNameStr (Just coreFnMod.path)
         ffiCode <- case ffiPathMb of
           Nothing -> pure ""
           Just ffiPath -> do
@@ -138,11 +143,14 @@ main = launchAff_ do
               let
                 closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
                 closureEnd = "\n  return $exports;\n});\n"
-                mappings = joinWith "\n" (map (\(Ident f) -> "\\PhpursThunks::$thunks['" <> safeName (phpModName <> "_" <> f) <> "'] = function() use (&$ffi_" <> phpModName <> ") { return $ffi_" <> phpModName <> "['" <> f <> "']; };") (Array.fromFoldable backendMod.foreign))
+                mappings = joinWith "\n" (map (\(Ident f) -> "$GLOBALS['" <> safeName (phpModName <> "_" <> f) <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? new class { public function __invoke(...$args) { return $this; } };") (Array.fromFoldable backendMod.foreign))
               in
                 closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
             else
-              ""
+              let
+                mappings = joinWith "\n" (map (\(Ident f) -> "$GLOBALS['" <> safeName (phpModName <> "_" <> f) <> "'] = new class { public function __invoke(...$args) { return $this; } };") (Array.fromFoldable backendMod.foreign))
+              in
+                mappings <> (if length mappings > 0 then "\n" else "")
 
         if mbBundle then do
           let phpCodeBundle = printPhpFile true wrappedFfiCode phpFile
@@ -159,6 +167,9 @@ main = launchAff_ do
       Just mainMod -> [ mainMod ]
       Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) modulesArray
 
+  let requireAllStr = "<?php\n" <> joinWith "" (map (\(Module m) -> "require_once __DIR__ . '/" <> unwrap m.name <> "/index.php';\n") (Array.fromFoldable finalModules))
+  FS.writeTextFile UTF8 "output/require_all.php" requireAllStr
+
   _ <- traverse
     ( \mainMod -> do
         let
@@ -167,8 +178,7 @@ main = launchAff_ do
             Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
 
           sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-          thunksClass = "if (!\\class_exists('\\\\PhpursThunks', false)) {\n  class PhpursThunks {\n    public static $thunks = [];\n    public static $cache = [];\n    public static function eval($id) {\n      if (isset(self::$cache[$id]) || \\array_key_exists($id, self::$cache)) return self::$cache[$id];\n      if (isset(self::$thunks[$id])) {\n        self::$cache[$id] = self::$thunks[$id]();\n        return self::$cache[$id];\n      }\n      throw new \\Exception(\"FATAL: Unknown thunk \" . $id);\n    }\n  }\n}\n"
-          callStr = "($GLOBALS['" <> sanitizedMain <> "'] ?? \\PhpursThunks::eval('" <> sanitizedMain <> "'))();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+          callStr = "$GLOBALS['" <> sanitizedMain <> "']();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
 
         if mbBundle then do
           bundleContent <- liftEffect $ Ref.read bundleContentRef
@@ -176,7 +186,7 @@ main = launchAff_ do
           FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
         else pure unit
 
-        let modEntryPoint = "<?php\n" <> autoloadStr <> thunksClass <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/index.php';\n" <> callStr
+        let modEntryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/../require_all.php';\n" <> callStr
         FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") modEntryPoint
     )
     targetMainModules

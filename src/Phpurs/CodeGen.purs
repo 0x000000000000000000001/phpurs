@@ -673,8 +673,14 @@ translate imports mod =
       )
       tcoBindings
 
+    moduleArities = Map.fromFoldable (Array.concatMap (\group -> 
+        Array.mapMaybe (\(Tuple ident tcoExpr) -> 
+          Just (Tuple (modPrefix <> safeIdent ident) (extractTypeArity tcoExpr))
+        ) group.bindings
+      ) tcoBindings)
+
   in
-    { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls, imports }
+    { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls, imports, arities: moduleArities }
 
 dedupArgs :: Array String -> Array String
 dedupArgs args = Array.mapWithIndex

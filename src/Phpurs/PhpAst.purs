@@ -6,6 +6,7 @@ module Phpurs.PhpAst where
 
 import Prelude
 import Data.Maybe (Maybe)
+import Data.Map (Map)
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 
@@ -58,4 +59,5 @@ type PhpFile =
   , rawDecls :: Array String
   , decls :: Array PhpDecl
   , imports :: Array (Array String)
+  , arities :: Map String Int
   }

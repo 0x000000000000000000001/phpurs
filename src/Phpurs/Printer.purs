@@ -11,6 +11,8 @@ module Phpurs.Printer where
 
 import Prelude
 
+import Data.Map (Map)
+import Data.Map as Map
 import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take, drop)
 import Data.Maybe (isNothing, Maybe(..))
 import Data.Array (filter, length, mapWithIndex, concatMap)
@@ -46,8 +48,8 @@ replaceReturn = concatMap replaceExpr
       [PhpSwitch cond (map (\c -> c { stmts = replaceReturn c.stmts }) cases) (map replaceReturn def)]
     replaceExpr other = [other]
 
-genNativeCurry :: String -> Array String -> Array PhpExpr -> String
-genNativeCurry name args stmts =
+genNativeCurry :: String -> Map String Int -> String -> Array String -> Array PhpExpr -> String
+genNativeCurry currentModPrefix allArities name args stmts =
   let
     argStr = joinWith ", " (mapWithIndex (\i a -> "$" <> safeName a <> (if i > 0 then " = null" else "")) args)
 
@@ -64,19 +66,19 @@ genNativeCurry name args stmts =
       fastPathStr <>
       "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
       "  }\n" <>
-      (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
+      (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map (printExpr currentModPrefix allArities) rewrittenStmts) <> ";\n" else "") <>
       "  __end:\n" <>
       "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
 
   in
     "function " <> name <> "(" <> argStr <> ") {\n" <> fnBody <> "}"
 
-genCurry :: Array String -> Array String -> Array PhpExpr -> String
-genCurry args captures stmts =
+genCurry :: String -> Map String Int -> Array String -> Array String -> Array PhpExpr -> String
+genCurry currentModPrefix allArities args captures stmts =
   let safeCaptures = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
   in if length args == 0 then
     let useClause = if length safeCaptures > 0 then " use (" <> joinWith ", " safeCaptures <> ", &$__fn)" else " use (&$__fn)"
-    in "function()" <> useClause <> " {\n" <> (joinWith ";\n" (map printExpr stmts) <> ";") <> "\n}"
+    in "function()" <> useClause <> " {\n" <> (joinWith ";\n" (map (printExpr currentModPrefix allArities) stmts) <> ";") <> "\n}"
   else
     let
       argStr = joinWith ", " (map (\a -> "$" <> safeName a <> " = null") args)
@@ -97,7 +99,7 @@ genCurry args captures stmts =
         fastPathStr <>
         "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
         "  }\n") <>
-        (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map printExpr rewrittenStmts) <> ";\n" else "") <>
+        (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map (printExpr currentModPrefix allArities) rewrittenStmts) <> ";\n" else "") <>
         "  __end:\n" <>
         "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
     in 
@@ -109,12 +111,12 @@ genCurry args captures stmts =
         "  return $__fn;\n" <>
         "})()"
 
-printExpr :: PhpExpr -> String
-printExpr expr = case expr of
+printExpr :: String -> Map String Int -> PhpExpr -> String
+printExpr currentModPrefix allArities expr = case expr of
   PhpNativeFunction _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
   PhpGlobalAssign _ _ -> "/* ERROR: PhpGlobalAssign inside expression */"
   PhpFunction captures args stmts ->
-    genCurry args captures stmts
+    genCurry currentModPrefix allArities args captures stmts
   PhpVar ident -> "$" <> safeName ident
   PhpGlobalVar mbMod ident -> 
     let
@@ -129,23 +131,23 @@ printExpr expr = case expr of
         Just mod -> joinWith "_" mod <> "_"
         Nothing -> ""
       idStr = safeName (modPrefix <> ident)
-    in "($GLOBALS['" <> idStr <> "'])(" <> joinWith ", " (map printExpr args) <> ")"
+    in "($GLOBALS['" <> idStr <> "'])(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
   PhpCall (PhpCall inner args1) args2 ->
-    printExpr (PhpCall inner (args1 <> args2))
-  PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map printExpr args) <> ")"
-  PhpCall abs args -> "(" <> printExpr abs <> ")(" <> joinWith ", " (map printExpr args) <> ")"
+    printExpr currentModPrefix allArities (PhpCall inner (args1 <> args2))
+  PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
+  PhpCall abs args -> "(" <> printExpr currentModPrefix allArities abs <> ")(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
   PhpInt i -> show i
   PhpNumber n -> show n
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
-  PhpArray arr -> "[" <> joinWith ", " (map printExpr arr) <> "]"
-  PhpAssocArray arr -> "[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr item.value) arr) <> "]"
-  PhpPropertyAccess e prop -> "(" <> printExpr e <> ")->{'" <> safeName prop <> "'}"
-  PhpRecordAccess e prop -> "(" <> printExpr e <> ")['" <> safeName prop <> "']"
-  PhpArrayIndex arr i -> "(" <> printExpr arr <> ")[" <> show i <> "]"
-  PhpClone obj -> "clone " <> printExpr obj
-  PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr v
-  PhpAssignExpr left v -> printExpr left <> " = " <> printExpr v
+  PhpArray arr -> "[" <> joinWith ", " (map (printExpr currentModPrefix allArities) arr) <> "]"
+  PhpAssocArray arr -> "[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr currentModPrefix allArities item.value) arr) <> "]"
+  PhpPropertyAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")->{'" <> safeName prop <> "'}"
+  PhpRecordAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")['" <> safeName prop <> "']"
+  PhpArrayIndex arr i -> "(" <> printExpr currentModPrefix allArities arr <> ")[" <> show i <> "]"
+  PhpClone obj -> "clone " <> printExpr currentModPrefix allArities obj
+  PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr currentModPrefix allArities v
+  PhpAssignExpr left v -> printExpr currentModPrefix allArities left <> " = " <> printExpr currentModPrefix allArities v
   PhpIf cond thenStmts elseStmts ->
     let
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
@@ -171,43 +173,43 @@ printExpr expr = case expr of
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
       Just sw ->
         let
-          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.body) <> ";") <> "\nbreak;") sw.cases)
-          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr sw.defaultBody) <> ";") <> "\nbreak;"
+          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr currentModPrefix allArities c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr currentModPrefix allArities) c.body) <> ";") <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr currentModPrefix allArities) sw.defaultBody) <> ";") <> "\nbreak;"
         in
-          "switch (" <> printExpr sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
+          "switch (" <> printExpr currentModPrefix allArities sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
       Nothing ->
         let
-          thenBody = joinWith ";\n" (map printExpr thenStmts) <> ";"
+          thenBody = joinWith ";\n" (map (printExpr currentModPrefix allArities) thenStmts) <> ";"
         in
-          "if (" <> printExpr cond <> ") {\n" <> thenBody <> "\n}" <> 
-          (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map printExpr elseStmts) <> ";") <> "\n}" else "")
+          "if (" <> printExpr currentModPrefix allArities cond <> ") {\n" <> thenBody <> "\n}" <> 
+          (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map (printExpr currentModPrefix allArities) elseStmts) <> ";") <> "\n}" else "")
 
-  PhpThrow v -> "throw new \\Exception(" <> printExpr v <> ")"
-  PhpInstanceOf v cls -> printExpr v <> " instanceof " <> cls
+  PhpThrow v -> "throw new \\Exception(" <> printExpr currentModPrefix allArities v <> ")"
+  PhpInstanceOf v cls -> printExpr currentModPrefix allArities v <> " instanceof " <> cls
   PhpMatch subj cases defExpr ->
     let
-      printCase { val, body } = printExpr val <> " => " <> printExpr body
+      printCase { val, body } = printExpr currentModPrefix allArities val <> " => " <> printExpr currentModPrefix allArities body
       casesStr = joinWith ", " (map printCase cases)
-      defStr = "default => " <> printExpr defExpr
+      defStr = "default => " <> printExpr currentModPrefix allArities defExpr
     in
-      "match (" <> printExpr subj <> ") { " <> casesStr <> (if length cases > 0 then ", " else "") <> defStr <> " }"
-  PhpTernary cond t e -> "(" <> printExpr cond <> " ? " <> printExpr t <> " : " <> printExpr e <> ")"
-  PhpReturn v -> "return " <> printExpr v
-  PhpBinOp op left right -> "(" <> printExpr left <> " " <> op <> " " <> printExpr right <> ")"
-  PhpWhile cond stmts -> "while (" <> printExpr cond <> ") {\n" <> joinWith ";\n" (map printExpr stmts) <> ";\n}"
+      "match (" <> printExpr currentModPrefix allArities subj <> ") { " <> casesStr <> (if length cases > 0 then ", " else "") <> defStr <> " }"
+  PhpTernary cond t e -> "(" <> printExpr currentModPrefix allArities cond <> " ? " <> printExpr currentModPrefix allArities t <> " : " <> printExpr currentModPrefix allArities e <> ")"
+  PhpReturn v -> "return " <> printExpr currentModPrefix allArities v
+  PhpBinOp op left right -> "(" <> printExpr currentModPrefix allArities left <> " " <> op <> " " <> printExpr currentModPrefix allArities right <> ")"
+  PhpWhile cond stmts -> "while (" <> printExpr currentModPrefix allArities cond <> ") {\n" <> joinWith ";\n" (map (printExpr currentModPrefix allArities) stmts) <> ";\n}"
   PhpContinue -> "continue /*__LVL__*/"
   PhpRaw raw -> raw
-  PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map printExpr args) <> ")"
+  PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
   PhpGoto lbl -> "goto " <> safeName lbl <> ";"
   PhpLabel lbl -> safeName lbl <> ":"
   PhpSwitch subject cases defaultStmts ->
     let
-      printCase c = joinWith "\n" (map (\m -> "case " <> printExpr m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr c.stmts) <> ";") <> "\nbreak;"
+      printCase c = joinWith "\n" (map (\m -> "case " <> printExpr currentModPrefix allArities m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr currentModPrefix allArities) c.stmts) <> ";") <> "\nbreak;"
       casesStr = joinWith "\n" (map printCase cases)
       defaultStr = case defaultStmts of
-        Just stmts -> "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map printExpr stmts) <> ";") <> "\nbreak;"
+        Just stmts -> "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr currentModPrefix allArities) stmts) <> ";") <> "\nbreak;"
         Nothing -> ""
-    in "switch (" <> printExpr subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
+    in "switch (" <> printExpr currentModPrefix allArities subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
 
 resolveContinues :: String -> String
 resolveContinues str =
@@ -230,22 +232,22 @@ resolveContinues str =
     r15 = replaceAll (Pattern "continue IIIIIIIIIIIIIII;") (Replacement "continue 16;") r14
   in r15
 
-printDecl :: PhpDecl -> String
-printDecl decl = resolveContinues $ case decl.expression of
+printDecl :: String -> Map String Int -> PhpDecl -> String
+printDecl currentModPrefix allArities decl = resolveContinues $ case decl.expression of
   PhpNativeFunction name args stmts ->
     "// " <> decl.identifier <> "\n" <>
-    genNativeCurry (safeFuncName name) args stmts <> "\n" <>
+    genNativeCurry currentModPrefix allArities (safeFuncName name) args stmts <> "\n" <>
     "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
   PhpGlobalAssign name expr ->
-    "// " <> decl.identifier <> "\n$GLOBALS['" <> safeName name <> "'] = " <> printExpr expr <> ";\n"
+    "// " <> decl.identifier <> "\n$GLOBALS['" <> safeName name <> "'] = " <> printExpr currentModPrefix allArities expr <> ";\n"
   expr ->
-    "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr expr <> ";\n"
+    "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr currentModPrefix allArities expr <> ";\n"
 
 -- | Main printing function that assembles a complete PHP file.
 -- | Generates the namespace, require statements (if not bundled), standard library
 -- | helpers (ADT classes, curry fallback), the thunk definitions, and finally the declarations.
-printPhpFile :: Boolean -> String -> PhpFile -> String
-printPhpFile isBundle ffiString file =
+printPhpFile :: Boolean -> String -> Map String Int -> PhpFile -> String
+printPhpFile isBundle ffiString allArities file =
   let
     ns = joinWith "\\" file.namespace
     importsToRequire = filter
@@ -258,8 +260,9 @@ printPhpFile isBundle ffiString file =
       file.imports
     imps = if isBundle then "" else joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
     debugImps = "// ALL IMPORTS: " <> joinWith ", " (map (\i -> joinWith "." i) file.imports) <> "\n" <> "// TO REQUIRE: " <> joinWith ", " (map (\i -> joinWith "." i) importsToRequire) <> "\n"
+    currentModPrefix = if length file.namespace > 0 then joinWith "_" file.namespace <> "_" else ""
     rawDeclsStr = joinWith "\n" file.rawDecls
-    decls = joinWith "\n" $ map printDecl file.decls
+    decls = joinWith "\n" $ map (printDecl currentModPrefix allArities) file.decls
     fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
       "  function phpurs_curry_fallback($fn, $args, $expected) {\n" <>
       "    $missing = $expected - \\count($args);\n" <>

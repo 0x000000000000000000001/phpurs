@@ -47,6 +47,7 @@ main = launchAff_ do
   finalModules <- coreFnModulesFromOutput "output"
 
   bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
+  globalAritiesRef <- liftEffect $ Ref.new Map.empty
 
   directives <- loadDirectives
 
@@ -76,6 +77,10 @@ main = launchAff_ do
             content <- FS.readTextFile UTF8 ffiPath
             pure (trim (replace (Pattern "<?php\n") (Replacement "") (replace (Pattern "<?php") (Replacement "") content)))
 
+        currentArities <- liftEffect $ Ref.read globalAritiesRef
+        let allArities = Map.union phpFile.arities currentArities
+        liftEffect $ Ref.write allArities globalAritiesRef
+
         let
           phpModName = replaceAll (Pattern ".") (Replacement "_") modNameStr
           wrappedFfiCode =
@@ -93,11 +98,11 @@ main = launchAff_ do
                 mappings <> (if length mappings > 0 then "\n" else "")
 
         if args.bundle then do
-          let phpCodeBundle = printPhpFile true wrappedFfiCode phpFile
+          let phpCodeBundle = printPhpFile true wrappedFfiCode allArities phpFile
           liftEffect $ Ref.modify_ (\s -> s <> phpCodeBundle <> "\n") bundleContentRef
         else pure unit
 
-        let phpCode = printPhpFile false wrappedFfiCode phpFile
+        let phpCode = printPhpFile false wrappedFfiCode allArities phpFile
         FS.writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpCode
     }
     finalModules

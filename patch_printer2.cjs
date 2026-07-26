@@ -1,9 +1,0 @@
-const fs = require('fs');
-let code = fs.readFileSync('src/Phpurs/Printer.purs', 'utf8');
-
-code = code.replace(
-  '"function " <> name <> "(" <> argStr <> ") {\\n" <> fnBody <> "}"',
-  '"function " <> name <> "(" <> argStr <> ")" <> retStr <> " {\\n" <> fnBody <> "}"'
-);
-
-fs.writeFileSync('src/Phpurs/Printer.purs', code);

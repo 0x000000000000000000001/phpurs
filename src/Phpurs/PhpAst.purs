@@ -16,6 +16,7 @@ data PhpExpr
   | PhpGlobalAssign String PhpExpr
   | PhpVar String
   | PhpGlobalVar (Maybe (Array String)) String
+  | PhpDirectCall String (Array PhpExpr)
   | PhpCall PhpExpr (Array PhpExpr)
   | PhpInt Int
   | PhpNumber Number

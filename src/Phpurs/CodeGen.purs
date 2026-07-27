@@ -55,9 +55,10 @@ translateOperator1 OpNumberNegate e = PhpBinOp "-" (PhpRaw "") e
 translateOperator1 OpArrayLength e = PhpCall (PhpRaw "count") [ e ]
 translateOperator1 (OpIsTag (Qualified mbMod (Ident tag))) e =
   let
+    safeTag = String.replaceAll (Pattern "'") (Replacement "_prime_") tag
     absClass = case mbMod of
-      Just (ModuleName m) -> "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") m <> "\\" <> String.replaceAll (Pattern ".") (Replacement "_") m <> "_" <> tag
-      Nothing -> tag -- Should not happen for fully qualified tags
+      Just (ModuleName m) -> "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") m <> "\\" <> String.replaceAll (Pattern ".") (Replacement "_") m <> "_" <> safeTag
+      Nothing -> safeTag -- Should not happen for fully qualified tags
   in
     PhpInstanceOf e absClass
 
@@ -514,13 +515,14 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
         { stmts: [], nextId: resE.nextId + 1 }
         props
     in
-      { stmts: resE.stmts <> [ PhpAssign tmpVar resE.expr ] <> accProps.stmts, expr: PhpVar tmpVar, nextId: accProps.nextId }
+      { stmts: resE.stmts <> [ PhpAssign tmpVar (PhpClone resE.expr) ] <> accProps.stmts, expr: PhpVar tmpVar, nextId: accProps.nextId }
 
   CtorSaturated (Qualified mbMod _) _ _ (Ident ctorName) args ->
     let
+      safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctorName
       absClass = case mbMod of
-        Just (ModuleName m) -> "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") m <> "\\" <> String.replaceAll (Pattern ".") (Replacement "_") m <> "_" <> ctorName
-        Nothing -> "\\" <> String.replaceAll (Pattern "_") (Replacement "\\") modNameStr <> "\\" <> modNameStr <> "_" <> ctorName
+        Just (ModuleName m) -> "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") m <> "\\" <> String.replaceAll (Pattern ".") (Replacement "_") m <> "_" <> safeCtorName
+        Nothing -> "\\" <> String.replaceAll (Pattern "_") (Replacement "\\") modNameStr <> "\\" <> modNameStr <> "_" <> safeCtorName
       accArgs = foldl
         ( \acc (Tuple _ val@(TcoExpr _ _)) ->
             let
@@ -536,11 +538,12 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
 
   CtorDef _ _ (Ident ctorName) fields ->
     let
-      absClass = "\\" <> String.replaceAll (Pattern "_") (Replacement "\\") modNameStr <> "\\" <> modNameStr <> "_" <> ctorName
+      safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctorName
+      absClass = "\\" <> String.replaceAll (Pattern "_") (Replacement "\\") modNameStr <> "\\" <> modNameStr <> "_" <> safeCtorName
       numFields = Array.length fields
       body = PhpNew absClass (map PhpVar fields)
-      safeCtorName = String.replaceAll (Pattern "'") (Replacement "\\'") ctorName
-      singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> safeCtorName <> "']")) body
+      safeCtorNameStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctorName
+      singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> safeCtorNameStr <> "']")) body
     in
       if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] (map (\n -> { name: n, type_: "" }) fields) "" [ PhpReturn body ], nextId }
 
@@ -621,9 +624,11 @@ translate imports mod =
     rawDecls = Array.concatMap (\decl ->
         Array.concatMap (\ctor ->
           let
-            structName = modPrefix <> ctor.constructorName
+            safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctor.constructorName
+            structName = modPrefix <> safeCtorName
+            safeTagStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctor.constructorName
             argsStr = Array.mapWithIndex (\i typ -> "public " <> exprTypeToPhpType typ <> " $value" <> show i) ctor.fieldTypes
-            structDecl = "final class " <> structName <> " { public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
+            structDecl = "final class " <> structName <> " { public $tag = '" <> safeTagStr <> "'; public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
           in
             [ structDecl ]
         ) decl.constructors

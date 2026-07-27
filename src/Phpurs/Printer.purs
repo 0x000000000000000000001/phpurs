@@ -16,7 +16,17 @@ import Data.Map as Map
 import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take, drop)
 import Data.Maybe (isNothing, Maybe(..))
 import Data.Array (filter, length, mapWithIndex, concatMap)
+import Data.Array as Array
+import Data.Tuple (Tuple(..))
+import Data.Foldable (foldl)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
+
+flattenPhpCalls :: PhpExpr -> Tuple PhpExpr (Array PhpExpr)
+flattenPhpCalls (PhpCall fn args) | length args == 1 =
+  let Tuple innerFn innerArgs = flattenPhpCalls fn
+  in Tuple innerFn (innerArgs <> args)
+flattenPhpCalls other = Tuple other []
+
 
 foreign import safeNameImpl :: String -> String
 foreign import safeFuncNameImpl :: String -> String
@@ -137,25 +147,55 @@ printExpr currentModPrefix allArities expr = case expr of
     let
       argsStr = joinWith ", " (map (printExpr currentModPrefix allArities) args)
     in "$GLOBALS['" <> safeName name <> "'](" <> argsStr <> ")"
-  PhpCall (PhpGlobalVar mbMod ident) args ->
+  PhpCall _ _ ->
     let
-      modPrefix = case mbMod of
-        Just mod -> joinWith "_" mod <> "_"
-        Nothing -> ""
-      idStr = safeName (modPrefix <> ident)
-    in "($GLOBALS['" <> idStr <> "'])(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
-  PhpCall (PhpCall inner args1) args2 ->
-    printExpr currentModPrefix allArities (PhpCall inner (args1 <> args2))
-  PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
-  PhpCall abs args -> "(" <> printExpr currentModPrefix allArities abs <> ")(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
+      Tuple flatFn flatArgs = flattenPhpCalls expr
+      canUnbox = case flatFn of
+        PhpGlobalVar mbMod ident ->
+          let
+            modPrefix = case mbMod of
+              Just mod -> joinWith "_" mod <> "_"
+              Nothing -> ""
+            idStr = safeName (modPrefix <> ident)
+            funcName = safeFuncName (modPrefix <> ident)
+          in case Map.lookup idStr allArities of
+            Just arity | arity > 0 && length flatArgs >= arity -> Just { funcName, arity, mbMod }
+            _ -> Nothing
+        _ -> Nothing
+    in case canUnbox of
+      Just { funcName, arity, mbMod } ->
+        let
+          nsPrefix = case mbMod of
+            Just mod -> "\\" <> joinWith "\\" mod <> "\\"
+            Nothing -> ""
+          directArgs = Array.take arity flatArgs
+          remainingArgs = Array.drop arity flatArgs
+          callStr = nsPrefix <> funcName <> "(" <> joinWith ", " (map (printExpr currentModPrefix allArities) directArgs) <> ")"
+        in
+          if length remainingArgs > 0 then
+            foldl (\acc a -> "(" <> acc <> ")(" <> printExpr currentModPrefix allArities a <> ")") callStr remainingArgs
+          else
+            callStr
+      Nothing ->
+        case expr of
+          PhpCall (PhpGlobalVar mbMod ident) args ->
+            let
+              modPrefix = case mbMod of
+                Just mod -> joinWith "_" mod <> "_"
+                Nothing -> ""
+              idStr = safeName (modPrefix <> ident)
+            in "($GLOBALS['" <> idStr <> "'])(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
+          PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
+          PhpCall abs args -> "(" <> printExpr currentModPrefix allArities abs <> ")(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
+          _ -> "/* ERROR: Impossible PhpCall match */"
   PhpInt i -> show i
   PhpNumber n -> show n
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map (printExpr currentModPrefix allArities) arr) <> "]"
-  PhpAssocArray arr -> "[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr currentModPrefix allArities item.value) arr) <> "]"
+  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr currentModPrefix allArities item.value) arr) <> "]"
   PhpPropertyAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")->{'" <> safeName prop <> "'}"
-  PhpRecordAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")['" <> safeName prop <> "']"
+  PhpRecordAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")->{'" <> safeName prop <> "'}"
   PhpArrayIndex arr i -> "(" <> printExpr currentModPrefix allArities arr <> ")[" <> show i <> "]"
   PhpClone obj -> "clone " <> printExpr currentModPrefix allArities obj
   PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr currentModPrefix allArities v

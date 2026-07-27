@@ -16,25 +16,28 @@ import Data.Bifunctor (lmap)
 import Data.Argonaut.Decode.Error (printJsonDecodeError)
 import Data.Array as Array
 import Data.List as List
-import Data.Maybe (Maybe(..), isJust)
+import Data.Maybe (Maybe(..), isJust, maybe)
 import Data.Map as Map
 import Data.Set as Set
 import Data.Traversable (traverse)
+import Data.Tuple (Tuple(..))
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.String as String
 import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
 import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
 import PureScript.Backend.Optimizer.Builder (buildModules)
-import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName, Qualified(..), ModuleName(..))
+import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName, Qualified(..), ModuleName(..), ExprType(..))
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 import Phpurs.CodeGen (translate)
-import Phpurs.Printer (printPhpFile, safeName)
+import Phpurs.GenNativeForeign (genNativeWrapper, flattenFuncType)
+import Phpurs.Printer (printPhpFile, safeName, safeFuncName)
 import Phpurs.ComposerMerge (mergeComposers)
 import PureScript.Backend.Optimizer.FfiSupport (findFfiFile)
 import Data.Newtype (unwrap)
 import Data.String (joinWith, replace, replaceAll, trim, length, contains)
 import Effect.Ref as Ref
 import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, checkCache, writeCache, loadDirectives)
+import PureScript.Backend.Optimizer.Reachability (moduleReachability)
 
 cacheVersion :: String
 cacheVersion = "1.0.0"
@@ -48,6 +51,7 @@ main = launchAff_ do
 
   bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
   globalAritiesRef <- liftEffect $ Ref.new Map.empty
+  backendModulesRef <- liftEffect $ Ref.new Map.empty
 
   directives <- loadDirectives
 
@@ -65,6 +69,7 @@ main = launchAff_ do
         checkCache cacheVersion coreFnMod.path ("output/" <> modNameStr <> "/.phpurs-cache.json")
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
         let modNameStr = unwrap backendMod.name
+        liftEffect $ Ref.modify_ (Map.insert backendMod.name backendMod) backendModulesRef
         writeCache cacheVersion ("output/" <> modNameStr <> "/.phpurs-cache.json") backendMod
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
@@ -77,23 +82,33 @@ main = launchAff_ do
             content <- FS.readTextFile UTF8 ffiPath
             pure (trim (replace (Pattern "<?php\n") (Replacement "") (replace (Pattern "<?php") (Replacement "") content)))
 
+        let
+          phpModName = replaceAll (Pattern ".") (Replacement "_") modNameStr
+          getArity = case _ of
+            Just t -> Array.length (flattenFuncType t).args
+            Nothing -> 0
+          
+          foreignArities = Map.fromFoldable $ map (\(Tuple (Ident f) type_) -> Tuple (safeName (phpModName <> "_" <> f)) (getArity type_)) (Map.toUnfoldable backendMod.foreign :: Array _)
+        
         currentArities <- liftEffect $ Ref.read globalAritiesRef
-        let allArities = Map.union phpFile.arities currentArities
+        let allArities = Map.union foreignArities (Map.union phpFile.arities currentArities)
         liftEffect $ Ref.write allArities globalAritiesRef
 
         let
-          phpModName = replaceAll (Pattern ".") (Replacement "_") modNameStr
+          getType = case _ of
+            Just t -> t
+            Nothing -> Any
           wrappedFfiCode =
             if length ffiCode > 0 then
               let
                 closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
                 closureEnd = "\n  return $exports;\n});\n"
-                mappings = joinWith "\n" (map (\(Ident f) -> "$GLOBALS['" <> safeName (phpModName <> "_" <> f) <> "'] = $ffi_" <> phpModName <> "['" <> f <> "'] ?? new class { public function __invoke(...$args) { return $this; } };") (Array.fromFoldable backendMod.foreign))
+                mappings = joinWith "\n" (map (\(Tuple (Ident f) type_) -> genNativeWrapper (safeName (phpModName <> "_" <> f)) (safeFuncName (phpModName <> "_" <> f)) ("$ffi_" <> phpModName) ("($ffi_" <> phpModName <> "['" <> f <> "'] ?? new class { public function __invoke(...$args) { return $this; } })") (getType type_)) (Map.toUnfoldable backendMod.foreign))
               in
                 closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
             else
               let
-                mappings = joinWith "\n" (map (\(Ident f) -> "$GLOBALS['" <> safeName (phpModName <> "_" <> f) <> "'] = new class { public function __invoke(...$args) { return $this; } };") (Array.fromFoldable backendMod.foreign))
+                mappings = joinWith "\n" (map (\(Tuple (Ident f) type_) -> genNativeWrapper (safeName (phpModName <> "_" <> f)) (safeFuncName (phpModName <> "_" <> f)) "null" "new class { public function __invoke(...$args) { return $this; } }" (getType type_)) (Map.toUnfoldable backendMod.foreign))
               in
                 mappings <> (if length mappings > 0 then "\n" else "")
 
@@ -107,13 +122,12 @@ main = launchAff_ do
     }
     finalModules
 
+  backendModules <- liftEffect $ Ref.read backendModulesRef
+
   let
     targetMainModules = case args.mbMainModule of
       Just mainMod -> [ mainMod ]
       Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) (Array.fromFoldable finalModules)
-
-  let requireAllStr = "<?php\n" <> joinWith "" (map (\(Module m) -> "require_once __DIR__ . '/" <> unwrap m.name <> "/index.php';\n") (Array.fromFoldable finalModules))
-  FS.writeTextFile UTF8 "output/require_all.php" requireAllStr
 
   _ <- traverse
     ( \mainMod -> do
@@ -131,7 +145,11 @@ main = launchAff_ do
           FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
         else pure unit
 
-        let modEntryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\nrequire_once __DIR__ . '/../require_all.php';\n" <> callStr
+        let
+          reachableSet = moduleReachability [ModuleName mainMod] backendModules
+          reachable = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
+          requires = joinWith "" (map (\(Module m) -> "require_once __DIR__ . '/../" <> unwrap m.name <> "/index.php';\n") reachable)
+          modEntryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n" <> requires <> callStr
         FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") modEntryPoint
     )
     targetMainModules

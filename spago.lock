@@ -678,34 +678,7 @@
     },
     "extra_packages": {
       "backend-optimizer": {
-        "git": "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git",
-        "ref": "9d21c3800b63352b9028a3c47029cb32bb0e29f7",
-        "dependencies": [
-          "argonaut",
-          "arrays",
-          "control",
-          "debug",
-          "dodo-printer",
-          "either",
-          "enums",
-          "foldable-traversable",
-          "foreign-object",
-          "integers",
-          "language-cst-parser",
-          "lazy",
-          "lists",
-          "maybe",
-          "newtype",
-          "ordered-collections",
-          "partial",
-          "prelude",
-          "safe-coerce",
-          "st",
-          "strings",
-          "transformers",
-          "tuples",
-          "unsafe-coerce"
-        ]
+        "path": "../purescript-backend-optimizer"
       }
     }
   },
@@ -844,9 +817,8 @@
       ]
     },
     "backend-optimizer": {
-      "type": "git",
-      "url": "https://github.com/0x000000000000000000001/purescript-backend-optimizer.git",
-      "rev": "9d21c3800b63352b9028a3c47029cb32bb0e29f7",
+      "type": "local",
+      "path": "../purescript-backend-optimizer",
       "dependencies": [
         "argonaut",
         "arrays",

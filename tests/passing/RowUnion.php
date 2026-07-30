@@ -1,5 +1,5 @@
 <?php
 
 $exports['mergeImpl'] = function($l, $r) {
-    return \array_merge((array) $r, (array) $l);
+    return (object) \array_merge((array) $r, (array) $l);
 };

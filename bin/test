@@ -39,7 +39,7 @@ failed=0
 
 # Clean output (now handled inside the loop)
 
-SKIP_BEFORE="RowNub" # E.g. "TCO" to run tests after TCO.purs
+SKIP_BEFORE="" # E.g. "TCO" to run tests after TCO.purs
 TEST_FILES=()
 CLEAN_CACHE=0
 
@@ -137,9 +137,10 @@ for test_file in "${TEST_FILES[@]}"; do
   echo "=> Testing $test_name"
   
   # Clean output and src for this specific test
-  rm -rf output/Main src/*
+  rm -rf output-test/Main src/*
   
   cp "$test_file" "src/Main.purs"
+  echo "-- $(date +%s%N)" >> "src/Main.purs"
   
   if [ -f "${test_file%.purs}.js" ]; then
     cp "${test_file%.purs}.js" "src/Main.js"
@@ -158,7 +159,7 @@ for test_file in "${TEST_FILES[@]}"; do
   max_retries=2
   build_success=0
   while [ $retry -le $max_retries ]; do
-    if out=$(spago build -q 2>&1); then
+    if out=$(spago build -q --output output-test 2>&1); then
       build_success=1
       break
     fi
@@ -167,10 +168,10 @@ for test_file in "${TEST_FILES[@]}"; do
 
   if [ $build_success -eq 1 ]; then
     # Generate PHP code
-    node ../../bin/phpurs.js > /dev/null 2>&1
+    node ../../bin/phpurs.js --output output-test > /dev/null 2>&1
     
     # Run the compiled PHP code
-    output_run=$(php -d memory_limit=512M output/Main/main.mod.php 2>&1)
+    output_run=$(php -d memory_limit=512M output-test/Main/main.mod.php 2>&1)
     exit_code=$?
     
     if [ -n "$output_run" ]; then

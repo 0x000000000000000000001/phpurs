@@ -1,6 +1,4 @@
 <?php
-$exports['showImpl'] = function($showFn) {
-    return function($val) use ($showFn) {
-        return $showFn($val);
-    };
+$exports['showImpl'] = function($showFn, $val) {
+    return $showFn($val);
 };

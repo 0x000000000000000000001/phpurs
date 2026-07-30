@@ -4,6 +4,7 @@ export const safeNameImpl = function(s) {
     if (c === '"') return 'dquote';
     if (c === '$') return 'dollar';
     if (c === '\\') return 'bslash';
+    if (c === '/') return 'slash';
     return c;
   }).join('');
 };
@@ -15,6 +16,7 @@ export const safeFuncNameImpl = function(s) {
     if (c === '"') return 'dquote';
     if (c === '$') return 'dollar';
     if (c === '\\') return 'bslash';
+    if (c === '/') return 'slash';
     return c;
   }).join('');
 };

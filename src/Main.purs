@@ -16,7 +16,7 @@ import Data.Bifunctor (lmap)
 import Data.Argonaut.Decode.Error (printJsonDecodeError)
 import Data.Array as Array
 import Data.List as List
-import Data.Maybe (Maybe(..), isJust, maybe)
+import Data.Maybe (Maybe(..), isJust, maybe, fromMaybe)
 import Data.Map as Map
 import Data.Set as Set
 import Data.Traversable (traverse)
@@ -45,9 +45,11 @@ cacheVersion = "1.0.0"
 main :: Effect Unit
 main = launchAff_ do
   argsRaw <- liftEffect Process.argv
-  let args = parseCLIArgs argsRaw
+  let 
+    args = parseCLIArgs argsRaw
+    outputDir = fromMaybe "output" args.mbOutputDir
 
-  finalModules <- coreFnModulesFromOutput "output"
+  finalModules <- coreFnModulesFromOutput outputDir
 
   bundleContentRef <- liftEffect $ Ref.new "<?php\n\n"
   globalAritiesRef <- liftEffect $ Ref.new Map.empty
@@ -66,11 +68,11 @@ main = launchAff_ do
     , onPrepareModule: \_ m -> pure m
     , onSkipModule: \_ (Module coreFnMod) -> do
         let modNameStr = unwrap coreFnMod.name
-        checkCache cacheVersion coreFnMod.path ("output/" <> modNameStr <> "/.phpurs-cache.json")
+        checkCache cacheVersion coreFnMod.path (outputDir <> "/" <> modNameStr <> "/.phpurs-cache.json")
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
         let modNameStr = unwrap backendMod.name
         liftEffect $ Ref.modify_ (Map.insert backendMod.name backendMod) backendModulesRef
-        writeCache cacheVersion ("output/" <> modNameStr <> "/.phpurs-cache.json") backendMod
+        writeCache cacheVersion (outputDir <> "/" <> modNameStr <> "/.phpurs-cache.json") backendMod
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod
@@ -118,7 +120,7 @@ main = launchAff_ do
         else pure unit
 
         let phpCode = printPhpFile false wrappedFfiCode allArities phpFile
-        FS.writeTextFile UTF8 ("output/" <> modNameStr <> "/index.php") phpCode
+        FS.writeTextFile UTF8 (outputDir <> "/" <> modNameStr <> "/index.php") phpCode
     }
     finalModules
 
@@ -150,7 +152,8 @@ main = launchAff_ do
           reachable = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
           requires = joinWith "" (map (\(Module m) -> "require_once __DIR__ . '/../" <> unwrap m.name <> "/index.php';\n") reachable)
           modEntryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n" <> requires <> callStr
-        FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.mod.php") modEntryPoint
+        liftEffect $ Console.log $ "Writing main.mod.php for " <> mainMod
+        FS.writeTextFile UTF8 (outputDir <> "/" <> mainMod <> "/main.mod.php") modEntryPoint
     )
     targetMainModules
 
@@ -159,7 +162,7 @@ main = launchAff_ do
       Just _ -> pure unit
       Nothing -> do
         bundleContent <- liftEffect $ Ref.read bundleContentRef
-        FS.writeTextFile UTF8 "output/bundle.php" bundleContent
+        FS.writeTextFile UTF8 (outputDir <> "/bundle.php") bundleContent
   else pure unit
 
   liftEffect $ mergeComposers ""

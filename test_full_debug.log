@@ -1,7 +1,0 @@
-Running tests from /Users/0x1/Documents/htdocs/phpurs/tests/passing...
-=> Testing 1110.purs
-MKDIR FAILED FOR Main
-./bin/test: line 172: [: -eq: unary operator expected
-   [0;31m[FAILED][0m Execution error
-
-Summary: [0;32m0 passed[0m, [0;31m1 failed[0m.

@@ -105,7 +105,7 @@ main = launchAff_ do
               let
                 closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
                 closureEnd = "\n  return $exports;\n});\n"
-                mappings = joinWith "\n" (map (\(Tuple (Ident f) type_) -> genNativeWrapper (safeName (phpModName <> "_" <> f)) (safeFuncName (phpModName <> "_" <> f)) ("$ffi_" <> phpModName) ("($ffi_" <> phpModName <> "['" <> f <> "'] ?? \\phpurs_ffi_fallback($ffi_" <> phpModName <> ", '" <> f <> "'))") (getType type_)) (Map.toUnfoldable backendMod.foreign))
+                mappings = joinWith "\n" (map (\(Tuple (Ident f) type_) -> genNativeWrapper (safeName (phpModName <> "_" <> f)) (safeFuncName (phpModName <> "_" <> f)) ("$ffi_" <> phpModName) ("($ffi_" <> phpModName <> "['" <> f <> "'] ?? new class { public function __invoke(...$args) { return $this; } })") (getType type_)) (Map.toUnfoldable backendMod.foreign))
               in
                 closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
             else

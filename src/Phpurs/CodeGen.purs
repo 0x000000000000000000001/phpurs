@@ -700,8 +700,24 @@ translate imports mod =
                                  retType = getRetType (Array.length fn.args) types
                              in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType (res.stmts <> [ PhpReturn res.expr ]) } ]
                           Nothing ->
-                             let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
-                             in [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
+                           let
+                             res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 expr
+                             arity = extractTypeArity expr
+                           in
+                             if arity > 0 then
+                               let
+                                 closureName = modPrefix <> name <> "_closure"
+                                 args = Array.mapWithIndex (\i _ -> "v_" <> show i) (Array.replicate arity unit)
+                                 callExpr = PhpCall (PhpGlobalVar Nothing closureName) (map PhpVar args)
+                                 types = extractFuncType expr
+                                 argsWithTypes = zipArgsWithTypes args types
+                                 retType = getRetType arity types
+                                 nativeFunc = { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType [ PhpReturn callExpr ] }
+                                 closureAssign = { identifier: closureName, expression: PhpGlobalAssign closureName (wrapInStmts [] res.stmts res.expr) }
+                               in
+                                 [ closureAssign, nativeFunc ]
+                             else
+                               [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
                     )
                     group.bindings
             else

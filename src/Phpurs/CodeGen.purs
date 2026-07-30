@@ -63,7 +63,7 @@ translateOperator1 (OpIsTag (Qualified mbMod (Ident tag))) e =
     PhpInstanceOf e absClass
 
 translateOperator2 :: BackendOperator2 -> PhpExpr -> PhpExpr -> PhpExpr
-translateOperator2 OpArrayIndex arr _ = PhpArrayIndex arr 0
+translateOperator2 OpArrayIndex arr ix = PhpArrayIndex arr ix
 translateOperator2 OpBooleanAnd l r = PhpBinOp "&&" l r
 translateOperator2 OpBooleanOr l r = PhpBinOp "||" l r
 translateOperator2 (OpBooleanOrd OpEq) l r = PhpBinOp "===" l r
@@ -318,7 +318,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
     in
       case acc of
         GetProp prop -> { stmts: res.stmts, expr: PhpRecordAccess res.expr prop, nextId: res.nextId }
-        GetIndex idx -> { stmts: res.stmts, expr: PhpArrayIndex res.expr idx, nextId: res.nextId }
+        GetIndex idx -> { stmts: res.stmts, expr: PhpArrayIndex res.expr (PhpInt idx), nextId: res.nextId }
         GetCtorField _ _ _ _ prop _ -> { stmts: res.stmts, expr: PhpPropertyAccess res.expr prop, nextId: res.nextId }
 
   Let (Just (Ident i)) (Level l) val body ->

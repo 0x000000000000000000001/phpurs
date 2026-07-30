@@ -27,7 +27,7 @@ data PhpExpr
   | PhpAssocArray (Array { key :: String, value :: PhpExpr })
   | PhpPropertyAccess PhpExpr String
   | PhpRecordAccess PhpExpr String
-  | PhpArrayIndex PhpExpr Int
+  | PhpArrayIndex PhpExpr PhpExpr
   | PhpAssign String PhpExpr | PhpAssignExpr PhpExpr PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
   | PhpMatch PhpExpr (Array { val :: PhpExpr, body :: PhpExpr }) PhpExpr -- subject, cases, default

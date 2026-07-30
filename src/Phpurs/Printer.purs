@@ -196,7 +196,7 @@ printExpr currentModPrefix allArities expr = case expr of
   PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr currentModPrefix allArities item.value) arr) <> "]"
   PhpPropertyAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")->{'" <> safeName prop <> "'}"
   PhpRecordAccess e prop -> "(" <> printExpr currentModPrefix allArities e <> ")->{'" <> safeName prop <> "'}"
-  PhpArrayIndex arr i -> "(" <> printExpr currentModPrefix allArities arr <> ")[" <> show i <> "]"
+  PhpArrayIndex arr i -> "(" <> printExpr currentModPrefix allArities arr <> ")[" <> printExpr currentModPrefix allArities i <> "]"
   PhpClone obj -> "clone " <> printExpr currentModPrefix allArities obj
   PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr currentModPrefix allArities v
   PhpAssignExpr left v -> printExpr currentModPrefix allArities left <> " = " <> printExpr currentModPrefix allArities v

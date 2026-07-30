@@ -6,4 +6,4 @@ import Effect.Console (log)
 s = \x y z -> x z (y z)
 
 main = log "Done"
--- 1785408492745360000
+-- 1785431437762521000

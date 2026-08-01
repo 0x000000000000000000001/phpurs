@@ -113,56 +113,42 @@ $_copyRecord = function($rec) {
     return $rec;
 };
 
-$_unsafeInsert = function($l) {
-    return function($a) use ($l) {
-        return function($rec) use ($l, $a) {
-            if (\is_array($rec)) {
-                $rec[$l] = $a;
-            } else {
-                $rec->{$l} = $a;
-            }
-            return $rec;
-        };
-    };
+$_unsafeInsert = function($l, $a, $rec) {
+    if (\is_array($rec)) {
+        $rec[$l] = $a;
+    } else {
+        $rec->{$l} = $a;
+    }
+    return $rec;
 };
 
-$_unsafeModify = function($l) {
-    return function($f) use ($l) {
-        return function($rec) use ($l, $f) {
-            if (\is_array($rec)) {
-                $rec[$l] = $f($rec[$l]);
-            } else {
-                $rec->{$l} = $f($rec->{$l});
-            }
-            return $rec;
-        };
-    };
+$_unsafeModify = function($l, $f, $rec) {
+    if (\is_array($rec)) {
+        $rec[$l] = $f($rec[$l]);
+    } else {
+        $rec->{$l} = $f($rec->{$l});
+    }
+    return $rec;
 };
 
-$_unsafeDelete = function($l) {
-    return function($rec) use ($l) {
-        if (\is_array($rec)) {
-            unset($rec[$l]);
-        } else {
-            unset($rec->{$l});
-        }
-        return $rec;
-    };
+$_unsafeDelete = function($l, $rec) {
+    if (\is_array($rec)) {
+        unset($rec[$l]);
+    } else {
+        unset($rec->{$l});
+    }
+    return $rec;
 };
 
-$_unsafeRename = function($l1) {
-    return function($l2) use ($l1) {
-        return function($rec) use ($l1, $l2) {
-            if (\is_array($rec)) {
-                $rec[$l2] = $rec[$l1];
-                unset($rec[$l1]);
-            } else {
-                $rec->{$l2} = $rec->{$l1};
-                unset($rec->{$l1});
-            }
-            return $rec;
-        };
-    };
+$_unsafeRename = function($l1, $l2, $rec) {
+    if (\is_array($rec)) {
+        $rec[$l2] = $rec[$l1];
+        unset($rec[$l1]);
+    } else {
+        $rec->{$l2} = $rec->{$l1};
+        unset($rec->{$l1});
+    }
+    return $rec;
 };
 
 $exports['copyRecord'] = $_copyRecord;
@@ -181,7 +167,7 @@ function majRecord_majBuilder_copymajRecord($v0) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
   global $ffi_Record_Builder;
-  $f = ($ffi_Record_Builder['copyRecord'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('copyRecord', $ffi_Record_Builder) ? $ffi_Record_Builder['copyRecord'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0);
 }
 $GLOBALS['Record_Builder_copyRecord'] = __NAMESPACE__ . '\\majRecord_majBuilder_copymajRecord';
@@ -193,7 +179,7 @@ function majRecord_majBuilder_unsafemajDelete(string $v0, $v1 = null) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
   global $ffi_Record_Builder;
-  $f = ($ffi_Record_Builder['unsafeDelete'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('unsafeDelete', $ffi_Record_Builder) ? $ffi_Record_Builder['unsafeDelete'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1);
 }
 $GLOBALS['Record_Builder_unsafeDelete'] = __NAMESPACE__ . '\\majRecord_majBuilder_unsafemajDelete';
@@ -205,7 +191,7 @@ function majRecord_majBuilder_unsafemajInsert(string $v0, $v1 = null, $v2 = null
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
   global $ffi_Record_Builder;
-  $f = ($ffi_Record_Builder['unsafeInsert'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('unsafeInsert', $ffi_Record_Builder) ? $ffi_Record_Builder['unsafeInsert'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2);
 }
 $GLOBALS['Record_Builder_unsafeInsert'] = __NAMESPACE__ . '\\majRecord_majBuilder_unsafemajInsert';
@@ -217,7 +203,7 @@ function majRecord_majBuilder_unsafemajModify(string $v0, $v1 = null, $v2 = null
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
   global $ffi_Record_Builder;
-  $f = ($ffi_Record_Builder['unsafeModify'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('unsafeModify', $ffi_Record_Builder) ? $ffi_Record_Builder['unsafeModify'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2);
 }
 $GLOBALS['Record_Builder_unsafeModify'] = __NAMESPACE__ . '\\majRecord_majBuilder_unsafemajModify';
@@ -229,7 +215,7 @@ function majRecord_majBuilder_unsafemajRename(string $v0, $v1 = null, $v2 = null
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
   global $ffi_Record_Builder;
-  $f = ($ffi_Record_Builder['unsafeRename'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('unsafeRename', $ffi_Record_Builder) ? $ffi_Record_Builder['unsafeRename'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2);
 }
 $GLOBALS['Record_Builder_unsafeRename'] = __NAMESPACE__ . '\\majRecord_majBuilder_unsafemajRename';

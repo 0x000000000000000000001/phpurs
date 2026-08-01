@@ -2,9 +2,11 @@
 
 namespace Main;
 
-// ALL IMPORTS: Effect.Console, Prelude, Prim
-// TO REQUIRE: Effect.Console, Prelude
+// ALL IMPORTS: Data.Function, Effect.Console, Main, Prelude, Prim
+// TO REQUIRE: Data.Function, Effect.Console, Main, Prelude
+require_once __DIR__ . '/../Data.Function/index.php';
 require_once __DIR__ . '/../Effect.Console/index.php';
+require_once __DIR__ . '/../Main/index.php';
 require_once __DIR__ . '/../Prelude/index.php';
 
 if (!class_exists(__NAMESPACE__ . '\\Phpurs_Data0')) {
@@ -98,19 +100,33 @@ $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 
 
-// Main_s
-function majMain_s($x_0, $y_1 = null, $z_2 = null) {
+// Main_f2
+function majMain_f2($v_0): string|\Closure {
   $__num = \func_num_args();
-  $__fn = __NAMESPACE__ . '\\' . 'majMain_s';
-  if ($__num < 3) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 3);
+  $__fn = __NAMESPACE__ . '\\' . 'majMain_f2';
+  if ($__num < 1) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
-  $__res = (($x_0)($z_2))(($y_1)($z_2));
+  $__res = "Done";
   goto __end;;
   __end:
-  return 3 < $__num ? $__res(...\array_slice(\func_get_args(), 3)) : $__res;
+  return 1 < $__num ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
 }
-$GLOBALS['Main_s'] = __NAMESPACE__ . '\\majMain_s';
+$GLOBALS['Main_f2'] = __NAMESPACE__ . '\\majMain_f2';
+
+// Main_f1
+function majMain_f1($g_0) {
+  $__num = \func_num_args();
+  $__fn = __NAMESPACE__ . '\\' . 'majMain_f1';
+  if ($__num < 1) {
+    return phpurs_curry_fallback($__fn, \func_get_args(), 1);
+  }
+  $__res = ($g_0)(1);
+  goto __end;;
+  __end:
+  return 1 < $__num ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+}
+$GLOBALS['Main_f1'] = __NAMESPACE__ . '\\majMain_f1';
 
 // Main_main
 $GLOBALS['Main_main'] = ($GLOBALS['Effect_Console_log'])("Done");

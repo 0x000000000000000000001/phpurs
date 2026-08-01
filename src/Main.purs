@@ -72,6 +72,7 @@ main = launchAff_ do
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
         let modNameStr = unwrap backendMod.name
         liftEffect $ Ref.modify_ (Map.insert backendMod.name backendMod) backendModulesRef
+        _ <- attempt (FS.mkdir (outputDir <> "/" <> modNameStr))
         writeCache cacheVersion (outputDir <> "/" <> modNameStr <> "/.phpurs-cache.json") backendMod
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports

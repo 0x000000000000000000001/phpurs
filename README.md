@@ -45,8 +45,6 @@ In parallel, the project structure has been fully reorganized to align with the 
 
 The compiler itself is now robust and performant. It has been battle-tested on real-world projects and is ready for production use. We highly welcome community contributions—whether it's PRs for the compiler itself or adding missing PHP FFIs to core and major PureScript libraries.
 
-
-
 ## How to use
 
 The easiest way to bootstrap a new PureScript-to-PHP project is by using our official starter template. It comes pre-configured with the necessary core library overrides (FFI mapped to native PHP) via Git dependencies.
@@ -177,7 +175,7 @@ Your IDE, autocomplete, and lockfiles will work natively and flawlessly.
 
 > **Note on Custom Directory Structures:** If you prefer to keep your PHP environment isolated in a subdirectory (e.g., `run/bak/php/composer.json`) rather than the root, simply adjust the `url` to be relative to the location of the `composer.json` file (e.g., `"../../../output"`).
 
-## Asynchronous I/O and Concurrency (Aff)
+## Asynchronous I/O and concurrency (Aff)
 
 `phpurs` provides native asynchronous effects (`Aff`) by leveraging PHP 8.1+ Fibers and the [Revolt](https://revolt.run/) event loop. 
 
@@ -188,9 +186,9 @@ A good rule of thumb is to **act exactly as if you were importing Node.js librar
 **Why native Fibers instead of Swoole?**
 While `phpurs` could have been built around powerful daemonized extensions like [Swoole](https://swoole.co.uk/) or FrankenPHP, doing so would have compromised the core promise of the project: the ability to compile and deploy highly-concurrent PureScript into cheap, standard "containerless" environments (like a basic VPS or shared hosting). By relying exclusively on native PHP 8.1+ Fibers, `phpurs` ensures that your asynchronous PureScript code can run natively anywhere PHP runs, without requiring custom C extensions or complex server-side configurations.
 
-## Local Development & Testing
+## Local development & testing
 
-### Nix environment (Recommended)
+### Nix environment (recommended)
 
 This repository is fully configured with a [Nix Flake](https://nixos.wiki/wiki/Flakes). If you have Nix installed, you can drop into a fully reproducible development shell containing the exact versions of PureScript, Spago, Node.js, PHP, and Composer needed to work on the compiler:
 ```bash
@@ -223,6 +221,19 @@ To run the test suite:
 ```bash
 ./bin/test
 ```
+
+## Current status & milestones
+
+Since its inception, `phpurs` has reached several major milestones:
+
+- [x] **100% of the official tests are green:** The compiler has officially graduated from its experimental phase and is now production-ready.
+- [x] **Massive compilation speedups & incremental builds:** By plugging into `purescript-backend-optimizer`, a cold build of 76k lines takes only ~2.6s, with incremental builds averaging ~0.6s.
+- [x] **Native `Aff` via Fibers:** Asynchronous operations are handled seamlessly via PHP 8.1+ Fibers and the Revolt event loop, without blocking the OS thread.
+- [x] **Real world validation (unit):** Successful validation on 100% of the unit tests for a complex, full scale project involving Postgres, S3, RabbitMQ, and deep Aff nesting, with execution times almost matching Node.js.
+- [x] **Real world validation (integration):** Successful validation on 100% of the integration tests for this same complex project.
+- [x] **A complete ecosystem:** Dedicated FFI libraries, a starter template, optional bundling with Dead Code Elimination (DCE), and full Nix determinism.
+- [ ] **Module validation:** Validate tests module by module (`phpurs-*`).
+- _(maybe more to come)_
 
 ## Architecture
 

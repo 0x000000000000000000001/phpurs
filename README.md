@@ -226,7 +226,7 @@ To run the test suite:
 
 Since its inception, `phpurs` has reached several major milestones:
 
-- [x] **100% of the official tests are green:** The compiler has officially graduated from its experimental phase and is now production-ready.
+- [x] **100% of the [official tests](https://github.com/purescript/purescript/tree/master/tests/purs/passing) are green:** The compiler has officially graduated from its experimental phase and is now production-ready.
 - [x] **Massive compilation speedups & incremental builds:** By plugging into `purescript-backend-optimizer`, a cold build of 76k lines takes only ~2.6s, with incremental builds averaging ~0.6s.
 - [x] **Native `Aff` via Fibers:** Asynchronous operations are handled seamlessly via PHP 8.1+ Fibers and the Revolt event loop, without blocking the OS thread.
 - [x] **Real world validation (unit):** Successful validation on 100% of the unit tests for a complex, full scale project involving Postgres, S3, RabbitMQ, and deep Aff nesting, with execution times almost matching Node.js.
@@ -234,6 +234,7 @@ Since its inception, `phpurs` has reached several major milestones:
 - [x] **A complete ecosystem:** Dedicated FFI libraries, a starter template, optional bundling with Dead Code Elimination (DCE), and full Nix determinism.
 - [ ] **Module validation:** Validate tests module by module (`phpurs-*`).
 - [ ] General code **cleanup** (it’s still quite messy)
+
 _(maybe more to come)_
 
 ## Architecture

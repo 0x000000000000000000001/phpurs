@@ -234,7 +234,7 @@ Since its inception, `phpurs` has reached several major milestones:
 - [x] **A complete ecosystem:** Dedicated FFI libraries, a starter template, optional bundling with Dead Code Elimination (DCE), and full Nix determinism.
 - [ ] **Module validation:** Validate tests module by module (`phpurs-*`).
 - [ ] General code **cleanup** (it’s still quite messy)
-- _(maybe more to come)_
+_(maybe more to come)_
 
 ## Architecture
 

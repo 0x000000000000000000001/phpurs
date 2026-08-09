@@ -4,7 +4,7 @@
 <br />
 <br />
 
-_Almost official, small bugs to fix._
+_Mature experimental WIP. Still bugs to fix, but the core ideas have been valided by the facts/results. It is paused until the official release of `gopurs`, which is [imminent](https://github.com/0x000000000000000000001/gopurs). You can [find a complete devlog here](https://discourse.purescript.org/t/leveraging-70-of-the-web-a-php-backend-for-purescript)._
 
 A super-optimized **PureScript-to-PHP compiler**, entirely written in PureScript, leveraging PHP's **portability**, **omnipresence on the web**, and **huge ecosystem**. It successfully passes the official PureScript test suite and is ready for production.
 

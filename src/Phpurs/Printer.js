@@ -1,3 +1,7 @@
+export const showInt32Impl = function(i) {
+  return String(i | 0);
+};
+
 export const safeNameImpl = function(s) {
   return s.split('').map(c => {
     if (c === "'") return 'quote';

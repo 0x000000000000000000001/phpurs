@@ -21,6 +21,7 @@ import Data.Tuple (Tuple(..))
 import Data.Foldable (foldl)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
 
+foreign import showInt32Impl :: Int -> String
 flattenPhpCalls :: PhpExpr -> Tuple PhpExpr (Array PhpExpr)
 flattenPhpCalls (PhpCall fn args) | length args == 1 =
   let Tuple innerFn innerArgs = flattenPhpCalls fn
@@ -188,7 +189,7 @@ printExpr currentModPrefix allArities expr = case expr of
           PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
           PhpCall abs args -> "(" <> printExpr currentModPrefix allArities abs <> ")(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
           _ -> "/* ERROR: Impossible PhpCall match */"
-  PhpInt i -> show i
+  PhpInt i -> showInt32Impl i
   PhpNumber n -> show n
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"

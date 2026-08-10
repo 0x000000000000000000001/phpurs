@@ -386,7 +386,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
                   
                   resBodyMut = translateExprImpl modNameStr combinedRecVars namedBound newBound Nothing combinedLoopCtx true nextId fn.body
                   
-                  mappedFvs = map (\v -> fromMaybe v (Map.lookup v newBound)) (Array.fromFoldable fn.fvs)
+                  mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) (Array.fromFoldable fn.fvs))
                   useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
                   
                   mutVarsToCaptureOuter = foldMap (\c -> map (\p -> "&" <> c.varPrefix <> p) c.params) loopCtx

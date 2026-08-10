@@ -5,8 +5,12 @@ import Data.Array as Array
 import Data.String as String
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..))
 
+stripForAll :: ExprType -> ExprType
+stripForAll (ForAll _ t) = stripForAll t
+stripForAll t = t
+
 flattenFuncType :: ExprType -> { args :: Array ExprType, ret :: ExprType }
-flattenFuncType = case _ of
+flattenFuncType ty = case stripForAll ty of
   Func args ret ->
     let
       inner = flattenFuncType ret

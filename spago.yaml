@@ -52,4 +52,4 @@ workspace:
       #   - transformers
       #   - tuples
       #   - unsafe-coerce
-      path: "../purescript-backend-optimizer"
+      path: "../../purescript-backend-optimizer"

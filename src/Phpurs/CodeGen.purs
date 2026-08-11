@@ -624,10 +624,10 @@ translate imports mod =
     rawDecls = Array.concatMap (\decl ->
         Array.concatMap (\ctor ->
           let
-            safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctor.constructorName
+            safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctor.name
             structName = modPrefix <> safeCtorName
-            safeTagStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctor.constructorName
-            argsStr = Array.mapWithIndex (\i typ -> "public " <> exprTypeToPhpType typ <> " $value" <> show i) ctor.fieldTypes
+            safeTagStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctor.name
+            argsStr = Array.mapWithIndex (\i typ -> "public " <> exprTypeToPhpType typ <> " $value" <> show i) ctor.fields
             structDecl = "final class " <> structName <> " { public $tag = '" <> safeTagStr <> "'; public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
           in
             [ structDecl ]

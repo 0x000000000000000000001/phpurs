@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -e
+
+# Se placer dans le dossier racine htdocs
+cd "$(dirname "$0")/../.."
+
+CLEAN=0
+for arg in "$@"; do
+  if [ "$arg" == "-c" ] || [ "$arg" == "--clean" ]; then
+    CLEAN=1
+  fi
+done
+
+if [ "$CLEAN" == "1" ]; then
+  echo "=== Recompiling phpurs ==="
+  (cd phpurs && npm run build) || { echo "Compiler build failed"; exit 1; }
+  echo ""
+fi
+
+echo "Détection des modules phpurs-*"
+echo "================================"
+
+for dir in phpurs-*/; do
+  if [ -x "${dir}bin/test" ]; then
+    echo ""
+    echo "=============================================="
+    echo "🧪 Testing module: $dir"
+    echo "=============================================="
+    (cd "$dir" && ./bin/test) || {
+      echo ""
+      echo "❌ ERROR: Tests failed in module $dir"
+      echo "🛑 Aborting remaining tests."
+      exit 1
+    }
+  fi
+done
+
+echo ""
+echo "✅ All tests passed successfully!"

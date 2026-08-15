@@ -13,16 +13,19 @@ import Prelude
 
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendOperatorNum(..))
 import PureScript.Backend.Optimizer.Codegen.Tco as Tco
-import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr)
+import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr, TcoRef(..), TcoUsage(..), TcoAnalysis(..))
 import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..), ExprType(..))
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
+import Effect.Unsafe (unsafePerformEffect)
+import Effect.Console as Console
 import Data.Tuple (Tuple(..))
 import Data.Array as Array
 import Data.String as String
+import Debug (trace)
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.Foldable (foldl, foldr, foldMap)
 import Data.Traversable (traverse)
@@ -125,7 +128,35 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
   _ -> Tuple tcoExpr []
 
 translateExprImpl :: String -> Array String -> Map String String -> Map String String -> Maybe String -> Array LoopCtx -> Boolean -> Int -> TcoExpr -> TranslationRes
-translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCtx isTail nextId tcoExpr@(TcoExpr _tcoAnalysis syntax) = case syntax of
+translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail nextId tcoExpr@(TcoExpr _tcoAnalysis syntax) = 
+  let
+    doTrace = if modNameStr == "Phpurs_PhpAst" then trace ("Translating: " <> case syntax of
+            Var _ -> "Var"
+            Local _ _ -> "Local"
+            Lit _ -> "Lit"
+            App _ _ -> "App"
+            Abs _ _ -> "Abs"
+            UncurriedApp _ _ -> "UncurriedApp"
+            UncurriedAbs _ _ -> "UncurriedAbs"
+            UncurriedEffectApp _ _ -> "UncurriedEffectApp"
+            UncurriedEffectAbs _ _ -> "UncurriedEffectAbs"
+            Accessor _ _ -> "Accessor"
+            Update _ _ -> "Update"
+            CtorDef _ _ _ _ -> "CtorDef"
+            CtorSaturated _ _ _ _ _ -> "CtorSaturated"
+            Let _ _ _ _ -> "Let"
+            LetRec _ _ _ -> "LetRec"
+            Branch _ _ -> "Branch"
+            EffectBind _ _ _ _ -> "EffectBind"
+            EffectPure _ -> "EffectPure"
+            EffectDefer _ -> "EffectDefer"
+            PrimOp _ -> "PrimOp"
+            PrimEffect _ -> "PrimEffect"
+            PrimUndefined -> "PrimUndefined"
+            Typed _ _ -> "Typed"
+            Fail _ -> "Fail"
+          ) else (\f -> f unit)
+  in doTrace \_ -> case syntax of
   Lit lit ->
     case lit of
       LitInt i -> { stmts: [], expr: PhpInt i, nextId }
@@ -277,8 +308,8 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
   Abs args body ->
     let
       argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
-      fvs = freeVars tcoExpr
-      useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
+      fvs = getFreeVars bound tcoExpr
+      useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] true nextId body
       types = extractFuncType tcoExpr
@@ -290,8 +321,8 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
   UncurriedAbs args body ->
     let
       argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) args
-      fvs = freeVars tcoExpr
-      useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
+      fvs = getFreeVars bound tcoExpr
+      useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] true nextId body
       types = extractFuncType tcoExpr
@@ -303,8 +334,8 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
   UncurriedEffectAbs args body ->
     let
       argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) args
-      fvs = freeVars tcoExpr
-      useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable fvs)
+      fvs = getFreeVars bound tcoExpr
+      useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] false nextId body
       types = extractFuncType tcoExpr
       argsWithTypes = zipArgsWithTypes argsArray types
@@ -322,24 +353,30 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
         GetCtorField _ _ _ _ prop _ -> { stmts: res.stmts, expr: PhpPropertyAccess res.expr prop, nextId: res.nextId }
 
   Let (Just (Ident i)) (Level l) val body ->
-    let
-      oldVarName = localId (Just (Ident i)) (Level l)
-      varName = oldVarName <> "_" <> show nextId
-      resVal = translateExprImpl modNameStr recVars namedBound bound (Just varName) [] false nextId val
-      newBound = Map.insert oldVarName varName bound
-      resBody = translateExprImpl modNameStr recVars namedBound newBound Nothing loopCtx isTail (resVal.nextId + 1) body
-    in
-      { stmts: resVal.stmts <> [ PhpAssign varName resVal.expr ] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
+    if totalUsagesOf (TcoLocal (Just (Ident i)) (Level l)) (tcoAnalysisOf body) == 0 then
+      translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail nextId body
+    else
+      let
+        oldVarName = localId (Just (Ident i)) (Level l)
+        varName = oldVarName <> "_" <> show nextId
+        resVal = translateExprImpl modNameStr recVars namedBound bound (Just varName) [] false nextId val
+        newBound = Map.insert oldVarName varName bound
+        resBody = translateExprImpl modNameStr recVars namedBound newBound Nothing loopCtx isTail (resVal.nextId + 1) body
+      in
+        { stmts: resVal.stmts <> [ PhpAssign varName resVal.expr ] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
   Let Nothing (Level l) val body ->
-    let
-      oldVarName = localId Nothing (Level l)
-      varName = oldVarName <> "_" <> show nextId
-      resVal = translateExprImpl modNameStr recVars namedBound bound (Just varName) [] false nextId val
-      newBound = Map.insert oldVarName varName bound
-      resBody = translateExprImpl modNameStr recVars namedBound newBound Nothing loopCtx isTail (resVal.nextId + 1) body
-    in
-      { stmts: resVal.stmts <> [ PhpAssign varName resVal.expr ] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
+    if totalUsagesOf (TcoLocal Nothing (Level l)) (tcoAnalysisOf body) == 0 then
+      translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail nextId body
+    else
+      let
+        oldVarName = localId Nothing (Level l)
+        varName = oldVarName <> "_" <> show nextId
+        resVal = translateExprImpl modNameStr recVars namedBound bound (Just varName) [] false nextId val
+        newBound = Map.insert oldVarName varName bound
+        resBody = translateExprImpl modNameStr recVars namedBound newBound Nothing loopCtx isTail (resVal.nextId + 1) body
+      in
+        { stmts: resVal.stmts <> [ PhpAssign varName resVal.expr ] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
   LetRec lvl binds body ->
     let
@@ -357,7 +394,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
       
       isLoop = (unwrap (tcoAnalysisOf tcoExpr)).role.isLoop
       mutRecBinds = if isLoop && Array.length (toArray binds) == 1 then
-        traverse (\(Tuple ident val) -> case extractUncurriedAbs val of
+        traverse (\(Tuple ident val) -> case extractUncurriedAbs bound val of
             Just abs -> Just { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }
             Nothing -> Nothing
         ) (toArray binds)
@@ -386,7 +423,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
                   
                   resBodyMut = translateExprImpl modNameStr combinedRecVars namedBound newBound Nothing combinedLoopCtx true nextId fn.body
                   
-                  mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) (Array.fromFoldable fn.fvs))
+                  mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs)
                   useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
                   
                   mutVarsToCaptureOuter = foldMap (\c -> map (\p -> "&" <> c.varPrefix <> p) c.params) loopCtx
@@ -466,7 +503,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
             let
               resCond = translateExprImpl modNameStr recVars namedBound bound Nothing [] false acc.nextId condExpr
               resBody = translateExprImpl modNameStr recVars namedBound bound Nothing loopCtx isTail resCond.nextId bodyExpr
-              condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
+              condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (getFreeVars bound condExpr)) resCond.stmts resCond.expr
               ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpRaw ("goto " <> labelName <> ";") ]) []
             in
               { stmts: acc.stmts <> [ifNode], nextId: resBody.nextId }
@@ -563,7 +600,7 @@ translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCt
   PrimEffect _ -> { stmts: [], expr: PhpString "TODO_PrimEffect", nextId }
   PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
   Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }
-  Typed _ a -> translateExprImpl modNameStr recVars namedBound bound _currentBindingName loopCtx isTail nextId a
+  Typed _ a -> translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail nextId a
 unwrapExpr :: TcoExpr -> BackendSyntax TcoExpr
 unwrapExpr (TcoExpr _ e) = e
 
@@ -618,6 +655,7 @@ exprTypeToPhpType = case _ of
 translate :: Array (Array String) -> BackendModule -> PhpFile
 translate imports mod =
   let
+    _startLog = if unwrap mod.name == "Phpurs.PhpAst" then unsafePerformEffect (Console.log "translate START") else unit
     modNameStr = String.replaceAll (Pattern ".") (Replacement "_") (unwrap mod.name)
     modPrefix = modNameStr <> "_"
     
@@ -641,13 +679,18 @@ translate imports mod =
             env' = case neBindings of
               Just ne | group.recursive -> Tco.topLevelTcoEnvGroup mod.name ne <> env
               _ -> env
-            tcoBinds = map (\(Tuple k v) -> Tuple k (Tco.analyze env' v)) group.bindings
+            tcoBinds = map (\(Tuple k v) -> 
+              let
+                res = if modNameStr == "Phpurs_PhpAst" then trace ("Tco.analyze START for " <> unwrap k) \_ -> Tco.analyze env' v else Tco.analyze env' v
+              in Tuple k (if modNameStr == "Phpurs_PhpAst" then trace ("Tco.analyze END for " <> unwrap k) \_ -> res else res)
+            ) group.bindings
           in
             Tuple env' (Array.snoc acc { recursive: group.recursive, bindings: tcoBinds })
       )
       (Tuple [] [])
       mod.bindings
 
+    _declsLog = if modNameStr == "Phpurs_PhpAst" then unsafePerformEffect (Console.log "Tco.analyze finished all bindings") else unit
     decls = Array.concatMap
       ( \group ->
           let
@@ -655,7 +698,7 @@ translate imports mod =
           in
             if group.recursive && Array.length group.bindings == 1 then
               let
-                mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }) (extractUncurriedAbs val)) group.bindings
+                mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }) (extractUncurriedAbs Map.empty val)) group.bindings
               in case mutRecBinds of
                 Just fns ->
                   let
@@ -692,7 +735,7 @@ translate imports mod =
                 Nothing ->
                   Array.concatMap
                     ( \(Tuple (Ident name) expr) ->
-                        case extractUncurriedAbs expr of
+                        case extractUncurriedAbs Map.empty expr of
                           Just fn ->
                              let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] true 0 fn.body
                                  types = extractFuncType expr
@@ -726,7 +769,7 @@ translate imports mod =
                     let
                       arity = extractTypeArity expr
                     in
-                      case extractUncurriedAbs expr of
+                      case extractUncurriedAbs Map.empty expr of
                         Just fn ->
                            let res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 fn.body
                                types = extractFuncType expr
@@ -775,18 +818,31 @@ dedupArgs args = Array.mapWithIndex
         else name
   )
   args
+totalUsagesOf :: TcoRef -> TcoAnalysis -> Int
+totalUsagesOf ref (TcoAnalysis { usages }) = case Map.lookup ref usages of
+  Just (TcoUsage { total }) -> total
+  _ -> 0
 
-extractUncurriedAbs :: TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Set String }
-extractUncurriedAbs tcoExpr@(TcoExpr _ syntax) = case syntax of
+getFreeVars :: Map String String -> TcoExpr -> Array String
+getFreeVars bound tcoExpr =
+  let TcoAnalysis { usages } = tcoAnalysisOf tcoExpr
+      localKeys = Array.mapMaybe (\(Tuple ref _) -> case ref of
+        TcoLocal mbIdent lvl -> Just (localId mbIdent lvl)
+        _ -> Nothing
+      ) (Map.toUnfoldable usages :: Array _)
+  in Array.filter (\v -> Map.member v bound) localKeys
+
+extractUncurriedAbs :: Map String String -> TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Array String }
+extractUncurriedAbs bound tcoExpr@(TcoExpr _ syntax) = case syntax of
   UncurriedAbs args body ->
-    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: freeVars tcoExpr }
+    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: getFreeVars bound tcoExpr }
   Abs args body ->
     let
       thisArgs = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
-    in case extractUncurriedAbs body of
-      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Set.union (freeVars tcoExpr) inner.fvs }
-      Nothing -> Just { args: thisArgs, body, fvs: freeVars tcoExpr }
-  Typed _ inner -> extractUncurriedAbs inner
+    in case extractUncurriedAbs bound body of
+      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Array.nub (getFreeVars bound tcoExpr <> inner.fvs) }
+      Nothing -> Just { args: thisArgs, body, fvs: getFreeVars bound tcoExpr }
+  Typed _ inner -> extractUncurriedAbs bound inner
   _ -> Nothing
 
 extractTypeArity :: TcoExpr -> Int

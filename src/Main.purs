@@ -11,6 +11,7 @@ import Node.FS.Stats as Stats
 import Node.Encoding (Encoding(..))
 import Node.Process as Process
 import Data.Argonaut.Parser (jsonParser)
+import Data.Foldable (foldl)
 import Data.Either (Either(..), isRight)
 import Data.Bifunctor (lmap)
 import Data.Argonaut.Decode.Error (printJsonDecodeError)
@@ -39,6 +40,34 @@ import Effect.Ref as Ref
 import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, checkCache, writeCache, loadDirectives)
 import PureScript.Backend.Optimizer.Reachability (moduleReachability)
 
+import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
+import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..))
+import PureScript.Backend.Optimizer.Convert (BackendBindingGroup(..))
+
+countNodes :: NeutralExpr -> Int
+countNodes (NeutralExpr expr) = 1 + case expr of
+  Var _ -> 0
+  Local _ _ -> 0
+  Lit _ -> 0
+  App f args -> countNodes f + foldl (+) 0 (map countNodes args)
+  Abs _ body -> countNodes body
+  UncurriedApp f args -> countNodes f + foldl (+) 0 (map countNodes args)
+  UncurriedAbs _ body -> countNodes body
+  UncurriedEffectApp f args -> countNodes f + foldl (+) 0 (map countNodes args)
+  UncurriedEffectAbs _ body -> countNodes body
+  Accessor obj _ -> countNodes obj
+  Update obj _ -> countNodes obj
+  CtorSaturated _ _ _ _ args -> foldl (+) 0 (map (\(Tuple _ a) -> countNodes a) args)
+  CtorDef _ _ _ _ -> 0
+  LetRec _ binds body -> foldl (+) 0 (map (\(Tuple _ a) -> countNodes a) binds) + countNodes body
+  Let _ _ val body -> countNodes val + countNodes body
+  EffectBind _ _ val body -> countNodes val + countNodes body
+  EffectPure val -> countNodes val
+  EffectDefer val -> countNodes val
+  Branch _ _ -> 0
+  PrimOp _ -> 0
+  _ -> 0
+
 cacheVersion :: String
 cacheVersion = "1.0.0"
 
@@ -60,10 +89,7 @@ main = launchAff_ do
   buildModules
     { directives
     , analyzeCustom: \_ _ -> Nothing
-    , foreignSemantics: Map.filterKeys (\(Qualified mbMod _) -> case mbMod of
-        Just (ModuleName m) -> not (contains (Pattern "Effect") m) && not (contains (Pattern "Control.Monad.ST") m)
-        _ -> true
-      ) coreForeignSemantics
+    , foreignSemantics: coreForeignSemantics
     , traceIdents: Set.empty
     , onPrepareModule: \_ m -> pure m
     , onSkipModule: \_ (Module coreFnMod) -> do
@@ -71,9 +97,10 @@ main = launchAff_ do
         pure Nothing
     , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
         let modNameStr = unwrap backendMod.name
-        liftEffect $ Ref.modify_ (Map.insert backendMod.name backendMod) backendModulesRef
+        let totalNodes = foldl (+) 0 (map (\bg -> foldl (+) 0 (map (\(Tuple _ expr) -> countNodes expr) bg.bindings)) backendMod.bindings)
+        liftEffect $ Console.log $ "Generating PHP code for " <> modNameStr <> " (Total AST Nodes: " <> show totalNodes <> ")"
+        liftEffect $ Ref.modify_ (Map.insert backendMod.name { imports: backendMod.imports, implementations: backendMod.implementations }) backendModulesRef
         _ <- attempt (FS.mkdir (outputDir <> "/" <> modNameStr))
-        writeCache cacheVersion (outputDir <> "/" <> modNameStr <> "/.phpurs-cache.json") backendMod
         let
           importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           phpFile = translate importsArray backendMod

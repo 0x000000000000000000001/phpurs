@@ -1,0 +1,12 @@
+--- a/src/Phpurs/CodeGen.purs
++++ b/src/Phpurs/CodeGen.purs
+@@ -424,7 +424,8 @@
+                   
+                   initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
+                   
+-                  resBodyMut = translateExprImpl modNameStr combinedRecVars namedBound newBound Nothing combinedLoopCtx true nextId fn.body
++                  newBoundMut = foldl (\acc arg -> Map.insert arg arg acc) newBound fn.args
++                  resBodyMut = translateExprImpl modNameStr combinedRecVars namedBound newBoundMut Nothing combinedLoopCtx true nextId fn.body
+                   
+                   mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs)
+                   useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)

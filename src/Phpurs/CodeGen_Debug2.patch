@@ -1,0 +1,9 @@
+--- a/src/Phpurs/CodeGen.purs
++++ b/src/Phpurs/CodeGen.purs
+@@ -428,6 +428,7 @@
+                   newBoundMut = foldl (\acc arg -> Map.insert arg arg acc) newBound fn.args
+                   resBodyMut = translateExprImpl modNameStr combinedRecVars namedBound newBoundMut Nothing combinedLoopCtx true nextId fn.body
+                   
++                  _ = if fn.ident == "go__go_4" then traceM { msg: "debug letrec", fvs: fn.fvs, boundKeys: Map.keys newBound, mapped: map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs } else unit
+                   mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs)
+                   useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)

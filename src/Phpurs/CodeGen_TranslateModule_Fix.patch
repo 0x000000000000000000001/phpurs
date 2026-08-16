@@ -1,0 +1,32 @@
+--- a/src/Phpurs/CodeGen.purs
++++ b/src/Phpurs/CodeGen.purs
+@@ -717,7 +717,8 @@
+                             loopVars = map (\p -> ctx.varPrefix <> p) fn.args
+                             initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
+                             
+-                            resBodyMut = translateExprImpl modNameStr recVars Map.empty Map.empty Nothing loopCtxs true 0 fn.body
++                            newBoundMut = foldl (\acc arg -> Map.insert arg arg acc) Map.empty fn.args
++                            resBodyMut = translateExprImpl modNameStr recVars Map.empty newBoundMut Nothing loopCtxs true 0 fn.body
+                             
+                             mappedFvs = map (\v -> v) (Array.fromFoldable fn.fvs)
+                             useVarsOuter = Array.nub (map (\mapped -> if Array.elem mapped recVars then "&" <> mapped else mapped) mappedFvs)
+@@ -741,7 +742,8 @@
+                     ( \(Tuple (Ident name) expr) ->
+                         case extractUncurriedAbs Map.empty expr of
+                           Just fn ->
+-                             let res = translateExprImpl modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] true 0 fn.body
++                             let newBound = foldl (\acc arg -> Map.insert arg arg acc) Map.empty fn.args
++                                 res = translateExprImpl modNameStr recVars Map.empty newBound (Just (modPrefix <> name)) [] true 0 fn.body
+                                  types = extractFuncType expr
+                                  argsWithTypes = zipArgsWithTypes fn.args types
+                                  retType = getRetType (Array.length fn.args) types
+@@ -775,7 +777,8 @@
+                     in
+                       case extractUncurriedAbs Map.empty expr of
+                         Just fn ->
+-                           let res = translateExprImpl modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false 0 fn.body
++                           let newBound = foldl (\acc arg -> Map.insert arg arg acc) Map.empty fn.args
++                               res = translateExprImpl modNameStr [] Map.empty newBound (Just (modPrefix <> name)) [] false 0 fn.body
+                                types = extractFuncType expr
+                                argsWithTypes = zipArgsWithTypes fn.args types
+                                retType = getRetType (Array.length fn.args) types

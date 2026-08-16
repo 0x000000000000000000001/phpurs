@@ -1,0 +1,8 @@
+@@ -19,6 +19,7 @@
+ import PureScript.Backend.Optimizer.CoreFn (Ident(..), Literal(..), ModuleName(..))
+ import PureScript.Backend.Optimizer.Directives (Directive)
+ import PureScript.Backend.Optimizer.Semantics (Ref(..), ForeignSemantics(..), NeutralExpr(..), NeutralRef(..))
++import Debug (traceM)
+ 
+ type PhpFile =
+   { header :: String

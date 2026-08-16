@@ -125,6 +125,7 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
       Tuple innerFn innerArgs = flattenApp fn
     in
       Tuple innerFn (innerArgs <> toArray args)
+  Typed _ inner -> flattenApp inner
   _ -> Tuple tcoExpr []
 
 translateExprImpl :: String -> Array String -> Map String String -> Map String String -> Maybe String -> Array LoopCtx -> Boolean -> Int -> TcoExpr -> TranslationRes

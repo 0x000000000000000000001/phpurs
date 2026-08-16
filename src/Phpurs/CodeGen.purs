@@ -309,7 +309,7 @@ translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail 
   Abs args body ->
     let
       argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
-      fvs = getFreeVars bound tcoExpr
+      fvs = Array.fromFoldable (freeVars tcoExpr)
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] true nextId body
@@ -322,7 +322,7 @@ translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail 
   UncurriedAbs args body ->
     let
       argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) args
-      fvs = getFreeVars bound tcoExpr
+      fvs = Array.fromFoldable (freeVars tcoExpr)
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] true nextId body
@@ -335,7 +335,7 @@ translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail 
   UncurriedEffectAbs args body ->
     let
       argsArray = map (\(Tuple mbI lvl) -> localId mbI lvl) args
-      fvs = getFreeVars bound tcoExpr
+      fvs = Array.fromFoldable (freeVars tcoExpr)
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       resBody = translateExprImpl modNameStr recVars namedBound bound Nothing [] false nextId body
       types = extractFuncType tcoExpr
@@ -504,7 +504,7 @@ translateExprImpl modNameStr recVars namedBound bound mbNamedVar loopCtx isTail 
             let
               resCond = translateExprImpl modNameStr recVars namedBound bound Nothing [] false acc.nextId condExpr
               resBody = translateExprImpl modNameStr recVars namedBound bound Nothing loopCtx isTail resCond.nextId bodyExpr
-              condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (getFreeVars bound condExpr)) resCond.stmts resCond.expr
+              condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
               ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpRaw ("goto " <> labelName <> ";") ]) []
             in
               { stmts: acc.stmts <> [ifNode], nextId: resBody.nextId }
@@ -824,25 +824,18 @@ totalUsagesOf ref (TcoAnalysis { usages }) = case Map.lookup ref usages of
   Just (TcoUsage { total }) -> total
   _ -> 0
 
-getFreeVars :: Map String String -> TcoExpr -> Array String
-getFreeVars bound tcoExpr =
-  let TcoAnalysis { usages } = tcoAnalysisOf tcoExpr
-      localKeys = Array.mapMaybe (\(Tuple ref _) -> case ref of
-        TcoLocal mbIdent lvl -> Just (localId mbIdent lvl)
-        _ -> Nothing
-      ) (Map.toUnfoldable usages :: Array _)
-  in Array.filter (\v -> Map.member v bound) localKeys
+
 
 extractUncurriedAbs :: Map String String -> TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Array String }
 extractUncurriedAbs bound tcoExpr@(TcoExpr _ syntax) = case syntax of
   UncurriedAbs args body ->
-    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: getFreeVars bound tcoExpr }
+    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
   Abs args body ->
     let
       thisArgs = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
     in case extractUncurriedAbs bound body of
-      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Array.nub (getFreeVars bound tcoExpr <> inner.fvs) }
-      Nothing -> Just { args: thisArgs, body, fvs: getFreeVars bound tcoExpr }
+      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Array.nub (Array.fromFoldable (freeVars tcoExpr) <> inner.fvs) }
+      Nothing -> Just { args: thisArgs, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
   Typed _ inner -> extractUncurriedAbs bound inner
   _ -> Nothing
 

@@ -1,4 +1,8 @@
+# Ignore all files for language stats
+* linguist-vendored
+# Keep JS generated diffs hidden
 *.js linguist-generated
-*.js linguist-vendored
 bin/phpurs.js linguist-generated
-bin/phpurs.js linguist-vendored
+
+# Only include target language
+*.php linguist-vendored=false

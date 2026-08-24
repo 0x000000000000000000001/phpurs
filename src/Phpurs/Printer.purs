@@ -385,6 +385,14 @@ printPhpFile isBundle ffiString allArities file =
       "      return phpurs_curry_fallback($fn, $merged, $expected);\n" <>
       "    };\n" <>
       "  }\n" <>
+      "}\n" <>
+      "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_execute_effect')) {\n" <>
+      "  function phpurs_execute_effect($val) {\n" <>
+      "    if (\\is_callable($val)) {\n" <>
+      "      return $val($GLOBALS['Data_Unit_unit']);\n" <>
+      "    }\n" <>
+      "    return $val;\n" <>
+      "  }\n" <>
       "}\n"
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n" <>
       "  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n" <>

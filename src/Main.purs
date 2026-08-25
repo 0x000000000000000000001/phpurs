@@ -88,6 +88,7 @@ main = launchAff_ do
 
   buildModules
     { directives
+    , rewriteLimit: 10000
     , analyzeCustom: \_ _ -> Nothing
     , foreignSemantics: coreForeignSemantics
     , traceIdents: Set.empty

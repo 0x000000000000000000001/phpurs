@@ -168,7 +168,7 @@ for test_file in "${TEST_FILES[@]}"; do
 
   if [ $build_success -eq 1 ]; then
     # Generate PHP code
-    node ../../bin/phpurs.js --output output-test > /dev/null 2>&1
+    ../../bin/phpurs --output output-test > /dev/null 2>&1
     
     # Run the compiled PHP code
     output_run=$(php -d memory_limit=512M output-test/Main/main.mod.php 2>&1)

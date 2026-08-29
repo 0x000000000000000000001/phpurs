@@ -186,7 +186,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
           acc = foldl
             ( \a expr@(TcoExpr _ _) ->
                 let
-                  res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock a.nextId expr
+                  res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false a.nextId expr
                 in
                   { stmts: a.stmts <> res.stmts, exprs: Array.snoc a.exprs res.expr, nextId: res.nextId }
             )
@@ -199,7 +199,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
           acc = foldl
             ( \a (Prop key val@(TcoExpr _ _)) ->
                 let
-                  res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock a.nextId val
+                  res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false a.nextId val
                 in
                   { stmts: a.stmts <> res.stmts, exprs: Array.snoc a.exprs { key, value: res.expr }, nextId: res.nextId }
             )
@@ -223,7 +223,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
 
   App fn args ->
     let
-      resFn = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId fn
+      resFn = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId fn
       argsArr = toArray args
       
       Tuple flatFn flatArgs = flattenApp tcoExpr
@@ -241,7 +241,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       accFinal = foldl
         ( \acc arg@(TcoExpr _ _) ->
             let
-              argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId arg
+              argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId arg
             in
               { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
         )
@@ -256,7 +256,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
           flatAccFinal = foldl
             ( \acc arg@(TcoExpr _ _) ->
                 let
-                  argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId arg
+                  argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId arg
                 in
                   { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
             )
@@ -274,7 +274,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
 
   UncurriedApp fn args ->
     let
-      resFn = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId fn
+      resFn = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId fn
       
       isTailCallTo = if isTail then case resFn.expr of
         PhpGlobalVar mbMod name ->
@@ -288,7 +288,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       accArgs = foldl
         ( \acc arg@(TcoExpr _ _) ->
             let
-              argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId arg
+              argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId arg
             in
               { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
         )
@@ -309,11 +309,11 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
 
   UncurriedEffectApp fn args ->
     let
-      resFn = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId fn
+      resFn = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId fn
       accArgs = foldl
         ( \acc arg@(TcoExpr _ _) ->
             let
-              argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId arg
+              argRes = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId arg
             in
               { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
         )
@@ -328,7 +328,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       fvs = Array.fromFoldable (freeVars tcoExpr)
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       
-      resBody = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] true inEffectBlock nextId body
+      resBody = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] true false nextId body
       types = extractFuncType tcoExpr
       argsWithTypes = zipArgsWithTypes argsArray types
       retType = getRetType (Array.length argsArray) types
@@ -341,7 +341,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       fvs = Array.fromFoldable (freeVars tcoExpr)
       useVars = map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) fvs
       
-      resBody = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] true inEffectBlock nextId body
+      resBody = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] true false nextId body
       types = extractFuncType tcoExpr
       argsWithTypes = zipArgsWithTypes argsArray types
       retType = getRetType (Array.length argsArray) types
@@ -362,7 +362,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
 
   Accessor e acc ->
     let
-      res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId e
+      res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId e
     in
       case acc of
         GetProp prop -> { stmts: res.stmts, expr: PhpRecordAccess res.expr prop, nextId: res.nextId }
@@ -376,7 +376,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       let
         oldVarName = localId (Just (Ident i)) (Level l)
         varName = oldVarName <> "_" <> show nextId
-        resVal = translateExprImpl_ modNameStr recVars namedBound bound (Just varName) [] false inEffectBlock nextId val
+        resVal = translateExprImpl_ modNameStr recVars namedBound bound (Just varName) [] false false nextId val
         newBound = Map.insert oldVarName varName bound
         resBody = translateExprImpl_ modNameStr recVars namedBound newBound Nothing loopCtx isTail inEffectBlock (resVal.nextId + 1) body
       in
@@ -389,7 +389,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       let
         oldVarName = localId Nothing (Level l)
         varName = oldVarName <> "_" <> show nextId
-        resVal = translateExprImpl_ modNameStr recVars namedBound bound (Just varName) [] false inEffectBlock nextId val
+        resVal = translateExprImpl_ modNameStr recVars namedBound bound (Just varName) [] false false nextId val
         newBound = Map.insert oldVarName varName bound
         resBody = translateExprImpl_ modNameStr recVars namedBound newBound Nothing loopCtx isTail inEffectBlock (resVal.nextId + 1) body
       in
@@ -438,7 +438,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
                   
                   initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
                   
-                  resBodyMut = translateExprImpl_ modNameStr combinedRecVars namedBound newBound Nothing combinedLoopCtx true inEffectBlock nextId fn.body
+                  resBodyMut = translateExprImpl_ modNameStr combinedRecVars namedBound newBound Nothing combinedLoopCtx true false nextId fn.body
                   
                   mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs)
                   useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
@@ -470,7 +470,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
                 let
                   oldName = localId (Just (Ident ident)) lvl
                   newName = fromMaybe oldName (Map.lookup oldName newBound)
-                  res = translateExprImpl_ modNameStr combinedRecVars namedBound newBound (Just newName) [] false inEffectBlock acc.nextId val
+                  res = translateExprImpl_ modNameStr combinedRecVars namedBound newBound (Just newName) [] false false acc.nextId val
                 in
                   { stmts: acc.stmts <> res.stmts <> [ PhpAssign newName res.expr ], nextId: res.nextId }
             )
@@ -522,7 +522,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       accPairs = foldl
         ( \acc (Pair condExpr@(TcoExpr _ _cond) bodyExpr@(TcoExpr _ _body)) ->
             let
-              resCond = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId condExpr
+              resCond = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId condExpr
               resBody = translateExprImpl_ modNameStr recVars namedBound bound Nothing loopCtx isTail inEffectBlock resCond.nextId bodyExpr
               condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
               ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpRaw ("goto " <> labelName <> ";") ]) []
@@ -561,12 +561,12 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
 
   Update e props ->
     let
-      resE = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId e
+      resE = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId e
       tmpVar = "__obj" <> show resE.nextId
       accProps = foldl
         ( \acc (Prop key val@(TcoExpr _ _)) ->
             let
-              resVal = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId val
+              resVal = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId val
             in
               { stmts: acc.stmts <> resVal.stmts <> [ PhpAssignExpr (PhpRecordAccess (PhpVar tmpVar) key) resVal.expr ], nextId: resVal.nextId }
         )
@@ -584,7 +584,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       accArgs = foldl
         ( \acc (Tuple _ val@(TcoExpr _ _)) ->
             let
-              resVal = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock acc.nextId val
+              resVal = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId val
             in
               { stmts: acc.stmts <> resVal.stmts, exprs: Array.snoc acc.exprs resVal.expr, nextId: resVal.nextId }
         )
@@ -608,13 +608,13 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
   PrimOp op -> case op of
     Op1 op1 e@(TcoExpr _ _) ->
       let
-        resE = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId e
+        resE = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId e
       in
         { stmts: resE.stmts, expr: translateOperator1 op1 resE.expr, nextId: resE.nextId }
     Op2 op2 e1@(TcoExpr _ _) e2@(TcoExpr _ _) ->
       let
-        res1 = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock nextId e1
-        res2 = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false inEffectBlock res1.nextId e2
+        res1 = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId e1
+        res2 = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false res1.nextId e2
       in
         { stmts: res1.stmts <> res2.stmts, expr: translateOperator2 op2 res1.expr res2.expr, nextId: res2.nextId }
 

@@ -12,6 +12,7 @@ module Phpurs.CodeGen where
 import Prelude
 
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendOperatorNum(..))
+import PureScript.Backend.Optimizer.Syntax as Syn
 import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr, TcoRef(..), TcoUsage(..), TcoAnalysis(..))
 import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..), ExprType(..))
@@ -172,6 +173,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
             PrimUndefined -> "PrimUndefined"
             Typed _ _ -> "Typed"
             Fail _ -> "Fail"
+            Syn.TypeApp _ _ -> "TypeApp"
           ) else (\f -> f unit)
   in doTrace \_ -> case syntax of
   Lit lit ->
@@ -620,6 +622,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
 
   PrimEffect _ -> { stmts: [], expr: PhpString "TODO_PrimEffect", nextId }
   PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
+  Syn.TypeApp a _ -> translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail inEffectBlock nextId a
   Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }
   Typed _ a -> translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail inEffectBlock nextId a
 unwrapExpr :: TcoExpr -> BackendSyntax TcoExpr

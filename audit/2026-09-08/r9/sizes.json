@@ -1,0 +1,14 @@
+{
+  "baseline": {
+    "php_modules": 299,
+    "php_module_bytes": 8625556,
+    "rbtree_bytes": 42830,
+    "rbtree_sha256": "79b1209df9b35eab3754d07c68204213f941cc5c72ee8a2741fca1f68db0cd51"
+  },
+  "integrated": {
+    "php_modules": 299,
+    "php_module_bytes": 8652639,
+    "rbtree_bytes": 69913,
+    "rbtree_sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d"
+  }
+}

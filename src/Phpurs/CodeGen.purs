@@ -18,6 +18,7 @@ import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unT
 import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..), ExprType(..))
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
+import Phpurs.TailInline as TailInline
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
@@ -551,24 +552,24 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
               resCond = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false acc.nextId condExpr
               resBody = translateExprImpl_ modNameStr recVars namedBound bound Nothing loopCtx isTail inEffectBlock resCond.nextId bodyExpr
               condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
-              ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpRaw ("goto " <> labelName <> ";") ]) []
+              ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpGoto labelName ]) []
             in
               { stmts: acc.stmts <> [ifNode], nextId: resBody.nextId }
         )
         { stmts: [], nextId: resDef.nextId + 1 }
         (toArray pairs)
 
-      finalDef = resDef.stmts <> [ PhpAssign tmpVar resDef.expr, PhpRaw (labelName <> ":") ]
+      finalDef = resDef.stmts <> [ PhpAssign tmpVar resDef.expr, PhpLabel labelName ]
       
       extractMatch :: Array PhpExpr -> Array PhpExpr -> Maybe PhpExpr
       extractMatch ifNodes defStmts = case Array.uncons ifNodes of
         Nothing -> Nothing
-        Just { head: PhpIf (PhpBinOp "===" subj val) [PhpAssign tVar body, PhpRaw _] [], tail } | tVar == tmpVar ->
+        Just { head: PhpIf (PhpBinOp "===" subj val) [PhpAssign tVar body, PhpGoto _] [], tail } | tVar == tmpVar ->
             let
               checkTail :: Array PhpExpr -> Array { val :: PhpExpr, body :: PhpExpr } -> Maybe (Array { val :: PhpExpr, body :: PhpExpr })
               checkTail rest acc = case Array.uncons rest of
                 Nothing -> Just acc
-                Just { head: PhpIf (PhpBinOp "===" s v) [PhpAssign tVar2 b, PhpRaw _] [], tail: t } | s == subj && tVar2 == tmpVar -> checkTail t (Array.snoc acc { val: v, body: b })
+                Just { head: PhpIf (PhpBinOp "===" s v) [PhpAssign tVar2 b, PhpGoto _] [], tail: t } | s == subj && tVar2 == tmpVar -> checkTail t (Array.snoc acc { val: v, body: b })
                 _ -> Nothing
             in case checkTail tail [{ val, body }] of
               Just validCases ->
@@ -583,7 +584,7 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
     in case extractMatch accPairs.stmts finalDef of
       Just matchExpr -> { stmts: [], expr: matchExpr, nextId: accPairs.nextId }
       Nothing ->
-        { stmts: [ PhpRaw ("$" <> tmpVar <> " = null;") ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
+        { stmts: [ PhpAssign tmpVar (PhpRaw "null") ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
 
   Update e props ->
     let
@@ -884,7 +885,7 @@ translate imports mod =
       ) tcoBindings)
 
   in
-    { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls, imports, arities: moduleArities }
+    TailInline.optimize { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls, imports, arities: moduleArities }
 
 dedupArgs :: Array String -> Array String
 dedupArgs args = Array.mapWithIndex

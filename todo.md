@@ -1,6 +1,6 @@
 # PHPurs — performances et petites étapes
 
-Audit du 8 septembre 2026. Ce fichier est le nouveau backlog de performance ; aucun ancien todo.md n'était présent dans ce dépôt. Les pistes viennent de la lecture du générateur, de PBO et du PHP produit. Le [profil RBTree](audit/2026-09-08/rbtree/report.md) identifie le premier coût ; [R0 est maintenant intégré et mesuré](audit/2026-09-08/r0/report.md). Le [profil LazyEvaluation](audit/2026-09-08/lazy/report.md) est terminé : les captures des closures dominent ; le prototype d'objets invocables a été retiré à cause du contrat FFI actuel (R8).
+Audit du 8 septembre 2026. Ce fichier est le nouveau backlog de performance ; aucun ancien todo.md n'était présent dans ce dépôt. Les pistes viennent de la lecture du générateur, de PBO et du PHP produit. Le [profil RBTree](audit/2026-09-08/rbtree/report.md) identifie le premier coût ; [R0 est maintenant intégré et mesuré](audit/2026-09-08/r0/report.md). Le [profil LazyEvaluation](audit/2026-09-08/lazy/report.md) est terminé : les captures des closures dominent ; le prototype d'objets invocables a été retiré à cause du contrat FFI actuel (R8). [R9 est intégré et mesuré](audit/2026-09-08/r9/report.md) : total 355–359 ms après régénération, contre 400–410 ms avec la passe désactivée.
 
 ## Espace de travail
 
@@ -32,15 +32,15 @@ Les résultats attendus, temps individuels, versions, commits, état JIT et deux
 
 Limites : machine partagée avec d'autres agents ; minimum de dix itérations par test, pas médiane ; cas très courts proches de la résolution de l'horloge ; directives PBO spécifiques aux benchmarks actives. Aucun pourcentage de gain ne sera annoncé sur cette seule référence.
 
-Dans ce premier relevé, RBTree représente 650,016 ms et LazyEvaluation 99,481 ms, soit environ 97,6 % de la somme. RBTree est maintenant profilé : la multiplication des variables locales de balance est le premier coût identifié (R0). LazyEvaluation est aussi profilé : allocation et destruction des captures dominent, sans passage du collecteur de cycles. Après retrait du prototype, le dernier run donne RBTree 286,562 ms et LazyEvaluation 101,390 ms, sur une somme de 406,653 ms.
+Dans ce premier relevé, RBTree représente 650,016 ms et LazyEvaluation 99,481 ms, soit environ 97,6 % de la somme. RBTree est maintenant profilé : la multiplication des variables locales de balance est le premier coût identifié (R0). LazyEvaluation est aussi profilé : allocation et destruction des captures dominent, sans passage du collecteur de cycles. Après retrait du prototype Lazy, le relevé donnait RBTree 286,562 ms et LazyEvaluation 101,390 ms, sur une somme de 406,653 ms. Après R9, les contrôles donnent RBTree 239–240 ms et LazyEvaluation 98–100 ms, pour un total de 355–359 ms.
 
 ## Ordre recommandé
 
 Priorité : dégrossir avec les gros gains démontrés, puis refaire le classement des coûts.
 
 1. R0 terminé pour la première optimisation. Le [nouveau profil après R0](audit/2026-09-08/rbtree-after-r0/report.md) écarte le coût massif des variables locales et mesure les coûts restants.
-2. Priorité R9 : inlining terminal borné, après une simplification des branches qui évite l'explosion du code. La copie diagnostique donne RBTree ~246 ms contre ~280 ms ; total 364–366 ms contre 407 ms au premier contrôle complet. Ce gain n'est pas intégré au compilateur.
-3. Profil LazyEvaluation terminé : le prototype vers 50 ms change le contrat FFI et reste retiré. R8 demeure la deuxième piste. RBTree reste le premier coût ; les enveloppes d'appels seules et le GC ne donnent pas un gros gain dans les expériences actuelles.
+2. R9 intégré : simplification des retours et inlining terminal borné. Le PHP régénéré donne RBTree 239–240 ms contre 285–292 ms ; total 355–359 ms contre 400–410 ms avec la passe désactivée. Les deux ordres, les dix fixtures et les comptes d'allocations sont vérifiés.
+3. Profil LazyEvaluation terminé : le prototype vers 50 ms change le contrat FFI et reste retiré. Prochaine petite étape R8 : vérifier le trajet d'une même fonction directe, dans un record et via Foreign, avant de choisir où préserver/convertir les Closure. RBTree reste le premier coût ; les enveloppes d'appels seules et le GC ne donnent pas un gros gain dans les expériences actuelles.
 4. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
@@ -203,20 +203,18 @@ Terminé quand : la reconnaissance des fonctions et leur exécution restent corr
 
 ## R9 — P1 — Réduire les appels terminaux entre fonctions connues
 
-**Expérience validée, code de production inchangé.** Le [profil RBTree après R0](audit/2026-09-08/rbtree-after-r0/report.md) compte 2 183 976 appels à balance et 2 583 932 constructions de T par action. Une copie diagnostique conserve les quatre motifs ordonnés de balance dans un corps compact, puis insère ce corps dans les deux appels terminaux de ins. Les constructeurs, tags, champs et allocations restent identiques ; les appels à balance disparaissent.
+**Première passe générique intégrée et mesurée.** Le [bilan R9](audit/2026-09-08/r9/report.md) compare le PHP entièrement régénéré avec la passe activée/désactivée, dans les deux ordres : **355,170–358,711 ms au total contre 399,670–409,605 ms** (11,1–12,4 % de temps en moins). RBTree : **239,411–240,267 ms contre 285,328–292,116 ms**. La référence historique du README est 381,61 ms au total et 269,606 ms pour RBTree.
 
-RBTree isolé : référence 279,213–281,561 ms, variante 245,793–246,323 ms (~12 % de temps en moins). Les 14 résultats passent : total 363,877–366,258 ms, contre 407,279 ms au premier contrôle complet et 436,989 ms au second, plus lent. Le README historique donne 381,61 ms au total et 269,606 ms pour RBTree. Le gain reste expérimental et la variation du second contrôle ne doit pas amplifier la promesse.
+La passe structure les jonctions en retours, compacte les copies simples et insère les corps feuilles connus aux appels terminaux saturés. Limites : 1 536 nœuds par corps et 3 072 nœuds ajoutés par caller, arguments inclus. Préserver les contrôles de types PHP émis, les captures et l'enveloppe publique ; laisser les autres appels inchangés. Aucun nom Test.* dans le critère. Sur les 299 modules de cette suite, seul RBTree change.
 
-- [x] Reprofiler le code après R0 sous JIT natif et Xdebug ; séparer appels, allocations, instanceof et GC.
-- [x] Comparer temporaires partagés, retours directs, motifs compacts seuls, contrôles d'arité, singletons, copies TCO et GC.
-- [x] Tester l'inlining sur une copie PHP : arbres identiques après chaque insertion sur ordres croissants/décroissants/aléatoires et doublons ; mêmes comptes de constructions R/B/E/T et d'appels récursifs ins.
-- [x] Mesurer les 14 benchmarks dans les deux ordres et vérifier les sorties ; les fichiers PHP actifs et le compilateur restent inchangés.
-- [ ] Prochaine petite étape : ajouter une fixture de petit appel terminal saturé avec branches, captures externes, arguments dépendants et cible conservée comme valeur. Définir le budget de code et le critère d'éligibilité sans nom Test.*.
-- [ ] Implémenter un premier inlining terminal borné de fonction connue non récursive : évaluer les arguments une seule fois dans l'ordre, renommer les locaux et labels, préserver captures et enveloppe publique pour les applications partielles/surapplications.
-- [ ] Mesurer le PHP réellement régénéré avant d'élargir : la copie diagnostique combine un corps compact et l'inlining ; recopier le decision tree actuel sans le compacter pourrait multiplier les temporaires et perdre le gain.
-- [ ] Rejouer les régressions de portées/captures, TCO, récursion et effets, puis les 14 benchmarks. Conserver le chemin actuel si le budget ou les preuves d'appel ne suffisent pas.
+- [x] Reprofiler après R0 et comparer appels, allocations, temporaires, arité, singletons, TCO et GC ; voir le [profil précédent](audit/2026-09-08/rbtree-after-r0/report.md).
+- [x] Valider le prototype sur une copie PHP puis vérifier les quatorze résultats dans les deux ordres.
+- [x] Ajouter TerminalInlining et un test direct du PHP AST : branches, ordre/unicité d'évaluation, captures, noms frais, curry/surapplication, contrôles PHP, exceptions et budgets.
+- [x] Implémenter l'inlining terminal borné de fonction native feuille du même module, sans récursion ni expansion itérative ; évaluer les arguments dans l'ordre et renommer les locaux. Les corps contenant des labels/sauts résiduels restent exclus.
+- [x] Mesurer la vraie régénération après compaction : bin/php/run -c passe ; dix fixtures et trois scripts directs passent. Les sorties et les arbres après 1 285 insertions restent identiques.
+- [x] Compter séparément : les 2 183 976 appels à balance disparaissent ; les 2 583 932 constructions de T et les comptes R/B/E/ins sont identiques. Le module RBTree grossit de 27 083 octets (+0,31 % sur l'ensemble des modules), pic mémoire inchangé à 42 MiB sur les contrôles complets.
 
-Le TAST v3 fournit types et instanciations pour prouver les appels saturés et les layouts ; le changement mesuré concerne ici le flot de contrôle. Il ne requiert pas de nouvelle représentation FFI. Réduire fortement les 2,58 millions de nœuds persistants demanderait ensuite une preuve distincte d'absence d'alias ; les types seuls ne donnent pas l'unicité.
+Cette première étape R9 est terminée dans le checkout, sans commit de cette étape. L'extension aux cibles typées/non feuilles ou aux appels non terminaux reste hors du périmètre validé. Le TAST v3 conserve types, instanciations et layouts ; cette passe agit sur le flot de contrôle du PHP AST sans nouvelle représentation FFI. Réduire fortement les allocations d'arbres persistants demanderait une preuve distincte d'absence d'alias. La prochaine petite étape de gros gain est la fixture de frontière FFI de R8.
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

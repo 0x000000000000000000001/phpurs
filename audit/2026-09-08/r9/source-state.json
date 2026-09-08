@@ -1,0 +1,13 @@
+{
+  "phpurs_head": "49cbed1b3ff8cf0e9c323189e32d4ef37ba6df63",
+  "altbak_worktree_head": "11ef5db3b912eea3107e0f3cced194ed1bb15812",
+  "pbo_worktree_head": "67ba2151e3717b27a13e95c25d3b25c8bdc645cc",
+  "source_sha256": {
+    "src/Phpurs/CodeGen.purs": "26af360758ebe83712c65c803bd5bcf0a7125f6707c935ceee4ba05bc4849748",
+    "src/Phpurs/TailInline.purs": "77f451991ba64a82f13f328d82a103a3a48f0d2d38867576424b151f807f1485",
+    "tests/codegen/tail-inline.mjs": "8a30e5c665a461ebd2c116c372aeb6f517c70c9c3867ddc3062bcb699375aa76",
+    "tests/passing/TerminalInlining.purs": "af908357e50f4128f6e91662adcb10ec09e4cde43c03ae8b0417296608f72313",
+    "tests/passing/TerminalInlining.php": "a8c557e64f0c81aa236479e6d4595108a53aee50f7cdf9ef9f6ba367776be7f2",
+    "tests/passing/TerminalInlining.js": "59f8cbf50a97bb76fe887e40ecb654967e20f966b2b14590e5ea6358b5cdd296"
+  }
+}

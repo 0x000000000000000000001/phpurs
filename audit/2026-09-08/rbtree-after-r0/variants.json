@@ -1,0 +1,34 @@
+{
+  "baseline": {
+    "source_sha256": "4bb2f1e53858e43901e43757b88bf50c92201b2e9a4e2578e8484030b3327fed",
+    "bytes": 42858
+  },
+  "singletons": {
+    "source_sha256": "aa1c60a83d97a20ef10b81ffc9bb19fd5e70a3cd17a77c0e9c9ed2f8e89b5e9f",
+    "bytes": 42361
+  },
+  "branch-results": {
+    "source_sha256": "8c170fd87636544d88e6b21359a75d010da90024ab9b73623090e10396b6eba5",
+    "bytes": 43782
+  },
+  "direct-results": {
+    "source_sha256": "63454144966d760ca257dd6ed0e7c73602656aaf31dd959aef6103dc9b1af25e",
+    "bytes": 43318
+  },
+  "compact-patterns": {
+    "source_sha256": "0cfd4c7df3143e44b4eeb628d32c17e84539d6f73fc13261698395479203a9ff",
+    "bytes": 21125
+  },
+  "inline-balance": {
+    "source_sha256": "e18c65644cb7067d37e9dcb86f0c67459677d69ca7720a07b1ff93154f565d7a",
+    "bytes": 48930
+  },
+  "exact-arity": {
+    "source_sha256": "14a80dc6b31f1d902613c2acc11523995858440d96618bd5942c10c25d97978c",
+    "bytes": 41645
+  },
+  "no-dead-tco": {
+    "source_sha256": "784d03cb483adb774ff65db0c6b754fe1877e4e12faa48076d17c2a3f54af5e0",
+    "bytes": 42544
+  }
+}

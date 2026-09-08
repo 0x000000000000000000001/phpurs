@@ -1,0 +1,134 @@
+{
+  "summary_ms": 5326.94567,
+  "self_sum_ms": 5321.59175,
+  "top": [
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2283976,
+      "self_ms": 3177.43134,
+      "self_percent": 59.7082882203431,
+      "self_memory_delta_bytes": 55200000
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_balance",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2183976,
+      "self_ms": 1455.46264,
+      "self_percent": 27.350137108882883,
+      "self_memory_delta_bytes": 494681872
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_T->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2583932,
+      "self_ms": 190.62476,
+      "self_percent": 3.5821004119679043,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_insert",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 100000,
+      "self_ms": 155.14065,
+      "self_percent": 2.9153053689246264,
+      "self_memory_delta_bytes": 26411176
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_buildmajTree",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 144.46101,
+      "self_percent": 2.7146203013412293,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_depth",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 200001,
+      "self_ms": 139.20986,
+      "self_percent": 2.615943998334709,
+      "self_memory_delta_bytes": 8000000
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 19.98158,
+      "self_percent": 0.3754812646047116,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_B->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 299957,
+      "self_ms": 12.37364,
+      "self_percent": 0.23251764850244291,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_R->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 199979,
+      "self_ms": 11.25606,
+      "self_percent": 0.21151678912611063,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_E->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 200002,
+      "self_ms": 7.61759,
+      "self_percent": 0.14314495282356074,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "self_ms": 0.90158,
+      "self_percent": 0.016941923438602745,
+      "self_memory_delta_bytes": 599672
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.69143,
+      "self_percent": 0.012992917015853386,
+      "self_memory_delta_bytes": 469552
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "calls": 1,
+      "self_ms": 0.65092,
+      "self_percent": 0.012231678613828277,
+      "self_memory_delta_bytes": 365672
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "calls": 1,
+      "self_ms": 0.57629,
+      "self_percent": 0.01082927866460256,
+      "self_memory_delta_bytes": 368488
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 0.55442,
+      "self_percent": 0.010418311400907444,
+      "self_memory_delta_bytes": 264888
+    },
+    {
+      "name": "{main}",
+      "file": "/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-08/rbtree-after-r0/runner.php",
+      "calls": 0,
+      "self_ms": 0.52967,
+      "self_percent": 0.009953224991375936,
+      "self_memory_delta_bytes": 170776
+    }
+  ]
+}

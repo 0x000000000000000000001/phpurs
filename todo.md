@@ -38,9 +38,9 @@ Dans ce premier relevé, RBTree représente 650,016 ms et LazyEvaluation 99,481 
 
 Priorité : dégrossir avec les gros gains démontrés, puis refaire le classement des coûts.
 
-1. R0 terminé pour la première optimisation : réduction des variables terminales de branches, fixtures et mesures validées.
-2. Profil LazyEvaluation terminé : le prototype réduit son temps vers 50 ms mais change la reconnaissance des fonctions par les FFI. Il n'est pas intégré. Prochaine petite étape R8 : prouver une frontière interne/FFI compatible avant de réintroduire les captures compactes.
-3. RBTree reste le premier coût (~70 %), LazyEvaluation le deuxième (~25 %). Retenir R0/R8 en priorité ; R1–R7 selon des gains isolés. Les enveloppes d'appels et le GC n'expliquent pas le temps de LazyEvaluation.
+1. R0 terminé pour la première optimisation. Le [nouveau profil après R0](audit/2026-09-08/rbtree-after-r0/report.md) écarte le coût massif des variables locales et mesure les coûts restants.
+2. Priorité R9 : inlining terminal borné, après une simplification des branches qui évite l'explosion du code. La copie diagnostique donne RBTree ~246 ms contre ~280 ms ; total 364–366 ms contre 407 ms au premier contrôle complet. Ce gain n'est pas intégré au compilateur.
+3. Profil LazyEvaluation terminé : le prototype vers 50 ms change le contrat FFI et reste retiré. R8 demeure la deuxième piste. RBTree reste le premier coût ; les enveloppes d'appels seules et le GC ne donnent pas un gros gain dans les expériences actuelles.
 4. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
@@ -95,7 +95,8 @@ Première implémentation limitée : bindings anonymes en position terminale, ho
 - [x] Utiliser un suffixe de slot dédié tout en conservant nextId pour les labels, jonctions et bindings uniques.
 - [x] Réutiliser seulement les bindings anonymes terminaux à valeur simple, hors boucle TCO, sans réaffecter un binding déjà actif ; aucune règle spécifique à Test.RBTree.
 - [x] Recompiler : bin/php/run -c passe ; 8 fixtures et 5 scénarios directs passent ; les 14 résultats sont conservés et balance passe de 249 à 33 variables.
-- [ ] Ensuite seulement, examiner les retours directs et le partage des résultats du decision tree PBO dans des changements distincts.
+- [x] Examiner séparément retours directs, partage des temporaires de résultats et decision tree après R0 : gain modeste (~15–25 ms) pour les temporaires, pas de gain stable pour le seul arbre compact. Voir R9 et le nouveau profil.
+- [ ] Intégrer éventuellement le partage des résultats terminaux dans un changement distinct, avec tests des opérandes frères et jonctions ; ne pas le compter comme livré.
 
 Terminé quand : le gain subsiste après régénération par PHPurs, les captures/portées restent correctes et aucun traitement spécial de Test.RBTree n'est ajouté au compilateur.
 
@@ -199,6 +200,23 @@ Le prototype générique (fonctions locales à un argument, captures par valeur)
 - [ ] Réintroduire seulement ce cas démontré dans le backend, sans nom Test.*, puis vérifier les fixtures et les 14 benchmarks. Mesurer mémoire et temps ; refuser le changement s'il déplace le coût vers un wrapper par thunk.
 
 Terminé quand : la reconnaissance des fonctions et leur exécution restent correctes à la frontière FFI, et un gain important subsiste après régénération complète. Les types TAST rendent les frontières analysables ; ils ne changent pas à eux seuls la représentation reconnue par le runtime PHP existant.
+
+## R9 — P1 — Réduire les appels terminaux entre fonctions connues
+
+**Expérience validée, code de production inchangé.** Le [profil RBTree après R0](audit/2026-09-08/rbtree-after-r0/report.md) compte 2 183 976 appels à balance et 2 583 932 constructions de T par action. Une copie diagnostique conserve les quatre motifs ordonnés de balance dans un corps compact, puis insère ce corps dans les deux appels terminaux de ins. Les constructeurs, tags, champs et allocations restent identiques ; les appels à balance disparaissent.
+
+RBTree isolé : référence 279,213–281,561 ms, variante 245,793–246,323 ms (~12 % de temps en moins). Les 14 résultats passent : total 363,877–366,258 ms, contre 407,279 ms au premier contrôle complet et 436,989 ms au second, plus lent. Le README historique donne 381,61 ms au total et 269,606 ms pour RBTree. Le gain reste expérimental et la variation du second contrôle ne doit pas amplifier la promesse.
+
+- [x] Reprofiler le code après R0 sous JIT natif et Xdebug ; séparer appels, allocations, instanceof et GC.
+- [x] Comparer temporaires partagés, retours directs, motifs compacts seuls, contrôles d'arité, singletons, copies TCO et GC.
+- [x] Tester l'inlining sur une copie PHP : arbres identiques après chaque insertion sur ordres croissants/décroissants/aléatoires et doublons ; mêmes comptes de constructions R/B/E/T et d'appels récursifs ins.
+- [x] Mesurer les 14 benchmarks dans les deux ordres et vérifier les sorties ; les fichiers PHP actifs et le compilateur restent inchangés.
+- [ ] Prochaine petite étape : ajouter une fixture de petit appel terminal saturé avec branches, captures externes, arguments dépendants et cible conservée comme valeur. Définir le budget de code et le critère d'éligibilité sans nom Test.*.
+- [ ] Implémenter un premier inlining terminal borné de fonction connue non récursive : évaluer les arguments une seule fois dans l'ordre, renommer les locaux et labels, préserver captures et enveloppe publique pour les applications partielles/surapplications.
+- [ ] Mesurer le PHP réellement régénéré avant d'élargir : la copie diagnostique combine un corps compact et l'inlining ; recopier le decision tree actuel sans le compacter pourrait multiplier les temporaires et perdre le gain.
+- [ ] Rejouer les régressions de portées/captures, TCO, récursion et effets, puis les 14 benchmarks. Conserver le chemin actuel si le budget ou les preuves d'appel ne suffisent pas.
+
+Le TAST v3 fournit types et instanciations pour prouver les appels saturés et les layouts ; le changement mesuré concerne ici le flot de contrôle. Il ne requiert pas de nouvelle représentation FFI. Réduire fortement les 2,58 millions de nœuds persistants demanderait ensuite une preuve distincte d'absence d'alias ; les types seuls ne donnent pas l'unicité.
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

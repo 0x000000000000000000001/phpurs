@@ -1,0 +1,15 @@
+--------------------------------------------------
+
+(Test)
+
+Red-Black Tree (100k Worst-Case Insertions):
+
+(Output & Warm-up)
+
+22
+
+(Execution time - best of 10)
+
+268417.00 μs
+
+{"mode":"bench","result":"22","best_of_ten_us":268417,"elapsed_ms":3606.822334,"peak_memory_bytes":31457280,"gc_before":{"running":false,"protected":false,"full":false,"runs":0,"collected":0,"threshold":10001,"buffer_size":16384,"roots":120,"application_time":0.018259667,"collector_time":0,"destructor_time":0,"free_time":0},"gc_after":{"running":false,"protected":false,"full":false,"runs":28,"collected":0,"threshold":290001,"buffer_size":393216,"roots":22,"application_time":3.625086458,"collector_time":0.115852207,"destructor_time":0,"free_time":0},"php":"8.5.4","xdebug_loaded":false,"jit":{"enabled":true,"on":true,"kind":5,"opt_level":5,"opt_flags":6,"buffer_size":134217712,"buffer_free":134166432}}

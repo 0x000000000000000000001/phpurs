@@ -1,0 +1,214 @@
+{
+  "main_thread_samples": 4258,
+  "leaf_symbols_php": [
+    {
+      "symbol": "ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER",
+      "samples": 200,
+      "main_thread_percent": 4.697040864255519
+    },
+    {
+      "symbol": "zend_object_dtor_property",
+      "samples": 191,
+      "main_thread_percent": 4.485674025364021
+    },
+    {
+      "symbol": "ZEND_INSTANCEOF_SPEC_TMPVAR_CONST_HANDLER",
+      "samples": 163,
+      "main_thread_percent": 3.828088304368248
+    },
+    {
+      "symbol": "zend_std_write_property",
+      "samples": 143,
+      "main_thread_percent": 3.3583842179426964
+    },
+    {
+      "symbol": "object_init_ex",
+      "samples": 137,
+      "main_thread_percent": 3.21747299201503
+    },
+    {
+      "symbol": "zend_objects_store_del",
+      "samples": 131,
+      "main_thread_percent": 3.076561766087365
+    },
+    {
+      "symbol": "zend_object_std_dtor",
+      "samples": 128,
+      "main_thread_percent": 3.0061061531235325
+    },
+    {
+      "symbol": "ZEND_NEW_SPEC_CONST_UNUSED_HANDLER",
+      "samples": 121,
+      "main_thread_percent": 2.841709722874589
+    },
+    {
+      "symbol": "zend_leave_helper_SPEC_TAILCALL",
+      "samples": 106,
+      "main_thread_percent": 2.489431658055425
+    },
+    {
+      "symbol": "<deduplicated_symbol>",
+      "samples": 103,
+      "main_thread_percent": 2.4189760450915925
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_545",
+      "samples": 79,
+      "main_thread_percent": 1.85533114138093
+    },
+    {
+      "symbol": "_emalloc",
+      "samples": 74,
+      "main_thread_percent": 1.737905119774542
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_85",
+      "samples": 70,
+      "main_thread_percent": 1.6439643024894317
+    },
+    {
+      "symbol": "_efree",
+      "samples": 66,
+      "main_thread_percent": 1.550023485204321
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_613",
+      "samples": 57,
+      "main_thread_percent": 1.3386566463128229
+    },
+    {
+      "symbol": "gc_possible_root",
+      "samples": 54,
+      "main_thread_percent": 1.2682010333489901
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_28",
+      "samples": 51,
+      "main_thread_percent": 1.1977454203851572
+    },
+    {
+      "symbol": "instanceof_function_slow",
+      "samples": 45,
+      "main_thread_percent": 1.056834194457492
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_388",
+      "samples": 44,
+      "main_thread_percent": 1.0333489901362143
+    },
+    {
+      "symbol": "zend_verify_property_type",
+      "samples": 43,
+      "main_thread_percent": 1.0098637858149366
+    },
+    {
+      "symbol": "zend_gc_collect_cycles",
+      "samples": 40,
+      "main_thread_percent": 0.9394081728511038
+    },
+    {
+      "symbol": "gc_scan",
+      "samples": 37,
+      "main_thread_percent": 0.868952559887271
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_372",
+      "samples": 35,
+      "main_thread_percent": 0.8219821512447159
+    },
+    {
+      "symbol": "zend_objects_store_put",
+      "samples": 34,
+      "main_thread_percent": 0.7984969469234382
+    },
+    {
+      "symbol": "gc_remove_from_buffer",
+      "samples": 32,
+      "main_thread_percent": 0.7515265382808831
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_22",
+      "samples": 31,
+      "main_thread_percent": 0.7280413339596055
+    },
+    {
+      "symbol": "zend_jit_assign_obj_helper",
+      "samples": 30,
+      "main_thread_percent": 0.7045561296383279
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_79",
+      "samples": 26,
+      "main_thread_percent": 0.6106153123532174
+    },
+    {
+      "symbol": "zend_objects_new",
+      "samples": 23,
+      "main_thread_percent": 0.5401596993893847
+    },
+    {
+      "symbol": "ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER",
+      "samples": 20,
+      "main_thread_percent": 0.4697040864255519
+    },
+    {
+      "symbol": "rc_dtor_func",
+      "samples": 19,
+      "main_thread_percent": 0.4462188821042743
+    },
+    {
+      "symbol": "zend_std_get_constructor",
+      "samples": 19,
+      "main_thread_percent": 0.4462188821042743
+    },
+    {
+      "symbol": "zend_object_dtor_dynamic_properties",
+      "samples": 18,
+      "main_thread_percent": 0.4227336777829967
+    },
+    {
+      "symbol": "ZEND_RETURN_SPEC_CV_TAILCALL_HANDLER",
+      "samples": 13,
+      "main_thread_percent": 0.3053076561766087
+    },
+    {
+      "symbol": "ZEND_QM_ASSIGN_SPEC_CV_TAILCALL_HANDLER",
+      "samples": 12,
+      "main_thread_percent": 0.2818224518553311
+    },
+    {
+      "symbol": "ZEND_JMP_FORWARD_SPEC_TAILCALL_HANDLER",
+      "samples": 10,
+      "main_thread_percent": 0.23485204321277595
+    },
+    {
+      "symbol": "execute_ex",
+      "samples": 10,
+      "main_thread_percent": 0.23485204321277595
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_7",
+      "samples": 9,
+      "main_thread_percent": 0.21136683889149835
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_9",
+      "samples": 8,
+      "main_thread_percent": 0.18788163457022078
+    },
+    {
+      "symbol": "ZEND_IS_SMALLER_LONG_SPEC_CONST_TMPVARCV_JMPZ_TAILCALL_HANDLER",
+      "samples": 5,
+      "main_thread_percent": 0.11742602160638797
+    },
+    {
+      "symbol": "zend_std_get_gc",
+      "samples": 5,
+      "main_thread_percent": 0.11742602160638797
+    }
+  ],
+  "gc_time_ms": 146.89046,
+  "elapsed_ms": 7786.734709,
+  "gc_collected": 0,
+  "note": "Unknown JIT frames are unassigned; idle worker samples are excluded from this table."
+}

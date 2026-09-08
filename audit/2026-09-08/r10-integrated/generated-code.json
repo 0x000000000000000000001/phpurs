@@ -1,0 +1,17 @@
+{
+  "modules": 301,
+  "changed_with_R10": [
+    "Test.RBTree"
+  ],
+  "final_output_differs_from_full_build": [],
+  "rbtree": {
+    "baseline": {
+      "bytes": 69913,
+      "sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d"
+    },
+    "integrated": {
+      "bytes": 126203,
+      "sha256": "58d6145d3a0e15fc99792555bab37e73079591ce53dafe1226294a321c74fcc9"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+branch-slots
+branch-slots: 5 generated PHP scenarios passed
+unary-callables
+unary-callables: captures, repeated calls, currying, overapplication, recursion, FFI callbacks and exceptions passed
+compact-loops
+compact-loops: public Closure, captures/curry/exceptions and 21 refusal scenarios passed
+tail-inline
+tail-inline: evaluation order, scopes, joins, partial/overapplication, PHP type checks, recursion and budgets passed

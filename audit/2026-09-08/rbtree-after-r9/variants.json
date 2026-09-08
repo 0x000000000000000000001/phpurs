@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "bytes": 69913,
+    "sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d"
+  },
+  "singletons": {
+    "bytes": 68975,
+    "sha256": "e7e82b68dfba1e513358fa872dbd02d7c18cf7387a3cbcc201e6bb7c121114a4"
+  },
+  "scalar-color": {
+    "bytes": 63996,
+    "sha256": "f3925e299aba9adddfda6034212a59a93164a657f2c3f3455d803a0927a21442"
+  },
+  "scalar-nullaries": {
+    "bytes": 63712,
+    "sha256": "05865fc33313b0cc75db85993655f590873c693a4656c38ef22a08a198006669"
+  },
+  "null-checks": {
+    "bytes": 61972,
+    "sha256": "bf3ed5987073c4e95ee6621c80557bf4518e73ce992355e2e78fddbd21e4806e"
+  }
+}

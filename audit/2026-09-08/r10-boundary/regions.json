@@ -1,0 +1,84 @@
+[
+  {
+    "eligible": false,
+    "entry": "weight",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "flipColor",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "exportColor",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "retainedCallback",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "exportCallback",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "build",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "exportBox",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": true,
+    "entry": "score",
+    "enum": "Main.Color",
+    "bindings": [
+      "build",
+      "flipColor",
+      "score",
+      "weight"
+    ],
+    "related_layouts": [
+      "Main.Chain",
+      "Main.Color"
+    ],
+    "inspected_nodes": 42
+  },
+  {
+    "eligible": false,
+    "entry": "observedBox",
+    "enum": "Main.Color",
+    "reason": "unsupported or unresolved type: Any"
+  },
+  {
+    "eligible": false,
+    "entry": "observedColor",
+    "enum": "Main.Color",
+    "reason": "ADT crosses external call: Main.inspectColor"
+  },
+  {
+    "eligible": false,
+    "entry": "applyUnknown",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  },
+  {
+    "eligible": false,
+    "entry": "main",
+    "enum": "Main.Color",
+    "reason": "entry/exit is not a monomorphic scalar function"
+  }
+]

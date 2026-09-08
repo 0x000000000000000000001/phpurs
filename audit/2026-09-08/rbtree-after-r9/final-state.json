@@ -1,0 +1,11 @@
+{
+  "active_modules_unchanged": true,
+  "active_module_count": 301,
+  "rbtree_sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d",
+  "source_status": {
+    "/Users/0x1/Documents/htdocs/phpurs/phpurs": " M todo.md\n?? audit/2026-09-08/rbtree-after-r9/\n",
+    "/Users/0x1/Documents/htdocs/altbak.pub-phpurs": "",
+    "/Users/0x1/Documents/htdocs/purescript-backend-optimizer-phpurs": ""
+  },
+  "benchmark_source_sha256": "515f07e9319d309cdf72e5be129ea4742b996e19f2ae4b07ba31bf6f4f12da55"
+}

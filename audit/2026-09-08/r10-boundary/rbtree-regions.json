@@ -1,0 +1,78 @@
+[
+  {
+    "eligible": true,
+    "entry": "__phpurs_scalar_region",
+    "enum": "Test.RBTree.Color",
+    "bindings": [
+      "balance",
+      "buildTree",
+      "depth",
+      "ins",
+      "insert",
+      "makeBlack",
+      "max"
+    ],
+    "related_layouts": [
+      "Test.RBTree.Color",
+      "Test.RBTree.Tree"
+    ],
+    "inspected_nodes": 147,
+    "owner": "act",
+    "free_locals": {
+      "dummy": {
+        "type": "Int"
+      }
+    },
+    "result_type": {
+      "type": "String"
+    },
+    "source_span": {
+      "end": [
+        56,
+        42
+      ],
+      "start": [
+        56,
+        9
+      ]
+    }
+  },
+  {
+    "eligible": true,
+    "entry": "__phpurs_scalar_region",
+    "enum": "Test.RBTree.Color",
+    "bindings": [
+      "balance",
+      "buildTree",
+      "depth",
+      "ins",
+      "insert",
+      "makeBlack",
+      "max"
+    ],
+    "related_layouts": [
+      "Test.RBTree.Color",
+      "Test.RBTree.Tree"
+    ],
+    "inspected_nodes": 145,
+    "owner": "act",
+    "free_locals": {
+      "dummy": {
+        "type": "Int"
+      }
+    },
+    "result_type": {
+      "type": "Int"
+    },
+    "source_span": {
+      "end": [
+        56,
+        41
+      ],
+      "start": [
+        56,
+        16
+      ]
+    }
+  }
+]

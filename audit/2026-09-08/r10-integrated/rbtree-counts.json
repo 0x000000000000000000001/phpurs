@@ -1,0 +1,14 @@
+{
+  "baseline": {
+    "Test_RBTree_E": 200001,
+    "majTest_majRmajBmajTree_ins": 2283976,
+    "Test_RBTree_R": 199978,
+    "Test_RBTree_T": 2583932,
+    "Test_RBTree_B": 299956
+  },
+  "integrated": {
+    "Test_RBTree___phpurs_enum_0_E": 200001,
+    "majTest_majRmajBmajTree___phpurs_enum_0_ins": 2283976,
+    "Test_RBTree___phpurs_enum_0_T": 2583932
+  }
+}

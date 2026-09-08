@@ -1,0 +1,519 @@
+{
+  "main_thread_samples": 4265,
+  "flat_leaf_samples": [
+    {
+      "symbol": "__workq_kernreturn  (in libsystem_kernel.dylib)",
+      "leaf_samples": 7706
+    },
+    {
+      "symbol": "ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER  (in php)",
+      "leaf_samples": 263
+    },
+    {
+      "symbol": "zend_object_dtor_property  (in php)",
+      "leaf_samples": 242
+    },
+    {
+      "symbol": "ZEND_INSTANCEOF_SPEC_TMPVAR_CONST_HANDLER  (in php)",
+      "leaf_samples": 158
+    },
+    {
+      "symbol": "zend_objects_store_del  (in php)",
+      "leaf_samples": 156
+    },
+    {
+      "symbol": "object_init_ex  (in php)",
+      "leaf_samples": 151
+    },
+    {
+      "symbol": "zend_object_std_dtor  (in php)",
+      "leaf_samples": 150
+    },
+    {
+      "symbol": "zend_std_write_property  (in php)",
+      "leaf_samples": 138
+    },
+    {
+      "symbol": "ZEND_NEW_SPEC_CONST_UNUSED_HANDLER  (in php)",
+      "leaf_samples": 127
+    },
+    {
+      "symbol": "<deduplicated_symbol>  (in php)",
+      "leaf_samples": 109
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_545  (in php)",
+      "leaf_samples": 94
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_28  (in php)",
+      "leaf_samples": 89
+    },
+    {
+      "symbol": "_emalloc  (in php)",
+      "leaf_samples": 87
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_613  (in php)",
+      "leaf_samples": 82
+    },
+    {
+      "symbol": "_efree  (in php)",
+      "leaf_samples": 78
+    },
+    {
+      "symbol": "instanceof_function_slow  (in php)",
+      "leaf_samples": 67
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_85  (in php)",
+      "leaf_samples": 65
+    },
+    {
+      "symbol": "gc_possible_root  (in php)",
+      "leaf_samples": 60
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_372  (in php)",
+      "leaf_samples": 54
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_388  (in php)",
+      "leaf_samples": 45
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800b88]",
+      "leaf_samples": 44
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800be0]",
+      "leaf_samples": 42
+    },
+    {
+      "symbol": "zend_objects_store_put  (in php)",
+      "leaf_samples": 38
+    },
+    {
+      "symbol": "zend_jit_assign_obj_helper  (in php)",
+      "leaf_samples": 36
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800bc4]",
+      "leaf_samples": 35
+    },
+    {
+      "symbol": "zend_verify_property_type  (in php)",
+      "leaf_samples": 34
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_79  (in php)",
+      "leaf_samples": 31
+    },
+    {
+      "symbol": "zend_gc_collect_cycles  (in php)",
+      "leaf_samples": 29
+    },
+    {
+      "symbol": "gc_scan  (in php)",
+      "leaf_samples": 27
+    },
+    {
+      "symbol": "rc_dtor_func  (in php)",
+      "leaf_samples": 25
+    },
+    {
+      "symbol": "zend_objects_new  (in php)",
+      "leaf_samples": 25
+    },
+    {
+      "symbol": "gc_remove_from_buffer  (in php)",
+      "leaf_samples": 23
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_22  (in php)",
+      "leaf_samples": 21
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8010f0]",
+      "leaf_samples": 17
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801444]",
+      "leaf_samples": 17
+    },
+    {
+      "symbol": "zend_std_get_constructor  (in php)",
+      "leaf_samples": 17
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801048]",
+      "leaf_samples": 14
+    },
+    {
+      "symbol": "ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER  (in php)",
+      "leaf_samples": 14
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802bb4]",
+      "leaf_samples": 13
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8044a0]",
+      "leaf_samples": 13
+    },
+    {
+      "symbol": "zend_object_dtor_dynamic_properties  (in php)",
+      "leaf_samples": 13
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80108c]",
+      "leaf_samples": 12
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8010d4]",
+      "leaf_samples": 11
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8013b8]",
+      "leaf_samples": 11
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8014b0]",
+      "leaf_samples": 11
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8010f8]",
+      "leaf_samples": 10
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801164]",
+      "leaf_samples": 10
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801394]",
+      "leaf_samples": 10
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800bac]",
+      "leaf_samples": 9
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80149c]",
+      "leaf_samples": 9
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8015c4]",
+      "leaf_samples": 9
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_7  (in php)",
+      "leaf_samples": 9
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801368]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8013d4]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80148c]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8014a8]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801f18]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8028ac]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80ab40]",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_9  (in php)",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "zend_std_get_gc  (in php)",
+      "leaf_samples": 8
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801024]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80109c]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8010dc]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801270]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8012bc]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8012f4]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80151c]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801828]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801a1c]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802268]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f803138]",
+      "leaf_samples": 7
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800f4c]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801138]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8012b4]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801390]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801800]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8018dc]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8019bc]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801be8]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801c48]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8022c8]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802634]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802928]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802988]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802c24]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f803450]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8034a8]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804768]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804a7c]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804e20]",
+      "leaf_samples": 6
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800f44]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f800fd4]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801020]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801060]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8011a4]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80140c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801494]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80155c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80159c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8018a4]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8019c8]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8019e8]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801bc4]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f801f80]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8020c8]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8024c4]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8024f8]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802784]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802810]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802848]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f802934]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80316c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f803250]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f803500]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80352c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80368c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8036e4]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804188]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8043e0]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804440]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804450]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f8047f8]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804838]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804be8]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804d3c]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f804ed0]",
+      "leaf_samples": 5
+    },
+    {
+      "symbol": "???  (in <unknown binary>)  [0x11f80b0ac]",
+      "leaf_samples": 5
+    }
+  ],
+  "instanceof_leaf_samples": 488,
+  "note": "Flat listing includes worker threads; use main-thread denominator only for PHP VM symbols. Unknown JIT frames and leaves below five samples are not attributed."
+}

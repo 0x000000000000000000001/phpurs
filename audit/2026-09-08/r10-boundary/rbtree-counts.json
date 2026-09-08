@@ -1,0 +1,14 @@
+{
+  "baseline": {
+    "Test\\RBTree\\E": 200001,
+    "Test\\RBTree\\ins": 2283976,
+    "Test\\RBTree\\R": 199978,
+    "Test\\RBTree\\T": 2583932,
+    "Test\\RBTree\\B": 299956
+  },
+  "private": {
+    "Test\\RBTree\\E": 200001,
+    "Test\\RBTree\\Phpurs_Internal_Enum_0\\ins": 2283976,
+    "Test\\RBTree\\Phpurs_Internal_Enum_0\\T": 2583932
+  }
+}

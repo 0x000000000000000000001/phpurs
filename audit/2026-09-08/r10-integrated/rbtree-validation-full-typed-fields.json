@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "a149a69dcb8abf9be5e5aef41ceb9dd74bc7342df4a60e0e833c1644dae6012d",
+      "916c43d7bb4b8d6f801db28edbe4d296e80a3a421e523d2ca64368d3dd5afa2c",
+      "36c62568bf369b50f39c9fdb241ebbb081d9c884bbb5f7c2460f9ac3868f2e6e",
+      "52e8f69efa5ed98a5d69f1c523c92fb6b502eb82270e1e26acaed3c4baf8a2d7"
+    ],
+    "insertions": 1285,
+    "retained_roots_unchanged": true
+  },
+  "integrated": {
+    "fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "a149a69dcb8abf9be5e5aef41ceb9dd74bc7342df4a60e0e833c1644dae6012d",
+      "916c43d7bb4b8d6f801db28edbe4d296e80a3a421e523d2ca64368d3dd5afa2c",
+      "36c62568bf369b50f39c9fdb241ebbb081d9c884bbb5f7c2460f9ac3868f2e6e",
+      "52e8f69efa5ed98a5d69f1c523c92fb6b502eb82270e1e26acaed3c4baf8a2d7"
+    ],
+    "insertions": 1285,
+    "retained_roots_unchanged": true
+  }
+}

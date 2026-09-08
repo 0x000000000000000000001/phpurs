@@ -16,6 +16,7 @@ data PhpExpr
   | PhpCompactFunction (Array String) (Array { name :: String, type_ :: String }) String (Array PhpExpr)
   | PhpCompactLoop String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
   | PhpNativeFunction String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
+  | PhpPrivateFunction String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
   | PhpGlobalAssign String PhpExpr
   | PhpVar String
   | PhpGlobalVar (Maybe (Array String)) String

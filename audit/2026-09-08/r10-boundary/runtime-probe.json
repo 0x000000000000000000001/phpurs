@@ -1,0 +1,34 @@
+{
+  "baseline": {
+    "score": 52,
+    "public_tree": "O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:1;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:2;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:3;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:4;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:5;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:6;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:7;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:8;s:6:\"value2\";O:13:\"Main\\Main_End\":1:{s:3:\"tag\";s:3:\"End\";}}}}}}}}}",
+    "public_boxed": true,
+    "public_weight": 52,
+    "extended_weight": 57,
+    "private_score_counts": {
+      "Main\\Red": 5,
+      "Main\\Blue": 4,
+      "Main\\Link": 8
+    },
+    "public_build_counts": {
+      "Main\\Red": 6,
+      "Main\\Blue": 6,
+      "Main\\Link": 10
+    }
+  },
+  "private": {
+    "score": 52,
+    "public_tree": "O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:1;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:2;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:3;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:4;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:5;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:6;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:14:\"Main\\Main_Blue\":1:{s:3:\"tag\";s:4:\"Blue\";}s:6:\"value1\";i:7;s:6:\"value2\";O:14:\"Main\\Main_Link\":4:{s:3:\"tag\";s:4:\"Link\";s:6:\"value0\";O:13:\"Main\\Main_Red\":1:{s:3:\"tag\";s:3:\"Red\";}s:6:\"value1\";i:8;s:6:\"value2\";O:13:\"Main\\Main_End\":1:{s:3:\"tag\";s:3:\"End\";}}}}}}}}}",
+    "public_boxed": true,
+    "public_weight": 52,
+    "extended_weight": 57,
+    "private_score_counts": {
+      "Main\\Phpurs_Internal_Enum_0\\Link": 8
+    },
+    "public_build_counts": {
+      "Main\\Red": 6,
+      "Main\\Blue": 6,
+      "Main\\Link": 10
+    }
+  }
+}

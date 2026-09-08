@@ -1,0 +1,128 @@
+{
+  "positive": {
+    "eligible": true,
+    "entry": "score",
+    "enum": "Main.Color",
+    "bindings": [
+      "build",
+      "flipColor",
+      "score",
+      "weight"
+    ],
+    "related_layouts": [
+      "Main.Chain",
+      "Main.Color"
+    ],
+    "inspected_nodes": 42
+  },
+  "checks": [
+    {
+      "eligible": false,
+      "entry": "observedColor",
+      "enum": "Main.Color",
+      "reason": "ADT crosses external call: Main.inspectColor"
+    },
+    {
+      "eligible": false,
+      "entry": "observedBox",
+      "enum": "Main.Color",
+      "reason": "unsupported or unresolved type: Any"
+    },
+    {
+      "eligible": false,
+      "entry": "applyUnknown",
+      "enum": "Main.Color",
+      "reason": "entry/exit is not a monomorphic scalar function"
+    },
+    {
+      "eligible": false,
+      "entry": "retainedCallback",
+      "enum": "Main.Color",
+      "reason": "entry/exit is not a monomorphic scalar function"
+    },
+    {
+      "eligible": false,
+      "entry": "exportColor",
+      "enum": "Main.Color",
+      "reason": "entry/exit is not a monomorphic scalar function"
+    },
+    {
+      "eligible": false,
+      "entry": "exportBox",
+      "enum": "Main.Color",
+      "reason": "entry/exit is not a monomorphic scalar function"
+    },
+    {
+      "eligible": false,
+      "entry": "exportCallback",
+      "enum": "Main.Color",
+      "reason": "entry/exit is not a monomorphic scalar function"
+    },
+    {
+      "case": "missing entry annotation",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "missing type"
+    },
+    {
+      "case": "unknown result annotation",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "unsupported or unresolved type: Any"
+    },
+    {
+      "case": "unknown local callable instead of direct weight",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "unknown callable: weight"
+    },
+    {
+      "case": "partial helper application",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "partial or overapplied local call: build"
+    },
+    {
+      "case": "ADT escapes in transitive helper",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "ADT crosses external call: Main.inspectColor"
+    },
+    {
+      "case": "binding budget",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "binding budget"
+    },
+    {
+      "case": "node budget",
+      "eligible": false,
+      "entry": "score",
+      "enum": "Main.Color",
+      "reason": "node budget"
+    },
+    {
+      "case": "module/enum names do not affect eligibility",
+      "eligible": true,
+      "entry": "score",
+      "enum": "Renamed.Signal",
+      "bindings": [
+        "build",
+        "flipColor",
+        "score",
+        "weight"
+      ],
+      "related_layouts": [
+        "Renamed.Chain",
+        "Renamed.Signal"
+      ],
+      "inspected_nodes": 42
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "baseline": {
+    "sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d",
+    "bytes": 69913
+  },
+  "private": {
+    "sha256": "1dad8ccc0ddfbd29917218c23896133fa514d46b85b49f17575395b52e065248",
+    "bytes": 127726
+  },
+  "region": {
+    "eligible": true,
+    "entry": "__phpurs_scalar_region",
+    "enum": "Test.RBTree.Color",
+    "bindings": [
+      "balance",
+      "buildTree",
+      "depth",
+      "ins",
+      "insert",
+      "makeBlack",
+      "max"
+    ],
+    "related_layouts": [
+      "Test.RBTree.Color",
+      "Test.RBTree.Tree"
+    ],
+    "inspected_nodes": 147,
+    "owner": "act",
+    "free_locals": {
+      "dummy": {
+        "type": "Int"
+      }
+    },
+    "result_type": {
+      "type": "String"
+    },
+    "source_span": {
+      "end": [
+        56,
+        42
+      ],
+      "start": [
+        56,
+        9
+      ]
+    }
+  },
+  "private_namespace": "Test\\RBTree\\Phpurs_Internal_Enum_0",
+  "public_code_before_act_unchanged": true
+}

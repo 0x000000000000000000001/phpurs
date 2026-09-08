@@ -1,0 +1,97 @@
+{
+  "builtWith": "0.15.16",
+  "moduleName": [
+    "Test",
+    "RBTree"
+  ],
+  "dataDecls": [
+    {
+      "constructors": [
+        {
+          "constructorName": "R",
+          "fieldTypes": [],
+          "fields": [],
+          "name": "R"
+        },
+        {
+          "constructorName": "B",
+          "fieldTypes": [],
+          "fields": [],
+          "name": "B"
+        }
+      ],
+      "name": "Color",
+      "typeName": "Color",
+      "typeVars": [],
+      "vars": []
+    },
+    {
+      "constructors": [
+        {
+          "constructorName": "E",
+          "fieldTypes": [],
+          "fields": [],
+          "name": "E"
+        },
+        {
+          "constructorName": "T",
+          "fieldTypes": [
+            0,
+            1,
+            3,
+            1
+          ],
+          "fields": [
+            0,
+            1,
+            3,
+            1
+          ],
+          "name": "T"
+        }
+      ],
+      "name": "Tree",
+      "typeName": "Tree",
+      "typeVars": [],
+      "vars": []
+    }
+  ],
+  "fieldTypeTable": {
+    "0": {
+      "args": [],
+      "fqn": [
+        "Test",
+        "RBTree",
+        "Color"
+      ],
+      "type": "Adt"
+    },
+    "1": {
+      "args": [],
+      "fqn": [
+        "Test",
+        "RBTree",
+        "Tree"
+      ],
+      "type": "Adt"
+    },
+    "3": {
+      "type": "Int"
+    }
+  },
+  "exports": [
+    "R",
+    "B",
+    "E",
+    "T",
+    "balance",
+    "insert",
+    "ins",
+    "makeBlack",
+    "buildTree",
+    "depth",
+    "max",
+    "describe",
+    "act"
+  ]
+}

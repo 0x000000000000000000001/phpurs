@@ -1,0 +1,30 @@
+{
+  "region": {
+    "eligible": true,
+    "entry": "score",
+    "enum": "Main.Color",
+    "bindings": [
+      "build",
+      "flipColor",
+      "score",
+      "weight"
+    ],
+    "related_layouts": [
+      "Main.Chain",
+      "Main.Color"
+    ],
+    "inspected_nodes": 42
+  },
+  "private_namespace": "Main\\Phpurs_Internal_Enum_0",
+  "private_classes": [
+    "Main\\Main_Link"
+  ],
+  "public_functions_unchanged_except_scalar_entry": true,
+  "public_adt_classes_unchanged": true,
+  "original_bytes": 26605,
+  "private_bytes": 30263,
+  "original_sha256": "561e28382a0e0efc361df63316f854c951aba9d73a9c6215fe1e84b91615d2ec",
+  "private_sha256": "fec81fcb99352554991fd8e8b54ff9132ee3c0733853199736f74467a80bf297",
+  "php_exit_code": 0,
+  "stdout": "Done\n"
+}

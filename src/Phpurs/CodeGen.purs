@@ -20,6 +20,7 @@ import PureScript.Backend.Optimizer.Convert (BackendModule)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import Phpurs.TailInline as TailInline
 import Phpurs.CompactLoops as CompactLoops
+import Phpurs.EnumRegions as EnumRegions
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
@@ -726,8 +727,10 @@ isSafeRecursiveInit currentModule group = go
 -- | Takes the list of module imports and a `BackendModule` (containing `TcoExpr` bindings)
 -- | and returns a fully constructed `PhpFile` ready for printing.
 translate :: Array (Array String) -> BackendModule -> PhpFile
-translate imports mod =
+translate imports input =
   let
+    regions = EnumRegions.optimize input
+    mod = regions.module_
     _startLog = if unwrap mod.name == "Phpurs.PhpAst" then unsafePerformEffect (Console.log "translate START") else unit
     modNameStr = String.replaceAll (Pattern ".") (Replacement "_") (unwrap mod.name)
     modPrefix = modNameStr <> "_"
@@ -738,7 +741,10 @@ translate imports mod =
             safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctor.name
             structName = modPrefix <> safeCtorName
             safeTagStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctor.name
-            argsStr = Array.mapWithIndex (\i typ -> "public " <> exprTypeToPhpType typ <> " $value" <> show i) ctor.fields
+            -- Internal field types are proven before rewriting. PHP promoted
+            -- property checks add a cost to each allocation without adding a
+            -- check at a public boundary; keep those checks on public classes.
+            argsStr = Array.mapWithIndex (\i typ -> "public " <> (if Set.member ctor.name regions.privateConstructors then "" else exprTypeToPhpType typ) <> " $value" <> show i) ctor.fields
             structDecl = "final class " <> structName <> " { public $tag = '" <> safeTagStr <> "'; public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
           in
             [ structDecl ]
@@ -885,8 +891,21 @@ translate imports mod =
         ) group.bindings
       ) tcoBindings)
 
+    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) regions.privateNames
+    -- Every private call is proven saturated and its arguments are checked on
+    -- the typed AST. Avoid adding dynamic scalar coercions that would prevent
+    -- the existing terminal inliner from simplifying these internal workers.
+    internalSignatures d = if Set.member d.identifier privateNames then case d.expression of
+      PhpNativeFunction name args _ body -> d { expression = PhpNativeFunction name (map (\a -> a { type_ = "" }) args) "" body }
+      _ -> d
+      else d
+    optimized = TailInline.optimize { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls: map internalSignatures decls, imports, arities: moduleArities }
+    hideWorker d = if Set.member d.identifier privateNames then case d.expression of
+      PhpNativeFunction name args ret body -> d { expression = PhpPrivateFunction name args ret body }
+      _ -> d
+      else d
   in
-    TailInline.optimize { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls, imports, arities: moduleArities }
+    optimized { decls = map hideWorker optimized.decls }
 
 dedupArgs :: Array String -> Array String
 dedupArgs args = Array.mapWithIndex

@@ -160,6 +160,7 @@ printExpr currentModPrefix allArities expr = case expr of
   PhpCompactLoop _ _ _ _ -> "/* ERROR: PhpCompactLoop inside expression */"
   PhpCompactFunction captures args _ stmts -> genCompactFunction currentModPrefix allArities captures args stmts
   PhpNativeFunction _ _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
+  PhpPrivateFunction _ _ _ _ -> "/* ERROR: PhpPrivateFunction inside expression */"
   PhpGlobalAssign _ _ -> "/* ERROR: PhpGlobalAssign inside expression */"
   PhpFunction captures args retType stmts ->
     genCurry currentModPrefix allArities args retType captures stmts
@@ -314,6 +315,9 @@ resolveContinues str =
 
 printDecl :: String -> Map String Int -> PhpDecl -> String
 printDecl currentModPrefix allArities decl = resolveContinues $ case decl.expression of
+  PhpPrivateFunction name args retType stmts ->
+    "// " <> decl.identifier <> "\n" <>
+    genNativeCurry currentModPrefix allArities (safeFuncName name) args retType stmts <> "\n"
   PhpCompactLoop name args retType stmts ->
     "// " <> decl.identifier <> "\n" <>
     genNativeCurryWithRoot true currentModPrefix allArities (safeFuncName name) args retType stmts <> "\n" <>

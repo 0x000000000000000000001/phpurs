@@ -1,0 +1,297 @@
+{
+  "date": "2026-09-08",
+  "purpose": "Initial audit baseline, no performance optimizations implemented",
+  "php": {
+    "version": "8.5.4",
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134214120
+    },
+    "opcache_enabled": true
+  },
+  "node": "v24.8.0",
+  "compiler": "0.15.16 [development build; commit: 59b80f2a183647c6d4e99f06b5658ff550f1cb68 DIRTY]",
+  "repositories": {
+    "altbak.pub-phpurs": {
+      "head": "f447b5c73c1170e8ee586a12ed6ae27f9f621905",
+      "branch": "edge-phpurs"
+    },
+    "purescript-backend-optimizer-phpurs": {
+      "head": "67ba2151e3717b27a13e95c25d3b25c8bdc645cc",
+      "branch": "edge-phpurs"
+    },
+    "phpurs/phpurs": {
+      "head": "3447372a1389b002139dcf37125cd23864d110e9",
+      "branch": "main"
+    }
+  },
+  "phpurs_diff_sha256": "11132aa3460e343c7e5b2cf80231f195524b88ff824764cbbeb7345fab00060d",
+  "clean_command": {
+    "command": "bin/php/run -c",
+    "exit_code": 0,
+    "benchmarks": [
+      {
+        "name": "AST Evaluation:",
+        "result": "7",
+        "best_of_10_us": 4
+      },
+      {
+        "name": "Fibonacci:",
+        "result": "55",
+        "best_of_10_us": 2
+      },
+      {
+        "name": "List Processing (900 elements):",
+        "result": "202950",
+        "best_of_10_us": 149
+      },
+      {
+        "name": "Tail Call Optimization (100k calls):",
+        "result": "100000",
+        "best_of_10_us": 71
+      },
+      {
+        "name": "Deep Record Updates (10k iterations):",
+        "result": "20000",
+        "best_of_10_us": 1483
+      },
+      {
+        "name": "Ackermann (3, 4):",
+        "result": "125",
+        "best_of_10_us": 49
+      },
+      {
+        "name": "Church Numerals (100k Closure Applications):",
+        "result": "100000",
+        "best_of_10_us": 9026
+      },
+      {
+        "name": "Prime Sieve (sum primes up to 500):",
+        "result": "21536",
+        "best_of_10_us": 446
+      },
+      {
+        "name": "Red-Black Tree (100k Worst-Case Insertions):",
+        "result": "22",
+        "best_of_10_us": 650016
+      },
+      {
+        "name": "Polymorphism (10M Type Class Dict Lookups):",
+        "result": "10000000",
+        "best_of_10_us": 6477
+      },
+      {
+        "name": "State Monad (1.2k Binds, 60 Stack Depth):",
+        "result": "1200",
+        "best_of_10_us": 430
+      },
+      {
+        "name": "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+        "result": "1000000",
+        "best_of_10_us": 99481
+      },
+      {
+        "name": "Array Processing (900 elements):",
+        "result": "202950",
+        "best_of_10_us": 99
+      },
+      {
+        "name": "RowToList (Keys Count):",
+        "result": "5",
+        "best_of_10_us": 1
+      }
+    ],
+    "sum_of_best_ms": 767.73,
+    "process_wall_seconds": 22.3,
+    "process_user_seconds": 27.48,
+    "max_resident_bytes": 620920832
+  },
+  "runtime_command": [
+    "php",
+    "-d",
+    "xdebug.mode=off",
+    "-d",
+    "opcache.enable_cli=1",
+    "-d",
+    "opcache.file_cache=/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/opcache",
+    "-d",
+    "opcache.jit_buffer_size=128M",
+    "-d",
+    "opcache.jit=1255",
+    "output/App/main.mod.php"
+  ],
+  "runtime_samples": [
+    {
+      "benchmarks": [
+        {
+          "name": "AST Evaluation:",
+          "result": "7",
+          "best_of_10_us": 5
+        },
+        {
+          "name": "Fibonacci:",
+          "result": "55",
+          "best_of_10_us": 2
+        },
+        {
+          "name": "List Processing (900 elements):",
+          "result": "202950",
+          "best_of_10_us": 151
+        },
+        {
+          "name": "Tail Call Optimization (100k calls):",
+          "result": "100000",
+          "best_of_10_us": 74
+        },
+        {
+          "name": "Deep Record Updates (10k iterations):",
+          "result": "20000",
+          "best_of_10_us": 1449
+        },
+        {
+          "name": "Ackermann (3, 4):",
+          "result": "125",
+          "best_of_10_us": 45
+        },
+        {
+          "name": "Church Numerals (100k Closure Applications):",
+          "result": "100000",
+          "best_of_10_us": 8895
+        },
+        {
+          "name": "Prime Sieve (sum primes up to 500):",
+          "result": "21536",
+          "best_of_10_us": 467
+        },
+        {
+          "name": "Red-Black Tree (100k Worst-Case Insertions):",
+          "result": "22",
+          "best_of_10_us": 670611
+        },
+        {
+          "name": "Polymorphism (10M Type Class Dict Lookups):",
+          "result": "10000000",
+          "best_of_10_us": 6616
+        },
+        {
+          "name": "State Monad (1.2k Binds, 60 Stack Depth):",
+          "result": "1200",
+          "best_of_10_us": 407
+        },
+        {
+          "name": "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "result": "1000000",
+          "best_of_10_us": 101051
+        },
+        {
+          "name": "Array Processing (900 elements):",
+          "result": "202950",
+          "best_of_10_us": 94
+        },
+        {
+          "name": "RowToList (Keys Count):",
+          "result": "5",
+          "best_of_10_us": 1
+        }
+      ],
+      "sum_of_best_ms": 789.87,
+      "process_wall_seconds": 12.902771791,
+      "process_user_seconds": null,
+      "max_resident_bytes": null,
+      "exit_code": 0
+    },
+    {
+      "benchmarks": [
+        {
+          "name": "AST Evaluation:",
+          "result": "7",
+          "best_of_10_us": 4
+        },
+        {
+          "name": "Fibonacci:",
+          "result": "55",
+          "best_of_10_us": 2
+        },
+        {
+          "name": "List Processing (900 elements):",
+          "result": "202950",
+          "best_of_10_us": 149
+        },
+        {
+          "name": "Tail Call Optimization (100k calls):",
+          "result": "100000",
+          "best_of_10_us": 76
+        },
+        {
+          "name": "Deep Record Updates (10k iterations):",
+          "result": "20000",
+          "best_of_10_us": 1562
+        },
+        {
+          "name": "Ackermann (3, 4):",
+          "result": "125",
+          "best_of_10_us": 49
+        },
+        {
+          "name": "Church Numerals (100k Closure Applications):",
+          "result": "100000",
+          "best_of_10_us": 9184
+        },
+        {
+          "name": "Prime Sieve (sum primes up to 500):",
+          "result": "21536",
+          "best_of_10_us": 465
+        },
+        {
+          "name": "Red-Black Tree (100k Worst-Case Insertions):",
+          "result": "22",
+          "best_of_10_us": 663473
+        },
+        {
+          "name": "Polymorphism (10M Type Class Dict Lookups):",
+          "result": "10000000",
+          "best_of_10_us": 6572
+        },
+        {
+          "name": "State Monad (1.2k Binds, 60 Stack Depth):",
+          "result": "1200",
+          "best_of_10_us": 443
+        },
+        {
+          "name": "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "result": "1000000",
+          "best_of_10_us": 101966
+        },
+        {
+          "name": "Array Processing (900 elements):",
+          "result": "202950",
+          "best_of_10_us": 88
+        },
+        {
+          "name": "RowToList (Keys Count):",
+          "result": "5",
+          "best_of_10_us": 1
+        }
+      ],
+      "sum_of_best_ms": 784.03,
+      "process_wall_seconds": 12.970972708,
+      "process_user_seconds": null,
+      "max_resident_bytes": null,
+      "exit_code": 0
+    }
+  ],
+  "generated_modules": 299,
+  "generated_index_php_bytes": 8625774,
+  "limitations": [
+    "Host shared with other agents; no exclusive CPU reservation.",
+    "Each suite value is the minimum of 10 iterations after warm-up, not a median or total process duration.",
+    "Clean command includes compiler rebuild, generation, Composer and runtime; it is not compiler-only timing.",
+    "Existing benchmark-specific PBO directives retained; no general speedup claim.",
+    "Runtime-only samples timed by parent Node process; peak RSS not collected."
+  ]
+}

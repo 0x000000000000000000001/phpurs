@@ -1,0 +1,2059 @@
+{
+  "events": [
+    "Time_(10ns)",
+    "Memory_(bytes)"
+  ],
+  "summary": [
+    598071392,
+    37761168
+  ],
+  "self_sum_ticks": 597600924,
+  "self_sum_ms": 5976.00924,
+  "note": "Recursive edge inclusive times overlap; memory deltas are not allocation counts.",
+  "functions": [
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2283976,
+      "self_ms": 3790.43288,
+      "self_percent": 63.42749362951119,
+      "self_memory_delta_bytes": 55200000
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_balance",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2183976,
+      "self_ms": 1438.51846,
+      "self_percent": 24.071556823764215,
+      "self_memory_delta_bytes": 494681872
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_T->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2583932,
+      "self_ms": 195.24618,
+      "self_percent": 3.267166635103797,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_insert",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 100000,
+      "self_ms": 167.8322,
+      "self_percent": 2.8084327393041315,
+      "self_memory_delta_bytes": 26411176
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_buildmajTree",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 161.28334,
+      "self_percent": 2.698846898034582,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\majTest_majRmajBmajTree_depth",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 200001,
+      "self_ms": 143.0403,
+      "self_percent": 2.3935756163589867,
+      "self_memory_delta_bytes": 8000000
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 20.46604,
+      "self_percent": 0.34247001934019766,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_B->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 299957,
+      "self_ms": 11.98844,
+      "self_percent": 0.2006094622437364,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_R->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 199979,
+      "self_ms": 11.04055,
+      "self_percent": 0.1847478736495394,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Test\\RBTree\\Test_RBTree_E->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 200002,
+      "self_ms": 7.4963,
+      "self_percent": 0.12543989975490735,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "self_ms": 3.78842,
+      "self_percent": 0.06339381095066714,
+      "self_memory_delta_bytes": 196024
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 2.97129,
+      "self_percent": 0.049720304649328154,
+      "self_memory_delta_bytes": 134752
+    },
+    {
+      "name": "{main}",
+      "file": "/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-08/rbtree/runner.php",
+      "calls": 0,
+      "self_ms": 2.78775,
+      "self_percent": 0.04664902425753277,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "calls": 1,
+      "self_ms": 2.08833,
+      "self_percent": 0.034945227092721166,
+      "self_memory_delta_bytes": 67032
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "calls": 1,
+      "self_ms": 1.98779,
+      "self_percent": 0.033262833442339185,
+      "self_memory_delta_bytes": 62824
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "calls": 1,
+      "self_ms": 1.96304,
+      "self_percent": 0.03284867745619483,
+      "self_memory_delta_bytes": 68992
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 1.86271,
+      "self_percent": 0.031169797856604384,
+      "self_memory_delta_bytes": 2496
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "calls": 1,
+      "self_ms": 1.63938,
+      "self_percent": 0.02743268850769046,
+      "self_memory_delta_bytes": 6552
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "calls": 1,
+      "self_ms": 1.54879,
+      "self_percent": 0.025916793930526115,
+      "self_memory_delta_bytes": 144480
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "calls": 1,
+      "self_ms": 1.43767,
+      "self_percent": 0.02405735905455193,
+      "self_memory_delta_bytes": 68432
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 1.26679,
+      "self_percent": 0.02119792572476009,
+      "self_memory_delta_bytes": 104
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "calls": 1,
+      "self_ms": 0.9515,
+      "self_percent": 0.015921996800660903,
+      "self_memory_delta_bytes": 68520
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "calls": 1,
+      "self_ms": 0.92517,
+      "self_percent": 0.015481401765704098,
+      "self_memory_delta_bytes": 5216
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "calls": 1,
+      "self_ms": 0.91696,
+      "self_percent": 0.015344019113330555,
+      "self_memory_delta_bytes": 3392
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "calls": 1,
+      "self_ms": 0.7185,
+      "self_percent": 0.012023073779584718,
+      "self_memory_delta_bytes": 69864
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Category/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Category/index.php",
+      "calls": 1,
+      "self_ms": 0.57342,
+      "self_percent": 0.009595366689894877,
+      "self_memory_delta_bytes": 66848
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "calls": 1,
+      "self_ms": 0.50333,
+      "self_percent": 0.008422510404284449,
+      "self_memory_delta_bytes": 320
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php:104-139}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "calls": 1,
+      "self_ms": 0.07346,
+      "self_percent": 0.0012292484340268523,
+      "self_memory_delta_bytes": 760
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "calls": 1,
+      "self_ms": 0.05958,
+      "self_percent": 0.0009969864102820564,
+      "self_memory_delta_bytes": 1080
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "calls": 1,
+      "self_ms": 0.03904,
+      "self_percent": 0.000653278775720233,
+      "self_memory_delta_bytes": 280
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "calls": 1,
+      "self_ms": 0.03654,
+      "self_percent": 0.0006114448377258533,
+      "self_memory_delta_bytes": 1912
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "calls": 1,
+      "self_ms": 0.03471,
+      "self_percent": 0.0005808223951139674,
+      "self_memory_delta_bytes": 13240
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "calls": 1,
+      "self_ms": 0.0315,
+      "self_percent": 0.0005271076187291838,
+      "self_memory_delta_bytes": 9624
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "calls": 1,
+      "self_ms": 0.03092,
+      "self_percent": 0.0005174021451144878,
+      "self_memory_delta_bytes": 5704
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Field/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Field/index.php",
+      "calls": 1,
+      "self_ms": 0.02883,
+      "self_percent": 0.0004824289729511864,
+      "self_memory_delta_bytes": 120
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "calls": 1,
+      "self_ms": 0.02871,
+      "self_percent": 0.00048042094392745623,
+      "self_memory_delta_bytes": 7992
+    },
+    {
+      "name": "php::opcache_get_status",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.02838,
+      "self_percent": 0.0004748988641121981,
+      "self_memory_delta_bytes": 3680
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Monad/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Monad/index.php",
+      "calls": 1,
+      "self_ms": 0.02663,
+      "self_percent": 0.0004456151075161323,
+      "self_memory_delta_bytes": 3672
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.NaturalTransformation/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.NaturalTransformation/index.php",
+      "calls": 1,
+      "self_ms": 0.02596,
+      "self_percent": 0.0004344036121336385,
+      "self_memory_delta_bytes": 120
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "calls": 1,
+      "self_ms": 0.02529,
+      "self_percent": 0.0004231921167511448,
+      "self_memory_delta_bytes": 4312
+    },
+    {
+      "name": "checkedAct",
+      "file": "/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-08/rbtree/runner.php",
+      "calls": 1,
+      "self_ms": 0.02504,
+      "self_percent": 0.0004190087229517068,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.BooleanAlgebra/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.BooleanAlgebra/index.php",
+      "calls": 1,
+      "self_ms": 0.02392,
+      "self_percent": 0.0004002671187302247,
+      "self_memory_delta_bytes": 3320
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.CommutativeRing/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.CommutativeRing/index.php",
+      "calls": 1,
+      "self_ms": 0.02321,
+      "self_percent": 0.0003883862803398209,
+      "self_memory_delta_bytes": 4120
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "calls": 1,
+      "self_ms": 0.02033,
+      "self_percent": 0.0003401935837702955,
+      "self_memory_delta_bytes": 248
+    },
+    {
+      "name": "php::realpath",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.02029,
+      "self_percent": 0.00033952424076238546,
+      "self_memory_delta_bytes": 96
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.DivisionRing/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.DivisionRing/index.php",
+      "calls": 1,
+      "self_ms": 0.016,
+      "self_percent": 0.0002677372031640299,
+      "self_memory_delta_bytes": 1304
+    },
+    {
+      "name": "php::class_exists",
+      "file": "php:internal",
+      "calls": 35,
+      "self_ms": 0.01383,
+      "self_percent": 0.00023142534498490837,
+      "self_memory_delta_bytes": 376
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "calls": 1,
+      "self_ms": 0.01383,
+      "self_percent": 0.00023142534498490837,
+      "self_memory_delta_bytes": 256
+    },
+    {
+      "name": "Data\\Show\\majData_majShow_showmajIntmajImpl",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "calls": 1,
+      "self_ms": 0.01167,
+      "self_percent": 0.00019528082255776432,
+      "self_memory_delta_bytes": 160
+    },
+    {
+      "name": "php::function_exists",
+      "file": "php:internal",
+      "calls": 71,
+      "self_ms": 0.0094,
+      "self_percent": 0.00015729560685886758,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "php::is_file",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.00733,
+      "self_percent": 0.0001226571061995212,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "php::json_encode",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.00671,
+      "self_percent": 0.00011228228957691504,
+      "self_memory_delta_bytes": 768
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Void/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Void/index.php",
+      "calls": 1,
+      "self_ms": 0.00638,
+      "self_percent": 0.00010676020976165692,
+      "self_memory_delta_bytes": 120
+    },
+    {
+      "name": "Test\\RBTree\\phpurs_execute_effect",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 2,
+      "self_ms": 0.00525,
+      "self_percent": 8.785126978819733e-05,
+      "self_memory_delta_bytes": 208
+    },
+    {
+      "name": "php::hrtime",
+      "file": "php:internal",
+      "calls": 2,
+      "self_ms": 0.00512,
+      "self_percent": 8.567590501248957e-05,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "calls": 1,
+      "self_ms": 0.00438,
+      "self_percent": 7.329305936615319e-05,
+      "self_memory_delta_bytes": 280
+    },
+    {
+      "name": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Boolean/index.php",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Boolean/index.php",
+      "calls": 1,
+      "self_ms": 0.00379,
+      "self_percent": 6.342024999947959e-05,
+      "self_memory_delta_bytes": 120
+    },
+    {
+      "name": "Data\\Ord\\phpurs_curry_fallback",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 15,
+      "self_ms": 0.00346,
+      "self_percent": 5.789817018422147e-05,
+      "self_memory_delta_bytes": 11400
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:62-73}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 5,
+      "self_ms": 0.00338,
+      "self_percent": 5.655948416840131e-05,
+      "self_memory_delta_bytes": 1360
+    },
+    {
+      "name": "php::is_callable",
+      "file": "php:internal",
+      "calls": 2,
+      "self_ms": 0.00329,
+      "self_percent": 5.505346240060365e-05,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:76-88}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 5,
+      "self_ms": 0.00309,
+      "self_percent": 5.1706747361053275e-05,
+      "self_memory_delta_bytes": 1360
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:273-307}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 0.00275,
+      "self_percent": 4.6017331793817644e-05,
+      "self_memory_delta_bytes": 1816
+    },
+    {
+      "name": "Data\\Ord\\majData_majOrd_ordmajStringmajImpl",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.00196,
+      "self_percent": 3.279780738759366e-05,
+      "self_memory_delta_bytes": 272
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:112-162}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 0.00183,
+      "self_percent": 3.062244261188592e-05,
+      "self_memory_delta_bytes": 4312
+    },
+    {
+      "name": "php::gc_status",
+      "file": "php:internal",
+      "calls": 2,
+      "self_ms": 0.00175,
+      "self_percent": 2.9283756596065774e-05,
+      "self_memory_delta_bytes": 2304
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php:112-112}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "calls": 1,
+      "self_ms": 0.00158,
+      "self_percent": 2.6439048812447955e-05,
+      "self_memory_delta_bytes": 32
+    },
+    {
+      "name": "Effect\\Console\\majEffect_majConsole_log",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "calls": 1,
+      "self_ms": 0.00146,
+      "self_percent": 2.443101978871773e-05,
+      "self_memory_delta_bytes": 192
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:806-812}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 0.00138,
+      "self_percent": 2.309233377289758e-05,
+      "self_memory_delta_bytes": 680
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php:110-127}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "calls": 1,
+      "self_ms": 0.00121,
+      "self_percent": 2.024762598927976e-05,
+      "self_memory_delta_bytes": 376
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php:109-139}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "calls": 1,
+      "self_ms": 0.00121,
+      "self_percent": 2.024762598927976e-05,
+      "self_memory_delta_bytes": 5304
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php:104-142}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "calls": 1,
+      "self_ms": 0.00117,
+      "self_percent": 1.957828298136969e-05,
+      "self_memory_delta_bytes": 3544
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php:105-114}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "calls": 1,
+      "self_ms": 0.001,
+      "self_percent": 1.673357519775187e-05,
+      "self_memory_delta_bytes": 760
+    },
+    {
+      "name": "php::set_error_handler",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.00096,
+      "self_percent": 1.6064232189841797e-05,
+      "self_memory_delta_bytes": 320
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php:108-129}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "calls": 1,
+      "self_ms": 0.00096,
+      "self_percent": 1.6064232189841797e-05,
+      "self_memory_delta_bytes": 3544
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php:110-129}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "calls": 1,
+      "self_ms": 0.00092,
+      "self_percent": 1.539488918193172e-05,
+      "self_memory_delta_bytes": 3544
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:310-325}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 0.00092,
+      "self_percent": 1.539488918193172e-05,
+      "self_memory_delta_bytes": 1304
+    },
+    {
+      "name": "Bench\\majBench_opaque",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "self_ms": 0.00092,
+      "self_percent": 1.539488918193172e-05,
+      "self_memory_delta_bytes": 160
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:113-157}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.00075,
+      "self_percent": 1.2550181398313901e-05,
+      "self_memory_delta_bytes": 2752
+    },
+    {
+      "name": "Data\\Ord\\majData_majOrd_ordmajNumbermajImpl",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.00075,
+      "self_percent": 1.2550181398313901e-05,
+      "self_memory_delta_bytes": 272
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php:108-117}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "calls": 1,
+      "self_ms": 0.00075,
+      "self_percent": 1.2550181398313901e-05,
+      "self_memory_delta_bytes": 1168
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php:113-135}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "self_ms": 0.00075,
+      "self_percent": 1.2550181398313901e-05,
+      "self_memory_delta_bytes": 1528
+    },
+    {
+      "name": "php::extension_loaded",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.00075,
+      "self_percent": 1.2550181398313901e-05,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Data\\Ordering\\Data_Ordering_GT->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "calls": 7,
+      "self_ms": 0.00066,
+      "self_percent": 1.1044159630516235e-05,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php:110-138}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "calls": 1,
+      "self_ms": 0.00063,
+      "self_percent": 1.0542152374583678e-05,
+      "self_memory_delta_bytes": 2752
+    },
+    {
+      "name": "Data\\Ord\\majData_majOrd_ordmajIntmajImpl",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.00058,
+      "self_percent": 9.705473614696084e-06,
+      "self_memory_delta_bytes": 272
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php:110-135}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "calls": 1,
+      "self_ms": 0.00054,
+      "self_percent": 9.03613060678601e-06,
+      "self_memory_delta_bytes": 4336
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php:109-122}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "calls": 1,
+      "self_ms": 0.00054,
+      "self_percent": 9.03613060678601e-06,
+      "self_memory_delta_bytes": 1960
+    },
+    {
+      "name": "Data\\Ord\\majData_majOrd_ordmajBooleanmajImpl",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.00054,
+      "self_percent": 9.03613060678601e-06,
+      "self_memory_delta_bytes": 272
+    },
+    {
+      "name": "Type\\Proxy\\Type_Proxy_Proxy->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "calls": 7,
+      "self_ms": 0.0005,
+      "self_percent": 8.366787598875935e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php:108-123}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "calls": 1,
+      "self_ms": 0.0005,
+      "self_percent": 8.366787598875935e-06,
+      "self_memory_delta_bytes": 2752
+    },
+    {
+      "name": "Data\\Ord\\majData_majOrd_ordmajCharmajImpl",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "self_ms": 0.0005,
+      "self_percent": 8.366787598875935e-06,
+      "self_memory_delta_bytes": 272
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php:109-122}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "calls": 1,
+      "self_ms": 0.00046,
+      "self_percent": 7.69744459096586e-06,
+      "self_memory_delta_bytes": 1960
+    },
+    {
+      "name": "Data\\Ordering\\Data_Ordering_EQ->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "calls": 7,
+      "self_ms": 0.00041,
+      "self_percent": 6.8607658310782665e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php:111-120}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "calls": 1,
+      "self_ms": 0.00038,
+      "self_percent": 6.35875857514571e-06,
+      "self_memory_delta_bytes": 1168
+    },
+    {
+      "name": "php::memory_get_peak_usage",
+      "file": "php:internal",
+      "calls": 1,
+      "self_ms": 0.00038,
+      "self_percent": 6.35875857514571e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "Data\\Ordering\\Data_Ordering_LT->__construct",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "calls": 7,
+      "self_ms": 0.00032,
+      "self_percent": 5.354744063280598e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:131-143}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "self_ms": 0.00029,
+      "self_percent": 4.852736807348042e-06,
+      "self_memory_delta_bytes": 792
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php:108-117}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "calls": 1,
+      "self_ms": 0.00025,
+      "self_percent": 4.183393799437967e-06,
+      "self_memory_delta_bytes": 1168
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:246-252}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 0.00025,
+      "self_percent": 4.183393799437967e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php:111-111}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "calls": 1,
+      "self_ms": 0.00025,
+      "self_percent": 4.183393799437967e-06,
+      "self_memory_delta_bytes": 760
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php:104-111}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "calls": 1,
+      "self_ms": 0.00017,
+      "self_percent": 2.844707783617818e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php:108-115}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "calls": 1,
+      "self_ms": 0.00017,
+      "self_percent": 2.844707783617818e-06,
+      "self_memory_delta_bytes": 1168
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php:119-123}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "self_ms": 0.00017,
+      "self_percent": 2.844707783617818e-06,
+      "self_memory_delta_bytes": 760
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:240-246}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 8e-05,
+      "self_percent": 1.3386860158201496e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:264-270}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "self_ms": 8e-05,
+      "self_percent": 1.3386860158201496e-06,
+      "self_memory_delta_bytes": 0
+    },
+    {
+      "name": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php:120-122}",
+      "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "self_ms": 8e-05,
+      "self_percent": 1.3386860158201496e-06,
+      "self_memory_delta_bytes": 0
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "calls": 2183976,
+      "inclusive_ms": 62711.31059
+    },
+    {
+      "caller": "{main}",
+      "callee": "checkedAct",
+      "calls": 1,
+      "inclusive_ms": 5951.60042
+    },
+    {
+      "caller": "checkedAct",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "calls": 1,
+      "inclusive_ms": 5951.57538
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_buildmajTree",
+      "calls": 1,
+      "inclusive_ms": 5788.52317
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_buildmajTree",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_insert",
+      "calls": 100000,
+      "inclusive_ms": 5627.32215
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_insert",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "calls": 100000,
+      "inclusive_ms": 5447.28682
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_depth",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_depth",
+      "calls": 200000,
+      "inclusive_ms": 2093.63852
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_balance",
+      "calls": 2183976,
+      "inclusive_ms": 1637.09445
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_balance",
+      "callee": "Test\\RBTree\\Test_RBTree_T->__construct",
+      "calls": 2383932,
+      "inclusive_ms": 179.94628
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "callee": "Test\\RBTree\\majTest_majRmajBmajTree_depth",
+      "calls": 1,
+      "inclusive_ms": 142.56425
+    },
+    {
+      "caller": "{main}",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "calls": 1,
+      "inclusive_ms": 25.756
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "calls": 1,
+      "inclusive_ms": 24.48371
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "calls": 1,
+      "inclusive_ms": 14.80871
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "calls": 1,
+      "inclusive_ms": 13.89117
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "calls": 1,
+      "inclusive_ms": 11.18054
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "calls": 1,
+      "inclusive_ms": 9.18771
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "callee": "Test\\RBTree\\Test_RBTree_T->__construct",
+      "calls": 100000,
+      "inclusive_ms": 7.86882
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_balance",
+      "callee": "Test\\RBTree\\Test_RBTree_B->__construct",
+      "calls": 199956,
+      "inclusive_ms": 7.57907
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "callee": "Test\\RBTree\\Test_RBTree_E->__construct",
+      "calls": 200000,
+      "inclusive_ms": 7.49622
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_insert",
+      "callee": "Test\\RBTree\\Test_RBTree_T->__construct",
+      "calls": 100000,
+      "inclusive_ms": 7.43108
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "calls": 1,
+      "inclusive_ms": 5.80867
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_ins",
+      "callee": "Test\\RBTree\\Test_RBTree_R->__construct",
+      "calls": 100000,
+      "inclusive_ms": 5.60537
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_balance",
+      "callee": "Test\\RBTree\\Test_RBTree_R->__construct",
+      "calls": 99978,
+      "inclusive_ms": 5.43505
+    },
+    {
+      "caller": "Test\\RBTree\\majTest_majRmajBmajTree_insert",
+      "callee": "Test\\RBTree\\Test_RBTree_B->__construct",
+      "calls": 100000,
+      "inclusive_ms": 4.40929
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "calls": 1,
+      "inclusive_ms": 3.74442
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "calls": 1,
+      "inclusive_ms": 2.19267
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "calls": 1,
+      "inclusive_ms": 2.09746
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "calls": 1,
+      "inclusive_ms": 1.71975
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "calls": 1,
+      "inclusive_ms": 1.49667
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "calls": 1,
+      "inclusive_ms": 1.00079
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.95867
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Category/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.70875
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.52046
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Category/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.13471
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php:104-139}",
+      "calls": 1,
+      "inclusive_ms": 0.07346
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.04117
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.03804
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.0355
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.03263
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.0325
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.03038
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Field/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.02954
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::opcache_get_status",
+      "calls": 1,
+      "inclusive_ms": 0.02838
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.NaturalTransformation/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.0275
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Monad/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.02704
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.02608
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.BooleanAlgebra/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.02446
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.CommutativeRing/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.02363
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.02113
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::realpath",
+      "calls": 1,
+      "inclusive_ms": 0.02029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.DivisionRing/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.01629
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.01583
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "callee": "Data\\Show\\majData_majShow_showmajIntmajImpl",
+      "calls": 1,
+      "inclusive_ms": 0.01325
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "callee": "Test\\RBTree\\phpurs_execute_effect",
+      "calls": 2,
+      "inclusive_ms": 0.00863
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::is_file",
+      "calls": 1,
+      "inclusive_ms": 0.00733
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Void/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.00675
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::json_encode",
+      "calls": 1,
+      "inclusive_ms": 0.00671
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.006
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::hrtime",
+      "calls": 2,
+      "inclusive_ms": 0.00512
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:62-73}",
+      "calls": 5,
+      "inclusive_ms": 0.00446
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "callee": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Boolean/index.php",
+      "calls": 1,
+      "inclusive_ms": 0.00446
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:76-88}",
+      "calls": 5,
+      "inclusive_ms": 0.00408
+    },
+    {
+      "caller": "Test\\RBTree\\phpurs_execute_effect",
+      "callee": "php::is_callable",
+      "calls": 2,
+      "inclusive_ms": 0.00329
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:273-307}",
+      "calls": 1,
+      "inclusive_ms": 0.00308
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ord\\majData_majOrd_ordmajStringmajImpl",
+      "calls": 1,
+      "inclusive_ms": 0.00263
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:806-812}",
+      "calls": 1,
+      "inclusive_ms": 0.00246
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::function_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00246
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:112-162}",
+      "calls": 1,
+      "inclusive_ms": 0.00183
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::gc_status",
+      "calls": 2,
+      "inclusive_ms": 0.00175
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00171
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "Effect\\Console\\majEffect_majConsole_log",
+      "calls": 1,
+      "inclusive_ms": 0.00171
+    },
+    {
+      "caller": "Data\\Show\\majData_majShow_showmajIntmajImpl",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php:112-112}",
+      "calls": 1,
+      "inclusive_ms": 0.00158
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00142
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php:110-127}",
+      "calls": 1,
+      "inclusive_ms": 0.00121
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php:109-139}",
+      "calls": 1,
+      "inclusive_ms": 0.00121
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php:104-142}",
+      "calls": 1,
+      "inclusive_ms": 0.00117
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.NaturalTransformation/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00117
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:62-73}",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 5,
+      "inclusive_ms": 0.0011
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:806-812}",
+      "callee": "Bench\\majBench_opaque",
+      "calls": 1,
+      "inclusive_ms": 0.00108
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:76-88}",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 5,
+      "inclusive_ms": 0.00101
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php:105-114}",
+      "calls": 1,
+      "inclusive_ms": 0.001
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ord\\majData_majOrd_ordmajNumbermajImpl",
+      "calls": 1,
+      "inclusive_ms": 0.001
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:310-325}",
+      "calls": 1,
+      "inclusive_ms": 0.001
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php:108-129}",
+      "calls": 1,
+      "inclusive_ms": 0.00096
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::set_error_handler",
+      "calls": 1,
+      "inclusive_ms": 0.00096
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php:110-129}",
+      "calls": 1,
+      "inclusive_ms": 0.00092
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php:113-157}",
+      "calls": 1,
+      "inclusive_ms": 0.00075
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php:108-117}",
+      "calls": 1,
+      "inclusive_ms": 0.00075
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php:113-135}",
+      "calls": 1,
+      "inclusive_ms": 0.00075
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::extension_loaded",
+      "calls": 1,
+      "inclusive_ms": 0.00075
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ord\\majData_majOrd_ordmajIntmajImpl",
+      "calls": 1,
+      "inclusive_ms": 0.00071
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00071
+    },
+    {
+      "caller": "Data\\Ord\\majData_majOrd_ordmajStringmajImpl",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 1,
+      "inclusive_ms": 0.00067
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ord\\majData_majOrd_ordmajCharmajImpl",
+      "calls": 1,
+      "inclusive_ms": 0.00067
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ord\\majData_majOrd_ordmajBooleanmajImpl",
+      "calls": 1,
+      "inclusive_ms": 0.00067
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php:110-138}",
+      "calls": 1,
+      "inclusive_ms": 0.00063
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_GT->__construct",
+      "calls": 5,
+      "inclusive_ms": 0.00058
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php:110-135}",
+      "calls": 1,
+      "inclusive_ms": 0.00054
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php:109-122}",
+      "calls": 1,
+      "inclusive_ms": 0.00054
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00054
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Field/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00054
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00054
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Boolean/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.0005
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php:108-123}",
+      "calls": 1,
+      "inclusive_ms": 0.0005
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.0005
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Category/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00046
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00046
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php:109-122}",
+      "calls": 1,
+      "inclusive_ms": 0.00046
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00042
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00038
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php:111-120}",
+      "calls": 1,
+      "inclusive_ms": 0.00038
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.BooleanAlgebra/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00038
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.NaturalTransformation/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00038
+    },
+    {
+      "caller": "{main}",
+      "callee": "php::memory_get_peak_usage",
+      "calls": 1,
+      "inclusive_ms": 0.00038
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00033
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00033
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Monad/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Prelude/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:131-143}",
+      "calls": 1,
+      "inclusive_ms": 0.00029
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Semigroupoid/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Void/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "Data\\Ord\\majData_majOrd_ordmajNumbermajImpl",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Apply/index.php:108-117}",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.CommutativeRing/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:273-307}",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:246-252}",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "Effect\\Console\\majEffect_majConsole_log",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php:111-111}",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00025
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_EQ->__construct",
+      "calls": 5,
+      "inclusive_ms": 0.00024
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Function/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Functor/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect.Console/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00021
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ord/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_LT->__construct",
+      "calls": 5,
+      "inclusive_ms": 0.0002
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Boolean/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Unit/index.php:104-111}",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.HeytingAlgebra/index.php",
+      "callee": "Type\\Proxy\\Type_Proxy_Proxy->__construct",
+      "calls": 2,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "Data\\Ord\\majData_majOrd_ordmajCharmajImpl",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php:108-115}",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.DivisionRing/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Field/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "Bench\\majBench_opaque",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php:119-123}",
+      "calls": 1,
+      "inclusive_ms": 0.00017
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Category/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Record.Unsafe/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Show/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ring/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Applicative/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Bind/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.BooleanAlgebra/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.CommutativeRing/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00016
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Type.Proxy/index.php",
+      "callee": "Type\\Proxy\\Type_Proxy_Proxy->__construct",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Symbol/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "Data\\Ord\\majData_majOrd_ordmajIntmajImpl",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "Data\\Ord\\majData_majOrd_ordmajBooleanmajImpl",
+      "callee": "Data\\Ord\\phpurs_curry_fallback",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.EuclideanRing/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_EQ->__construct",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "Test\\RBTree\\Test_RBTree_R->__construct",
+      "calls": 1,
+      "inclusive_ms": 0.00013
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Void/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semiring/index.php",
+      "callee": "Type\\Proxy\\Type_Proxy_Proxy->__construct",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Control.Monad/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Monoid/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.DivisionRing/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 0.00012
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Semigroup/index.php",
+      "callee": "php::function_exists",
+      "calls": 2,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_LT->__construct",
+      "calls": 1,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "callee": "Type\\Proxy\\Type_Proxy_Proxy->__construct",
+      "calls": 2,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:273-307}",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:240-246}",
+      "calls": 1,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:310-325}",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Effect/index.php:264-270}",
+      "calls": 1,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "Test\\RBTree\\Test_RBTree_B->__construct",
+      "calls": 1,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "Test\\RBTree\\phpurs_execute_effect",
+      "callee": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Bench/index.php:120-122}",
+      "calls": 1,
+      "inclusive_ms": 8e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Eq/index.php",
+      "callee": "php::class_exists",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_GT->__construct",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Ordering/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_EQ->__construct",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_GT->__construct",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Data.Bounded/index.php",
+      "callee": "Data\\Ordering\\Data_Ordering_LT->__construct",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    },
+    {
+      "caller": "require_once::/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php",
+      "callee": "Test\\RBTree\\Test_RBTree_E->__construct",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    },
+    {
+      "caller": "{closure:/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php:808-811}",
+      "callee": "Test\\RBTree\\Test_RBTree_E->__construct",
+      "calls": 1,
+      "inclusive_ms": 4e-05
+    }
+  ]
+}

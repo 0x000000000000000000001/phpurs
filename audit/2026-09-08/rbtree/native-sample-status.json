@@ -1,0 +1,22 @@
+{
+  "php_pid": 43722,
+  "command": [
+    "php",
+    "-d",
+    "xdebug.mode=off",
+    "-d",
+    "opcache.enable_cli=1",
+    "-d",
+    "opcache.file_cache=/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/opcache",
+    "-d",
+    "opcache.jit_buffer_size=128M",
+    "-d",
+    "opcache.jit=1255",
+    "/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-08/rbtree/runner.php",
+    "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output",
+    "sample"
+  ],
+  "sample_returncode": 0,
+  "sample_stdout": "",
+  "sample_stderr": "Sampling process 43722 for 5 seconds with 1 millisecond of run time between samples\nSampling completed, processing symbols...\nSample analysis of process 43722 written to file /Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-08/rbtree/raw/native-sample.txt\n"
+}

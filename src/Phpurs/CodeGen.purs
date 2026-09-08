@@ -28,7 +28,7 @@ import Data.Array as Array
 import Data.String as String
 import Debug (trace)
 import Data.String.Pattern (Pattern(..), Replacement(..))
-import Data.Foldable (foldl, foldr, foldMap)
+import Data.Foldable (all, foldl, foldr, foldMap)
 import Data.Traversable (traverse)
 import Debug as Debug
 import Data.Newtype (unwrap)
@@ -38,6 +38,21 @@ import Data.Set (Set)
 import Data.Set as Set
 
 type TranslationRes = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: Int }
+
+-- Terminal alternatives may share these slots: evaluating the binding itself
+-- cannot introduce statements or capture a reference to the slot being written.
+isSimpleBindingValue :: TcoExpr -> Boolean
+isSimpleBindingValue (TcoExpr _ expr) = case expr of
+  Local _ _ -> true
+  Accessor value _ -> isSimpleBindingValue value
+  Lit (LitInt _) -> true
+  Lit (LitNumber _) -> true
+  Lit (LitString _) -> true
+  Lit (LitChar _) -> true
+  Lit (LitBoolean _) -> true
+  Typed _ value -> isSimpleBindingValue value
+  Syn.TypeApp value _ -> isSimpleBindingValue value
+  _ -> false
 
 wrapInStmts :: Array String -> Array PhpExpr -> PhpExpr -> PhpExpr
 wrapInStmts _ [] expr = expr
@@ -92,6 +107,7 @@ translateOperator2 (OpIntNum OpAdd) l r = PhpBinOp "+" l r
 translateOperator2 (OpIntNum OpSubtract) l r = PhpBinOp "-" l r
 translateOperator2 (OpIntNum OpMultiply) l r = PhpBinOp "*" l r
 translateOperator2 (OpIntNum OpDivide) l r = PhpBinOp "/" l r
+translateOperator2 (OpIntNum OpMod) l r = PhpBinOp "%" l r
 translateOperator2 (OpIntOrd OpEq) l r = PhpBinOp "===" l r
 translateOperator2 (OpIntOrd OpNotEq) l r = PhpBinOp "!==" l r
 translateOperator2 (OpIntOrd OpGt) l r = PhpBinOp ">" l r
@@ -102,6 +118,7 @@ translateOperator2 (OpNumberNum OpAdd) l r = PhpBinOp "+" l r
 translateOperator2 (OpNumberNum OpSubtract) l r = PhpBinOp "-" l r
 translateOperator2 (OpNumberNum OpMultiply) l r = PhpBinOp "*" l r
 translateOperator2 (OpNumberNum OpDivide) l r = PhpBinOp "/" l r
+translateOperator2 (OpNumberNum OpMod) l r = PhpCall (PhpRaw "\\fmod") [ l, r ]
 translateOperator2 (OpNumberOrd OpEq) l r = PhpBinOp "===" l r
 translateOperator2 (OpNumberOrd OpNotEq) l r = PhpBinOp "!==" l r
 translateOperator2 (OpNumberOrd OpGt) l r = PhpBinOp ">" l r
@@ -390,7 +407,14 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
     else
       let
         oldVarName = localId Nothing (Level l)
-        varName = oldVarName <> "_" <> show nextId
+        -- Non-tail siblings (e.g. two call arguments) keep unique names because
+        -- their statements run before either result expression is consumed.
+        -- The dedicated suffix also separates slots from parameters/captures.
+        varName =
+          if isTail && Array.null loopCtx && not (Map.member oldVarName bound) && isSimpleBindingValue val then
+            oldVarName <> "_slot"
+          else
+            oldVarName <> "_" <> show nextId
         resVal = translateExprImpl_ modNameStr recVars namedBound bound (Just varName) [] false false nextId val
         newBound = Map.insert oldVarName varName bound
         resBody = translateExprImpl_ modNameStr recVars namedBound newBound Nothing loopCtx isTail inEffectBlock (resVal.nextId + 1) body
@@ -673,6 +697,29 @@ exprTypeToPhpType = case _ of
   Func _ _ -> ""
   _ -> ""
 
+-- | Initialize recursive dictionaries and functions before expressions which
+-- | call into them (for example, Apply instances implemented with Monad.ap).
+isSafeRecursiveInit :: ModuleName -> Array Ident -> TcoExpr -> Boolean
+isSafeRecursiveInit currentModule group = go
+  where
+  go (TcoExpr _ expr) = case expr of
+    Abs _ _ -> true
+    UncurriedAbs _ _ -> true
+    UncurriedEffectAbs _ _ -> true
+    CtorDef _ _ _ _ -> true
+    EffectBind _ _ _ _ -> true
+    EffectPure _ -> true
+    Var (Qualified (Just mn) ident) | mn == currentModule -> not (Array.elem ident group)
+    Var _ -> true
+    Lit lit -> all go lit
+    Accessor a _ -> go a
+    Update a props -> go a && all (\(Prop _ value) -> go value) props
+    CtorSaturated _ _ _ _ values -> all (\(Tuple _ value) -> go value) values
+    PrimOp op -> all go op
+    Typed _ a -> go a
+    Syn.TypeApp a _ -> go a
+    _ -> false
+
 -- | Main translation function.
 -- | Takes the list of module imports and a `BackendModule` (containing `TcoExpr` bindings)
 -- | and returns a fully constructed `PhpFile` ready for printing.
@@ -708,8 +755,15 @@ translate imports mod =
                 res = if modNameStr == "Phpurs_PhpAst" then trace ("Tco.analyze START for " <> unwrap k) \_ -> Tco.analyze env' v else Tco.analyze env' v
               in Tuple k (if modNameStr == "Phpurs_PhpAst" then trace ("Tco.analyze END for " <> unwrap k) \_ -> res else res)
             ) group.bindings
+            orderedBinds =
+              if group.recursive then
+                let
+                  groupIdents = map (\(Tuple ident _) -> ident) group.bindings
+                  ready = Array.partition (\(Tuple _ expr) -> isSafeRecursiveInit mod.name groupIdents expr) tcoBinds
+                in ready.yes <> ready.no
+              else tcoBinds
           in
-            Tuple env' (Array.snoc acc { recursive: group.recursive, bindings: tcoBinds })
+            Tuple env' (Array.snoc acc { recursive: group.recursive, bindings: orderedBinds })
       )
       (Tuple [] [])
       mod.bindings

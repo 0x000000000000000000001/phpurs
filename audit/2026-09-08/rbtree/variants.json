@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "source_sha256": "6ee54ff40d3b189b025aab3f8c815a4d810cc745948fb8d9711c1ad14ff5fe12",
+    "bytes": 42216
+  },
+  "singletons": {
+    "source_sha256": "807d9a7b8b7a2df141ec88d46f17f0b81c41c3d34bd10123220bf7a650a8b391",
+    "bytes": 41719
+  },
+  "reuse-binders": {
+    "source_sha256": "4411366f95c5b47fd853933d22df83920c7f1b31f2a37bad2323279886750799",
+    "bytes": 40628
+  },
+  "exact-arity": {
+    "source_sha256": "580456cc448c4111b21627a29eba127c892e1796997939be8afbe2c1bc85705c",
+    "bytes": 41003
+  },
+  "no-dead-tco": {
+    "source_sha256": "9310044d2dd64a0e1d2a86f6f02bba1521d9a59ddda61ac19649b3ec20381524",
+    "bytes": 41902
+  }
+}

@@ -1,0 +1,29 @@
+
+> phpurs@0.1.0 build
+> spago build && spago bundle --module Main --platform node --outfile bin/phpurs.js --bundle-type app
+
+Reading Spago workspace configuration...
+
+✓ Selecting package to build: phpurs
+
+Downloading dependencies...
+Building...
+[ 1 of 29] Compiling Foreign.Object
+[ERROR 1/1 EscapedSkolem] .spago/p/foreign-object-4.1.0/src/Foreign/Object.purs:197:14
+
+  197  insert k v = mutate (OST.poke k v)
+                    ^^^^^^^^^^^^^^^^^^^^^
+
+  The type variable r, bound at
+    .spago/p/foreign-object-4.1.0/src/Foreign/Object.purs:197:21 - 197:35 (line 197, column 21 - line 197, column 35)
+  has escaped its scope, appearing in the type
+    (forall r. STObject r a28 -> ST r ...) -> Object a28 -> Object a28
+  in the expression (mutate)
+  in value declaration insert
+
+           Src   Lib   All
+Warnings     0     0     0
+Errors       0     1     1
+
+✘ Failed to build.
+

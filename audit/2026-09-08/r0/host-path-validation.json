@@ -1,0 +1,27 @@
+{
+  "reproduced_path_prefix": "/Users/0x1/.local/bin",
+  "before_exit_code": 1,
+  "after_exit_code": 0,
+  "cold_exit_code": 0,
+  "host_modules_rebuilt_cold": 417,
+  "foreign_object_recompiled": true,
+  "host_standard_corefn": true,
+  "benchmark_tast": true,
+  "expected_results": [
+    "7",
+    "55",
+    "202950",
+    "100000",
+    "20000",
+    "125",
+    "100000",
+    "21536",
+    "22",
+    "10000000",
+    "1200",
+    "1000000",
+    "202950",
+    "5"
+  ],
+  "balance_variables": 33
+}

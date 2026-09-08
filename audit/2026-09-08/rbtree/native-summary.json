@@ -1,0 +1,300 @@
+{
+  "native": {
+    "main_thread_samples": 4128,
+    "free_compiled_variables_leaf_samples": 1809,
+    "free_compiled_variables_percent": 43.82267441860465,
+    "free_symbol_present_anywhere": true,
+    "top_leaf_symbols_all_threads": [
+      {
+        "symbol": "__workq_kernreturn  (in libsystem_kernel.dylib)",
+        "samples": 4128
+      },
+      {
+        "symbol": "zend_free_compiled_variables  (in php)",
+        "samples": 1809
+      },
+      {
+        "symbol": "<deduplicated_symbol>  (in php)",
+        "samples": 115
+      },
+      {
+        "symbol": "zend_object_dtor_property  (in php)",
+        "samples": 104
+      },
+      {
+        "symbol": "ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER  (in php)",
+        "samples": 90
+      },
+      {
+        "symbol": "zend_objects_store_del  (in php)",
+        "samples": 89
+      },
+      {
+        "symbol": "ZEND_INSTANCEOF_SPEC_TMPVAR_CONST_HANDLER  (in php)",
+        "samples": 76
+      },
+      {
+        "symbol": "zend_object_std_dtor  (in php)",
+        "samples": 60
+      },
+      {
+        "symbol": "zend_std_write_property  (in php)",
+        "samples": 57
+      },
+      {
+        "symbol": "object_init_ex  (in php)",
+        "samples": 50
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_545  (in php)",
+        "samples": 48
+      },
+      {
+        "symbol": "zend_leave_helper_SPEC_TAILCALL  (in php)",
+        "samples": 48
+      },
+      {
+        "symbol": "ZEND_NEW_SPEC_CONST_UNUSED_HANDLER  (in php)",
+        "samples": 41
+      },
+      {
+        "symbol": "_efree  (in php)",
+        "samples": 41
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_28  (in php)",
+        "samples": 36
+      },
+      {
+        "symbol": "_emalloc  (in php)",
+        "samples": 32
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_372  (in php)",
+        "samples": 27
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_613  (in php)",
+        "samples": 27
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_85  (in php)",
+        "samples": 27
+      },
+      {
+        "symbol": "instanceof_function_slow  (in php)",
+        "samples": 24
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11f000be0]",
+        "samples": 22
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11f000b88]",
+        "samples": 21
+      },
+      {
+        "symbol": "gc_possible_root  (in php)",
+        "samples": 19
+      },
+      {
+        "symbol": "gc_scan  (in php)",
+        "samples": 18
+      },
+      {
+        "symbol": "zend_gc_collect_cycles  (in php)",
+        "samples": 18
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11f0033c4]",
+        "samples": 14
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_79  (in php)",
+        "samples": 14
+      },
+      {
+        "symbol": "zend_verify_property_type  (in php)",
+        "samples": 14
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_388  (in php)",
+        "samples": 13
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11f003398]",
+        "samples": 12
+      },
+      {
+        "symbol": "gc_remove_from_buffer  (in php)",
+        "samples": 12
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11f000bc4]",
+        "samples": 11
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11f00213c]",
+        "samples": 11
+      },
+      {
+        "symbol": "ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER  (in php)",
+        "samples": 11
+      },
+      {
+        "symbol": "zend_jit_assign_obj_helper  (in php)",
+        "samples": 11
+      }
+    ],
+    "note": "Idle worker samples are excluded from the main-thread denominator. Absent symbols may be inlined JIT code."
+  },
+  "reuse-binders": {
+    "main_thread_samples": 4233,
+    "free_compiled_variables_leaf_samples": 0,
+    "free_compiled_variables_percent": 0.0,
+    "free_symbol_present_anywhere": false,
+    "top_leaf_symbols_all_threads": [
+      {
+        "symbol": "__workq_kernreturn  (in libsystem_kernel.dylib)",
+        "samples": 7740
+      },
+      {
+        "symbol": "ZEND_INSTANCEOF_SPEC_CV_CONST_HANDLER  (in php)",
+        "samples": 250
+      },
+      {
+        "symbol": "zend_object_dtor_property  (in php)",
+        "samples": 186
+      },
+      {
+        "symbol": "ZEND_INSTANCEOF_SPEC_TMPVAR_CONST_HANDLER  (in php)",
+        "samples": 172
+      },
+      {
+        "symbol": "ZEND_NEW_SPEC_CONST_UNUSED_HANDLER  (in php)",
+        "samples": 139
+      },
+      {
+        "symbol": "object_init_ex  (in php)",
+        "samples": 139
+      },
+      {
+        "symbol": "zend_std_write_property  (in php)",
+        "samples": 126
+      },
+      {
+        "symbol": "zend_objects_store_del  (in php)",
+        "samples": 120
+      },
+      {
+        "symbol": "<deduplicated_symbol>  (in php)",
+        "samples": 111
+      },
+      {
+        "symbol": "zend_object_std_dtor  (in php)",
+        "samples": 95
+      },
+      {
+        "symbol": "zend_leave_helper_SPEC_TAILCALL  (in php)",
+        "samples": 94
+      },
+      {
+        "symbol": "_emalloc  (in php)",
+        "samples": 80
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_545  (in php)",
+        "samples": 79
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_28  (in php)",
+        "samples": 73
+      },
+      {
+        "symbol": "instanceof_function_slow  (in php)",
+        "samples": 65
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_613  (in php)",
+        "samples": 62
+      },
+      {
+        "symbol": "_efree  (in php)",
+        "samples": 56
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_388  (in php)",
+        "samples": 55
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_85  (in php)",
+        "samples": 53
+      },
+      {
+        "symbol": "gc_possible_root  (in php)",
+        "samples": 45
+      },
+      {
+        "symbol": "zend_gc_collect_cycles  (in php)",
+        "samples": 42
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11d800b88]",
+        "samples": 40
+      },
+      {
+        "symbol": "zend_verify_property_type  (in php)",
+        "samples": 39
+      },
+      {
+        "symbol": "gc_scan  (in php)",
+        "samples": 38
+      },
+      {
+        "symbol": "zend_objects_store_put  (in php)",
+        "samples": 36
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_372  (in php)",
+        "samples": 34
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11d800be0]",
+        "samples": 29
+      },
+      {
+        "symbol": "ZEND_RETURN_SPEC_CV_TAILCALL_HANDLER  (in php)",
+        "samples": 27
+      },
+      {
+        "symbol": "zend_jit_assign_obj_helper  (in php)",
+        "samples": 26
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11d8027ec]",
+        "samples": 24
+      },
+      {
+        "symbol": "gc_remove_from_buffer  (in php)",
+        "samples": 24
+      },
+      {
+        "symbol": "ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER  (in php)",
+        "samples": 23
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11d801e54]",
+        "samples": 22
+      },
+      {
+        "symbol": "OUTLINED_FUNCTION_22  (in php)",
+        "samples": 22
+      },
+      {
+        "symbol": "???  (in <unknown binary>)  [0x11d800ecc]",
+        "samples": 21
+      }
+    ],
+    "note": "Idle worker samples are excluded from the main-thread denominator. Absent symbols may be inlined JIT code."
+  }
+}

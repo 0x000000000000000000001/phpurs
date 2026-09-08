@@ -1,0 +1,42 @@
+[
+  {
+    "fixture": "BranchBindingSlots",
+    "exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "RecursiveDictionaryInitialization",
+    "exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "DeepCase",
+    "exit_code": 0,
+    "stdout": "112.0\nDone\n"
+  },
+  {
+    "fixture": "ShadowedRename",
+    "exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "ShadowedTCOLet",
+    "exit_code": 0,
+    "stdout": "1.0\nDone\n"
+  },
+  {
+    "fixture": "TCOCase",
+    "exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "TCOMutRec",
+    "exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "CaseMultipleExpressions",
+    "exit_code": 0,
+    "stdout": "Testing...\nDone\n"
+  }
+]

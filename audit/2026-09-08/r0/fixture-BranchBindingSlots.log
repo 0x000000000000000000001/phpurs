@@ -1,0 +1,195 @@
+[ 2 of 95] Compiling Record.Unsafe
+[ 3 of 95] Compiling Unsafe.Coerce
+[ 1 of 95] Compiling Type.Proxy
+[ 4 of 95] Compiling Partial
+[ 5 of 95] Compiling Spago.Generated.BuildInfo
+[ 6 of 95] Compiling Data.Void
+[ 7 of 95] Compiling Data.Unit
+[ 8 of 95] Compiling Data.NaturalTransformation
+[ 9 of 95] Compiling Data.Boolean
+[10 of 95] Compiling Control.Semigroupoid
+[11 of 95] Compiling Control.Lazy
+[12 of 95] Compiling Partial.Unsafe
+[13 of 95] Compiling Safe.Coerce
+[14 of 95] Compiling Control.Category
+[15 of 95] Compiling Data.Symbol
+[16 of 95] Compiling Data.HeytingAlgebra
+[17 of 95] Compiling Data.Semiring
+[18 of 95] Compiling Data.Semigroup
+[19 of 95] Compiling Data.Show
+[20 of 95] Compiling Data.Ring
+[21 of 95] Compiling Data.Generic.Rep
+[22 of 95] Compiling Data.BooleanAlgebra
+[23 of 95] Compiling Data.Eq
+[24 of 95] Compiling Data.CommutativeRing
+[25 of 95] Compiling Data.Ordering
+[26 of 95] Compiling Data.EuclideanRing
+[27 of 95] Compiling Data.Ord
+[28 of 95] Compiling Data.DivisionRing
+[29 of 95] Compiling Data.Field
+[30 of 95] Compiling Data.Bounded
+[31 of 95] Compiling Data.Function
+[32 of 95] Compiling Data.Reflectable
+[33 of 95] Compiling Data.Monoid
+[34 of 95] Compiling Data.Functor
+[36 of 95] Compiling Control.Alt
+[35 of 95] Compiling Control.Extend
+[37 of 95] Compiling Control.Apply
+[38 of 95] Compiling Data.Bounded.Generic
+[39 of 95] Compiling Data.Monoid.Generic
+[40 of 95] Compiling Control.Plus
+[41 of 95] Compiling Control.Comonad
+[42 of 95] Compiling Control.Applicative
+[43 of 95] Compiling Control.Alternative
+[44 of 95] Compiling Control.Bind
+[45 of 95] Compiling Control.Monad
+[46 of 95] Compiling Control.MonadPlus
+[47 of 95] Compiling Prelude
+[48 of 95] Compiling Data.Semigroup.First
+[49 of 95] Compiling Data.Semigroup.Last
+[50 of 95] Compiling Data.Eq.Generic
+[51 of 95] Compiling Data.Monoid.Conj
+[52 of 95] Compiling Data.Semiring.Generic
+[53 of 95] Compiling Data.Semigroup.Generic
+[54 of 95] Compiling Effect
+[55 of 95] Compiling Data.Monoid.Disj
+[56 of 95] Compiling Data.Monoid.Dual
+[57 of 95] Compiling Data.HeytingAlgebra.Generic
+[58 of 95] Compiling Data.Ring.Generic
+[59 of 95] Compiling Data.Monoid.Additive
+[60 of 95] Compiling Data.Show.Generic
+[61 of 95] Compiling Data.Ord.Generic
+[63 of 95] Compiling Data.Monoid.Multiplicative
+[64 of 95] Compiling Effect.Console
+[62 of 95] Compiling Data.Monoid.Endo
+[65 of 95] Compiling Effect.Class
+[66 of 95] Compiling Effect.Unsafe
+[67 of 95] Compiling Effect.Ref
+[68 of 95] Compiling Effect.Uncurried
+[70 of 95] Compiling Test.Assert
+[69 of 95] Compiling Effect.Class.Console
+[71 of 95] Compiling Data.Newtype
+[72 of 95] Compiling Main
+[73 of 95] Compiling Data.Monoid.Alternate
+[74 of 95] Compiling Data.Functor.Invariant
+[76 of 95] Compiling Data.Const
+[75 of 95] Compiling Data.Tuple
+[78 of 95] Compiling Data.Identity
+[77 of 95] Compiling Data.Maybe
+[79 of 95] Compiling Data.Maybe.First
+[80 of 95] Compiling Data.Maybe.Last
+[81 of 95] Compiling Data.Either
+[82 of 95] Compiling Data.Tuple.Nested
+[84 of 95] Compiling Data.Either.Inject
+[83 of 95] Compiling Data.Bifunctor
+[85 of 95] Compiling Data.Either.Nested
+[86 of 95] Compiling Control.Biapply
+[87 of 95] Compiling Control.Monad.Rec.Class
+[88 of 95] Compiling Control.Biapplicative
+[89 of 95] Compiling Data.Bifunctor.Join
+[90 of 95] Compiling Control.Monad.ST.Internal
+[91 of 95] Compiling Control.Monad.ST.Uncurried
+[92 of 95] Compiling Control.Monad.ST.Ref
+[93 of 95] Compiling Control.Monad.ST
+[94 of 95] Compiling Control.Monad.ST.Global
+[95 of 95] Compiling Control.Monad.ST.Class
+           Src   Lib   All
+Warnings     0     0     0
+Errors       0     0     0
+Generating PHP code for Control.Semigroupoid (Total AST Nodes: 3)
+Generating PHP code for Control.Category (Total AST Nodes: 2)
+Generating PHP code for Data.Boolean (Total AST Nodes: 1)
+Generating PHP code for Type.Proxy (Total AST Nodes: 1)
+Generating PHP code for Data.Symbol (Total AST Nodes: 2)
+Generating PHP code for Data.Unit (Total AST Nodes: 0)
+Generating PHP code for Record.Unsafe (Total AST Nodes: 0)
+Generating PHP code for Data.HeytingAlgebra (Total AST Nodes: 19)
+Generating PHP code for Data.Void (Total AST Nodes: 1)
+Generating PHP code for Data.Eq (Total AST Nodes: 18)
+Generating PHP code for Data.Semigroup (Total AST Nodes: 11)
+Generating PHP code for Data.Show (Total AST Nodes: 15)
+Generating PHP code for Data.Ordering (Total AST Nodes: 7)
+Generating PHP code for Data.Semiring (Total AST Nodes: 16)
+Generating PHP code for Data.Ring (Total AST Nodes: 11)
+Generating PHP code for Data.Ord (Total AST Nodes: 28)
+Generating PHP code for Data.Function (Total AST Nodes: 6)
+Generating PHP code for Data.Functor (Total AST Nodes: 9)
+Generating PHP code for Control.Alt (Total AST Nodes: 2)
+Generating PHP code for Control.Apply (Total AST Nodes: 10)
+Generating PHP code for Control.Applicative (Total AST Nodes: 7)
+Generating PHP code for Control.Plus (Total AST Nodes: 2)
+Generating PHP code for Control.Alternative (Total AST Nodes: 2)
+Generating PHP code for Data.BooleanAlgebra (Total AST Nodes: 7)
+Generating PHP code for Data.Bounded (Total AST Nodes: 14)
+Generating PHP code for Data.CommutativeRing (Total AST Nodes: 8)
+Generating PHP code for Data.EuclideanRing (Total AST Nodes: 7)
+Generating PHP code for Control.Bind (Total AST Nodes: 12)
+Generating PHP code for Control.Monad (Total AST Nodes: 7)
+Generating PHP code for Data.Monoid (Total AST Nodes: 12)
+Generating PHP code for Data.DivisionRing (Total AST Nodes: 4)
+Generating PHP code for Data.Field (Total AST Nodes: 1)
+Generating PHP code for Data.NaturalTransformation (Total AST Nodes: 0)
+Generating PHP code for Prelude (Total AST Nodes: 0)
+Generating PHP code for Data.Monoid.Additive (Total AST Nodes: 14)
+Generating PHP code for Control.Extend (Total AST Nodes: 7)
+Generating PHP code for Control.Comonad (Total AST Nodes: 1)
+Generating PHP code for Data.Monoid.Conj (Total AST Nodes: 15)
+Generating PHP code for Data.Monoid.Disj (Total AST Nodes: 15)
+Generating PHP code for Data.Monoid.Dual (Total AST Nodes: 14)
+Generating PHP code for Data.Monoid.Endo (Total AST Nodes: 7)
+Generating PHP code for Data.Monoid.Multiplicative (Total AST Nodes: 14)
+Generating PHP code for Data.Semigroup.First (Total AST Nodes: 13)
+Generating PHP code for Data.Semigroup.Last (Total AST Nodes: 13)
+Generating PHP code for Unsafe.Coerce (Total AST Nodes: 0)
+Generating PHP code for Safe.Coerce (Total AST Nodes: 1)
+Generating PHP code for Data.Newtype (Total AST Nodes: 24)
+Generating PHP code for Data.Monoid.Alternate (Total AST Nodes: 20)
+Generating PHP code for Data.Functor.Invariant (Total AST Nodes: 11)
+Generating PHP code for Data.Const (Total AST Nodes: 21)
+Generating PHP code for Data.Generic.Rep (Total AST Nodes: 14)
+Generating PHP code for Data.Maybe (Total AST Nodes: 30)
+Generating PHP code for Data.Either (Total AST Nodes: 30)
+Generating PHP code for Control.Lazy (Total AST Nodes: 4)
+Generating PHP code for Data.Tuple (Total AST Nodes: 30)
+Generating PHP code for Data.Bifunctor (Total AST Nodes: 7)
+Generating PHP code for Control.Biapply (Total AST Nodes: 6)
+Generating PHP code for Control.Biapplicative (Total AST Nodes: 2)
+Generating PHP code for Data.Identity (Total AST Nodes: 26)
+Generating PHP code for Effect (Total AST Nodes: 7)
+Generating PHP code for Effect.Ref (Total AST Nodes: 4)
+Generating PHP code for Partial (Total AST Nodes: 2)
+Generating PHP code for Partial.Unsafe (Total AST Nodes: 2)
+Generating PHP code for Control.Monad.Rec.Class (Total AST Nodes: 20)
+Generating PHP code for Control.Monad.ST.Internal (Total AST Nodes: 10)
+Generating PHP code for Control.Monad.ST (Total AST Nodes: 0)
+Generating PHP code for Control.Monad.ST.Global (Total AST Nodes: 1)
+Generating PHP code for Control.Monad.ST.Class (Total AST Nodes: 3)
+Generating PHP code for Control.Monad.ST.Ref (Total AST Nodes: 0)
+Generating PHP code for Control.Monad.ST.Uncurried (Total AST Nodes: 0)
+Generating PHP code for Control.MonadPlus (Total AST Nodes: 1)
+Generating PHP code for Data.Bifunctor.Join (Total AST Nodes: 8)
+Generating PHP code for Data.Bounded.Generic (Total AST Nodes: 14)
+Generating PHP code for Data.Either.Inject (Total AST Nodes: 5)
+Generating PHP code for Data.Either.Nested (Total AST Nodes: 30)
+Generating PHP code for Data.Eq.Generic (Total AST Nodes: 8)
+Generating PHP code for Data.HeytingAlgebra.Generic (Total AST Nodes: 16)
+Generating PHP code for Data.Maybe.First (Total AST Nodes: 20)
+Generating PHP code for Data.Maybe.Last (Total AST Nodes: 20)
+Generating PHP code for Data.Monoid.Generic (Total AST Nodes: 6)
+Generating PHP code for Data.Ord.Generic (Total AST Nodes: 8)
+Generating PHP code for Data.Reflectable (Total AST Nodes: 6)
+Generating PHP code for Data.Ring.Generic (Total AST Nodes: 6)
+Generating PHP code for Data.Semigroup.Generic (Total AST Nodes: 7)
+Generating PHP code for Data.Semiring.Generic (Total AST Nodes: 12)
+Generating PHP code for Data.Show.Generic (Total AST Nodes: 9)
+Generating PHP code for Data.Tuple.Nested (Total AST Nodes: 50)
+Generating PHP code for Effect.Class (Total AST Nodes: 2)
+Generating PHP code for Effect.Console (Total AST Nodes: 6)
+Generating PHP code for Effect.Class.Console (Total AST Nodes: 18)
+Generating PHP code for Effect.Uncurried (Total AST Nodes: 20)
+Generating PHP code for Effect.Unsafe (Total AST Nodes: 0)
+Generating PHP code for Test.Assert (Total AST Nodes: 10)
+Generating PHP code for Main (Total AST Nodes: 7)
+Generating PHP code for Spago.Generated.BuildInfo (Total AST Nodes: 3)
+Writing main.mod.php for Main
+Done

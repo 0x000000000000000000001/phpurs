@@ -678,7 +678,7 @@
     },
     "extra_packages": {
       "backend-optimizer": {
-        "path": "../../purescript-backend-optimizer"
+        "path": "../../purescript-backend-optimizer-phpurs"
       }
     }
   },
@@ -818,7 +818,7 @@
     },
     "backend-optimizer": {
       "type": "local",
-      "path": "../../purescript-backend-optimizer",
+      "path": "../../purescript-backend-optimizer-phpurs",
       "dependencies": [
         "argonaut",
         "arrays",
@@ -835,6 +835,9 @@
         "lists",
         "maybe",
         "newtype",
+        "node-buffer",
+        "node-fs",
+        "nullable",
         "ordered-collections",
         "partial",
         "prelude",

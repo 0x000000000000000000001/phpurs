@@ -1,0 +1,17 @@
+{
+  "baseline": {
+    "lazy_bytes": 13817,
+    "lazy_sha256": "1f819080b965e072ea5a1dcc98399b63ea29ebf1e566f669d5041aa66adb3111",
+    "modules_bytes": 8683618
+  },
+  "integrated": {
+    "lazy_bytes": 14130,
+    "lazy_sha256": "fb5cd4930b0f9943ef48ed4d6672ce9729a2583909a0512afc1161b91db4f2cd",
+    "modules_bytes": 8683931
+  },
+  "changed_modules": [
+    "Test.LazyEvaluation"
+  ],
+  "active_matches_integrated": true,
+  "rbtree_sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d"
+}

@@ -19,6 +19,7 @@ import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import Phpurs.TailInline as TailInline
+import Phpurs.CompactLoops as CompactLoops
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
@@ -806,7 +807,7 @@ translate imports mod =
                                argsWithTypes = zipArgsWithTypes fn.args types
                                retType = getRetType (Array.length fn.args) types
                              in
-                             { identifier: fn.ident, expression: PhpNativeFunction fn.ident argsWithTypes retType (initVarStmts <> innerFuncBody) }
+                             { identifier: fn.ident, expression: CompactLoops.optimize ctx.labelName types (PhpNativeFunction fn.ident argsWithTypes retType (initVarStmts <> innerFuncBody)) }
                       )
                       fns
                   in

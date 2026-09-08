@@ -1,0 +1,15 @@
+{
+  "baseline": {
+    "bytes": 13817,
+    "sha256": "1f819080b965e072ea5a1dcc98399b63ea29ebf1e566f669d5041aa66adb3111"
+  },
+  "root-convert": {
+    "bytes": 14097,
+    "sha256": "bf73b75047394bebe15214aaf2e6d56950e696c84d54722cd0d0a75663887965"
+  },
+  "escaping-root": {
+    "bytes": 14112,
+    "sha256": "199c14e1a79874b345242b01e756545f6a8be8de5f0d8610b1cbd2dd343c609b"
+  },
+  "rbtree_sha256": "3755e926d62e3055b04593d242df0c9a2f61534f2eadf524be7ef56cff97b20d"
+}

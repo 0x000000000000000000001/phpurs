@@ -1,0 +1,878 @@
+{
+  "baseline": {
+    "cases": [
+      {
+        "depth": 0,
+        "seed": -3,
+        "values": [
+          -3,
+          -3,
+          -3,
+          -3,
+          -3,
+          -3,
+          -3
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 0,
+        "seed": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 0,
+        "seed": 11,
+        "values": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": -3,
+        "values": [
+          -2,
+          -2,
+          -2,
+          -2,
+          -2,
+          -2,
+          -2
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": 0,
+        "values": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": 11,
+        "values": [
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": -3,
+        "values": [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": 0,
+        "values": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": 11,
+        "values": [
+          13,
+          13,
+          13,
+          13,
+          13,
+          13,
+          13
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": -3,
+        "values": [
+          14,
+          14,
+          14,
+          14,
+          14,
+          14,
+          14
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": 0,
+        "values": [
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": 11,
+        "values": [
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          28
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": -3,
+        "values": [
+          997,
+          997,
+          997,
+          997,
+          997,
+          997,
+          997
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": 0,
+        "values": [
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": 11,
+        "values": [
+          1011,
+          1011,
+          1011,
+          1011,
+          1011,
+          1011,
+          1011
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      }
+    ],
+    "extended": [
+      10,
+      12,
+      10
+    ],
+    "mutable": [
+      18,
+      19,
+      5,
+      21,
+      4
+    ],
+    "exception_identity": true,
+    "overapplication_error": {
+      "type": "Error",
+      "message": "Value of type int is not callable"
+    },
+    "zero_depth_identity": true
+  },
+  "root-convert": {
+    "cases": [
+      {
+        "depth": 0,
+        "seed": -3,
+        "values": [
+          -3,
+          -3,
+          -3,
+          -3,
+          -3,
+          -3,
+          -3
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 0,
+        "seed": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 0,
+        "seed": 11,
+        "values": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": -3,
+        "values": [
+          -2,
+          -2,
+          -2,
+          -2,
+          -2,
+          -2,
+          -2
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": 0,
+        "values": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": 11,
+        "values": [
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": -3,
+        "values": [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": 0,
+        "values": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": 11,
+        "values": [
+          13,
+          13,
+          13,
+          13,
+          13,
+          13,
+          13
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": -3,
+        "values": [
+          14,
+          14,
+          14,
+          14,
+          14,
+          14,
+          14
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": 0,
+        "values": [
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": 11,
+        "values": [
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          28
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": -3,
+        "values": [
+          997,
+          997,
+          997,
+          997,
+          997,
+          997,
+          997
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": 0,
+        "values": [
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": 11,
+        "values": [
+          1011,
+          1011,
+          1011,
+          1011,
+          1011,
+          1011,
+          1011
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      }
+    ],
+    "extended": [
+      10,
+      12,
+      10
+    ],
+    "mutable": [
+      18,
+      19,
+      5,
+      21,
+      4
+    ],
+    "exception_identity": true,
+    "overapplication_error": {
+      "type": "Error",
+      "message": "Value of type int is not callable"
+    },
+    "zero_depth_identity": true
+  },
+  "escaping-root": {
+    "cases": [
+      {
+        "depth": 0,
+        "seed": -3,
+        "values": [
+          -3,
+          -3,
+          -3,
+          -3,
+          -3,
+          -3,
+          -3
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 0,
+        "seed": 0,
+        "values": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 0,
+        "seed": 11,
+        "values": [
+          11,
+          11,
+          11,
+          11,
+          11,
+          11,
+          11
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": -3,
+        "values": [
+          -2,
+          -2,
+          -2,
+          -2,
+          -2,
+          -2,
+          -2
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": 0,
+        "values": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1,
+        "seed": 11,
+        "values": [
+          12,
+          12,
+          12,
+          12,
+          12,
+          12,
+          12
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": -3,
+        "values": [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": 0,
+        "values": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 2,
+        "seed": 11,
+        "values": [
+          13,
+          13,
+          13,
+          13,
+          13,
+          13,
+          13
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": -3,
+        "values": [
+          14,
+          14,
+          14,
+          14,
+          14,
+          14,
+          14
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": 0,
+        "values": [
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 17,
+        "seed": 11,
+        "values": [
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          28
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": -3,
+        "values": [
+          997,
+          997,
+          997,
+          997,
+          997,
+          997,
+          997
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": 0,
+        "values": [
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      },
+      {
+        "depth": 1000,
+        "seed": 11,
+        "values": [
+          1011,
+          1011,
+          1011,
+          1011,
+          1011,
+          1011,
+          1011
+        ],
+        "tags": [
+          "function",
+          "Function",
+          "Function"
+        ]
+      }
+    ],
+    "extended": [
+      10,
+      12,
+      10
+    ],
+    "mutable": [
+      18,
+      19,
+      5,
+      21,
+      4
+    ],
+    "exception_identity": true,
+    "overapplication_error": {
+      "type": "Error",
+      "message": "Value of type int is not callable"
+    },
+    "zero_depth_identity": true
+  }
+}

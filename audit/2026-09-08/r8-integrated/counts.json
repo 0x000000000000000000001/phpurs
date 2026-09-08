@@ -1,0 +1,26 @@
+{
+  "baseline/act": {
+    "build_calls": 1000,
+    "nodes": 1000000,
+    "node_calls": 1000000,
+    "conversions": 0
+  },
+  "baseline/public-roots": {
+    "build_calls": 1000,
+    "nodes": 1000000,
+    "node_calls": 1000000,
+    "conversions": 0
+  },
+  "integrated/act": {
+    "build_calls": 1000,
+    "nodes": 1000000,
+    "node_calls": 1000000,
+    "conversions": 1000
+  },
+  "integrated/public-roots": {
+    "build_calls": 1000,
+    "nodes": 1000000,
+    "node_calls": 1000000,
+    "conversions": 1000
+  }
+}

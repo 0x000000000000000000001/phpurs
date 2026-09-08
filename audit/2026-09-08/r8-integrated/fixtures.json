@@ -1,0 +1,74 @@
+[
+  {
+    "fixture": "CompactClosureLoops",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "FunctionFFIBoundary",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "TerminalInlining",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "UnaryCallableCaptures",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "BranchBindingSlots",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "RecursiveDictionaryInitialization",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "DeepCase",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "112.0\nDone\n"
+  },
+  {
+    "fixture": "ShadowedRename",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "ShadowedTCOLet",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "1.0\nDone\n"
+  },
+  {
+    "fixture": "TCOCase",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "TCOMutRec",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  },
+  {
+    "fixture": "CaseMultipleExpressions",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Testing...\nDone\n"
+  }
+]

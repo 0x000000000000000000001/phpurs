@@ -60,7 +60,10 @@ replaceReturn = concatMap replaceExpr
     replaceExpr other = [other]
 
 genNativeCurry :: String -> Map String Int -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
-genNativeCurry currentModPrefix allArities name args retType stmts =
+genNativeCurry = genNativeCurryWithRoot false
+
+genNativeCurryWithRoot :: Boolean -> String -> Map String Int -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
+genNativeCurryWithRoot compactRoot currentModPrefix allArities name args retType stmts =
   let
     argStr = joinWith ", " (mapWithIndex (\i a -> 
       let t = if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
@@ -83,6 +86,7 @@ genNativeCurry currentModPrefix allArities name args retType stmts =
       "  }\n" <>
       (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map (printExpr currentModPrefix allArities) rewrittenStmts) <> ";\n" else "") <>
       "  __end:\n" <>
+      (if compactRoot then "  if ($__res instanceof Phpurs_InternalCallable) { $__res = \\Closure::fromCallable($__res); }\n" else "") <>
       "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
 
   in
@@ -101,7 +105,6 @@ genCurry currentModPrefix allArities args retType captures stmts =
         let t = if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
         in t <> "$" <> safeName a.name <> (if i > 0 then " = null" else "")
       ) args)
-      nStr = show (length args)
       nArgs = length args
       safeCaps = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
       outerUseClause = if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ")" else ""
@@ -109,18 +112,7 @@ genCurry currentModPrefix allArities args retType captures stmts =
                     (if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ")" else "")
                   else
                     (if length safeCaps > 0 then " use (" <> joinWith ", " safeCaps <> ", &$__fn)" else " use (&$__fn)")
-      rewrittenStmts = replaceReturn stmts
-      fastPathStr = ""
-      fnBody = 
-        "  $__num = \\func_num_args();\n" <>
-        (if nArgs == 1 then "" else
-        "  if ($__num < " <> nStr <> ") {\n" <>
-        fastPathStr <>
-        "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
-        "  }\n") <>
-        (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map (printExpr currentModPrefix allArities) rewrittenStmts) <> ";\n" else "") <>
-        "  __end:\n" <>
-        "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
+      fnBody = curryBody currentModPrefix allArities nArgs stmts
     in 
       if nArgs == 1 then
         "function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "}"
@@ -130,8 +122,43 @@ genCurry currentModPrefix allArities args retType captures stmts =
         "  return $__fn;\n" <>
         "})()"
 
+
+curryBody :: String -> Map String Int -> Int -> Array PhpExpr -> String
+curryBody currentModPrefix allArities nArgs stmts =
+  let
+    nStr = show nArgs
+    rewrittenStmts = replaceReturn stmts
+  in
+    "  $__num = \\func_num_args();\n" <>
+    (if nArgs == 1 then "" else
+      "  if ($__num < " <> nStr <> ") {\n" <>
+      "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n  }\n") <>
+    (if length rewrittenStmts > 0 then "  " <> joinWith ";\n  " (map (printExpr currentModPrefix allArities) rewrittenStmts) <> ";\n" else "") <>
+    "  __end:\n" <>
+    "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
+
+-- Capture slots are reloaded for every invocation, preserving PHP's by-value
+-- use bindings. Only the analysis in CompactLoops can create this AST node.
+genCompactFunction :: String -> Map String Int -> Array String -> Array { name :: String, type_ :: String } -> Array PhpExpr -> String
+genCompactFunction currentModPrefix allArities captures args stmts =
+  let
+    names = map (\v -> "$" <> safeName v) captures
+    field i = "__capture" <> show i
+    declarations = mapWithIndex (\i _ -> "  private $" <> field i <> ";") captures
+    initialize = mapWithIndex (\i v -> "$this->" <> field i <> " = " <> v <> ";") names
+    reload = mapWithIndex (\i v -> v <> " = $this->" <> field i <> ";") names
+    params = map (\a -> (if a.type_ == "mixed" || a.type_ == "" then "" else a.type_ <> " ") <> "$" <> safeName a.name) args
+  in
+    "new class(" <> joinWith ", " names <> ") implements Phpurs_InternalCallable {\n" <>
+    joinWith "\n" declarations <> "\n" <>
+    "  public function __construct(" <> joinWith ", " names <> ") { " <> joinWith " " initialize <> " }\n" <>
+    "  public function __invoke(" <> joinWith ", " params <> ") {\n" <>
+    joinWith "\n" reload <> "\n" <> curryBody currentModPrefix allArities (length args) stmts <> "  }\n}"
+
 printExpr :: String -> Map String Int -> PhpExpr -> String
 printExpr currentModPrefix allArities expr = case expr of
+  PhpCompactLoop _ _ _ _ -> "/* ERROR: PhpCompactLoop inside expression */"
+  PhpCompactFunction captures args _ stmts -> genCompactFunction currentModPrefix allArities captures args stmts
   PhpNativeFunction _ _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
   PhpGlobalAssign _ _ -> "/* ERROR: PhpGlobalAssign inside expression */"
   PhpFunction captures args retType stmts ->
@@ -287,6 +314,10 @@ resolveContinues str =
 
 printDecl :: String -> Map String Int -> PhpDecl -> String
 printDecl currentModPrefix allArities decl = resolveContinues $ case decl.expression of
+  PhpCompactLoop name args retType stmts ->
+    "// " <> decl.identifier <> "\n" <>
+    genNativeCurryWithRoot true currentModPrefix allArities (safeFuncName name) args retType stmts <> "\n" <>
+    "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
   PhpNativeFunction name args retType stmts ->
     "// " <> decl.identifier <> "\n" <>
     genNativeCurry currentModPrefix allArities (safeFuncName name) args retType stmts <> "\n" <>
@@ -314,7 +345,10 @@ printPhpFile isBundle ffiString allArities file =
     imps = if isBundle then "" else joinWith "\n" $ map (\i -> "require_once __DIR__ . '/../" <> joinWith "." i <> "/index.php';") importsToRequire
     debugImps = "// ALL IMPORTS: " <> joinWith ", " (map (\i -> joinWith "." i) file.imports) <> "\n" <> "// TO REQUIRE: " <> joinWith ", " (map (\i -> joinWith "." i) importsToRequire) <> "\n"
     currentModPrefix = if length file.namespace > 0 then joinWith "_" file.namespace <> "_" else ""
-    rawDeclsStr = joinWith "\n" file.rawDecls
+    compactRuntime = if Array.any (\d -> case d.expression of
+      PhpCompactLoop _ _ _ _ -> true
+      _ -> false) file.decls then "interface Phpurs_InternalCallable {}\n" else ""
+    rawDeclsStr = compactRuntime <> joinWith "\n" file.rawDecls
     decls = joinWith "\n" $ map (printDecl currentModPrefix allArities) file.decls
     fallback = "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_curry_fallback')) {\n" <>
       "  function phpurs_curry_fallback($fn, $args, $expected) {\n" <>

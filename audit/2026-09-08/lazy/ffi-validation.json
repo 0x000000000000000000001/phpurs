@@ -1,0 +1,47 @@
+{
+  "baseline": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  },
+  "unary-direct": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  },
+  "unary-typed": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  },
+  "static": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  },
+  "object-thunk": {
+    "typeOf": "object",
+    "tagOf": "Object",
+    "value": 10
+  },
+  "object-full": {
+    "typeOf": "object",
+    "tagOf": "Object",
+    "value": 10
+  },
+  "object-closure": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  },
+  "method-closure": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  },
+  "bound-closure": {
+    "typeOf": "function",
+    "tagOf": "Function",
+    "value": 10
+  }
+}

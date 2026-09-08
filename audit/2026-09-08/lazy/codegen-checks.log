@@ -1,0 +1,2 @@
+unary-callables: captures, repeated calls, currying, overapplication, recursion, FFI callbacks and exceptions passed
+branch-slots: 5 generated PHP scenarios passed

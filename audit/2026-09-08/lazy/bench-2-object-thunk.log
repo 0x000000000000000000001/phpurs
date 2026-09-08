@@ -1,0 +1,15 @@
+--------------------------------------------------
+
+(Test)
+
+Lazy Evaluation (1M Thunks Forced, 1k Depth):
+
+(Output & Warm-up)
+
+1000000
+
+(Execution time - best of 10)
+
+43751.00 μs
+
+{"mode":"bench","result":"1000000","best_of_ten_us":43751,"elapsed_ms":575.55825,"peak_memory_bytes":4194304,"gc_before":{"running":false,"protected":false,"full":false,"runs":0,"collected":0,"threshold":10001,"buffer_size":16384,"roots":116,"application_time":0.016762709,"collector_time":0,"destructor_time":0,"free_time":0},"gc_after":{"running":false,"protected":false,"full":false,"runs":0,"collected":0,"threshold":10001,"buffer_size":16384,"roots":123,"application_time":0.592324625,"collector_time":0,"destructor_time":0,"free_time":0},"php":"8.5.4","xdebug_loaded":false,"jit":{"enabled":true,"on":true,"kind":5,"opt_level":5,"opt_flags":6,"buffer_size":134217712,"buffer_free":134207540}}

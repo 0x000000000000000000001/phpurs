@@ -1,0 +1,49 @@
+diff --git a/src/Phpurs/Printer.purs b/src/Phpurs/Printer.purs
+index ad81a73..0425fc7 100644
+--- a/src/Phpurs/Printer.purs
++++ b/src/Phpurs/Printer.purs
+@@ -18,7 +18,7 @@ import Data.Maybe (isNothing, Maybe(..))
+ import Data.Array (filter, length, mapWithIndex, concatMap)
+ import Data.Array as Array
+ import Data.Tuple (Tuple(..))
+-import Data.Foldable (foldl)
++import Data.Foldable (all, foldl)
+ import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
+ 
+ foreign import showInt32Impl :: Int -> String
+@@ -88,6 +88,23 @@ genNativeCurry currentModPrefix allArities name args retType stmts =
+   in
+     "function " <> name <> "(" <> argStr <> ")" <> retStr <> " {\n" <> fnBody <> "}"
+ 
++-- Store immutable captures in object fields instead of a Closure's hash table.
++-- Reload locals on each invocation, just like PHP's by-value `use` bindings.
++-- The body retains the same overapplication protocol as the unary closure.
++genUnaryCallable :: String -> Array String -> String -> String
++genUnaryCallable argStr captures fnBody =
++  let
++    names = map (\name -> "$" <> safeName name) captures
++    fields = mapWithIndex (\i _ -> "__capture" <> show i) captures
++    declarations = joinWith "\n" (map (\field -> "  private $" <> field <> ";") fields)
++    initialize = joinWith "\n" (mapWithIndex (\i name -> "    $this->" <> ("__capture" <> show i) <> " = " <> name <> ";") names)
++    reload = joinWith "\n" (mapWithIndex (\i name -> "  " <> name <> " = $this->__capture" <> show i <> ";") names)
++  in
++    "new class(" <> joinWith ", " names <> ") {\n" <>
++    declarations <> "\n" <>
++    "  public function __construct(" <> joinWith ", " names <> ") {\n" <> initialize <> "\n  }\n" <>
++    "  public function __invoke(" <> argStr <> ") {\n" <> reload <> "\n" <> fnBody <> "  }\n}"
++
+ genCurry :: String -> Map String Int -> Array { name :: String, type_ :: String } -> String -> Array String -> Array PhpExpr -> String
+ genCurry currentModPrefix allArities args retType captures stmts =
+   let safeCaptures = map (\v -> if take 1 v == "&" then "&$" <> safeName (drop 1 v) else "$" <> safeName v) captures
+@@ -123,7 +140,10 @@ genCurry currentModPrefix allArities args retType captures stmts =
+         "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
+     in 
+       if nArgs == 1 then
+-        "function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "}"
++        if length captures > 0 && all (\name -> take 1 name /= "&") captures then
++          genUnaryCallable argStr captures fnBody
++        else
++          "function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "}"
+       else
+         "(function()" <> outerUseClause <> " {\n" <>
+         "  $__fn = function(" <> argStr <> ")" <> innerUseClause <> " {\n" <> fnBody <> "  };\n" <>

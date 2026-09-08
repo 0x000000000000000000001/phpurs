@@ -1,6 +1,6 @@
 # PHPurs — performances et petites étapes
 
-Audit du 8 septembre 2026. Ce fichier est le nouveau backlog de performance ; aucun ancien todo.md n'était présent dans ce dépôt. Les pistes viennent de la lecture du générateur, de PBO et du PHP produit. Le [profil RBTree](audit/2026-09-08/rbtree/report.md) identifie le premier coût ; [R0 est maintenant intégré et mesuré](audit/2026-09-08/r0/report.md).
+Audit du 8 septembre 2026. Ce fichier est le nouveau backlog de performance ; aucun ancien todo.md n'était présent dans ce dépôt. Les pistes viennent de la lecture du générateur, de PBO et du PHP produit. Le [profil RBTree](audit/2026-09-08/rbtree/report.md) identifie le premier coût ; [R0 est maintenant intégré et mesuré](audit/2026-09-08/r0/report.md). Le [profil LazyEvaluation](audit/2026-09-08/lazy/report.md) est terminé : les captures des closures dominent ; le prototype d'objets invocables a été retiré à cause du contrat FFI actuel (R8).
 
 ## Espace de travail
 
@@ -32,15 +32,15 @@ Les résultats attendus, temps individuels, versions, commits, état JIT et deux
 
 Limites : machine partagée avec d'autres agents ; minimum de dix itérations par test, pas médiane ; cas très courts proches de la résolution de l'horloge ; directives PBO spécifiques aux benchmarks actives. Aucun pourcentage de gain ne sera annoncé sur cette seule référence.
 
-Dans ce premier relevé, RBTree représente 650,016 ms et LazyEvaluation 99,481 ms, soit environ 97,6 % de la somme. RBTree est maintenant profilé : la multiplication des variables locales de balance est le premier coût identifié (R0). LazyEvaluation reste à profiler.
+Dans ce premier relevé, RBTree représente 650,016 ms et LazyEvaluation 99,481 ms, soit environ 97,6 % de la somme. RBTree est maintenant profilé : la multiplication des variables locales de balance est le premier coût identifié (R0). LazyEvaluation est aussi profilé : allocation et destruction des captures dominent, sans passage du collecteur de cycles. Après retrait du prototype, le dernier run donne RBTree 286,562 ms et LazyEvaluation 101,390 ms, sur une somme de 406,653 ms.
 
 ## Ordre recommandé
 
 Priorité : dégrossir avec les gros gains démontrés, puis refaire le classement des coûts.
 
 1. R0 terminé pour la première optimisation : réduction des variables terminales de branches, fixtures et mesures validées.
-2. Prochaine étape : profiler LazyEvaluation et traiter son coût dominant.
-3. Reclasser les coûts après ces deux étapes ; retenir R1–R7 selon les gains mesurés.
+2. Profil LazyEvaluation terminé : le prototype réduit son temps vers 50 ms mais change la reconnaissance des fonctions par les FFI. Il n'est pas intégré. Prochaine petite étape R8 : prouver une frontière interne/FFI compatible avant de réintroduire les captures compactes.
+3. RBTree reste le premier coût (~70 %), LazyEvaluation le deuxième (~25 %). Retenir R0/R8 en priorité ; R1–R7 selon des gains isolés. Les enveloppes d'appels et le GC n'expliquent pas le temps de LazyEvaluation.
 4. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
@@ -61,7 +61,7 @@ Constat : Bench.php utilise microtime(true), appelé à l'intérieur du protocol
 - [ ] Conserver un profil « historique » et un profil « général » sans directives nommant Test.* ; inspecter le PHP pour vérifier ce que mesure chaque cas.
 - [ ] Ajouter des tailles paramétrables et un minimum de répétitions pour les tests de quelques microsecondes ; vérifier les sorties à chaque échantillon.
 - [x] Profiler RBTree : appels Xdebug, échantillonnage natif sous JIT et variantes isolées avec le chrono existant. Voir le rapport et R0.
-- [ ] Profiler LazyEvaluation pour départager coût des appels, closures, allocations et GC.
+- [x] Profiler LazyEvaluation : appels Xdebug, échantillonnage natif avec JIT, variantes isolées et vérification FFI. Voir R8 et le rapport.
 
 Validation : les 14 résultats restent identiques. Rapporter démarrage froid, exécution chaude et compilation dans des colonnes séparées. Utiliser un profiler avec JIT désactivé pour localiser les coûts, puis remesurer sans instrumentation avec les paramètres de production.
 
@@ -75,6 +75,7 @@ Constat : CodeGen.purs, ligne 625, traduit encore PrimEffect en chaîne TODO_Pri
 - [ ] Ajouter pure retournant une closure ou une chaîne PHP invocable, une action exécutée deux fois, l'ordre des effets et les exceptions.
 - [ ] Définir puis tester le contrat numérique PHP/PBO : division entière, modulo avec signes et zéro, fractions Number, décalage logique et limites Int32. Comparer calcul constant et calcul avec entrée opaque.
 - [ ] Rejouer RecursiveDictionaryInitialization après toute modification des closures, de la DCE ou de l'ordre des déclarations.
+- [ ] Isoler le cas Ref.modify_ depuis une fonction locale opaque : la préparation de UnaryCallableCaptures a rencontré « Value of type int is not callable » avec le backend inchangé. La fixture validée emploie Ref.read/Ref.write ; ne pas présenter ce remplacement comme une correction de modify_.
 
 Terminé quand : un scénario incorrect échoue explicitement ; chaque scénario supporté produit la valeur attendue et le nombre attendu d'effets. Les zones encore non supportées restent identifiées, sans être comptées comme gains de performance.
 
@@ -181,6 +182,23 @@ Constat : Printer.purs, lignes 319–411, répète les helpers et treize classes
 - [ ] En dernier, partager les helpers restants dans un runtime unique avec noms qualifiés ; tester chargement direct d'un module et bundle.
 
 Mesure : nombre de modules/bindings, octets PHP, mémoire et démarrage d'un petit programme avec OPcache désactivé puis activé. Séparer ces gains des boucles chaudes des 14 benchmarks.
+
+## R8 — P1 — Compacter les captures avec un contrat FFI préservé
+
+**Profil terminé, optimisation non intégrée.** LazyEvaluation construit puis force un million de closures capturantes. Remplacer les captures par des champs d'un objet invocable descend vers 50 ms, contre environ 90–102 ms pour les closures, sans modifier la chaîne ni le million d'appels. Le contrôle d'arité seul et le collecteur de cycles ne sont pas les coûts dominants. Voir le [rapport](audit/2026-09-08/lazy/report.md).
+
+Le prototype générique (fonctions locales à un argument, captures par valeur) passe les 14 benchmarks mais échoue au contrat FFI : Foreign.typeOf/tagOf retourne object/Object au lieu de function/Function. Aff contient également un test instanceof Closure. Le prototype reste uniquement dans le dossier d'audit ; Printer.purs et le PHP courant ont été restaurés. Emballer chaque objet dans une vraie Closure réduit fortement le gain.
+
+- [x] Profiler sous Xdebug puis JIT natif, comparer séparément contrôles d'appels, static, GC, objets invocables et wrappers Closure.
+- [x] Vérifier profondeurs 0/1/2/17/1000, trois graines, appels répétés et le million d'appels de la charge originale.
+- [x] Tester captures indépendantes, tableaux, objets mutables, références récursives, curry/surapplication, callbacks et exceptions ; conserver UnaryCallableCaptures et unary-callables.mjs.
+- [x] Prouver la différence via la vraie FFI Foreign et retirer le prototype ; bin/php/run -c et les neuf fixtures passent après restauration.
+- [ ] Prochaine petite étape : une fixture qui transmet la même fonction directement, dans un record et via Foreign, avec assertions sur appels, typeOf/tagOf et un paramètre PHP Closure. Observer les frontières effectives avant de choisir la conversion.
+- [ ] Utiliser le TAST v3 (Func, ann.type et TypeApp) pour identifier un premier trajet de fonction interne et son passage FFI. Conserver les Closure actuelles lorsque le contrat ou les usages restent inconnus ; un type PureScript de fonction ne prouve pas qu'une FFI accepte tout callable PHP.
+- [ ] Expérimenter une conversion uniquement à la frontière prouvée, en laissant les captures internes compactes ; vérifier retours de FFI, collections/records et fonctions conservées. Éviter un emballage à chaque allocation interne.
+- [ ] Réintroduire seulement ce cas démontré dans le backend, sans nom Test.*, puis vérifier les fixtures et les 14 benchmarks. Mesurer mémoire et temps ; refuser le changement s'il déplace le coût vers un wrapper par thunk.
+
+Terminé quand : la reconnaissance des fonctions et leur exécution restent correctes à la frontière FFI, et un gain important subsiste après régénération complète. Les types TAST rendent les frontières analysables ; ils ne changent pas à eux seuls la représentation reconnue par le runtime PHP existant.
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

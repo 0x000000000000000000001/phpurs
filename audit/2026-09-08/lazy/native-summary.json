@@ -1,0 +1,177 @@
+{
+  "main_thread_samples": 4196,
+  "leaf_symbols_php": [
+    {
+      "symbol": "zend_objects_store_del",
+      "samples": 435,
+      "main_thread_percent": 10.36701620591039
+    },
+    {
+      "symbol": "zend_array_destroy",
+      "samples": 373,
+      "main_thread_percent": 8.889418493803621
+    },
+    {
+      "symbol": "zend_closure_free_storage",
+      "samples": 356,
+      "main_thread_percent": 8.484270734032412
+    },
+    {
+      "symbol": "zend_array_destroy.cold.3",
+      "samples": 320,
+      "main_thread_percent": 7.626310772163966
+    },
+    {
+      "symbol": "zend_destroy_static_vars",
+      "samples": 319,
+      "main_thread_percent": 7.602478551000953
+    },
+    {
+      "symbol": "zend_create_closure_ex",
+      "samples": 198,
+      "main_thread_percent": 4.718779790276454
+    },
+    {
+      "symbol": "_efree",
+      "samples": 148,
+      "main_thread_percent": 3.5271687321258343
+    },
+    {
+      "symbol": "ZEND_BIND_STATIC_SPEC_CV_HANDLER",
+      "samples": 137,
+      "main_thread_percent": 3.2650142993326976
+    },
+    {
+      "symbol": "<deduplicated_symbol>",
+      "samples": 133,
+      "main_thread_percent": 3.169685414680648
+    },
+    {
+      "symbol": "zend_object_std_dtor",
+      "samples": 122,
+      "main_thread_percent": 2.9075309818875117
+    },
+    {
+      "symbol": "zend_array_dup",
+      "samples": 82,
+      "main_thread_percent": 1.9542421353670163
+    },
+    {
+      "symbol": "destroy_op_array",
+      "samples": 80,
+      "main_thread_percent": 1.9065776930409915
+    },
+    {
+      "symbol": "_emalloc",
+      "samples": 63,
+      "main_thread_percent": 1.5014299332697807
+    },
+    {
+      "symbol": "zend_closure_new",
+      "samples": 62,
+      "main_thread_percent": 1.4775977121067683
+    },
+    {
+      "symbol": "object_init_ex",
+      "samples": 60,
+      "main_thread_percent": 1.4299332697807436
+    },
+    {
+      "symbol": "_emalloc_384",
+      "samples": 54,
+      "main_thread_percent": 1.2869399428026693
+    },
+    {
+      "symbol": "zend_objects_store_put",
+      "samples": 53,
+      "main_thread_percent": 1.263107721639657
+    },
+    {
+      "symbol": "ZEND_BIND_LEXICAL_SPEC_TMP_CV_HANDLER",
+      "samples": 49,
+      "main_thread_percent": 1.1677788369876072
+    },
+    {
+      "symbol": "ZEND_DECLARE_LAMBDA_FUNCTION_SPEC_CONST_HANDLER",
+      "samples": 45,
+      "main_thread_percent": 1.0724499523355575
+    },
+    {
+      "symbol": "_emalloc_56",
+      "samples": 45,
+      "main_thread_percent": 1.0724499523355575
+    },
+    {
+      "symbol": "ZEND_FETCH_FUNC_ARG_SPEC_CONST_UNUSED_HANDLER",
+      "samples": 44,
+      "main_thread_percent": 1.0486177311725453
+    },
+    {
+      "symbol": "zend_closure_bind_var_ex",
+      "samples": 40,
+      "main_thread_percent": 0.9532888465204957
+    },
+    {
+      "symbol": "_efree_56",
+      "samples": 36,
+      "main_thread_percent": 0.8579599618684461
+    },
+    {
+      "symbol": "zend_hash_find_known_hash",
+      "samples": 35,
+      "main_thread_percent": 0.8341277407054337
+    },
+    {
+      "symbol": "zend_jit_init_func_run_time_cache_helper",
+      "samples": 35,
+      "main_thread_percent": 0.8341277407054337
+    },
+    {
+      "symbol": "gc_possible_root",
+      "samples": 33,
+      "main_thread_percent": 0.786463298379409
+    },
+    {
+      "symbol": "rc_dtor_func",
+      "samples": 31,
+      "main_thread_percent": 0.7387988560533841
+    },
+    {
+      "symbol": "zval_ptr_dtor",
+      "samples": 27,
+      "main_thread_percent": 0.6434699714013347
+    },
+    {
+      "symbol": "gc_remove_from_buffer",
+      "samples": 24,
+      "main_thread_percent": 0.5719733079122974
+    },
+    {
+      "symbol": "zend_object_std_init",
+      "samples": 22,
+      "main_thread_percent": 0.5243088655862727
+    },
+    {
+      "symbol": "ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER",
+      "samples": 16,
+      "main_thread_percent": 0.3813155386081983
+    },
+    {
+      "symbol": "zend_object_dtor_dynamic_properties",
+      "samples": 14,
+      "main_thread_percent": 0.3336510962821735
+    },
+    {
+      "symbol": "DYLD-STUB$$memcpy",
+      "samples": 12,
+      "main_thread_percent": 0.2859866539561487
+    },
+    {
+      "symbol": "OUTLINED_FUNCTION_7",
+      "samples": 12,
+      "main_thread_percent": 0.2859866539561487
+    }
+  ],
+  "gc_runs": 0,
+  "notes": "Native JIT; idle worker thread leaf samples excluded. Unknown JIT frames are not assigned to PHP functions."
+}

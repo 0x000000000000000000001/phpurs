@@ -1,0 +1,149 @@
+[1 of 1] Compiling Main
+[WARNING 1/5 ImplicitImport] src/Main.purs:3:1
+
+  3  import Prelude
+     ^^^^^^^^^^^^^^
+
+  Module Prelude has unspecified imports, consider using the explicit form:
+    import Prelude (discard, show, ($))
+
+[WARNING 2/5 ImplicitImport] src/Main.purs:5:1
+
+  5  import Effect
+     ^^^^^^^^^^^^^
+
+  Module Effect has unspecified imports, consider using the explicit form:
+    import Effect (Effect)
+
+[WARNING 3/5 MissingTypeDeclaration] src/Main.purs:8:1
+
+      v
+   8  f x y z =
+   9    let f 1.0 2.0 3.0 = 1.0
+  10    in f x z y
+                 ^
+
+  No type declaration was provided for the top-level declaration of f.
+  It is good practice to provide type declarations as a form of documentation.
+  The inferred type of f was:
+    Partial => Number -> Number -> Number -> Number
+  in value declaration f
+
+[WARNING 4/5 ShadowedName] src/Main.purs:9:7
+
+  9    let f 1.0 2.0 3.0 = 1.0
+           ^^^^^^^^^^^^^^^^^^^
+
+  Name f was shadowed.
+  in value declaration f
+
+[WARNING 5/5 WildcardInferredType] src/Main.purs:12:16
+
+  12  main :: Effect _
+                     ^
+
+  Wildcard type definition has the inferred type
+    Unit
+  in value declaration main
+
+           Src   Lib   All
+Warnings     5     0     5
+Errors       0     0     0
+Generating PHP code for Control.Semigroupoid (Total AST Nodes: 3)
+Generating PHP code for Control.Category (Total AST Nodes: 2)
+Generating PHP code for Data.Boolean (Total AST Nodes: 1)
+Generating PHP code for Type.Proxy (Total AST Nodes: 1)
+Generating PHP code for Data.Symbol (Total AST Nodes: 2)
+Generating PHP code for Data.Unit (Total AST Nodes: 0)
+Generating PHP code for Record.Unsafe (Total AST Nodes: 0)
+Generating PHP code for Data.HeytingAlgebra (Total AST Nodes: 19)
+Generating PHP code for Data.Void (Total AST Nodes: 1)
+Generating PHP code for Data.Eq (Total AST Nodes: 18)
+Generating PHP code for Data.Semigroup (Total AST Nodes: 11)
+Generating PHP code for Data.Show (Total AST Nodes: 15)
+Generating PHP code for Data.Ordering (Total AST Nodes: 7)
+Generating PHP code for Data.Semiring (Total AST Nodes: 16)
+Generating PHP code for Data.Ring (Total AST Nodes: 11)
+Generating PHP code for Data.Ord (Total AST Nodes: 28)
+Generating PHP code for Data.Function (Total AST Nodes: 6)
+Generating PHP code for Data.Functor (Total AST Nodes: 9)
+Generating PHP code for Control.Alt (Total AST Nodes: 2)
+Generating PHP code for Control.Apply (Total AST Nodes: 10)
+Generating PHP code for Control.Applicative (Total AST Nodes: 7)
+Generating PHP code for Control.Plus (Total AST Nodes: 2)
+Generating PHP code for Control.Alternative (Total AST Nodes: 2)
+Generating PHP code for Data.BooleanAlgebra (Total AST Nodes: 7)
+Generating PHP code for Data.Bounded (Total AST Nodes: 14)
+Generating PHP code for Data.CommutativeRing (Total AST Nodes: 8)
+Generating PHP code for Data.EuclideanRing (Total AST Nodes: 7)
+Generating PHP code for Control.Bind (Total AST Nodes: 12)
+Generating PHP code for Control.Monad (Total AST Nodes: 7)
+Generating PHP code for Data.Monoid (Total AST Nodes: 12)
+Generating PHP code for Data.DivisionRing (Total AST Nodes: 4)
+Generating PHP code for Data.Field (Total AST Nodes: 1)
+Generating PHP code for Data.NaturalTransformation (Total AST Nodes: 0)
+Generating PHP code for Prelude (Total AST Nodes: 0)
+Generating PHP code for Data.Monoid.Additive (Total AST Nodes: 14)
+Generating PHP code for Control.Extend (Total AST Nodes: 7)
+Generating PHP code for Control.Comonad (Total AST Nodes: 1)
+Generating PHP code for Data.Monoid.Conj (Total AST Nodes: 15)
+Generating PHP code for Data.Monoid.Disj (Total AST Nodes: 15)
+Generating PHP code for Data.Monoid.Dual (Total AST Nodes: 14)
+Generating PHP code for Data.Monoid.Endo (Total AST Nodes: 7)
+Generating PHP code for Data.Monoid.Multiplicative (Total AST Nodes: 14)
+Generating PHP code for Data.Semigroup.First (Total AST Nodes: 13)
+Generating PHP code for Data.Semigroup.Last (Total AST Nodes: 13)
+Generating PHP code for Unsafe.Coerce (Total AST Nodes: 0)
+Generating PHP code for Safe.Coerce (Total AST Nodes: 1)
+Generating PHP code for Data.Newtype (Total AST Nodes: 24)
+Generating PHP code for Data.Monoid.Alternate (Total AST Nodes: 20)
+Generating PHP code for Data.Functor.Invariant (Total AST Nodes: 11)
+Generating PHP code for Data.Const (Total AST Nodes: 21)
+Generating PHP code for Data.Generic.Rep (Total AST Nodes: 14)
+Generating PHP code for Data.Maybe (Total AST Nodes: 30)
+Generating PHP code for Data.Either (Total AST Nodes: 30)
+Generating PHP code for Control.Lazy (Total AST Nodes: 4)
+Generating PHP code for Data.Tuple (Total AST Nodes: 30)
+Generating PHP code for Data.Bifunctor (Total AST Nodes: 7)
+Generating PHP code for Control.Biapply (Total AST Nodes: 6)
+Generating PHP code for Control.Biapplicative (Total AST Nodes: 2)
+Generating PHP code for Data.Identity (Total AST Nodes: 26)
+Generating PHP code for Effect (Total AST Nodes: 7)
+Generating PHP code for Effect.Ref (Total AST Nodes: 4)
+Generating PHP code for Partial (Total AST Nodes: 2)
+Generating PHP code for Partial.Unsafe (Total AST Nodes: 2)
+Generating PHP code for Control.Monad.Rec.Class (Total AST Nodes: 20)
+Generating PHP code for Control.Monad.ST.Internal (Total AST Nodes: 10)
+Generating PHP code for Control.Monad.ST (Total AST Nodes: 0)
+Generating PHP code for Control.Monad.ST.Global (Total AST Nodes: 1)
+Generating PHP code for Control.Monad.ST.Class (Total AST Nodes: 3)
+Generating PHP code for Control.Monad.ST.Ref (Total AST Nodes: 0)
+Generating PHP code for Control.Monad.ST.Uncurried (Total AST Nodes: 0)
+Generating PHP code for Control.MonadPlus (Total AST Nodes: 1)
+Generating PHP code for Data.Bifunctor.Join (Total AST Nodes: 8)
+Generating PHP code for Data.Bounded.Generic (Total AST Nodes: 14)
+Generating PHP code for Data.Either.Inject (Total AST Nodes: 5)
+Generating PHP code for Data.Either.Nested (Total AST Nodes: 30)
+Generating PHP code for Data.Eq.Generic (Total AST Nodes: 8)
+Generating PHP code for Data.HeytingAlgebra.Generic (Total AST Nodes: 16)
+Generating PHP code for Data.Maybe.First (Total AST Nodes: 20)
+Generating PHP code for Data.Maybe.Last (Total AST Nodes: 20)
+Generating PHP code for Data.Monoid.Generic (Total AST Nodes: 6)
+Generating PHP code for Data.Ord.Generic (Total AST Nodes: 8)
+Generating PHP code for Data.Reflectable (Total AST Nodes: 6)
+Generating PHP code for Data.Ring.Generic (Total AST Nodes: 6)
+Generating PHP code for Data.Semigroup.Generic (Total AST Nodes: 7)
+Generating PHP code for Data.Semiring.Generic (Total AST Nodes: 12)
+Generating PHP code for Data.Show.Generic (Total AST Nodes: 9)
+Generating PHP code for Data.Tuple.Nested (Total AST Nodes: 50)
+Generating PHP code for Effect.Class (Total AST Nodes: 2)
+Generating PHP code for Effect.Console (Total AST Nodes: 6)
+Generating PHP code for Effect.Class.Console (Total AST Nodes: 18)
+Generating PHP code for Effect.Uncurried (Total AST Nodes: 20)
+Generating PHP code for Effect.Unsafe (Total AST Nodes: 0)
+Generating PHP code for Main (Total AST Nodes: 3)
+Generating PHP code for Spago.Generated.BuildInfo (Total AST Nodes: 3)
+Generating PHP code for Test.Assert (Total AST Nodes: 10)
+Writing main.mod.php for Main
+1.0
+Done

@@ -1,0 +1,1787 @@
+{
+  "fixture": {
+    "file": "/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-08/r8-boundary/raw/tests/output/Main/corefn.json",
+    "sha256": "d7fafa641113b76ee295170fdcc40bb59673d11ddf5f880ee00d6261bf0568e7",
+    "exports": [
+      "opaque",
+      "invokeClosure",
+      "invokeRecord",
+      "roundTripForeign",
+      "retain",
+      "recall",
+      "main"
+    ],
+    "bindings": [
+      {
+        "name": "f",
+        "line": 23,
+        "annotation_type": null,
+        "expression_type": null,
+        "expression_form": "App"
+      },
+      {
+        "name": "foreignFunction",
+        "line": 27,
+        "annotation_type": null,
+        "expression_type": null,
+        "expression_form": "App"
+      },
+      {
+        "name": "returned",
+        "line": 29,
+        "annotation_type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "expression_type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "expression_form": "App"
+      },
+      {
+        "name": "handler",
+        "line": 26,
+        "annotation_type": null,
+        "expression_type": null,
+        "expression_form": "App"
+      },
+      {
+        "name": "foreignRecord",
+        "line": 28,
+        "annotation_type": null,
+        "expression_type": null,
+        "expression_form": "App"
+      },
+      {
+        "name": "returnedRecord",
+        "line": 30,
+        "annotation_type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        },
+        "expression_type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        },
+        "expression_form": "App"
+      }
+    ],
+    "type_applications": [
+      {
+        "target": "Main.opaque",
+        "line": 22,
+        "type_argument": {
+          "type": "Int"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Main.opaque",
+        "line": 24,
+        "type_argument": {
+          "type": "Int"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Main.opaque",
+        "line": 25,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Main.opaque",
+        "line": 23,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 27,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeFromForeign",
+        "line": 29,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [],
+              "fqn": [
+                "Foreign",
+                "Foreign"
+              ],
+              "type": "Adt"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Main.opaque",
+        "line": 26,
+        "type_argument": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "row": {
+                "fields": [
+                  {
+                    "label": "callback",
+                    "type": {
+                      "args": [
+                        {
+                          "type": "Int"
+                        }
+                      ],
+                      "ret": {
+                        "type": "Int"
+                      },
+                      "type": "Func"
+                    }
+                  },
+                  {
+                    "label": "label",
+                    "type": {
+                      "type": "String"
+                    }
+                  }
+                ],
+                "tail": {
+                  "type": "Any"
+                },
+                "type": "Row"
+              },
+              "type": "Record"
+            }
+          ],
+          "ret": {
+            "row": {
+              "fields": [
+                {
+                  "label": "callback",
+                  "type": {
+                    "args": [
+                      {
+                        "type": "Int"
+                      }
+                    ],
+                    "ret": {
+                      "type": "Int"
+                    },
+                    "type": "Func"
+                  }
+                },
+                {
+                  "label": "label",
+                  "type": {
+                    "type": "String"
+                  }
+                }
+              ],
+              "tail": {
+                "type": "Any"
+              },
+              "type": "Row"
+            },
+            "type": "Record"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 28,
+        "type_argument": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "row": {
+                "fields": [
+                  {
+                    "label": "callback",
+                    "type": {
+                      "args": [
+                        {
+                          "type": "Int"
+                        }
+                      ],
+                      "ret": {
+                        "type": "Int"
+                      },
+                      "type": "Func"
+                    }
+                  },
+                  {
+                    "label": "label",
+                    "type": {
+                      "type": "String"
+                    }
+                  }
+                ],
+                "tail": {
+                  "type": "Any"
+                },
+                "type": "Row"
+              },
+              "type": "Record"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeFromForeign",
+        "line": 30,
+        "type_argument": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [],
+              "fqn": [
+                "Foreign",
+                "Foreign"
+              ],
+              "type": "Adt"
+            }
+          ],
+          "ret": {
+            "row": {
+              "fields": [
+                {
+                  "label": "callback",
+                  "type": {
+                    "args": [
+                      {
+                        "type": "Int"
+                      }
+                    ],
+                    "ret": {
+                      "type": "Int"
+                    },
+                    "type": "Func"
+                  }
+                },
+                {
+                  "label": "label",
+                  "type": {
+                    "type": "String"
+                  }
+                }
+              ],
+              "tail": {
+                "type": "Any"
+              },
+              "type": "Row"
+            },
+            "type": "Record"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 34,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 34,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 36,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 36,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Foreign.unsafeToForeign",
+        "line": 37,
+        "type_argument": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          },
+          "type": "Func"
+        }
+      }
+    ],
+    "foreign": {
+      "invokeClosure": {
+        "args": [
+          {
+            "args": [
+              {
+                "type": "Int"
+              }
+            ],
+            "ret": {
+              "type": "Int"
+            },
+            "type": "Func"
+          },
+          {
+            "type": "Int"
+          }
+        ],
+        "ret": {
+          "type": "Int"
+        },
+        "type": "Func"
+      },
+      "invokeRecord": {
+        "args": [
+          {
+            "type": "Any"
+          },
+          {
+            "type": "Int"
+          }
+        ],
+        "ret": {
+          "type": "Int"
+        },
+        "type": "Func"
+      },
+      "opaque": {
+        "body": {
+          "args": [
+            {
+              "name": "a",
+              "type": "TypeVar"
+            }
+          ],
+          "ret": {
+            "name": "a",
+            "type": "TypeVar"
+          },
+          "type": "Func"
+        },
+        "type": "ForAll",
+        "vars": [
+          "a"
+        ]
+      },
+      "recall": {
+        "args": [
+          {
+            "type": "Int"
+          }
+        ],
+        "ret": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "fqn": [
+            "Effect",
+            "Effect"
+          ],
+          "type": "Adt"
+        },
+        "type": "Func"
+      },
+      "retain": {
+        "args": [
+          {
+            "type": "Any"
+          }
+        ],
+        "ret": {
+          "args": [
+            {
+              "type": "Unit"
+            }
+          ],
+          "fqn": [
+            "Effect",
+            "Effect"
+          ],
+          "type": "Adt"
+        },
+        "type": "Func"
+      },
+      "roundTripForeign": {
+        "args": [
+          {
+            "args": [],
+            "fqn": [
+              "Foreign",
+              "Foreign"
+            ],
+            "type": "Adt"
+          }
+        ],
+        "ret": {
+          "args": [],
+          "fqn": [
+            "Foreign",
+            "Foreign"
+          ],
+          "type": "Adt"
+        },
+        "type": "Func"
+      }
+    },
+    "variable_uses": [
+      {
+        "name": "f",
+        "module": null,
+        "line": 27,
+        "type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "f",
+        "module": null,
+        "line": 26,
+        "type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 28,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "f",
+        "module": null,
+        "line": 31,
+        "type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "f",
+        "module": null,
+        "line": 31,
+        "type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 32,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 32,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              },
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 34,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 34,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "invokeClosure",
+        "module": [
+          "Main"
+        ],
+        "line": 35,
+        "type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "f",
+        "module": null,
+        "line": 35,
+        "type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "invokeClosure",
+        "module": [
+          "Main"
+        ],
+        "line": 35,
+        "type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 35,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "invokeRecord",
+        "module": [
+          "Main"
+        ],
+        "line": 35,
+        "type": {
+          "args": [
+            {
+              "row": {
+                "fields": [
+                  {
+                    "label": "callback",
+                    "type": {
+                      "args": [
+                        {
+                          "type": "Int"
+                        }
+                      ],
+                      "ret": {
+                        "type": "Int"
+                      },
+                      "type": "Func"
+                    }
+                  },
+                  {
+                    "label": "label",
+                    "type": {
+                      "type": "String"
+                    }
+                  }
+                ],
+                "tail": {
+                  "type": "Any"
+                },
+                "type": "Row"
+              },
+              "type": "Record"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 35,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "invokeClosure",
+        "module": [
+          "Main"
+        ],
+        "line": 36,
+        "type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "invokeRecord",
+        "module": [
+          "Main"
+        ],
+        "line": 37,
+        "type": {
+          "args": [
+            {
+              "row": {
+                "fields": [
+                  {
+                    "label": "callback",
+                    "type": {
+                      "args": [
+                        {
+                          "type": "Int"
+                        }
+                      ],
+                      "ret": {
+                        "type": "Int"
+                      },
+                      "type": "Func"
+                    }
+                  },
+                  {
+                    "label": "label",
+                    "type": {
+                      "type": "String"
+                    }
+                  }
+                ],
+                "tail": {
+                  "type": "Any"
+                },
+                "type": "Row"
+              },
+              "type": "Record"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "handler",
+        "module": null,
+        "line": 38,
+        "type": {
+          "row": {
+            "fields": [
+              {
+                "label": "callback",
+                "type": {
+                  "args": [
+                    {
+                      "type": "Int"
+                    }
+                  ],
+                  "ret": {
+                    "type": "Int"
+                  },
+                  "type": "Func"
+                }
+              },
+              {
+                "label": "label",
+                "type": {
+                  "type": "String"
+                }
+              }
+            ],
+            "tail": {
+              "type": "Any"
+            },
+            "type": "Row"
+          },
+          "type": "Record"
+        }
+      },
+      {
+        "name": "invokeClosure",
+        "module": [
+          "Main"
+        ],
+        "line": 44,
+        "type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Int"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "name": "f",
+        "module": null,
+        "line": 44,
+        "type": {
+          "args": [
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      }
+    ],
+    "type_app_count": 97
+  },
+  "lazy": {
+    "file": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output/Test.LazyEvaluation/corefn.json",
+    "sha256": "26fe16b045440ea0418c3d9c58a136bd0faf76eada8945b8668399304a715f04",
+    "exports": [
+      "Lazy",
+      "defer",
+      "force",
+      "buildThunks",
+      "runManyTimes",
+      "describe",
+      "act"
+    ],
+    "bindings": [
+      {
+        "name": "force",
+        "line": 14,
+        "annotation_type": {
+          "body": {
+            "args": [
+              {
+                "args": [
+                  {
+                    "type": "Unit"
+                  }
+                ],
+                "ret": {
+                  "name": "a",
+                  "type": "TypeVar"
+                },
+                "type": "Func"
+              }
+            ],
+            "ret": {
+              "name": "a",
+              "type": "TypeVar"
+            },
+            "type": "Func"
+          },
+          "type": "ForAll",
+          "vars": [
+            "a"
+          ]
+        },
+        "expression_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "name": "a",
+                "type": "TypeVar"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "name": "a",
+            "type": "TypeVar"
+          },
+          "type": "Func"
+        },
+        "expression_form": "Abs"
+      },
+      {
+        "name": "buildThunks",
+        "line": 20,
+        "annotation_type": {
+          "args": [
+            {
+              "type": "Int"
+            },
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Unit"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "expression_type": {
+          "args": [
+            {
+              "type": "Int"
+            },
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Unit"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "expression_form": "Abs"
+      },
+      {
+        "name": "runManyTimes",
+        "line": 26,
+        "annotation_type": {
+          "args": [
+            {
+              "type": "Int"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "expression_type": {
+          "args": [
+            {
+              "type": "Int"
+            },
+            {
+              "type": "Int"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        },
+        "expression_form": "Abs"
+      }
+    ],
+    "type_applications": [
+      {
+        "target": "Test.LazyEvaluation.defer",
+        "line": 22,
+        "type_argument": {
+          "type": "Int"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Unit"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Test.LazyEvaluation.force",
+        "line": 22,
+        "type_argument": {
+          "type": "Int"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Test.LazyEvaluation.force",
+        "line": 28,
+        "type_argument": {
+          "type": "Int"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      },
+      {
+        "target": "Test.LazyEvaluation.defer",
+        "line": 28,
+        "type_argument": {
+          "type": "Int"
+        },
+        "annotation_type": {
+          "args": [
+            {
+              "args": [
+                {
+                  "type": "Unit"
+                }
+              ],
+              "ret": {
+                "type": "Int"
+              },
+              "type": "Func"
+            },
+            {
+              "type": "Unit"
+            }
+          ],
+          "ret": {
+            "type": "Int"
+          },
+          "type": "Func"
+        }
+      }
+    ],
+    "foreign": {},
+    "variable_uses": [
+      {
+        "name": "f",
+        "module": null,
+        "line": 15,
+        "type": {
+          "args": [
+            {
+              "type": "Unit"
+            }
+          ],
+          "ret": {
+            "name": "a",
+            "type": "TypeVar"
+          },
+          "type": "Func"
+        }
+      }
+    ],
+    "type_app_count": 15
+  }
+}

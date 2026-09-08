@@ -1,0 +1,141 @@
+{
+    "php": "8.5.4",
+    "observations": {
+        "generated_closure": {
+            "direct": 12,
+            "record_call": 12,
+            "foreign_function_tags": [
+                "function",
+                "Function"
+            ],
+            "foreign_record_tags": [
+                "object",
+                "Object"
+            ],
+            "foreign_callback_tags": [
+                "function",
+                "Function"
+            ],
+            "typed_closure": {
+                "value": 12
+            },
+            "typed_record_callback": {
+                "value": 12
+            },
+            "foreign_return": 13,
+            "foreign_return_tags": [
+                "function",
+                "Function"
+            ],
+            "foreign_record_return": {
+                "value": 13
+            },
+            "retained_calls": [
+                12,
+                13
+            ]
+        },
+        "compact_object": {
+            "direct": 12,
+            "record_call": 12,
+            "foreign_function_tags": [
+                "object",
+                "Object"
+            ],
+            "foreign_record_tags": [
+                "object",
+                "Object"
+            ],
+            "foreign_callback_tags": [
+                "object",
+                "Object"
+            ],
+            "typed_closure": {
+                "error": "TypeError"
+            },
+            "typed_record_callback": {
+                "error": "TypeError"
+            },
+            "foreign_return": 13,
+            "foreign_return_tags": [
+                "object",
+                "Object"
+            ],
+            "foreign_record_return": {
+                "error": "TypeError"
+            },
+            "retained_calls": [
+                12,
+                13
+            ]
+        },
+        "only_direct_converted": {
+            "direct": 12,
+            "record_call": 12,
+            "foreign_function_tags": [
+                "function",
+                "Function"
+            ],
+            "foreign_record_tags": [
+                "object",
+                "Object"
+            ],
+            "foreign_callback_tags": [
+                "object",
+                "Object"
+            ],
+            "typed_closure": {
+                "value": 12
+            },
+            "typed_record_callback": {
+                "error": "TypeError"
+            },
+            "foreign_return": 13,
+            "foreign_return_tags": [
+                "function",
+                "Function"
+            ],
+            "foreign_record_return": {
+                "error": "TypeError"
+            },
+            "retained_calls": [
+                12,
+                13
+            ]
+        },
+        "direct_and_record_converted": {
+            "direct": 12,
+            "record_call": 12,
+            "foreign_function_tags": [
+                "function",
+                "Function"
+            ],
+            "foreign_record_tags": [
+                "object",
+                "Object"
+            ],
+            "foreign_callback_tags": [
+                "function",
+                "Function"
+            ],
+            "typed_closure": {
+                "value": 12
+            },
+            "typed_record_callback": {
+                "value": 12
+            },
+            "foreign_return": 13,
+            "foreign_return_tags": [
+                "function",
+                "Function"
+            ],
+            "foreign_record_return": {
+                "value": 13
+            },
+            "retained_calls": [
+                12,
+                13
+            ]
+        }
+    }
+}

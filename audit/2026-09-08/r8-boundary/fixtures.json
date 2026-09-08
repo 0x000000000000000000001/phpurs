@@ -1,0 +1,8 @@
+[
+  {
+    "fixture": "FunctionFFIBoundary",
+    "php_exit_code": 0,
+    "js_exit_code": 0,
+    "stdout": "Done\n"
+  }
+]

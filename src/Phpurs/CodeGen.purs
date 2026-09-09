@@ -23,6 +23,7 @@ import Phpurs.CompactLoops as CompactLoops
 import Phpurs.EnumRegions as EnumRegions
 import Phpurs.ThunkFusion as ThunkFusion
 import Phpurs.NullableConstructors as Nullable
+import Phpurs.CopyCleanup as CopyCleanup
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
@@ -895,6 +896,10 @@ translate imports input =
       ) tcoBindings)
 
     privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.union regions.privateNames fusion.privateNames)
+    regionWorkers = Set.map (\ident -> modPrefix <> unwrap ident) regions.privateNames
+    privateClasses = Set.map (\name ->
+      "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") (unwrap mod.name) <> "\\" <> modPrefix
+        <> String.replaceAll (Pattern "'") (Replacement "_prime_") name) regions.privateConstructors
     nullableClasses = Map.fromFoldable (map (\(Tuple name empty) ->
       Tuple ("\\" <> String.replaceAll (Pattern ".") (Replacement "\\") (unwrap mod.name) <> "\\" <> modPrefix
         <> String.replaceAll (Pattern "'") (Replacement "_prime_") name) empty)
@@ -912,7 +917,8 @@ translate imports input =
       _ -> d
       else d
   in
-    Nullable.lower nullableClasses (optimized { decls = map hideWorker optimized.decls })
+    CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses }
+      (Nullable.lower nullableClasses (optimized { decls = map hideWorker optimized.decls }))
 
 dedupArgs :: Array String -> Array String
 dedupArgs args = Array.mapWithIndex

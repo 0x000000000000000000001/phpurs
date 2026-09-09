@@ -1,0 +1,17 @@
+{
+  "php_files": 302,
+  "modules": 301,
+  "changed_modules": [
+    "Test.RBTree/index.php"
+  ],
+  "active_matches_integrated": true,
+  "public_prefix_identical": true,
+  "rbtree_sha256": "bc22594905438cfd291cf479b6c5a25ede4489d842d052bc45ac31eca32c0a3c",
+  "baseline_sha256": "e4194ef828406f9470e904ee8c943bf485c73afbaebf3f0c10941e4a88a118a0",
+  "baseline_bytes": 123361,
+  "integrated_bytes": 113141,
+  "baseline_ins_locals": 36,
+  "integrated_ins_locals": 9,
+  "real_tco_loops_retained": true,
+  "copy_fixture_selects_private_region": true
+}

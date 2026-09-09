@@ -44,8 +44,9 @@ Priorité : dégrossir avec les gros gains démontrés, puis refaire le classeme
 4. [R10 intégré](audit/2026-09-08/r10-integrated/report.md) : couleurs scalaires internes, propriétés privées sans contrôles PHP redondants et contrats publics vérifiés. Total 241,6–242,7 ms contre 316,7–320,2 ms dans ses contrôles. `E = null` reste une extension distincte.
 5. **[R11 intégré](audit/2026-09-09/r11-integrated/report.md)** : fusion AST bornée des chaînes immédiatement forcées, corps uniforme et seed littéral prouvés. Lazy 0,783–0,828 ms contre 46,672–47,147 ms ; total 196,1–200,0 ms contre 238,7–243,7 ms, soit environ 18 % de moins. Les callbacks inconnus et fonctions conservées gardent leur chemin public. Le chrono du prototype manuel reste distinct.
 6. **[Représentation nullable privée de R10 intégrée](audit/2026-09-09/r10-null-integrated/report.md).** Après régénération : RBTree 146–148 ms contre 177–179 ms ; total 166–168 ms contre 196–199 ms, soit 15,39–15,71 % de moins, pic mémoire 26 contre 34 MiB. Layout et usages prouvés dans le TAST, abaissement structurel de l'AST PHP, sept suites AST et quinze fixtures PHP/JS vérifiées. Le prototype sur copies reste un relevé distinct.
-7. **Prochaine priorité : reprofiler RBTree après l'intégration nullable.** Il représente encore environ 88 % du total. Mesurer les coûts restants des objets et du code de contrôle avant de choisir la prochaine transformation ; R4 et Church restent des pistes à comparer en temps absolu.
-8. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
+7. **[R12 intégré : copies et temporaires internes supprimés](audit/2026-09-09/copy-cleanup/report.md).** Après reconstruction complète : RBTree 110–114 ms contre 143–149 ms ; total 129–133 ms contre 162–169 ms, soit 20,60–21,07 % de moins. `ins` passe de 36 à 9 variables, avec les mêmes 2 583 932 nœuds construits. Huit suites AST et seize fixtures PHP/JS passent ; les vraies boucles conservent leurs mises à jour simultanées.
+8. **Prochaine priorité : reclasser les coûts après R12.** RBTree représente encore environ 85 % du total. Profiler ses coûts restants avant d'élargir la représentation ou les transformations ; comparer aussi Church en temps absolu, en tenant compte du fait que son natif remplace les closures par une boucle.
+9. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
 
@@ -144,6 +145,7 @@ Mesure : benchmark dédié de chaînes Effect/bind/Ref et nombre de closures pro
 
 Constat : CodeGen.purs, lignes 270–273 et 306–309, copie arguments → temporaires → variables de boucle ; lignes 777–778, la boucle recopie vers les paramètres. Les transformations TCO locales et globales sont limitées à un groupe d'une fonction.
 
+- [x] R12 supprime les allers-retours d'entrée devenus inactifs, avec preuve des définitions/usages et garde sur les captures. Les copies des vraies boucles, permutations et temporaires encore utilisés restent présentes ; ce résultat ne clôt pas les points suivants.
 - [ ] Ajouter permutation de paramètres, dépendances croisées, arguments calculés et closure conservant une ancienne valeur de paramètre.
 - [ ] Supprimer les affectations identiques, sans autre transformation.
 - [ ] Pour une boucle sans capture problématique, affecter les paramètres depuis les temporaires en préservant une mise à jour simultanée.
@@ -258,6 +260,20 @@ Le TAST décrit explicitement `Color = R | B` et `Tree = E | T Color Tree Int Tr
 - [x] Mesurer en deux ordres sans instrumentation ; compter séparément zéro nœud/dispatch intermédiaire, toujours 1 000 appels initiaux et 1 000 000 additions. Vérifier les 301 modules actifs inchangés.
 - [x] **Passe AST générique bornée.** `ThunkFusion.purs` prouve la signature aplatie, deux binders réels, le décompte vers zéro et un pas uniforme `+`, `-` ou `*` par littéral. Le site doit être immédiatement consommé, de profondeur littérale non négative, avec seed `Unit -> Int` au corps littéral et Unit canonique. Les formes non prouvées gardent leur AST ; les workers privés réutilisent TCO, sans `$GLOBALS` public. Le constructeur public reste identique.
 - [x] Rejouer les contre-exemples et R8/R9/R10, régénérer avec `bin/php/run -c`, puis comparer à passe désactivée. Six suites AST, 14 fixtures PHP/JS et 14 résultats par run passent ; 48 comparaisons numériques plus les observations de pile, débordement, captures et exceptions. Un seul des 301 modules PHP change. Le comptage intégré confirme zéro objet/appel intermédiaire et zéro appel au seed littéral, toujours un million d'additions.
+
+## R12 — P1 — Supprimer les copies internes après inlining
+
+**Intégré et mesuré** : [bilan, scripts et contrôles](audit/2026-09-09/copy-cleanup/report.md). La passe `CopyCleanup` reçoit les fonctions et constructeurs des régions fermées prouvées dans le TAST, après inlining et abaissement nullable. Les signatures publiques, allocations et frontières FFI sont préservées.
+
+- [x] Isoler les copies terminales et les allers-retours TCO inactifs dans des copies du PHP ; comparer séparément et ensemble. Le prototype reste distinct des mesures intégrées.
+- [x] Propager les alias de locaux immédiatement avant un retour pur et supprimer les temporaires de résultats morts, par transformation de l'AST PHP.
+- [x] Retirer les séquences d'entrée paramètre → temporaire → même paramètre uniquement si les compteurs de définitions/usages prouvent que le temporaire ne sert à rien d'autre.
+- [x] Borner avant récursion : 8 192 nœuds, profondeur 128, largeur 512 ; refuser les captures, callbacks inconnus, écritures à travers un alias, constructeurs externes dans le retour et PHP opaque.
+- [x] Exécuter les régressions AST avant/après, notamment les branches, copies chaînées, permutations, boucles, objets partagés, gardes et limites de taille. Ajouter une fixture TAST qui échange deux arbres pendant 20 000/20 001 itérations.
+- [x] Recompiler avec `bin/php/run -c` : code 0, huit suites AST et seize fixtures PHP/JS réussies. Comparer les structures après 1 285 insertions, puis revérifier 1 290 paires d'anciennes racines et les contrats publics.
+- [x] Mesurer sur le PHP régénéré dans quatre processus ABBA : total 128,915–133,057 ms contre 162,371–168,579 ms ; RBTree 109,602–113,499 ms contre 142,962–148,735 ms. Gain total 20,60–21,07 %, pic mémoire inchangé à 26 MiB.
+
+Seul RBTree change parmi 301 modules. `ins` passe de 36 à 9 variables locales ; les 2 283 976 appels et 2 583 932 nœuds restent identiques. La référence officielle du README reste 158,97 ms au total et 140,005 ms pour RBTree ; le natif historique est à 123,096 ms, sans nouvelle mesure native dans cette série. Les résultats nouveaux sont consignés ici et dans l'audit, sans réécrire le tableau partagé entre worktrees.
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

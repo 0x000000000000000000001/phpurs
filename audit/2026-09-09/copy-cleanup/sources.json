@@ -1,0 +1,29 @@
+{
+  "backend": {
+    "path": "/Users/0x1/Documents/htdocs/phpurs/phpurs",
+    "head": "34d867954efb70994ed4673d03bb7bc6f6887ddb",
+    "status": " M src/Phpurs/CodeGen.purs\n?? audit/2026-09-09/copy-cleanup/\n?? src/Phpurs/CopyCleanup.purs\n?? tests/codegen/copy-cleanup.mjs\n?? tests/passing/CopyCleanup.js\n?? tests/passing/CopyCleanup.php\n?? tests/passing/CopyCleanup.purs\n"
+  },
+  "benchmark": {
+    "path": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs",
+    "head": "1835d25540135115cba06a82973e7d827b8c359c",
+    "status": ""
+  },
+  "main_benchmark": {
+    "path": "/Users/0x1/Documents/htdocs/altbak.pub",
+    "head": "4492638e34197a812844552476bbb219b3136c5b",
+    "status": " M README.md\n"
+  },
+  "pbo": {
+    "path": "/Users/0x1/Documents/htdocs/purescript-backend-optimizer-phpurs",
+    "head": "6e256c6a962c94d09ad2599c165231633bbfaa98",
+    "status": ""
+  },
+  "sha256": {
+    "/Users/0x1/Documents/htdocs/phpurs/phpurs/src/Phpurs/CodeGen.purs": "6a428cd5ec7d2fe4710b29419c85744b81627ecde39d165b20a5165e7bcbf7b5",
+    "/Users/0x1/Documents/htdocs/phpurs/phpurs/src/Phpurs/CopyCleanup.purs": "cb9246ef80d57d81640ed2f7cdf772fad4469ffd9a102af41cf7d557bec68ab5",
+    "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/src/Test/RBTree.purs": "515f07e9319d309cdf72e5be129ea4742b996e19f2ae4b07ba31bf6f4f12da55",
+    "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/src/Bench.purs": "1053c71f2ee821ee7c85d24d963361b292bfeaf3a63b773cc6b85b8c3aa9751a",
+    "/Users/0x1/Documents/htdocs/altbak.pub/README.md": "d6e87e6b4d652faa75503eb9ac548f7dbb9264f161aaf9509db6d07aa643466f"
+  }
+}

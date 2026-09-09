@@ -1,0 +1,10 @@
+{
+  "baseline": {
+    "majTest_majRmajBmajTree___phpurs_enum_0_ins": 2283976,
+    "Test_RBTree___phpurs_enum_0_T": 2583932
+  },
+  "integrated": {
+    "majTest_majRmajBmajTree___phpurs_enum_0_ins": 2283976,
+    "Test_RBTree___phpurs_enum_0_T": 2583932
+  }
+}

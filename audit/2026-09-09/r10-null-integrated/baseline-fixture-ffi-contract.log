@@ -1,0 +1,6 @@
+FATAL: {closure:{closure:/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php:115}:129}(): Argument #1 ($f) must be of type Closure, string given, called in /Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php on line 169
+#0 /Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php(169): {closure:{closure:/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php:115}:129}('Main\\majMain_to...', Object(Main\Main_Cell))
+#1 /Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php(397): Main\majMain_observe('Main\\majMain_to...', Object(Main\Main_Cell))
+#2 /Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php(471): Main\majMain_observedmajScore(4)
+#3 /Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/main.mod.php(13): {closure:{closure:/Users/0x1/Documents/htdocs/phpurs/phpurs/audit/2026-09-09/r10-null-integrated/raw/tests/output/Main/index.php:426}:441}()
+#4 {main}

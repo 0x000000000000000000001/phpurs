@@ -1,0 +1,9 @@
+{
+  "src/Phpurs/NullableConstructors.purs": "de6f881ef95cf42cc36f33250ba325b0ef503729b61f0eddcb87a2f0d65b5c4d",
+  "src/Phpurs/EnumRegions.purs": "a996c4db1145ca22068680f85b60505da296ddd37799334c47ec474108d6221e",
+  "src/Phpurs/CodeGen.purs": "3656f5c82bc030dccefc00d6c18dd170c00ac4d61959b69b3ce425807dc19b7c",
+  "tests/codegen/nullable-constructors.mjs": "9fe22b626c0f52f3af9db30219d915dfaf4ae642ea5932493eedb2488a0cd5bd",
+  "tests/passing/NullableRegion.purs": "205f9747c510a8907524dbbbf148bbd3a2518272406dfb26a9793cb984700d5d",
+  "tests/passing/NullableRegion.php": "2723aa6b78a570d63215f0eaa7d4e335b1cdd4710ff0dfda8f2e15d5fcc9d69e",
+  "tests/passing/NullableRegion.js": "ce23cde644254f191207811c58cb5a933490fa721c68c61f85c177dba5f73fe9"
+}

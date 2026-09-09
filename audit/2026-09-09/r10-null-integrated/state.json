@@ -1,0 +1,14 @@
+{
+  "php_files_checked": 302,
+  "modules_checked": 301,
+  "changed_modules": [
+    "Test.RBTree/index.php"
+  ],
+  "control_matches_previous_output": true,
+  "active_matches_integrated": true,
+  "public_prefix_identical": true,
+  "baseline_rbtree_sha256": "58d6145d3a0e15fc99792555bab37e73079591ce53dafe1226294a321c74fcc9",
+  "integrated_rbtree_sha256": "e4194ef828406f9470e904ee8c943bf485c73afbaebf3f0c10941e4a88a118a0",
+  "baseline_rbtree_bytes": 126203,
+  "integrated_rbtree_bytes": 123361
+}

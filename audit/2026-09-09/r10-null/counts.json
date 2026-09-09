@@ -1,0 +1,15 @@
+{
+  "baseline": {
+    "Test_RBTree___phpurs_enum_0_E": 200001,
+    "majTest_majRmajBmajTree___phpurs_enum_0_ins": 2283976,
+    "Test_RBTree___phpurs_enum_0_T": 2583932
+  },
+  "nullable-leaves": {
+    "majTest_majRmajBmajTree___phpurs_enum_0_ins": 2283976,
+    "Test_RBTree___phpurs_enum_0_T": 2583932
+  },
+  "null-checks": {
+    "majTest_majRmajBmajTree___phpurs_enum_0_ins": 2283976,
+    "Test_RBTree___phpurs_enum_0_T": 2583932
+  }
+}

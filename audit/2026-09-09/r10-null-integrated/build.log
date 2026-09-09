@@ -1,0 +1,238 @@
+Reading Spago workspace configuration...
+
+✓ Selecting package to build: phpurs
+
+Downloading dependencies...
+Building...
+[1 of 4] Compiling Phpurs.NullableConstructors
+[2 of 4] Compiling Phpurs.EnumRegions
+[3 of 4] Compiling Phpurs.CodeGen
+[4 of 4] Compiling Main
+[WARNING 1/24 UnusedExplicitImport] src/Main.purs:7:1
+
+  7  import Effect.Aff (Aff, launchAff_, attempt)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module Effect.Aff contains the following unused references:
+    Aff
+  It could be replaced with:
+    import Effect.Aff (attempt, launchAff_)
+
+[WARNING 2/24 UnusedImport] src/Main.purs:10:1
+
+  10  import Node.FS.Stats as Stats
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The qualified import of Node.FS.Stats as Stats is redundant
+
+[WARNING 3/24 UnusedImport] src/Main.purs:13:1
+
+  13  import Data.Argonaut.Parser (jsonParser)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of Data.Argonaut.Parser is redundant
+
+[WARNING 4/24 UnusedImport] src/Main.purs:15:1
+
+  15  import Data.Either (Either(..), isRight)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of Data.Either is redundant
+
+[WARNING 5/24 UnusedImport] src/Main.purs:16:1
+
+  16  import Data.Bifunctor (lmap)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of Data.Bifunctor is redundant
+
+[WARNING 6/24 UnusedImport] src/Main.purs:17:1
+
+  17  import Data.Argonaut.Decode.Error (printJsonDecodeError)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of Data.Argonaut.Decode.Error is redundant
+
+[WARNING 7/24 UnusedImport] src/Main.purs:19:1
+
+  19  import Data.List as List
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The qualified import of Data.List as List is redundant
+
+[WARNING 8/24 UnusedExplicitImport] src/Main.purs:20:1
+
+  20  import Data.Maybe (Maybe(..), isJust, maybe, fromMaybe)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module Data.Maybe contains the following unused references:
+    maybe
+  It could be replaced with:
+    import Data.Maybe (Maybe(..), fromMaybe, isJust)
+
+[WARNING 9/24 UnusedImport] src/Main.purs:27:1
+
+  27  import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of PureScript.Backend.Optimizer.CoreFn.Json is redundant
+
+[WARNING 10/24 UnusedImport] src/Main.purs:28:1
+
+  28  import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of PureScript.Backend.Optimizer.CoreFn.Sort is redundant
+
+[WARNING 11/24 UnusedExplicitImport] src/Main.purs:30:1
+
+  30  import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName, Qualified(..), ModuleName(..), ExprType(..))
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module PureScript.Backend.Optimizer.CoreFn contains the following unused references:
+    Ann
+    Qualified
+  It could be replaced with:
+    import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Module(..), ModuleName(..), importName)
+
+[WARNING 12/24 UnusedExplicitImport] src/Main.purs:38:1
+
+  38  import Data.String (joinWith, replace, replaceAll, trim, length, contains)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module Data.String contains the following unused references:
+    contains
+  It could be replaced with:
+    import Data.String (joinWith, length, replace, replaceAll, trim)
+
+[WARNING 13/24 UnusedExplicitImport] src/Main.purs:40:1
+
+  40  import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, checkCache, writeCache, loadDirectives)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module PureScript.Backend.Optimizer.App contains the following unused references:
+    checkCache
+    writeCache
+  It could be replaced with:
+    import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, loadDirectives, parseCLIArgs)
+
+[WARNING 14/24 UnusedImport] src/Main.purs:45:1
+
+  45  import PureScript.Backend.Optimizer.Convert (BackendBindingGroup(..))
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of PureScript.Backend.Optimizer.Convert is redundant
+
+[WARNING 15/24 UnusedName] src/Main.purs:97:13
+
+  97          let modNameStr = unwrap coreFnMod.name
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Name modNameStr was introduced but not used.
+  in value declaration main
+
+[WARNING 16/24 UnusedExplicitImport] src/Phpurs/CodeGen.purs:17:1
+
+  17  import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr, TcoRef(..), TcoUsage(..), TcoAnalysis(..))
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module PureScript.Backend.Optimizer.Codegen.Tco contains the following unused references:
+    unTcoExpr
+  It could be replaced with:
+    import PureScript.Backend.Optimizer.Codegen.Tco (TcoAnalysis(..), TcoExpr(..), TcoRef(..), TcoUsage(..), tcoAnalysisOf)
+
+[WARNING 17/24 UnusedExplicitImport] src/Phpurs/CodeGen.purs:36:1
+
+  36  import Data.Foldable (all, foldl, foldr, foldMap)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module Data.Foldable contains the following unused references:
+    foldr
+  It could be replaced with:
+    import Data.Foldable (all, foldMap, foldl)
+
+[WARNING 18/24 UnusedImport] src/Phpurs/CodeGen.purs:38:1
+
+  38  import Debug as Debug
+      ^^^^^^^^^^^^^^^^^^^^^
+
+  The qualified import of Debug as Debug is redundant
+
+[WARNING 19/24 UnusedImport] src/Phpurs/CodeGen.purs:42:1
+
+  42  import Data.Set (Set)
+      ^^^^^^^^^^^^^^^^^^^^^
+
+  The import of Data.Set is redundant
+
+[WARNING 20/24 UserDefinedWarning] src/Phpurs/CodeGen.purs:158:1
+
+  158  translateExprImpl_ :: String -> Array String -> Map String String -> Map String String -> Maybe String -> Array LoopCtx -> Boolean -> Boolean -> Int -> TcoExpr -> TranslationRes
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  A custom warning occurred while solving type class constraints:
+    Debug function usage
+  in binding group translateExprImpl_
+
+[WARNING 21/24 UserDefinedWarning] src/Phpurs/CodeGen.purs:731:1
+
+  731  translate :: Array (Array String) -> BackendModule -> PhpFile
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  A custom warning occurred while solving type class constraints:
+    Debug function usage
+  in value declaration translate
+
+[WARNING 22/24 UserDefinedWarning] src/Phpurs/CodeGen.purs:731:1
+
+  731  translate :: Array (Array String) -> BackendModule -> PhpFile
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  A custom warning occurred while solving type class constraints:
+    Debug function usage
+  in value declaration translate
+
+[WARNING 23/24 UnusedName] src/Phpurs/CodeGen.purs:808:29
+
+  808                              useVarsOuter = Array.nub (map (\mapped -> if Array.elem mapped recVars then "&" <> mapped else mapped) mappedFvs)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  Name useVarsOuter was introduced but not used.
+  in value declaration translate
+
+[WARNING 24/24 UnusedExplicitImport] src/Phpurs/NullableConstructors.purs:8:1
+
+  8  import Data.Foldable (foldl, foldr)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  The import of module Data.Foldable contains the following unused references:
+    foldl
+  It could be replaced with:
+    import Data.Foldable (foldr)
+
+           Src   Lib   All
+Warnings    24     0    24
+Errors       0     0     0
+
+✓ Build succeeded.
+
+Reading Spago workspace configuration...
+
+✓ Selecting package to build: phpurs
+
+Downloading dependencies...
+Building...
+           Src   Lib   All
+Warnings     0     0     0
+Errors       0     0     0
+
+✓ Build succeeded.
+
+Bundling...
+
+  bin/phpurs.js  1.2mb ⚠️
+
+⚡ Done in 39ms
+
+✓ Bundle succeeded.
+

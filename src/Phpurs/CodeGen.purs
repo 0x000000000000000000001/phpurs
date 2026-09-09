@@ -22,6 +22,7 @@ import Phpurs.TailInline as TailInline
 import Phpurs.CompactLoops as CompactLoops
 import Phpurs.EnumRegions as EnumRegions
 import Phpurs.ThunkFusion as ThunkFusion
+import Phpurs.NullableConstructors as Nullable
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
@@ -894,6 +895,10 @@ translate imports input =
       ) tcoBindings)
 
     privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.union regions.privateNames fusion.privateNames)
+    nullableClasses = Map.fromFoldable (map (\(Tuple name empty) ->
+      Tuple ("\\" <> String.replaceAll (Pattern ".") (Replacement "\\") (unwrap mod.name) <> "\\" <> modPrefix
+        <> String.replaceAll (Pattern "'") (Replacement "_prime_") name) empty)
+      (Map.toUnfoldable regions.nullableConstructors :: Array (Tuple String Boolean)))
     -- Every private call is proven saturated and its arguments are checked on
     -- the typed AST. Avoid adding dynamic scalar coercions that would prevent
     -- the existing terminal inliner from simplifying these internal workers.
@@ -907,7 +912,7 @@ translate imports input =
       _ -> d
       else d
   in
-    optimized { decls = map hideWorker optimized.decls }
+    Nullable.lower nullableClasses (optimized { decls = map hideWorker optimized.decls })
 
 dedupArgs :: Array String -> Array String
 dedupArgs args = Array.mapWithIndex

@@ -1,0 +1,24 @@
+{
+  "sites": {
+    "alloc_E": 4,
+    "test_E": 3,
+    "test_T": 59
+  },
+  "variants": {
+    "baseline": {
+      "sha256": "58d6145d3a0e15fc99792555bab37e73079591ce53dafe1226294a321c74fcc9",
+      "bytes": 126203,
+      "public_prefix_identical": true
+    },
+    "nullable-leaves": {
+      "sha256": "4998af6c79aae6738b6471c1f84ad86935a7087fb9d04984fa73fa41e9c6fe33",
+      "bytes": 125892,
+      "public_prefix_identical": true
+    },
+    "null-checks": {
+      "sha256": "29f37c78030ac082baf327a184e4f4fa83ab0f1f1c0e446ee4898ed88c0154a4",
+      "bytes": 123237,
+      "public_prefix_identical": true
+    }
+  }
+}

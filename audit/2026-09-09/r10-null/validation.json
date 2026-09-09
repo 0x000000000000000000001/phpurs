@@ -1,0 +1,65 @@
+{
+  "baseline": {
+    "insertions": 1285,
+    "retained_root_pairs": 1290,
+    "fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "208ebace46d11912d5faa651db3592883566219f8aed48ab618e1fe6ca6bbb62",
+      "d999a4f2f38141a34fb34c8dca1e92de537420333a4f30a5b03611699b83c5c1",
+      "9f10c3e227e6821465a45d28462d48a431e6531559980fcfbb600861a8e379d3",
+      "d7411e1198e19ae0142fb5bf28dc5122e41310c2ce05e84766b3c0a06419d0d2"
+    ],
+    "public_serialization_fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "191ba58e758b9db2927acbffd4410e6e30262e5e6e64e05fbbeae21a680ad898",
+      "cef0b0ea481dc0111404570d5398af35088850264e7fa2722b465b99cc8ea335",
+      "0a9a0627cff2011bc15c0d30cae6e87a52dc710f35961dc06ffb556a983fec1e",
+      "ff37333885036476551b6d01ad254b78c4be04557ba6122075cb9d5f5deb77c8"
+    ],
+    "red_black_invariants": true,
+    "public_partial_call": true,
+    "public_type_error": true
+  },
+  "nullable-leaves": {
+    "insertions": 1285,
+    "retained_root_pairs": 1290,
+    "fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "208ebace46d11912d5faa651db3592883566219f8aed48ab618e1fe6ca6bbb62",
+      "d999a4f2f38141a34fb34c8dca1e92de537420333a4f30a5b03611699b83c5c1",
+      "9f10c3e227e6821465a45d28462d48a431e6531559980fcfbb600861a8e379d3",
+      "d7411e1198e19ae0142fb5bf28dc5122e41310c2ce05e84766b3c0a06419d0d2"
+    ],
+    "public_serialization_fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "191ba58e758b9db2927acbffd4410e6e30262e5e6e64e05fbbeae21a680ad898",
+      "cef0b0ea481dc0111404570d5398af35088850264e7fa2722b465b99cc8ea335",
+      "0a9a0627cff2011bc15c0d30cae6e87a52dc710f35961dc06ffb556a983fec1e",
+      "ff37333885036476551b6d01ad254b78c4be04557ba6122075cb9d5f5deb77c8"
+    ],
+    "red_black_invariants": true,
+    "public_partial_call": true,
+    "public_type_error": true
+  },
+  "null-checks": {
+    "insertions": 1285,
+    "retained_root_pairs": 1290,
+    "fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "208ebace46d11912d5faa651db3592883566219f8aed48ab618e1fe6ca6bbb62",
+      "d999a4f2f38141a34fb34c8dca1e92de537420333a4f30a5b03611699b83c5c1",
+      "9f10c3e227e6821465a45d28462d48a431e6531559980fcfbb600861a8e379d3",
+      "d7411e1198e19ae0142fb5bf28dc5122e41310c2ce05e84766b3c0a06419d0d2"
+    ],
+    "public_serialization_fingerprints": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "191ba58e758b9db2927acbffd4410e6e30262e5e6e64e05fbbeae21a680ad898",
+      "cef0b0ea481dc0111404570d5398af35088850264e7fa2722b465b99cc8ea335",
+      "0a9a0627cff2011bc15c0d30cae6e87a52dc710f35961dc06ffb556a983fec1e",
+      "ff37333885036476551b6d01ad254b78c4be04557ba6122075cb9d5f5deb77c8"
+    ],
+    "red_black_invariants": true,
+    "public_partial_call": true,
+    "public_type_error": true
+  }
+}

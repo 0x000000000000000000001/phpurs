@@ -1,0 +1,69 @@
+{
+  "dataDecl": {
+    "constructors": [
+      {
+        "constructorName": "E",
+        "fieldTypes": [],
+        "fields": [],
+        "name": "E"
+      },
+      {
+        "constructorName": "T",
+        "fieldTypes": [
+          0,
+          1,
+          3,
+          1
+        ],
+        "fields": [
+          0,
+          1,
+          3,
+          1
+        ],
+        "name": "T"
+      }
+    ],
+    "name": "Tree",
+    "typeName": "Tree",
+    "typeVars": [],
+    "vars": []
+  },
+  "resolved_T_fields": [
+    {
+      "args": [],
+      "fqn": [
+        "Test",
+        "RBTree",
+        "Color"
+      ],
+      "type": "Adt"
+    },
+    {
+      "args": [],
+      "fqn": [
+        "Test",
+        "RBTree",
+        "Tree"
+      ],
+      "type": "Adt"
+    },
+    {
+      "type": "Int"
+    },
+    {
+      "args": [],
+      "fqn": [
+        "Test",
+        "RBTree",
+        "Tree"
+      ],
+      "type": "Adt"
+    }
+  ],
+  "representation": {
+    "E": "null",
+    "T": "boxed private object"
+  },
+  "scope": "Existing closed R10 region in Test.RBTree.act; diagnostic checks this fixed layout only, not a new generic compiler proof."
+}

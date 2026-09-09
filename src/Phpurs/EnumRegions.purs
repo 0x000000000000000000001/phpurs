@@ -12,7 +12,7 @@ import Data.Foldable (all, foldl, foldr, traverse_)
 import Data.List (List(..))
 import Data.Map (Map)
 import Data.Map as Map
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
 import Data.Newtype (unwrap)
 import Data.Set (Set)
 import Data.Set as Set
@@ -20,6 +20,7 @@ import Data.String as String
 import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..), snd)
+import Phpurs.NullableConstructors as Nullable
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ConstructorType(..), DataDecl, ExprType(..), Ident(..), Literal(..), ModuleName, ProperName(..), Qualified(..))
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
@@ -44,11 +45,11 @@ type Constructor =
   , constructorType :: ConstructorType, typeName :: ProperName
   }
 
-type CheckState = { fuel :: Int, depth :: Int, workers :: Set Ident, layouts :: Set String, usesEnum :: Boolean }
+type CheckState = { fuel :: Int, depth :: Int, workers :: Set Ident, layouts :: Set String, usesCompactLayout :: Boolean }
 type Check a = StateT CheckState Maybe a
 
 initial :: CheckState
-initial = { fuel: nodeBudget, depth: 0, workers: Set.empty, layouts: Set.empty, usesEnum: false }
+initial = { fuel: nodeBudget, depth: 0, workers: Set.empty, layouts: Set.empty, usesCompactLayout: false }
 
 require :: Boolean -> Check Unit
 require b = lift if b then Just unit else Nothing
@@ -71,6 +72,9 @@ scalar = case _ of
 isEnum :: DataDecl -> Boolean
 isEnum d = A.null d.vars && A.length d.constructors >= 2 && all (A.null <<< _.fields) d.constructors
 
+compactLayout :: DataDecl -> Boolean
+compactLayout d = isEnum d || isJust (Nullable.layout d)
+
 -- Only closed, monomorphic local layouts with scalar/ADT fields are admitted.
 -- Function fields, records, unknown types and open polymorphism fail closed.
 valueType :: Context -> ExprType -> Check Unit
@@ -82,7 +86,7 @@ valueType ctx (ADT name _ args) = do
   s <- get
   unless (Set.member name s.layouts) do
     tick
-    modify_ (\v -> v { layouts = Set.insert name v.layouts, usesEnum = v.usesEnum || isEnum d })
+    modify_ (\v -> v { layouts = Set.insert name v.layouts, usesCompactLayout = v.usesCompactLayout || compactLayout d })
     traverse_ (traverse_ (valueType ctx) <<< _.fields) d.constructors
 valueType _ _ = require false
 
@@ -324,7 +328,7 @@ scan ctx prefix expr@(NeutralExpr syntax) = do
       pure (runStateT (infer ctx Map.empty true Nothing expr) initial)
       else pure Nothing
     case result of
-      Just (Tuple ty proof) | scalar ty && proof.usesEnum && not (Set.isEmpty proof.workers) -> do
+      Just (Tuple ty proof) | scalar ty && proof.usesCompactLayout && not (Set.isEmpty proof.workers) -> do
         let added = Set.difference proof.workers s.workers
         let copied = s.copied + foldl (\n ident -> n + fromMaybe 0 (size (nodeBudget + 1) <$> Map.lookup ident ctx.bindings)) 0 added
         let workers = Set.union s.workers proof.workers
@@ -346,13 +350,13 @@ freshPrefix mod = go 0
   go n = let prefix = "__phpurs_enum_" <> show n <> "_"
     in if A.any (String.contains (Pattern prefix)) names then go (n + 1) else prefix
 
-optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident, privateConstructors :: Set String }
+optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident, privateConstructors :: Set String, nullableConstructors :: Map String Boolean }
 optimize mod
-  | not (A.any isEnum mod.dataDecls)
+  | not (A.any compactLayout mod.dataDecls)
       || A.length mod.dataDecls > 64
       || A.length mod.bindings > 256
       || A.any (\d -> A.length d.constructors > 64 || A.any (\c -> A.length c.fields > 64) d.constructors) mod.dataDecls =
-      { module_: mod, privateNames: Set.empty, privateConstructors: Set.empty }
+      { module_: mod, privateNames: Set.empty, privateConstructors: Set.empty, nullableConstructors: Map.empty }
   | otherwise =
       let
         ctx = context mod
@@ -374,4 +378,9 @@ optimize mod
         { module_: mod { bindings = bindings <> copies, dataDecls = mod.dataDecls <> layouts }
         , privateNames: Set.map renamed selected.workers
         , privateConstructors: Set.fromFoldable (A.concatMap (map _.name <<< _.constructors) layouts)
+        -- These names belong only to copied layouts whose complete uses passed
+        -- infer. The public layouts and arbitrary PHP values are never tagged.
+        , nullableConstructors: Map.fromFoldable (A.concatMap (\d -> case Nullable.layout d of
+            Just l -> [ Tuple l.empty true, Tuple l.boxed false ]
+            Nothing -> []) layouts)
         }

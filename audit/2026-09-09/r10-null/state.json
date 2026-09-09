@@ -1,0 +1,23 @@
+{
+  "active_php_files_unchanged": 302,
+  "active_modules_unchanged": 301,
+  "generator_files_unchanged": 22,
+  "variants": {
+    "baseline": {
+      "changed_php_files": [],
+      "public_prefix_identical": true
+    },
+    "nullable-leaves": {
+      "changed_php_files": [
+        "Test.RBTree/index.php"
+      ],
+      "public_prefix_identical": true
+    },
+    "null-checks": {
+      "changed_php_files": [
+        "Test.RBTree/index.php"
+      ],
+      "public_prefix_identical": true
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{"variant": "baseline", "order": "tree-first", "times_us": {"RBTree": 118123, "Church": 9727}}
+{"variant": "integrated", "order": "tree-first", "times_us": {"RBTree": 114159, "Church": 2200}}
+{"variant": "integrated", "order": "tree-first", "times_us": {"RBTree": 113759, "Church": 2213}}
+{"variant": "baseline", "order": "tree-first", "times_us": {"RBTree": 116692, "Church": 9603}}
+{"variant": "baseline", "order": "church-first", "times_us": {"Church": 9627, "RBTree": 116788}}
+{"variant": "integrated", "order": "church-first", "times_us": {"Church": 2191, "RBTree": 116860}}
+{"variant": "integrated", "order": "church-first", "times_us": {"Church": 2159, "RBTree": 113839}}
+{"variant": "baseline", "order": "church-first", "times_us": {"Church": 9406, "RBTree": 109469}}

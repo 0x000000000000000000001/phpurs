@@ -1,0 +1,20 @@
+[
+  {
+    "variant": "baseline",
+    "result": "100000",
+    "counts": {
+      "successor_closures": 100202,
+      "neutral_bindings": 11111,
+      "increments": 100000
+    }
+  },
+  {
+    "variant": "integrated",
+    "result": "100000",
+    "counts": {
+      "successor_closures": 2030,
+      "neutral_bindings": 203,
+      "increments": 100000
+    }
+  }
+]

@@ -22,6 +22,7 @@ import Phpurs.TailInline as TailInline
 import Phpurs.CompactLoops as CompactLoops
 import Phpurs.EnumRegions as EnumRegions
 import Phpurs.ThunkFusion as ThunkFusion
+import Phpurs.PartialBindings as PartialBindings
 import Phpurs.NullableConstructors as Nullable
 import Phpurs.CopyCleanup as CopyCleanup
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
@@ -732,7 +733,8 @@ isSafeRecursiveInit currentModule group = go
 translate :: Array (Array String) -> BackendModule -> PhpFile
 translate imports input =
   let
-    fusion = ThunkFusion.optimize input
+    partialBindings = PartialBindings.optimize input
+    fusion = ThunkFusion.optimize partialBindings.module_
     regions = EnumRegions.optimize fusion.module_
     mod = regions.module_
     _startLog = if unwrap mod.name == "Phpurs.PhpAst" then unsafePerformEffect (Console.log "translate START") else unit
@@ -895,7 +897,7 @@ translate imports input =
         ) group.bindings
       ) tcoBindings)
 
-    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.union regions.privateNames fusion.privateNames)
+    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.unions [ regions.privateNames, fusion.privateNames, partialBindings.privateNames ])
     regionWorkers = Set.map (\ident -> modPrefix <> unwrap ident) regions.privateNames
     privateClasses = Set.map (\name ->
       "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") (unwrap mod.name) <> "\\" <> modPrefix

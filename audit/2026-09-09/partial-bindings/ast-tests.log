@@ -1,0 +1,19 @@
+branch-slots
+branch-slots: 5 generated PHP scenarios passed
+unary-callables
+unary-callables: captures, repeated calls, currying, overapplication, recursion, FFI callbacks and exceptions passed
+compact-loops
+compact-loops: public Closure, captures/curry/exceptions and 21 refusal scenarios passed
+tail-inline
+tail-inline: evaluation order, scopes, joins, partial/overapplication, PHP type checks, recursion and budgets passed
+enum-regions
+enum-regions: selection, boundaries, unknown types/calls, budgets, fresh names and PHP execution passed
+thunk-fusion
+thunk-fusion: structural proof, refusal boundaries, budgets, retained closures and 48 PHP arithmetic comparisons passed
+nullable-constructors
+nullable-constructors: typed domains, nested empties, public boundaries, names, budgets and generated PHP passed
+copy-cleanup
+Copy cleanup: terminal aliases, entry round-trips, loops, captures, boundaries and budgets passed
+partial-bindings
+partial-bindings: typed provenance, refusals, bounds and PHP semantics passed
+partial-bindings: typed provenance, refusals, bounds and PHP semantics passed

@@ -45,8 +45,9 @@ Priorité : dégrossir avec les gros gains démontrés, puis refaire le classeme
 5. **[R11 intégré](audit/2026-09-09/r11-integrated/report.md)** : fusion AST bornée des chaînes immédiatement forcées, corps uniforme et seed littéral prouvés. Lazy 0,783–0,828 ms contre 46,672–47,147 ms ; total 196,1–200,0 ms contre 238,7–243,7 ms, soit environ 18 % de moins. Les callbacks inconnus et fonctions conservées gardent leur chemin public. Le chrono du prototype manuel reste distinct.
 6. **[Représentation nullable privée de R10 intégrée](audit/2026-09-09/r10-null-integrated/report.md).** Après régénération : RBTree 146–148 ms contre 177–179 ms ; total 166–168 ms contre 196–199 ms, soit 15,39–15,71 % de moins, pic mémoire 26 contre 34 MiB. Layout et usages prouvés dans le TAST, abaissement structurel de l'AST PHP, sept suites AST et quinze fixtures PHP/JS vérifiées. Le prototype sur copies reste un relevé distinct.
 7. **[R12 intégré : copies et temporaires internes supprimés](audit/2026-09-09/copy-cleanup/report.md).** Après reconstruction complète : RBTree 110–114 ms contre 143–149 ms ; total 129–133 ms contre 162–169 ms, soit 20,60–21,07 % de moins. `ins` passe de 36 à 9 variables, avec les mêmes 2 583 932 nœuds construits. Huit suites AST et seize fixtures PHP/JS passent ; les vraies boucles conservent leurs mises à jour simultanées.
-8. **Prochaine priorité : reclasser les coûts après R12.** RBTree représente encore environ 85 % du total. Profiler ses coûts restants avant d'élargir la représentation ou les transformations ; comparer aussi Church en temps absolu, en tenant compte du fait que son natif remplace les closures par une boucle.
-9. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
+8. **[R13 intégré : applications partielles internes réutilisées](audit/2026-09-09/partial-bindings/report.md).** Church 2,088–2,170 ms contre 9,011–9,170 ms ; total 126,069–127,121 ms contre 130,428–132,246 ms avec le point d'entrée normal, soit 2,54–4,67 % de moins. Les 100 000 incréments restent ; les closures du successeur passent de 100 202 à 2 030. Neuf suites AST et dix-sept fixtures PHP/JS passent.
+9. **Prochaine priorité : reclasser après R13.** RBTree domine toujours. Pour Church, mesurer séparément le déplacement des applications partielles dans les compositions prouvées ; les gains restants sont plus petits. Garder le point d'entrée réel de la suite : précharger RBTree dans un harnais change ses performances malgré un PHP identique.
+10. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
 
@@ -274,6 +275,21 @@ Le TAST décrit explicitement `Color = R | B` et `Tree = E | T Color Tree Int Tr
 - [x] Mesurer sur le PHP régénéré dans quatre processus ABBA : total 128,915–133,057 ms contre 162,371–168,579 ms ; RBTree 109,602–113,499 ms contre 142,962–148,735 ms. Gain total 20,60–21,07 %, pic mémoire inchangé à 26 MiB.
 
 Seul RBTree change parmi 301 modules. `ins` passe de 36 à 9 variables locales ; les 2 283 976 appels et 2 583 932 nœuds restent identiques. La référence officielle du README reste 158,97 ms au total et 140,005 ms pour RBTree ; le natif historique est à 123,096 ms, sans nouvelle mesure native dans cette série. Les résultats nouveaux sont consignés ici et dans l'audit, sans réécrire le tableau partagé entre worktrees.
+
+## R13 — P1 — Réutiliser les applications partielles des chaînes internes
+
+**Intégré et mesuré** : [bilan et contrôles](audit/2026-09-09/partial-bindings/report.md). `PartialBindings` prouve les producteurs et leur consommation scalaire sur le TAST, puis transforme uniquement une copie interne du successeur : `\f -> \x -> f (n f x)` devient `\f -> let bound = n f in \x -> f (bound x)`.
+
+- [x] Vérifier empiriquement le TAST optimisé de Church et distinguer arité runtime et signature aplatie.
+- [x] Prouver le neutre, le constructeur récursif et les compositions fermées ; ne sélectionner que les appels entièrement consommés avec un callback entier littéral sans capture.
+- [x] Créer des copies internes à préfixe frais, déplacer uniquement le binding du successeur et conserver les fonctions publiques, les callbacks inconnus et les applications partielles qui fuient.
+- [x] Borner les parcours et le nombre de copies ; tester les refus, annotations, collisions, niveaux, exceptions, observations de pile et arithmétique sans raccourci.
+- [x] Reconstruire avec `bin/php/run -c` ; neuf suites AST, dix-sept fixtures PHP/JS et 42 cas du graphe Church passent.
+- [x] Vérifier 100 000 incréments inchangés ; 100 202 → 2 030 closures du successeur et 11 111 → 203 préparations du neutre.
+- [x] Comparer quatre processus ABBA via l'entrée réelle `App/main.mod.php` : Church 9,011–9,170 → 2,088–2,170 ms ; total 130,428–132,246 → 126,069–127,121 ms. Les séries avec préchargement de RBTree, défavorables au total, sont conservées et expliquées dans le bilan.
+- [ ] Micro-étape distincte : mesurer puis éventuellement réutiliser les applications partielles des compositions, avec la même preuve de provenance. Ne pas remplacer Church par une boucle arithmétique.
+
+Référence officielle actuelle : README principal, Church 8,794 ms, RBTree 107,566 ms, total 126,41 ms ; natif Church 0,105 ms avec une boucle différente. Les nouveaux résultats restent ici ; aucun README de benchmark n'est réécrit.
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

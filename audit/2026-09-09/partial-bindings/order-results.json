@@ -1,0 +1,250 @@
+[
+  {
+    "variant": "baseline",
+    "order": "tree-first",
+    "times_us": {
+      "RBTree": 118123,
+      "Church": 9727
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 27,
+      "application_time": 2.482806041,
+      "collector_time": 0.033396667,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134134196
+    }
+  },
+  {
+    "variant": "integrated",
+    "order": "tree-first",
+    "times_us": {
+      "RBTree": 114159,
+      "Church": 2200
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 27,
+      "application_time": 1.802494208,
+      "collector_time": 0.021571583,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134123956
+    }
+  },
+  {
+    "variant": "integrated",
+    "order": "tree-first",
+    "times_us": {
+      "RBTree": 113759,
+      "Church": 2213
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 27,
+      "application_time": 1.649311792,
+      "collector_time": 0.019363293,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134123956
+    }
+  },
+  {
+    "variant": "baseline",
+    "order": "tree-first",
+    "times_us": {
+      "RBTree": 116692,
+      "Church": 9603
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 27,
+      "application_time": 1.778384375,
+      "collector_time": 0.020121584,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134134196
+    }
+  },
+  {
+    "variant": "baseline",
+    "order": "church-first",
+    "times_us": {
+      "Church": 9627,
+      "RBTree": 116788
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 24,
+      "application_time": 1.771345625,
+      "collector_time": 0.01972846,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134124772
+    }
+  },
+  {
+    "variant": "integrated",
+    "order": "church-first",
+    "times_us": {
+      "Church": 2191,
+      "RBTree": 116860
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 24,
+      "application_time": 1.706774542,
+      "collector_time": 0.023751958,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134128676
+    }
+  },
+  {
+    "variant": "integrated",
+    "order": "church-first",
+    "times_us": {
+      "Church": 2159,
+      "RBTree": 113839
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 24,
+      "application_time": 1.666763708,
+      "collector_time": 0.020761584,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134128676
+    }
+  },
+  {
+    "variant": "baseline",
+    "order": "church-first",
+    "times_us": {
+      "Church": 9406,
+      "RBTree": 109469
+    },
+    "gc": {
+      "running": false,
+      "protected": false,
+      "full": false,
+      "runs": 10,
+      "collected": 0,
+      "threshold": 110001,
+      "buffer_size": 131072,
+      "roots": 24,
+      "application_time": 1.683692208,
+      "collector_time": 0.018442293,
+      "destructor_time": 0,
+      "free_time": 0
+    },
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134124772
+    }
+  }
+]

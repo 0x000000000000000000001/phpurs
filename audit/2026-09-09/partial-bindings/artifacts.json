@@ -1,0 +1,15 @@
+{
+  "module_count": 301,
+  "changed_modules": [
+    "Test.Church/index.php"
+  ],
+  "active_mismatches": [],
+  "public_Church_declarations_identical": true,
+  "source_sha256": {
+    "src/Phpurs/PartialBindings.purs": "d7ab355b78e7f8a2ee57b25703f2a89d34a7b2587a4d147a359b9790d691210b",
+    "src/Phpurs/CodeGen.purs": "62d6c86c9320273ecc9c9a359015c39672ea9228c9db7e0fc659478a3fbb2f4c",
+    "../../altbak.pub-phpurs/run/bak/php/output/Test.Church/index.php": "351d5c0461453d466fdc3d2c06f64175dec3fff42fe3abd3aea3eb01365d3a79",
+    "../../altbak.pub-phpurs/run/bak/php/output/Test.RBTree/index.php": "bc22594905438cfd291cf479b6c5a25ede4489d842d052bc45ac31eca32c0a3c"
+  },
+  "php_version": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)"
+}

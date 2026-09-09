@@ -1,0 +1,71 @@
+{
+  "input_sha256": "26fe16b045440ea0418c3d9c58a136bd0faf76eada8945b8668399304a715f04",
+  "module": [
+    "Test",
+    "LazyEvaluation"
+  ],
+  "builder_type": {
+    "args": [
+      {
+        "type": "Int"
+      },
+      {
+        "args": [
+          {
+            "type": "Unit"
+          }
+        ],
+        "ret": {
+          "type": "Int"
+        },
+        "type": "Func"
+      },
+      {
+        "type": "Unit"
+      }
+    ],
+    "ret": {
+      "type": "Int"
+    },
+    "type": "Func"
+  },
+  "consumer_type": {
+    "args": [
+      {
+        "type": "Int"
+      },
+      {
+        "type": "Int"
+      }
+    ],
+    "ret": {
+      "type": "Int"
+    },
+    "type": "Func"
+  },
+  "depth": 1000,
+  "seed_type": {
+    "args": [
+      {
+        "type": "Unit"
+      }
+    ],
+    "ret": {
+      "type": "Int"
+    },
+    "type": "Func"
+  },
+  "seed_literal": 0,
+  "forced_result_type": {
+    "type": "Int"
+  },
+  "refused_mutants": {
+    "negative_depth": true,
+    "dynamic_depth": true,
+    "unknown_seed": true,
+    "ffi_seed_body": true,
+    "missing_seed_type": true,
+    "unknown_result_type": true
+  },
+  "scope": "Pinned-program entry check only; generic body proof and backend integration still pending"
+}

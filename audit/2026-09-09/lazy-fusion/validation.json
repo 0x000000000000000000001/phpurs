@@ -1,0 +1,1 @@
+{"numeric_cases":30,"ordinary_observations_match":true,"events":["depth","seed argument","unit argument",["seed",true],["result",25]],"exception_calls":1,"unit_cases":[100,1,17],"public_repeated_forces":[21,26],"public_ffi":"function\/Function\/Closure","rejected_stack_callback":[37,19],"rejected_addition_shortcut":["d:9.223372036854776E+18;","d:9.223372036854778E+18;"]}

@@ -1,0 +1,10 @@
+{
+  "baseline": {
+    "bytes": 14130,
+    "sha256": "fb5cd4930b0f9943ef48ed4d6672ce9729a2583909a0512afc1161b91db4f2cd"
+  },
+  "fused": {
+    "bytes": 14923,
+    "sha256": "c1835d5467e099392c9775f22ab7ab850be1a833f21636edaee6fc62cfc099e7"
+  }
+}

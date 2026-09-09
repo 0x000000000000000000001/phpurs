@@ -21,6 +21,7 @@ import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import Phpurs.TailInline as TailInline
 import Phpurs.CompactLoops as CompactLoops
 import Phpurs.EnumRegions as EnumRegions
+import Phpurs.ThunkFusion as ThunkFusion
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Array.NonEmpty (toArray, fromArray)
@@ -729,7 +730,8 @@ isSafeRecursiveInit currentModule group = go
 translate :: Array (Array String) -> BackendModule -> PhpFile
 translate imports input =
   let
-    regions = EnumRegions.optimize input
+    fusion = ThunkFusion.optimize input
+    regions = EnumRegions.optimize fusion.module_
     mod = regions.module_
     _startLog = if unwrap mod.name == "Phpurs.PhpAst" then unsafePerformEffect (Console.log "translate START") else unit
     modNameStr = String.replaceAll (Pattern ".") (Replacement "_") (unwrap mod.name)
@@ -891,7 +893,7 @@ translate imports input =
         ) group.bindings
       ) tcoBindings)
 
-    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) regions.privateNames
+    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.union regions.privateNames fusion.privateNames)
     -- Every private call is proven saturated and its arguments are checked on
     -- the typed AST. Avoid adding dynamic scalar coercions that would prevent
     -- the existing terminal inliner from simplifying these internal workers.

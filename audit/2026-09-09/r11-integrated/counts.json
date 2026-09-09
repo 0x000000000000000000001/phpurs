@@ -1,0 +1,16 @@
+{
+  "baseline": {
+    "builders": 1000,
+    "nodes": 1000000,
+    "node_calls": 1000000,
+    "seeds": 1000,
+    "additions": 1000000
+  },
+  "integrated": {
+    "builders": 0,
+    "nodes": 0,
+    "node_calls": 0,
+    "seeds": 0,
+    "additions": 1000000
+  }
+}

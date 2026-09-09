@@ -1,0 +1,6 @@
+{
+  "src/Phpurs/ThunkFusion.purs": "197b1d74d0ae0750e53e8ca4ff8a9e46751a890ace83dd90547fa4ab278ca077",
+  "src/Phpurs/CodeGen.purs": "3d490a48c91204ed8db8f1711327689cf0eeb32392eb1a7da9941a00b8f911ab",
+  "tests/codegen/thunk-fusion.mjs": "dda8deabe316910b00b1ab3ab65640b6012faf9b4c6b5aebad9f817b12daaf17",
+  "tests/passing/ImmediateThunkFusion.purs": "eab06b6b8f775ae17c82e1b2084c6d5a82afc01d343be353a142a6fe536f0739"
+}

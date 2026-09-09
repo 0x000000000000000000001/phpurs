@@ -1,0 +1,14 @@
+ImmediateThunkFusion: passed
+InternalEnumRegion: passed
+CompactClosureLoops: passed
+FunctionFFIBoundary: passed
+TerminalInlining: passed
+UnaryCallableCaptures: passed
+BranchBindingSlots: passed
+RecursiveDictionaryInitialization: passed
+DeepCase: passed
+ShadowedRename: passed
+ShadowedTCOLet: passed
+TCOCase: passed
+TCOMutRec: passed
+CaseMultipleExpressions: passed

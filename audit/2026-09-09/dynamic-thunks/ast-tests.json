@@ -1,0 +1,47 @@
+[
+  {
+    "test": "branch-slots.mjs",
+    "exit_code": 0,
+    "stdout": "branch-slots: 5 generated PHP scenarios passed"
+  },
+  {
+    "test": "compact-loops.mjs",
+    "exit_code": 0,
+    "stdout": "compact-loops: public Closure, captures/curry/exceptions and 21 refusal scenarios passed"
+  },
+  {
+    "test": "copy-cleanup.mjs",
+    "exit_code": 0,
+    "stdout": "Copy cleanup: terminal aliases, entry round-trips, loops, captures, boundaries and budgets passed"
+  },
+  {
+    "test": "enum-regions.mjs",
+    "exit_code": 0,
+    "stdout": "enum-regions: selection, boundaries, unknown types/calls, budgets, fresh names and PHP execution passed"
+  },
+  {
+    "test": "nullable-constructors.mjs",
+    "exit_code": 0,
+    "stdout": "nullable-constructors: typed domains, nested empties, public boundaries, names, budgets and generated PHP passed"
+  },
+  {
+    "test": "partial-bindings.mjs",
+    "exit_code": 0,
+    "stdout": "partial-bindings: typed provenance, refusals, bounds and PHP semantics passed"
+  },
+  {
+    "test": "tail-inline.mjs",
+    "exit_code": 0,
+    "stdout": "tail-inline: evaluation order, scopes, joins, partial/overapplication, PHP type checks, recursion and budgets passed"
+  },
+  {
+    "test": "thunk-fusion.mjs",
+    "exit_code": 0,
+    "stdout": "thunk-fusion: static/dynamic proofs, negative fallback, refusal boundaries, budgets, retained closures and 48 PHP arithmetic comparisons passed"
+  },
+  {
+    "test": "unary-callables.mjs",
+    "exit_code": 0,
+    "stdout": "unary-callables: captures, repeated calls, currying, overapplication, recursion, FFI callbacks and exceptions passed"
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "depth": 1000,
+    "repeats": 1000,
+    "output": 1000000,
+    "best_ms": 46.835,
+    "median_ms": 47.1896455,
+    "samples_ms": [
+      46.835,
+      46.906541,
+      46.941416,
+      47.031708,
+      47.172208,
+      47.207083,
+      47.307917,
+      47.419542,
+      47.661875,
+      47.762708
+    ],
+    "php": "8.5.4",
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134204304
+    },
+    "variant": "baseline"
+  },
+  {
+    "depth": 1000,
+    "repeats": 1000,
+    "output": 1000000,
+    "best_ms": 0.819583,
+    "median_ms": 0.8269995000000001,
+    "samples_ms": [
+      0.819583,
+      0.82025,
+      0.823459,
+      0.826416,
+      0.826791,
+      0.827208,
+      0.83175,
+      0.833,
+      0.836417,
+      0.846292
+    ],
+    "php": "8.5.4",
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134209456
+    },
+    "variant": "integrated"
+  },
+  {
+    "depth": 1000,
+    "repeats": 1000,
+    "output": 1000000,
+    "best_ms": 0.850625,
+    "median_ms": 1.0000835000000001,
+    "samples_ms": [
+      0.850625,
+      0.850708,
+      0.854292,
+      0.971667,
+      0.994292,
+      1.005875,
+      1.006625,
+      1.008458,
+      1.02975,
+      1.033625
+    ],
+    "php": "8.5.4",
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134209456
+    },
+    "variant": "integrated"
+  },
+  {
+    "depth": 1000,
+    "repeats": 1000,
+    "output": 1000000,
+    "best_ms": 47.015166,
+    "median_ms": 47.518750499999996,
+    "samples_ms": [
+      47.015166,
+      47.043084,
+      47.050292,
+      47.172583,
+      47.407292,
+      47.630209,
+      47.63975,
+      47.70625,
+      47.755791,
+      47.815625
+    ],
+    "php": "8.5.4",
+    "jit": {
+      "enabled": true,
+      "on": true,
+      "kind": 5,
+      "opt_level": 5,
+      "opt_flags": 6,
+      "buffer_size": 134217712,
+      "buffer_free": 134204304
+    },
+    "variant": "baseline"
+  }
+]

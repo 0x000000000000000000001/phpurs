@@ -1,0 +1,11 @@
+{
+  "source": "/Users/0x1/Documents/htdocs/altbak.pub-phpurs/run/bak/php/output",
+  "baseline_bundle_sha256": "92d1cde2e754ba3c4c2e0708fdd0214bb9b9e278957a91162b5dd59d17a27d1c",
+  "phpurs_head": "be46bdfc0a557d1f6eadd8c81b1d81d3f3669c3b",
+  "pbo_head": "6e256c6a962c94d09ad2599c165231633bbfaa98",
+  "altbak_head": "d24e244eb084dabed8fb3c37878f2ec3464bbc81",
+  "baseline-phpurs.js_sha256": "66c5fd85c9598e903c2d184dfdd17787c2922311062884a376687ee0612f2e2a",
+  "integrated-phpurs.js_sha256": "26de464180110deafaa8d17c2c9648ef95157d4829b87327bf05fe234b00855d",
+  "baseline-thunk-fusion.js_sha256": "c135a0bd7ae532ae6a91a46d631d1e5a40f2bc513f53c43cba9f77bb366f93e4",
+  "scratch": "/private/tmp/phpurs-dynamic-thunks-aga0yrgt"
+}

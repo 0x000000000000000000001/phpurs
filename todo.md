@@ -46,7 +46,7 @@ Priorité : dégrossir avec les gros gains démontrés, puis refaire le classeme
 6. **[Représentation nullable privée de R10 intégrée](audit/2026-09-09/r10-null-integrated/report.md).** Après régénération : RBTree 146–148 ms contre 177–179 ms ; total 166–168 ms contre 196–199 ms, soit 15,39–15,71 % de moins, pic mémoire 26 contre 34 MiB. Layout et usages prouvés dans le TAST, abaissement structurel de l'AST PHP, sept suites AST et quinze fixtures PHP/JS vérifiées. Le prototype sur copies reste un relevé distinct.
 7. **[R12 intégré : copies et temporaires internes supprimés](audit/2026-09-09/copy-cleanup/report.md).** Après reconstruction complète : RBTree 110–114 ms contre 143–149 ms ; total 129–133 ms contre 162–169 ms, soit 20,60–21,07 % de moins. `ins` passe de 36 à 9 variables, avec les mêmes 2 583 932 nœuds construits. Huit suites AST et seize fixtures PHP/JS passent ; les vraies boucles conservent leurs mises à jour simultanées.
 8. **[R13 intégré : applications partielles internes réutilisées](audit/2026-09-09/partial-bindings/report.md).** Church 2,088–2,170 ms contre 9,011–9,170 ms ; total 126,069–127,121 ms contre 130,428–132,246 ms avec le point d'entrée normal, soit 2,54–4,67 % de moins. Les 100 000 incréments restent ; les closures du successeur passent de 100 202 à 2 030. Neuf suites AST et dix-sept fixtures PHP/JS passent.
-9. **Prochaine priorité : reclasser après R13.** RBTree domine toujours. Pour Church, mesurer séparément le déplacement des applications partielles dans les compositions prouvées ; les gains restants sont plus petits. Garder le point d'entrée réel de la suite : précharger RBTree dans un harnais change ses performances malgré un PHP identique.
+9. **[R14 intégré : profondeur dynamique des thunks](audit/2026-09-09/dynamic-thunks/report.md).** Une profondeur locale typée `Int` utilise un garde privé, puis le worker scalaire existant ; les valeurs négatives reprennent le constructeur original. Sur un programme PureScript à profondeur runtime, un million d'étapes passe de 47,19–47,52 à 0,827–1,000 ms en médiane. Les 302 fichiers PHP des benchmarks historiques sont identiques entre les deux passes. Prochaine micro-étape : étudier les seeds capturant seulement un scalaire pur, avant les chaînes State et les parcours de collections.
 10. B1–B4 : accélérer la boucle de développement, avec mesures de compilation séparées.
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
@@ -253,6 +253,8 @@ Le TAST décrit explicitement `Color = R | B` et `Tree = E | T Color Tree Int Tr
 
 ## R11 — P1 — Fusion des chaînes de thunks immédiatement forcées
 
+La couverture initiale décrite ici est élargie par [R14](#r14--p1--profondeur-dynamique-des-thunks) aux profondeurs locales dynamiques, avec garde et repli. Les seeds restent littéraux.
+
 **Intégré et mesuré après `bin/php/run -c`.** Lazy passe de 46,672–47,147 à 0,783–0,828 ms dans les 14 benchmarks ; le total de 238,733–243,727 à 196,111–200,029 ms, soit 17,85–17,93 % de moins dans les paires contemporaines. La baseline du README principal reste 237,07 ms / 44,911 ms ; le natif optimisé historique donne 200,45 ms / 0,368 ms. Voir le [bilan de l'intégration](audit/2026-09-09/r11-integrated/report.md). Le [prototype manuel](audit/2026-09-09/lazy-fusion/report.md), à 0,347–0,372 ms, reste une mesure distincte : l'intégration réutilise les boucles TCO génériques.
 
 - [x] Remplacer sur copie le seul appel `force (buildThunks 1000 (defer (\_ -> 0)))` par un worker scalaire exécutant les mêmes additions. Conserver la boucle extérieure, les fonctions publiques et les autres modules.
@@ -290,6 +292,20 @@ Seul RBTree change parmi 301 modules. `ins` passe de 36 à 9 variables locales ;
 - [ ] Micro-étape distincte : mesurer puis éventuellement réutiliser les applications partielles des compositions, avec la même preuve de provenance. Ne pas remplacer Church par une boucle arithmétique.
 
 Référence officielle actuelle : README principal, Church 8,794 ms, RBTree 107,566 ms, total 126,41 ms ; natif Church 0,105 ms avec une boucle différente. Les nouveaux résultats restent ici ; aucun README de benchmark n'est réécrit.
+
+## R14 — P1 — Profondeur dynamique des thunks
+
+**Intégré et mesuré après `bin/php/run -c`.** Le garde privé teste une fois `depth >= 0`, puis appelle le worker arithmétique existant. Une profondeur négative appelle le constructeur public original. Seules les lectures de variables locales typées `Int` sont ajoutées aux formes admises ; les expressions arbitraires, seeds inconnus/capturants et fonctions conservées restent exclus. Voir le [bilan](audit/2026-09-09/dynamic-thunks/report.md).
+
+- [x] Mesurer le potentiel sur des copies PHP avant de modifier le générateur.
+- [x] Accepter les profondeurs locales dynamiques sans dupliquer leur évaluation ; conserver les seeds littéraux et les preuves actuelles sur le pas.
+- [x] Générer au plus un garde par constructeur sélectionné, partager le worker avec les consommateurs statiques et conserver des noms privés frais et une passe idempotente.
+- [x] Vérifier le repli négatif avec une cible instrumentée, les refus, les collisions, les budgets et l'évaluation unique d'une profondeur issue du FFI.
+- [x] Faire passer neuf suites AST, six fixtures PHP/JS ciblées et la compilation complète `bin/php/run -c` avec les 14 résultats attendus.
+- [x] Mesurer quatre processus ABBA sur du PHP réellement généré depuis un programme PureScript : médianes 47,19–47,52 → 0,827–1,000 ms ; 1 000 000 allocations de thunks → 0, avec 1 000 000 additions conservées.
+- [x] Vérifier l'absence de modification des 302 fichiers PHP des benchmarks historiques entre les deux versions de la passe. Le total de validation vaut 120,61 ms ; la référence README reste 119,69 ms. Aucun gain du total historique n'est attribué à R14.
+- [ ] Prochaine micro-étape distincte : seed qui lit uniquement une capture scalaire pure. Revoir explicitement l'idempotence du garde, dont le seed de repli capture actuellement son paramètre.
+- [ ] Ensuite : mesurer une spécialisation des chaînes State immédiatement exécutées, puis la spécialisation des callbacks de parcours. Les prototypes de fusion complète ne constituent pas encore une intégration.
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

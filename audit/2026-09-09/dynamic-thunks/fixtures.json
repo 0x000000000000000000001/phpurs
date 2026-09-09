@@ -1,0 +1,32 @@
+[
+  {
+    "fixture": "ImmediateThunkFusion",
+    "php": "passed",
+    "js": "passed"
+  },
+  {
+    "fixture": "PartialBindings",
+    "php": "passed",
+    "js": "passed"
+  },
+  {
+    "fixture": "CompactClosureLoops",
+    "php": "passed",
+    "js": "passed"
+  },
+  {
+    "fixture": "FunctionFFIBoundary",
+    "php": "passed",
+    "js": "passed"
+  },
+  {
+    "fixture": "TerminalInlining",
+    "php": "passed",
+    "js": "passed"
+  },
+  {
+    "fixture": "CopyCleanup",
+    "php": "passed",
+    "js": "passed"
+  }
+]

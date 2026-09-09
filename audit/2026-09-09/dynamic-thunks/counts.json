@@ -1,0 +1,14 @@
+[
+  {
+    "output": 1000000,
+    "allocations": 1000000,
+    "additions": 0,
+    "variant": "baseline"
+  },
+  {
+    "output": 1000000,
+    "allocations": 0,
+    "additions": 1000000,
+    "variant": "integrated"
+  }
+]

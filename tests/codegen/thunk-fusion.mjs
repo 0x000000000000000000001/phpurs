@@ -50,13 +50,31 @@ assert.equal(size(optimize(mod(consume(0))).privateNames),1,'zero depth');
 const wrapped=typed(int,new S.TypeApp(consume(),int));
 assert.equal(size(optimize(mod(wrapped)).privateNames),1,'Typed and TypeApp wrappers');
 
+const dynamicEntry = (count=loc(0),initial=seed(11),name='dynamic',build='build') =>
+  new Tuple(name,typed(new T.Func([int],int),abs([0],typed(int,call(build,[count,initial,u()])))));
+const dynamicModule = (binding=dynamicEntry(),extras=[]) => ({...original,bindings:[
+  original.bindings[0],{recursive:false,bindings:[binding,...extras]},
+]});
+const dynamic=dynamicModule();
+const guarded=optimize(dynamic);
+assert.equal(size(guarded.privateNames),2,'dynamic local uses a guard and one scalar worker');
+assert.deepEqual(guarded.module_.bindings[0],dynamic.bindings[0],'dynamic public builder unchanged');
+assert.deepEqual(optimize(guarded.module_).module_,guarded.module_,'guarded fusion is idempotent');
+assert.equal(size(optimize(dynamicModule(dynamicEntry(typed(int,new S.TypeApp(loc(0),int))))).privateNames),2,'wrapped local depth');
+const shared=optimize(dynamicModule(dynamicEntry(),[entry(consume()),dynamicEntry(loc(0),seed(7),'second')]));
+assert.equal(size(shared.privateNames),2,'literal and dynamic consumers share the scalar worker and guard');
+
 const refuse = (reason,m) => {
   const result=optimize(m);
   assert.equal(size(result.privateNames),0,reason);
   assert.deepEqual(result.module_,m,reason+' preserves AST');
 };
 refuse('negative depth',mod(consume(-1)));
-refuse('dynamic depth',mod(call('build',[loc(0),seed(0),u()])));
+refuse('untyped local depth',dynamicModule(dynamicEntry(new S.Local(new Just('depth'),0))));
+refuse('wrong depth type',dynamicModule(dynamicEntry(typed(T.Number.value,new S.Local(new Just('depth'),0)))));
+refuse('dynamic depth expression',dynamicModule(dynamicEntry(op(S.OpAdd.value,loc(0),lit(1)))));
+refuse('foreign depth expression',dynamicModule(dynamicEntry(typed(int,app(new S.Var(q('depth','FFI')),[loc(0)])))));
+refuse('dynamic unknown seed',dynamicModule(dynamicEntry(loc(0),loc(4,thunk))));
 refuse('unknown callback',mod(consume(17,loc(4,thunk))));
 refuse('foreign seed body',mod(consume(17,typed(thunk,abs([2],typed(int,app(new S.Var(q('inspect','FFI')),[u()])))))));
 refuse('seed captures a scalar',mod(consume(17,typed(thunk,abs([2],loc(4))))));
@@ -99,8 +117,13 @@ const many=Array.from({length:workerBudget+1},(_,n)=>({recursive:true,bindings:[
 const uses=Array.from({length:workerBudget+1},(_,n)=>entry(consume(1,seed(0),u(),'b'+n),'e'+n));
 const capped=optimize({...original,bindings:[...many,{recursive:false,bindings:uses}]});
 assert.equal(size(capped.privateNames),workerBudget,'bounded number of workers');
+const dynamicUses=Array.from({length:workerBudget+1},(_,n)=>dynamicEntry(loc(0),seed(0),'d'+n,'b'+n));
+const dynamicCapped=optimize({...original,bindings:[...many,{recursive:false,bindings:dynamicUses}]});
+assert.equal(size(dynamicCapped.privateNames),workerBudget*2,'at most one guard per selected builder');
 const collision=mod(consume(),builder(),[{recursive:false,bindings:[entry(lit(0),'__PHPURS_FUSE_0_collision')]}]);
 assert.ok(JSON.stringify(optimize(collision).module_).includes('__phpurs_fuse_1_build'),'case-insensitive fresh prefix');
+const guardCollision=dynamicModule(dynamicEntry(),[entry(lit(0),'__PHPURS_FORCE_0_collision')]);
+assert.ok(JSON.stringify(optimize(guardCollision).module_).includes('__phpurs_force_1_build'),'case-insensitive fresh guard prefix');
 function rename(x) {
   if(typeof x==='string') return x.replaceAll('Demo','Elsewhere').replaceAll('build','assemble');
   if(Array.isArray(x)) return x.map(rename);
@@ -108,11 +131,53 @@ function rename(x) {
   return x;
 }
 assert.equal(size(optimize(rename(original)).privateNames),1,'no benchmark names');
+assert.equal(size(optimize(rename(dynamic)).privateNames),2,'dynamic fusion has no benchmark names');
 
 function render(m) {
   const file=translate([])(m);
   return printPhpFile(false)('')(file.arities)(file);
 }
+const dynamicPhp=render(dynamic);
+assert.ok(!/\$GLOBALS\['[^']*__phpurs_(?:fuse|force)_/.test(dynamicPhp),'no dynamic private globals');
+assert.match(dynamicPhp,/__phpurs_force_0_build/,'guard emitted');
+assert.match(dynamicPhp,/>= 0/,'runtime non-negative guard');
+assert.match(dynamicPhp,/goto tco_loop_[^;]*fuse/,'dynamic worker remains a loop');
+const dynamicRun=spawnSync('php',[],{input:dynamicPhp+`
+$GLOBALS['Data_Unit_unit']=null;
+foreach ([0,1,2,17,127,1000] as $depth) {
+  $actual=\\Demo\\majDemo_dynamic($depth);
+  $expected=\\Demo\\majDemo_build($depth,fn($u)=>11,null);
+  if(serialize($actual)!==serialize($expected)) throw new \\Exception('dynamic parity');
+}
+echo "Done\\n";
+`,encoding:'utf8'});
+assert.equal(dynamicRun.status,0,dynamicRun.stdout+dynamicRun.stderr);
+assert.equal(dynamicRun.stdout,'Done\n');
+
+// A real negative countdown never terminates. Instrument only the guard's
+// fallback target so the test can check argument forwarding and route selection.
+const guardStart=dynamicPhp.indexOf('function majDemo___phpurs_force_0_build(');
+assert.ok(guardStart>=0);
+const instrumented=dynamicPhp.slice(0,guardStart)+dynamicPhp.slice(guardStart).replaceAll('\\Demo\\majDemo_build(', '\\Demo\\probe_negative(');
+assert.notEqual(instrumented,dynamicPhp,'fallback call instrumented');
+const negativeRun=spawnSync('php',[],{input:instrumented+`
+$GLOBALS['Data_Unit_unit']=null;
+$GLOBALS['fallbacks']=0;
+function probe_negative($depth,$seed,$input) {
+  ++$GLOBALS['fallbacks'];
+  if($depth!==-7 || $seed($input)!==11 || $input!==null) throw new \\Exception('fallback arguments');
+  throw $GLOBALS['sentinel'];
+}
+$GLOBALS['sentinel']=new \\RuntimeException('negative route');
+$caught=false;
+try { \\Demo\\majDemo_dynamic(-7); }
+catch (\\RuntimeException $e) { $caught=true; if($e!==$GLOBALS['sentinel']) throw new \\Exception('exception identity'); }
+if(!$caught || $GLOBALS['fallbacks']!==1) throw new \\Exception('missing fallback');
+if(\\Demo\\majDemo_dynamic(0)!==11 || \\Demo\\majDemo_dynamic(17)!==28 || $GLOBALS['fallbacks']!==1) throw new \\Exception('nonnegative path');
+echo "Done\\n";
+`,encoding:'utf8'});
+assert.equal(negativeRun.status,0,negativeRun.stdout+negativeRun.stderr);
+assert.equal(negativeRun.stdout,'Done\n');
 const callbackEntry = new Tuple('observe',typed(new T.Func([thunk],int),abs([0],typed(int,consume(17,loc(0,thunk))))));
 const php=render(mod(consume(),builder(),[{recursive:false,bindings:[callbackEntry]}]));
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_fuse_/.test(php),'no private globals');
@@ -168,4 +233,4 @@ for (const [operation,amount,seeds,depths] of [
   assert.equal(result.status,0,result.stdout+result.stderr);
   assert.equal(result.stdout,'Done\n');
 }
-console.log('thunk-fusion: structural proof, refusal boundaries, budgets, retained closures and 48 PHP arithmetic comparisons passed');
+console.log('thunk-fusion: static/dynamic proofs, negative fallback, refusal boundaries, budgets, retained closures and 48 PHP arithmetic comparisons passed');

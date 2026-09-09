@@ -11,6 +11,8 @@ foreign import opaque :: forall a. a -> a
 foreign import countedSeed :: Unit -> Int
 foreign import readCalls :: Effect Int
 foreign import invoke :: (Unit -> Int) -> Int
+foreign import countedDepth :: Int -> Int
+foreign import readDepthCalls :: Effect Int
 
 newtype Deferred a = Deferred (Unit -> a)
 
@@ -24,6 +26,9 @@ grow n acc = grow (n - 1) (Deferred (\_ -> force acc + 1))
 consume :: Unit -> Int
 consume _ = force (grow 17 (Deferred (\_ -> 11)))
 
+consumeDepth :: Int -> Int
+consumeDepth depth = force (grow depth (Deferred (\_ -> 11)))
+
 main :: Effect Unit
 main = do
   assert' "immediate closed chain" (consume (opaque unit) == 28)
@@ -33,6 +38,13 @@ main = do
     dynamic = opaque 17
   assert' "unknown seed" (force (grow 17 (Deferred unknown)) == 28)
   assert' "unknown depth" (force (grow dynamic (Deferred (\_ -> 11))) == 28)
+  let checkDepth = opaque consumeDepth
+  assert' "dynamic zero" (checkDepth (opaque 0) == 11)
+  assert' "dynamic one" (checkDepth (opaque 1) == 12)
+  assert' "dynamic long chain" (checkDepth (opaque 1000) == 1011)
+  assert' "evaluated depth" (checkDepth (countedDepth 17) == 28)
+  depthCalls <- readDepthCalls
+  assert' "depth evaluated once" (depthCalls == 1)
   let retained = opaque (grow 17 (Deferred countedSeed))
   before <- readCalls
   assert' "construction stays lazy" (before == 0)

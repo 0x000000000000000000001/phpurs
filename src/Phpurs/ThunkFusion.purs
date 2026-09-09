@@ -163,38 +163,69 @@ makeWorker name step = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
   value = typed Int (NeutralExpr (Local (Just (Ident "value")) (Level 1)))
   binary op left right = NeutralExpr (PrimOp (Op2 op left right))
 
-type ScanState = { fuel :: Int, workers :: Set Ident }
+-- Guard once at the consumer boundary, leaving the arithmetic worker intact.
+-- The fallback still constructs the original lazy chain. Its seed only reads
+-- the literal scalar passed by the selected consumer; unknown seeds never enter
+-- this path. A captured seed also keeps this wrapper out of subsequent scans.
+makeGuard :: Qualified Ident -> Qualified Ident -> NeutralExpr
+makeGuard builder worker = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
+  (NEA.cons' (Tuple (Just (Ident "depth")) (Level 0)) [ Tuple (Just (Ident "seed")) (Level 1) ])
+  body
+  where
+  body = typed Int $ NeutralExpr $ Branch
+    (NEA.singleton (Pair nonNegative (typed Int (call worker depth seed))))
+    (typed Int (NeutralExpr (App (NeutralExpr (Var builder)) (NEA.cons' depth [ initial, unitInput ]))))
+  depth = typed Int (NeutralExpr (Local (Just (Ident "depth")) (Level 0)))
+  seed = typed Int (NeutralExpr (Local (Just (Ident "seed")) (Level 1)))
+  nonNegative = typed Boolean (NeutralExpr (PrimOp (Op2 (OpIntOrd OpGte) depth (int 0))))
+  initial = typed thunkType (NeutralExpr (Abs (NEA.singleton (Tuple Nothing (Level 2))) seed))
+  unitInput = typed Unit (NeutralExpr (Var (Qualified (Just (ModuleName "Data.Unit")) (Ident "unit"))))
 
-scan :: ModuleName -> String -> Map Ident Step -> NeutralExpr -> State ScanState NeutralExpr
-scan moduleName prefix builders expr@(NeutralExpr syntax) = do
+type ScanState = { fuel :: Int, workers :: Set Ident, guards :: Set Ident }
+
+scan :: ModuleName -> String -> String -> Map Ident Step -> NeutralExpr -> State ScanState NeutralExpr
+scan moduleName prefix guardPrefix builders expr@(NeutralExpr syntax) = do
   state <- get
   if state.fuel <= 0 then pure expr
   else do
     modify_ (\s -> s { fuel = s.fuel - 1 })
     case candidate of
-      Just { ident, depth, seed } | Set.member ident state.workers || Set.size state.workers < workerBudget -> do
-        modify_ (\s -> s { workers = Set.insert ident s.workers })
-        pure (typed Int (call (Qualified (Just moduleName) (Ident (prefix <> unwrap ident))) (int depth) (int seed)))
-      _ -> NeutralExpr <$> traverse (scan moduleName prefix builders) syntax
+      Just { ident, count, seed, dynamic } | Set.member ident state.workers || Set.size state.workers < workerBudget -> do
+        modify_ (\s -> s
+          { workers = Set.insert ident s.workers
+          , guards = if dynamic then Set.insert ident s.guards else s.guards
+          })
+        let selectedPrefix = if dynamic then guardPrefix else prefix
+        pure (typed Int (call (Qualified (Just moduleName) (Ident (selectedPrefix <> unwrap ident))) count (int seed)))
+      _ -> NeutralExpr <$> traverse (scan moduleName prefix guardPrefix builders) syntax
   where
   candidate = case syntax of
     App fn args -> case peel fn, NEA.toArray args of
       Var (Qualified (Just mn) ident), [ count, initial, input ] | mn == moduleName -> do
         _ <- Map.lookup ident builders
-        depth <- integer count
-        require (hasType Int count && depth >= 0 && pureUnit input)
+        require (hasType Int count && pureUnit input)
+        dynamic <- case integer count of
+          Just depth -> false <$ require (depth >= 0)
+          -- Only read an already evaluated local. Expressions and foreign
+          -- calls require a separate evaluation-order/purity proof.
+          Nothing -> case peel count of
+            Local _ _ -> Just true
+            _ -> Nothing
         seed <- seedValue initial
-        pure { ident, depth, seed }
+        pure { ident, count, seed, dynamic }
       _, _ -> Nothing
     _ -> Nothing
 
 freshPrefix :: BackendModule -> String
-freshPrefix mod = go 0
+freshPrefix = freshPrefixFor "__phpurs_fuse_"
+
+freshPrefixFor :: String -> BackendModule -> String
+freshPrefixFor family mod = go 0
   where
   names = map (String.toLower <<< unwrap) (A.concatMap (map (\(Tuple k _) -> k) <<< _.bindings) mod.bindings)
     <> map String.toLower (A.concatMap (map _.name <<< _.constructors) mod.dataDecls)
     <> map (String.toLower <<< unwrap) (Set.toUnfoldable (Map.keys mod.foreign) :: Array Ident)
-  go n = let prefix = "__phpurs_fuse_" <> show n <> "_"
+  go n = let prefix = family <> show n <> "_"
     in if A.any (String.contains (Pattern prefix)) names then go (n + 1) else prefix
 
 optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident }
@@ -213,15 +244,26 @@ fuseModule :: BackendModule -> Map Ident Step -> { module_ :: BackendModule, pri
 fuseModule mod builders =
   let
     prefix = freshPrefix mod
+    guardPrefix = freshPrefixFor "__phpurs_force_" mod
     Tuple bindings selected = runState
       (traverse (\g -> do
-        bs <- traverse (\(Tuple k e) -> Tuple k <$> if bounded 8192 e then scan mod.name prefix builders e else pure e) g.bindings
+        bs <- traverse (\(Tuple k e) -> Tuple k <$> if bounded 8192 e then scan mod.name prefix guardPrefix builders e else pure e) g.bindings
         pure (g { bindings = bs })) mod.bindings)
-      { fuel: 32768, workers: Set.empty }
+      { fuel: 32768, workers: Set.empty, guards: Set.empty }
     renamed ident = Ident (prefix <> unwrap ident)
     copies = A.mapMaybe (\ident -> do
       step <- Map.lookup ident builders
       let name = renamed ident
       pure { recursive: true, bindings: [ Tuple name (makeWorker (Qualified (Just mod.name) name) step) ] })
       (Set.toUnfoldable selected.workers :: Array Ident)
-  in { module_: mod { bindings = bindings <> copies }, privateNames: Set.map renamed selected.workers }
+    guarded ident = Ident (guardPrefix <> unwrap ident)
+    guards = map (\ident ->
+      { recursive: false
+      , bindings: [ Tuple (guarded ident) (makeGuard
+          (Qualified (Just mod.name) ident)
+          (Qualified (Just mod.name) (renamed ident))) ]
+      }) (Set.toUnfoldable selected.guards :: Array Ident)
+  in
+    { module_: mod { bindings = bindings <> copies <> guards }
+    , privateNames: Set.union (Set.map renamed selected.workers) (Set.map guarded selected.guards)
+    }

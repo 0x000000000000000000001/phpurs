@@ -1,22 +1,28 @@
 # phpurs
 
 <img height="160" alt="phpurs project illustration" src="https://github.com/user-attachments/assets/461687af-046a-4b23-a625-ec084710782b" />
-<br />
-<br />
 
-_Experimental PureScript-to-PHP backend under active development. Follow the [development log](https://discourse.purescript.org/t/leveraging-70-of-the-web-a-php-backend-for-purescript)._
+_Experimental PureScript-to-PHP backend under active development. Follow the [development log](https://discourse.purescript.org/t/leveraging-70-of-the-web-a-php-backend-for-purescript/5340)._
 
 `phpurs` compiles PureScript to **PHP 8.4+**, combining PureScript's type system and pure business logic with PHP's hosting options and library ecosystem. The compiler is written in PureScript and uses a TAST-aware fork of [Arista's purescript-backend-optimizer](https://github.com/aristanetworks/purescript-backend-optimizer).
 
 It consumes the enriched **Typed CoreFn (TAST / `tcorefn`)** produced by the [custom PureScript compiler](https://github.com/0x000000000000000000001/purescript). In the current toolchain, this typed payload is stored in `output/<Module>/corefn.json`. The filename does **not** mean ordinary upstream CoreFn: expression types, ADT layouts (`dataDecls`), class declarations (`classDecls`) and type applications remain available to the backend.
 
-_Thanks to PHP Weekly for [featuring the project](https://phpweekly.com/archive/2026-07-24.html)!_
+_Thanks to PHP Weekly for [featuring the project](https://www.phpweekly.com/archive/2026-07-24.html)!_
 
-## Why PHP?
+## Features
 
 PHP is useful when deployment already revolves around `.php` files, Composer packages and an existing web server: shared hosting, a small VPS, or an established PHP application. `phpurs` lets PureScript business logic join that environment while retaining PureScript's static checking, algebraic data types and functional abstractions.
 
 Generated applications run on PHP; Node.js and the PureScript toolchain are needed to build them. Native PHP libraries can be called through `.php` FFI, and `Aff` uses PHP Fibers with the Revolt event loop for concurrent I/O. Deployment still needs the PHP version, extensions and Composer dependencies used by the application.
+
+- **Optimization before PHP generation.** The shared optimizer handles inlining, uncurrying, constant folding and specialization. PHP lowering adds tail-call transformations and passes for partial bindings, thunk fusion, compact loops, copy cleanup and terminal inlining.
+- **Representations informed by types.** TAST declaration layouts drive ADT constructor classes, and known scalar types provide PHP signatures where supported. Eligible internal ADT regions can use scalar or nullable representations; public constructors and general higher-order code retain the representations they need.
+- **PHP FFI with generated wrappers.** Define imports through a module's `$exports` array. The backend derives calling wrappers from their PureScript types, including support for partial application. The FFI author supplies the PHP implementation and respects the effect and callback conventions.
+- **Application integration.** Generated entrypoints load reachable modules in dependency order. Optional bundles combine modules, and Composer dependency collection helps connect PHP library requirements to an application's Composer project.
+- **Cooperative I/O through Aff.** The sibling `phpurs-aff` library implements Fibers using Revolt. Non-blocking PHP APIs can suspend and resume computations within one process; synchronous I/O and CPU work still occupy the executing thread.
+
+The compiler is written in PureScript with JavaScript FFI for host operations and runs on Node.js. Its optimization passes are covered by [focused regression fixtures](tests/codegen); performance depends on the program and runtime configuration.
 
 ## Benchmarks
 
@@ -24,33 +30,13 @@ The reference results live in [altbak.pub's PHP table](https://github.com/0x0000
 
 Use those documented baselines for performance comparisons, preserving the workload, PHP version, JIT/OPcache settings and measurement method. Older development timings are historical observations, not a claim about every program or the current compiler. The repository also retains [a detailed optimization audit](audit/2026-09-08/r10-integrated/report.md) with generated-code checks and controlled measurements.
 
-## Why a new PHP backend?
+## Getting started
 
-The ecosystem has evolved drastically since the early days of transpiling functional languages to PHP. This evolution unlocked new architectural paradigms that make building a completely new PHP backend highly relevant today:
-
-### 1. The optimizer & bootstrapping
-While previous native compilers were often written in Haskell and parsed raw `CoreFn`, `phpurs` is written 100% in PureScript. It uses a TAST-aware fork of [Arista's purescript-backend-optimizer](https://github.com/aristanetworks/purescript-backend-optimizer). This allows the compiler to instantly benefit from classical optimizations such as aggressive uncurrying, constant folding, dead code elimination, dictionary specialization, and Tail Call Optimization (TCO) at the AST level before PHP generation. The compiler itself runs on Node.js, ensuring it remains fully accessible to the PureScript ecosystem.
-
-### 2. A refined memory layout for PHP
-`phpurs` implements PHP-specific optimizations: partial-binding elimination, thunk fusion, compact loops, terminal inlining and scalar representations of eligible internal ADT regions. Constructor classes are generated from exact layouts (`dataDecls`) instead of relying on guessed structures. This heavily reduces the number of closures and objects created at runtime, bypassing PHP's traditional garbage collection bottlenecks in tight loops.
-
-### 3. TAST: Breaking the performance ceiling
-To reach high execution speeds, `phpurs` consumes an enriched `tcorefn.json` (Typed CoreFn). This custom format preserves the deep structural typing information and the exact memory layout of ADTs that standard `corefn` strips away. Combined with PHP 8.4+ scalar parameter and return type hints where supported, this allows the compiler to generate idiomatic, well-typed PHP code end-to-end, unlocking significant performance gains.
-
-### 4. Zero boilerplate FFI
-`phpurs` provides native PHP exports, with wrappers automatically derived from their PureScript types. The compiler embeds your `.php` FFI snippets inside module-local closures and generates calling wrappers that seamlessly support fully applied calls and partial application, making FFI development feel native and straightforward.
-
-### 5. Up-to-date with modern PureScript & PHP
-`phpurs` aims to be fully aligned with the current v0.15+ PureScript ecosystem and takes full advantage of modern PHP 8.4+. It automatically handles application entrypoints, dependency-ordered loading, optional bundles, and generates `composer.json` requirements for seamless Composer autoloading integration.
-
-### 6. Cooperative concurrency behind Aff
-`phpurs-aff` supplies the Fiber implementation using the native PHP `Revolt` event loop. While PHP remains single-threaded, Fibers provide true cooperative concurrency for I/O operations, meaning your asynchronous PureScript code fits perfectly within PHP's event-driven paradigms without blocking the thread un-necessarily.
-
-## Prerequisites
+### Prerequisites
 
 For development and application compilation, provide:
 
-- Node.js and npm to build and execute the backend's JavaScript bundle.
+- Node.js and npm to build and execute the backend's JavaScript bundle. The bundled esbuild dependency requires Node.js 18 or newer; your Spago version may require a newer Node.js.
 - Spago on `PATH`; the compiler's [spago.yaml](spago.yaml) uses registry package set `77.10.1`. Spago is not installed by this repository's `package.json`.
 - The TAST-capable `purs` fork for programs targeting PHP. Rebuild their output with that compiler when switching from upstream PureScript.
 - PHP **8.4+** as the target documented here, and Composer for FFI packages with PHP dependencies. Fibers themselves were introduced in PHP 8.1.
@@ -58,7 +44,7 @@ For development and application compilation, provide:
 
 The compiler itself runs on Node.js and uses ordinary JavaScript FFI libraries. The applications it emits use `phpurs-*` overrides. Keep those two dependency configurations separate.
 
-## Build the compiler from source
+### Build the backend
 
 The current source checkout is configured for local development: `spago.yaml` resolves `backend-optimizer` from `../../purescript-backend-optimizer-phpurs`. Arrange a compatible checkout of the [optimizer fork](https://github.com/0x000000000000000000001/purescript-backend-optimizer) at that path, or deliberately update the dependency to the matching location before building.
 
@@ -87,15 +73,17 @@ The build runs `spago build` and bundles `Main` into `bin/phpurs.js`. The `bin/p
 
 The npm package declares a `phpurs` executable and a build-on-install hook. With the current local optimizer dependency, installing directly from GitHub is not a self-contained setup: the optimizer path must also resolve in the installation directory. The source layout above makes that dependency explicit.
 
-## How to use
+### Compile and run an application
 
-### Configure an application
+The [starter's library overrides](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) provide a larger dependency example. Use the compiler setup and entrypoint commands in this README: the starter's npm scripts still refer to the older `output/main.php` layout. Existing projects can retain their registry package set and replace libraries that contain JavaScript FFI with their PHP equivalents, including transitive dependencies.
 
-Use the [starter template](https://github.com/0x000000000000000000001/phpurs-starter) as a reference for the library overrides. Existing projects can retain their registry package set and replace libraries that contain JavaScript FFI with their PHP equivalents, including transitive dependencies.
-
-For example, merge the following into the application's `spago.yaml`:
+For a minimal console application, create this `spago.yaml` (or merge its settings into an existing project):
 
 ```yaml
+package:
+  name: hello-php
+  dependencies: [prelude, effect, console]
+
 workspace:
   packageSet:
     registry: 77.10.1
@@ -104,24 +92,50 @@ workspace:
       git: "https://github.com/0x000000000000000000001/phpurs-prelude.git"
       ref: "master"
       dependencies: []
-    # Add every PHP FFI override required by your dependency graph.
-    # The starter's spago.yaml gives a larger example.
+    effect:
+      git: "https://github.com/0x000000000000000000001/phpurs-effect.git"
+      ref: "master"
+      dependencies: [prelude]
+    console:
+      git: "https://github.com/0x000000000000000000001/phpurs-console.git"
+      ref: "master"
+      dependencies: [effect, prelude]
   backend:
     cmd: phpurs
     args: ["--main", "Main", "--autoload-path", "vendor/autoload.php"]
 ```
 
-The example assumes the prepared `phpurs` launcher is on `PATH`. Setting only `prelude` is not sufficient for programs using `effect`, `console`, `aff`, or other packages with FFI. Pure PureScript packages without JavaScript FFI can continue to come from the registry.
+The example assumes the prepared `phpurs` launcher is on `PATH`. Add the PHP FFI overrides needed by any further dependencies, such as `aff`. Packages written entirely in PureScript can continue to come from the registry. Keep the application's `spago.lock` under version control to record the resolved Git revisions.
 
-### Build and run
+Create `src/Main.purs`:
+
+```purescript
+module Main where
+
+import Prelude
+import Effect (Effect)
+import Effect.Console (log)
+
+main :: Effect Unit
+main = log "Hello, PHP from PureScript!"
+```
+
+#### Build and run
 
 From the application root, with the TAST compiler on `PATH`:
 
 ```bash
+export PATH="/absolute/path/to/tast-purs-directory:$PATH"
 spago build
 # Install any required Composer dependencies as described below.
 php output/Main/main.mod.php
+# Hello, PHP from PureScript!
 ```
+
+Check that the generated `output/Main/corefn.json` includes `dataDecls` and
+`classDecls`, plus `typeTable` with the current fork. If they are absent, select
+the correct compiler and rebuild in a fresh output directory. A matching version
+number alone does not prove TAST support.
 
 The backend writes:
 
@@ -135,12 +149,12 @@ The backend writes:
 
 Without `--main`, an entrypoint is written for every module exporting `main`. To target `App.Main`, set `args: ["--main", "App.Main"]` and run `php output/App.Main/main.mod.php`.
 
-### Compiler configuration options
+### Compiler options
 
-Arguments can be stored in `workspace.backend.args` or supplied for a build:
+Set the executable in `workspace.backend.cmd`. Arguments can be stored in `workspace.backend.args` or replaced for one build with `--backend-args`:
 
 ```bash
-spago build --backend phpurs --backend-args "--main App.Main --bundle --autoload-path vendor/autoload.php"
+spago build --backend-args "--main App.Main --bundle --autoload-path vendor/autoload.php"
 php output/App.Main/main.bundle.php
 ```
 
@@ -154,7 +168,40 @@ php output/App.Main/main.bundle.php
 
 Use the default `output` layout for bundling and Composer integration: per-entrypoint bundle paths and Composer discovery/output currently still refer to `output`, even when `--output` changes the module directory. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
 
-## PHP dependencies
+## Foreign function interface
+
+Place `Example.php` beside `Example.purs`. Populate `$exports` with keys matching the `foreign import` names. The compiler embeds that file inside a module-local closure and generates the calling wrappers from the TAST types.
+
+```purescript
+module Example where
+
+import Prelude (Unit)
+import Effect (Effect)
+
+foreign import add :: Int -> Int -> Int
+foreign import printLine :: String -> Effect Unit
+```
+
+```php
+<?php
+$exports['add'] = function(int $a, int $b): int {
+    return $a + $b;
+};
+
+$exports['printLine'] = function(string $message) {
+    return function() use ($message) {
+        echo $message . "\n";
+    };
+};
+```
+
+`add` accepts both arguments directly. The wrapper handles PureScript partial application. `printLine` returns a zero-argument closure so its side effect occurs when the `Effect` runs, not when its argument is supplied. Preserve that delay when writing effectful imports; callback and ADT representations should follow the existing `phpurs-*` implementations.
+
+Useful examples include the sibling `phpurs-console/src/Effect/Console.php` and the local [function/FFI boundary fixture](tests/passing/FunctionFFIBoundary.php). The latter covers captured closures, callbacks stored in records and effectful retention. Records use PHP object properties, and generated public ADT constructors expose a tag and constructor fields.
+
+Check every imported symbol: the current compiler can generate placeholder callables for missing FFI files or exports instead of issuing a hard error. Successful code generation alone does not validate an FFI port.
+
+### Composer dependencies
 
 Manage application dependencies in your root `composer.json`. FFI packages may have their own Composer requirements; for example, `phpurs-aff` requires `revolt/event-loop`.
 
@@ -188,39 +235,7 @@ composer install --no-dev --optimize-autoloader
 
 If the root Composer project is in a subdirectory, adjust the path repository's `url` relative to that `composer.json`, and set `--autoload-path` accordingly. Dependency discovery does not install Composer packages or guarantee that every custom FFI directory is scanned; declare missing requirements in the application explicitly.
 
-## Writing PHP FFI
-
-Place `Example.php` beside `Example.purs`. Populate `$exports` with keys matching the `foreign import` names. The compiler embeds that file inside a module-local closure and generates the calling wrappers from the TAST types; there is no separate WASM parser to rebuild for PHP.
-
-```purescript
-module Example where
-
-import Effect (Effect)
-
-foreign import add :: Int -> Int -> Int
-foreign import printLine :: String -> Effect Unit
-```
-
-```php
-<?php
-$exports['add'] = function(int $a, int $b): int {
-    return $a + $b;
-};
-
-$exports['printLine'] = function(string $message) {
-    return function() use ($message) {
-        echo $message . "\n";
-    };
-};
-```
-
-`add` accepts both arguments directly. The wrapper handles PureScript partial application. `printLine` returns a zero-argument closure so its side effect occurs when the `Effect` runs, not when its argument is supplied. Preserve that delay when writing effectful imports; callback and ADT representations should follow the existing `phpurs-*` implementations.
-
-Useful examples include the sibling `phpurs-console/src/Effect/Console.php` and the local [function/FFI boundary fixture](tests/passing/FunctionFFIBoundary.php). The latter covers captured closures, callbacks stored in records and effectful retention. Records use PHP object properties, and generated public ADT constructors expose a tag and constructor fields.
-
-Check every imported symbol: the current compiler can generate placeholder callables for missing FFI files or exports instead of issuing a hard error. Successful code generation alone does not validate an FFI port.
-
-## Asynchronous I/O and concurrency (Aff)
+### Asynchronous I/O and concurrency (Aff)
 
 The `phpurs-aff` implementation uses native PHP Fibers and the Revolt event loop. Fibers suspend while waiting and are resumed through the runtime's callbacks. This provides cooperative concurrency within a PHP process; CPU-bound code does not automatically run on multiple cores.
 
@@ -228,7 +243,7 @@ Use asynchronous PHP APIs for I/O. A synchronous database query or `file_get_con
 
 Install the Aff package's Composer dependencies and load the autoloader before running the application. Generated entrypoints contain a Revolt event-loop hook; Aff launchers also manage runtime progress. Existing sibling package implementations provide the contracts for cancellation, callbacks and supervision.
 
-## Local development & testing
+## Development and testing
 
 ### Library checkouts
 
@@ -275,21 +290,6 @@ nix develop
 
 It currently selects upstream PureScript `0.15.15`. That can serve as a host compiler, but application generation still needs the TAST fork, and the local optimizer dependency must resolve. Treat the flake as development tooling; the file alone does not establish a portable, fully pinned build of this local checkout.
 
-## Current status & milestones
-
-Implemented capabilities and remaining validation work:
-
-- [x] PureScript compiler integrated with the TAST-aware optimizer fork.
-- [x] Typed scalar signatures and ADT constructor layouts in generated PHP.
-- [x] Native FFI wrappers, automatic entrypoints, optional bundling and Composer dependency collection.
-- [x] Fiber/Revolt Aff implementation in the sibling FFI ecosystem.
-- [x] Vendored language fixtures and focused regression tests for compiler optimizations and FFI boundaries.
-- [x] Recorded real-application unit and integration validation involving Postgres, S3, RabbitMQ and nested Aff in the project's development history.
-- [ ] Complete and maintain package-by-package validation of the `phpurs-*` ecosystem.
-- [ ] Make installation independent of local optimizer paths and finish cleanup.
-
-Earlier development reports recorded a passing language suite and successful real-application tests. Those results are historical, not a fresh certification of this checkout. The current [test runner](bin/test) explicitly skips several newer language features, the 32-bit integer-overflow fixture (`2136`) and the cyclic-initialization fixture (`4179`). PHP integers follow the platform's integer width, typically 64 bits. Check the runner's exclusions when reporting coverage rather than claiming unrestricted upstream test compatibility.
-
 ## Architecture
 
 1. **Typed input:** the optimizer fork's `App` loader reads and sorts the enriched `corefn.json` modules. TAST preserves structural types, declaration layouts and polymorphic instantiations.
@@ -298,7 +298,22 @@ Earlier development reports recorded a passing language suite and successful rea
 4. **FFI and printing:** [GenNativeForeign](src/GenNativeForeign.purs) generates typed calling wrappers; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source.
 5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [ComposerMerge](src/ComposerMerge.js) collects PHP package requirements.
 
-Spago provides incremental compilation of the backend itself. The current `Main` does not call the imported optimizer cache helpers, so a persistent `.phpurs-cache.json` optimization cache is not part of the active generation path. Rebuild after compiler changes instead of relying on the old cache description.
+Spago provides incremental compilation of the backend itself. The current `Main` does not call the optimizer cache helpers, so generated PHP is rebuilt on each backend invocation. Rebuild the compiler bundle after changing its source.
+
+## Current status and limitations
+
+Implemented capabilities and remaining validation work:
+
+- [x] PureScript compiler integrated with the TAST-aware optimizer fork.
+- [x] Typed scalar signatures and ADT constructor layouts in generated PHP.
+- [x] Native FFI wrappers, automatic entrypoints, optional bundling and Composer dependency collection.
+- [x] Fiber/Revolt Aff implementation in the sibling FFI ecosystem.
+- [x] Vendored language fixtures and focused regression tests for compiler optimizations and FFI boundaries.
+- [x] [Recorded application validation](https://discourse.purescript.org/t/leveraging-70-of-the-web-a-php-backend-for-purescript/5340/9) involving Postgres, S3, RabbitMQ and HTTP in July 2026.
+- [ ] Complete and maintain package-by-package validation of the `phpurs-*` ecosystem.
+- [ ] Make installation independent of local optimizer paths and finish cleanup.
+
+Earlier development reports recorded a passing language suite and successful real-application tests. Those results are historical, not a fresh certification of this checkout. The current [test runner](bin/test) explicitly skips several newer language features, the 32-bit integer-overflow fixture (`2136`) and the cyclic-initialization fixture (`4179`). PHP integers follow the platform's integer width, typically 64 bits. Check the runner's exclusions when reporting coverage rather than claiming unrestricted upstream test compatibility.
 
 ## License
 

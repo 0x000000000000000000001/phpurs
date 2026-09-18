@@ -73,6 +73,8 @@ The build runs `spago build` and bundles `Main` into `bin/phpurs.js`. The `bin/p
 
 The npm package declares a `phpurs` executable and a build-on-install hook. With the current local optimizer dependency, installing directly from GitHub is not a self-contained setup: the optimizer path must also resolve in the installation directory. The source layout above makes that dependency explicit.
 
+Each backend invocation reports monotonic elapsed times to stderr, in milliseconds, for `load TAST + sort`, `prepare`, `optimize + emit`, `finalize`, and `backend total`. The total includes these phases; it excludes the earlier `purs` compilation and target-language compilation or execution. Each phase waits for its asynchronous callbacks and file writes to finish. Failed phases and the total are marked `(failed)`, and the original error is rethrown.
+
 ### Compile and run an application
 
 The [starter's library overrides](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) provide a larger dependency example. Use the compiler setup and entrypoint commands in this README: the starter's npm scripts still refer to the older `output/main.php` layout. Existing projects can retain their registry package set and replace libraries that contain JavaScript FFI with their PHP equivalents, including transitive dependencies.

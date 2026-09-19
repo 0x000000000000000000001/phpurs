@@ -1,4 +1,4 @@
-# phpurs
+# 🐘 phpurs
 
 <img height="160" alt="phpurs project illustration" src="https://github.com/user-attachments/assets/461687af-046a-4b23-a625-ec084710782b" />
 

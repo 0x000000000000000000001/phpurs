@@ -11,6 +11,7 @@ package:
     - integers
     - strings
     - enums
+    - foreign
     - foreign-object
     - numbers
     - refs
@@ -46,6 +47,8 @@ workspace:
       path: "../../../phpurs-strings"
     enums:
       path: "../../../phpurs-enums"
+    foreign:
+      path: "../../../phpurs-foreign"
     foreign-object:
       path: "../../../phpurs-foreign-object"
     numbers:

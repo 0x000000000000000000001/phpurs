@@ -431,6 +431,18 @@ printPhpFile isBundle ffiString allArities file =
       "    }\n" <>
       "    return $val;\n" <>
       "  }\n" <>
+      "}\n" <>
+      "if (!\\function_exists(__NAMESPACE__ . '\\\\phpurs_ref_new')) {\n" <>
+      "  function phpurs_ref_new($value) {\n" <>
+      "    return (object)['value' => $value];\n" <>
+      "  }\n" <>
+      "  function phpurs_ref_read($ref) {\n" <>
+      "    return $ref->value;\n" <>
+      "  }\n" <>
+      "  function phpurs_ref_write($ref, $value) {\n" <>
+      "    $ref->value = $value;\n" <>
+      "    return null;\n" <>
+      "  }\n" <>
       "}\n"
     dataClasses = "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n" <>
       "  class Phpurs_Data0 { public $tag; public function __construct($t) { $this->tag = $t; } }\n" <>

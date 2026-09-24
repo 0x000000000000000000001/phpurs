@@ -11,7 +11,7 @@ module Phpurs.CodeGen where
 
 import Prelude
 
-import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendOperatorNum(..))
+import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendOperatorNum(..), BackendEffect(..))
 import PureScript.Backend.Optimizer.Syntax as Syn
 import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, unTcoExpr, TcoRef(..), TcoUsage(..), TcoAnalysis(..))
@@ -383,8 +383,11 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       types = extractFuncType tcoExpr
       argsWithTypes = zipArgsWithTypes argsArray types
       retType = getRetType (Array.length argsArray) types
+      -- An uncurried effect function performs its effect when saturated, like
+      -- the FFI EffectFn it represents; the effect value may still be deferred.
+      bodyExpr = PhpCall (PhpRaw "phpurs_execute_effect") [ resBody.expr ]
     in
-      { stmts: [], expr: PhpFunction useVars argsWithTypes retType (resBody.stmts <> [ PhpReturn resBody.expr ]), nextId: resBody.nextId }
+      { stmts: [], expr: PhpFunction useVars argsWithTypes retType (resBody.stmts <> [ PhpReturn bodyExpr ]), nextId: resBody.nextId }
 
   Accessor e acc ->
     let
@@ -651,7 +654,22 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       in
         { stmts: res1.stmts <> res2.stmts, expr: translateOperator2 op2 res1.expr res2.expr, nextId: res2.nextId }
 
-  PrimEffect _ -> { stmts: [], expr: PhpString "TODO_PrimEffect", nextId }
+  PrimEffect effect -> case effect of
+    EffectRefNew val ->
+      let res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId val
+      in { stmts: res.stmts, expr: PhpCall (PhpRaw "phpurs_ref_new") [ res.expr ], nextId: res.nextId }
+    EffectRefRead ref ->
+      let res = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId ref
+      in { stmts: res.stmts, expr: PhpCall (PhpRaw "phpurs_ref_read") [ res.expr ], nextId: res.nextId }
+    EffectRefWrite ref val ->
+      let
+        resRef = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId ref
+        resVal = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false resRef.nextId val
+      in
+        { stmts: resRef.stmts <> resVal.stmts
+        , expr: PhpCall (PhpRaw "phpurs_ref_write") [ resRef.expr, resVal.expr ]
+        , nextId: resVal.nextId
+        }
   PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
   Syn.TypeApp a _ -> translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail inEffectBlock nextId a
   Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }

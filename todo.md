@@ -73,15 +73,17 @@ Validation : les 14 résultats restent identiques. Rapporter démarrage froid, e
 
 ## M1 — P0 — Verrouiller les contrats avant de supprimer des coûts
 
-Constat : CodeGen.purs, ligne 625, traduit encore PrimEffect en chaîne TODO_PrimEffect ; les sémantiques PBO activées peuvent produire les primitives ST new/read/write. Main.purs, lignes 137–143, remplace une FFI manquante par un objet invocable factice. Le runner exclut notamment une frontière Int32 et un cas d'initialisation cyclique : son succès n'est pas une preuve complète de compatibilité.
+Constat : les primitives `PrimEffect` (ST/Effect new/read/write) sont désormais traduites vers les helpers runtime `phpurs_ref_new/read/write` ; la traduction, les captures et l'exécution sont couvertes par les tests de la plage 0→E et par `tests/codegen/references.mjs`. Main.purs, lignes 137–143, remplace encore une FFI manquante par un objet invocable factice. Le runner exclut notamment une frontière Int32 et un cas d'initialisation cyclique : son succès n'est pas une preuve complète de compatibilité.
 
-- [ ] Ajouter les cas ST minimaux : création/lecture, écriture visible via un alias, incrément en boucle ; utiliser une entrée opaque et inspecter que les primitives subsistent avant de relever le comportement actuel.
-- [ ] Faire produire un diagnostic module/opération pour une primitive non traduite, puis implémenter new, read et write en trois étapes séparées, en préservant le moment d'exécution.
+- [x] Ajouter les cas ST minimaux : création/lecture, écriture visible via un alias, incrément en boucle ; les primitives subsistent jusqu'au générateur, qui n'émet plus de placeholder. Couverture : Collatz, Fib, Let, RecursiveDictionaryInitialization, UnaryCallableCaptures et `tests/codegen/references.mjs`.
+- [x] Implémenter new, read et write dans CodeGen et le préambule runtime, en préservant le moment d'exécution ; l'analyse des variables libres traverse aussi les sous-expressions de `PrimEffect` pour que les effets différés capturent leurs références. Un constructeur inconnu ne peut plus atteindre silencieusement une chaîne TODO.
 - [ ] Pour une FFI réellement utilisée mais absente, lever une erreur nommant module et export ; conserver une politique explicite pour les modules non atteignables.
 - [ ] Ajouter pure retournant une closure ou une chaîne PHP invocable, une action exécutée deux fois, l'ordre des effets et les exceptions.
 - [ ] Définir puis tester le contrat numérique PHP/PBO : division entière, modulo avec signes et zéro, fractions Number, décalage logique et limites Int32. Comparer calcul constant et calcul avec entrée opaque.
-- [ ] Rejouer RecursiveDictionaryInitialization après toute modification des closures, de la DCE ou de l'ordre des déclarations.
+- [x] Rejouer RecursiveDictionaryInitialization après toute modification des closures, de la DCE ou de l'ordre des déclarations : passe dans la plage 0→E (149 fichiers).
 - [ ] Isoler le cas Ref.modify_ depuis une fonction locale opaque : la préparation de UnaryCallableCaptures a rencontré « Value of type int is not callable » avec le backend inchangé. La fixture validée emploie Ref.read/Ref.write ; ne pas présenter ce remplacement comme une correction de modify_.
+- [x] Faire exécuter l'effet par une `UncurriedEffectAbs` saturée (EffectFn généré) et non seulement déferrer : corrige `EffFn` sans changer les FFI brutes.
+- [x] Ajouter le paquet `foreign` aux dépendances du runner : `CompactClosureLoops` importe `Foreign`.
 
 Terminé quand : un scénario incorrect échoue explicitement ; chaque scénario supporté produit la valeur attendue et le nombre attendu d'effets. Les zones encore non supportées restent identifiées, sans être comptées comme gains de performance.
 
@@ -322,16 +324,17 @@ Validation : 14 résultats par processus, médiane par ligne sur trois processus
 
 ## R16 — P1 — Supprimer le tag des constructeurs privés
 
-**Intégré au générateur et mesuré ; aucune campagne README republiée à cette étape.** Les constructeurs privés d'`EnumRegions` portaient un `$tag` que le code généré ne lit jamais : les correspondances passent par `instanceof` (`translateOperator1 (OpIsTag ...)`), les énumérations prouvées sont des entiers et les frontières FFI/publiques restent exclues. Le `$tag` est conservé sur les classes publiques.
+**Intégré au générateur, mesuré et republié : la colonne compilée du README passe à 116,59 ms, les colonnes FFI sont conservées.** Les constructeurs privés d'`EnumRegions` portaient un `$tag` que le code généré ne lit jamais : les correspondances passent par `instanceof` (`translateOperator1 (OpIsTag ...)`), les énumérations prouvées sont des entiers et les frontières FFI/publiques restent exclues. Le `$tag` est conservé sur les classes publiques.
 
 - [x] Vérifier l'absence de toute lecture `->{'tag'}` dans le PHP généré et le rôle réel d'`OpIsTag` avant de retirer la propriété.
 - [x] Mesurer le potentiel sur copies appariées : RBTree isolé, quatre tours ABBA, quatre variantes A–D ; C (sans tag) ≈ 4 % sous la référence, B/D (champs typés) +30 à 35 %.
 - [x] Confirmer le résultat négatif des champs typés et conserver les champs privés non typés.
 - [x] Mesurer le programme complet sur un même TAST, seule la déclaration diffère : 120,09–120,37 ms avec tag contre 115,19–116,64 ms sans, soit 4,3 ms / 3,6 %.
 - [x] Ajouter deux assertions de régression dans `enum-regions.mjs` (privé sans `$tag`, public avec) ; les neuf suites passent.
-- [x] Vérifier que seul `Test.RBTree/index.php` change parmi les modules à constructeurs privés, et qu'aucun build FFI n'en contient.
+- [x] Vérifier que seul `Test.RBTree/index.php` change parmi les modules à constructeurs privés ; les builds FFI compilent aussi `Test.RBTree`, mais leurs entrées passent par `Test.RBTreeFFI`/`AppFFI` et aucun module exécuté par ces programmes n'est touché.
+- [x] Republier la colonne compilée depuis la campagne `php-pure-20260924d` (116,59 ms affichés) et conserver les colonnes FFI après vérification ABBA, la variation observée relevant de la fenêtre de charge et non du retrait du tag.
 
-Validation : quatorze résultats dans les deux variantes, aucun accès `tag` généré, préfixe public inchangé, coût de compilation inchangé. Voir [le bilan](audit/2026-09-24/private-tag/report.md).
+Validation : quatorze résultats dans les deux variantes, aucun accès `tag` généré, préfixe public inchangé, coût de compilation inchangé. Voir [le bilan](audit/2026-09-24/private-tag/report.md) et [la note de campagne](../../altbak.pub/docs/benchmark-results/2026-09-24-php-private-tag.md).
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 

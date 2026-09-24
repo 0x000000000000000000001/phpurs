@@ -12,6 +12,7 @@
             "enums",
             "exceptions",
             "foldable-traversable",
+            "foreign",
             "foreign-object",
             "functions",
             "integers",
@@ -645,6 +646,9 @@
       "foldable-traversable": {
         "path": "../../../phpurs-foldable-traversable"
       },
+      "foreign": {
+        "path": "../../../phpurs-foreign"
+      },
       "foreign-object": {
         "path": "../../../phpurs-foreign-object"
       },
@@ -843,6 +847,21 @@
         "orders",
         "prelude",
         "tuples"
+      ]
+    },
+    "foreign": {
+      "type": "local",
+      "path": "../../../phpurs-foreign",
+      "dependencies": [
+        "either",
+        "functions",
+        "identity",
+        "integers",
+        "lists",
+        "maybe",
+        "prelude",
+        "strings",
+        "transformers"
       ]
     },
     "foreign-object": {
@@ -1111,6 +1130,28 @@
         "partial",
         "prelude",
         "refs"
+      ]
+    },
+    "transformers": {
+      "type": "registry",
+      "version": "6.1.0",
+      "integrity": "sha256-QJmgNT/y7ljPHSsXaW4zxF/982BFiQ90KNL1g/NtEOQ=",
+      "dependencies": [
+        "control",
+        "distributive",
+        "effect",
+        "either",
+        "exceptions",
+        "foldable-traversable",
+        "identity",
+        "lazy",
+        "maybe",
+        "newtype",
+        "prelude",
+        "st",
+        "tailrec",
+        "tuples",
+        "unfoldable"
       ]
     },
     "tuples": {

@@ -311,6 +311,18 @@ size cap expr = go 0 (Cons (Tuple 0 expr) Nil)
     | depth > 128 || foldl (\n _ -> n + 1) 0 syntax > 64 = cap
     | otherwise = go (count + 1) (foldr (\child acc -> Cons (Tuple (depth + 1) child) acc) rest syntax)
 
+-- A region may start at any saturated call to a local monomorphic worker that
+-- returns a scalar. The optimizer does not always keep a `Typed` annotation on
+-- such calls (for example as the direct argument of `EffectPure`), so the
+-- candidate test consults the worker's signature instead of the annotation.
+candidateCall :: Context -> NeutralExpr -> Boolean
+candidateCall ctx fn = case peel fn of
+  Var (Qualified (Just mn) (Ident ident)) | mn == ctx.name ->
+    case Map.lookup (Ident ident) ctx.bindings >>= signature of
+      Just sig -> scalar sig.ret
+      Nothing -> false
+  _ -> false
+
 scan :: Context -> String -> NeutralExpr -> State ScanState NeutralExpr
 scan ctx prefix expr@(NeutralExpr syntax) = do
   s <- get
@@ -318,10 +330,8 @@ scan ctx prefix expr@(NeutralExpr syntax) = do
   else do
     modify_ (\v -> v { fuel = v.fuel - 1 })
     let candidate = case syntax of
-          Typed ty inner | scalar ty -> case peel inner of
-            App _ _ -> true
-            UncurriedApp _ _ -> true
-            _ -> false
+          App fn _ -> candidateCall ctx fn
+          UncurriedApp fn _ -> candidateCall ctx fn
           _ -> false
     result <- if candidate && s.attempts > 0 then do
       modify_ (\v -> v { attempts = v.attempts - 1 })

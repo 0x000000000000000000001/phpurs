@@ -307,6 +307,19 @@ Référence officielle actuelle : README principal, Church 8,794 ms, RBTree 107,
 - [ ] Prochaine micro-étape distincte : seed qui lit uniquement une capture scalaire pure. Revoir explicitement l'idempotence du garde, dont le seed de repli capture actuellement son paramètre.
 - [ ] Ensuite : mesurer une spécialisation des chaînes State immédiatement exécutées, puis la spécialisation des callbacks de parcours. Les prototypes de fusion complète ne constituent pas encore une intégration.
 
+## R15 — P1 — Détecter une région scalaire sans annotation `Typed`
+
+**Intégré et mesuré après `bin/php/run -c`.** Le banc numérique canonique écrit `act = pure (depth (buildTree dummy E))` ; PBO ne conserve pas d'annotation `Typed Int` sur cet appel en position nue, contrairement à l'ancien banc à `show`. La détection exigeait `Typed ty inner` avec `ty` scalaire : `Test.RBTree` ne sélectionnait plus aucune région et le total canonique restait proche de 262 ms alors que le worktree mesurait ~127 ms avec l'ancien programme.
+
+- [x] Constater la sélection nulle dans le TAST canonique (les deux candidats internes à `depth` sont refusés comme prévu ; l'entrée `act` n'est jamais examinée) et la sélection à cinq workers dans la variante `show`.
+- [x] Faire porter la détection sur la signature du worker local (`candidateCall`) : appel saturé dont le type de retour est scalaire, annotation absente comprise. Preuve, budgets et réécriture restent inchangés ; aucun nom de benchmark n'est codé en dur.
+- [x] Ajouter deux cas de régression : une entrée en application nue ouvre la région à deux workers ; une application nue renvoyant l'ADT public reste refusée. Les neuf suites AST passent.
+- [x] Vérifier que le PHP généré ne change que pour `Test.RBTree/index.php` en mode compilé ; les modes FFI sont identiques octet pour octet à la campagne du 20 septembre.
+- [x] Mesurer trois processus validés par mode, mêmes sources, mêmes paramètres JIT/OPcache : total compilé 121,52 ms (RBTree 108,947 ms) contre 262,81 ms publiés ; FFI 1064,43 ms contre 1057,50 ms et FFI impératif 202,55 ms contre 204,82 ms, code inchangé. La variation FFI est celle des petits noyaux décrite par la méthodologie.
+- [x] Consigner les campagnes (`altbak.pub/var/benchmark/php-{pure,ffi,fficc}-20260924`), les empreintes d'outillage, puis republier la table PHP du README avec le ratio /C.
+
+Validation : 14 résultats par processus, médiane par ligne sur trois processus, total = somme des médianes. Le coût de compilation reste borné par les mêmes budgets et refus. Voir [le bilan de campagne](../../altbak.pub/docs/benchmark-results/2026-09-24-php-enum-regions.md).
+
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 
 Constat : Main.purs, lignes 96–98, renvoie toujours Nothing dans onSkipModule ; le cache importé n'est pas utilisé. Le helper PBO actuel fondé sur version et mtime CoreFn ne couvre pas à lui seul FFI, directives et dépendances.

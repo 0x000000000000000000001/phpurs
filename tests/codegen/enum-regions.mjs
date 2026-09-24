@@ -37,11 +37,22 @@ const selected = optimize(original);
 assert.equal(size(selected.privateNames),2);
 assert.deepEqual(selected.module_.bindings.slice(0,2),original.bindings.slice(0,2),'public ADT workers stay intact');
 assert.deepEqual(selected.module_.dataDecls,original.dataDecls,'public enum classes stay intact');
+// The optimizer does not keep a `Typed` annotation on every call: as the direct
+// argument of `EffectPure` the entry can be a bare application. The candidate
+// test must consult the worker signature instead of the annotation.
+const bareEntry = new Tuple('entry',typed(new T.Func([int],int),
+  new S.Abs([new Tuple(new Just('x0'),0)],call('read',[typed(color,call('choose',[loc(0)]))]))));
+const bareSelected = optimize(mod(bareEntry,[choose,read]));
+assert.equal(size(bareSelected.privateNames),2,'entry call without a Typed wrapper opens a region');
+assert.deepEqual(bareSelected.module_.bindings.slice(0,2),original.bindings.slice(0,2),'bare entry keeps public workers');
 const fail = (name,m) => {
   const result=optimize(m);
   assert.equal(size(result.privateNames),0,name);
   assert.deepEqual(result.module_,m,name+' keeps the original AST');
 };
+const bareAdt = new Tuple('entry',typed(new T.Func([int],color),
+  new S.Abs([new Tuple(new Just('x0'),0)],call('choose',[loc(0)]))));
+fail('bare ADT result',mod(bareAdt,[choose,read]));
 fail('public ADT input',mod(fn('entry',[color],int,call('read',[loc(0,color)]))));
 fail('public ADT result',mod(fn('entry',[int],color,call('choose',[loc(0)]))));
 fail('indirect function',mod(fn('entry',[int],int,new S.App(new S.Local(new Just('callback'),1),[typed(color,call('choose',[loc(0)]))]))));

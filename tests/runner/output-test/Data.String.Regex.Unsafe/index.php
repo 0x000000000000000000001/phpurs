@@ -95,6 +95,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_execute_effect')) {
+  function phpurs_execute_effect($val) {
+    if (\is_callable($val)) {
+      return $val($GLOBALS['Data_Unit_unit']);
+    }
+    return $val;
+  }
+}
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_ref_new')) {
+  function phpurs_ref_new($value) {
+    return (object)['value' => $value];
+  }
+  function phpurs_ref_read($ref) {
+    return $ref->value;
+  }
+  function phpurs_ref_write($ref, $value) {
+    $ref->value = $value;
+    return null;
+  }
+}
 
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
@@ -108,20 +128,7 @@ function majData_majString_majRegex_majUnsafe_unsafemajRegex(string $s_0, $f_1 =
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__local_var_2_0 = \Data\String\Regex\majData_majString_majRegex_regexmajImpl($GLOBALS['Data_Either_Left'], $GLOBALS['Data_Either_Right'], $s_0, \Data\String\Regex\majData_majString_majRegex_rendermajFlags($f_1));
-  $__t1 = null;;
-  if ($__local_var_2_0 instanceof \Data\Either\Data_Either_Left) {
-$__t1 = \Partial\majPartial__crashmajWith(($__local_var_2_0)->{'value0'});
-goto end_branch_1;;
-};
-  if ($__local_var_2_0 instanceof \Data\Either\Data_Either_Right) {
-$__t1 = ($__local_var_2_0)->{'value0'};
-goto end_branch_1;;
-};
-  throw new \Exception("Failed pattern match at " . __FILE__ . ":" . __LINE__);
-  $__t1 = null;
-  end_branch_1:;
-  $__res = $__t1;
+  $__res = ((($GLOBALS['Data_Either_either'])($GLOBALS['Partial_Unsafe_unsafeCrashWith']))(($GLOBALS['Control_Category_identity'])($GLOBALS['Control_Category_categoryFn'])))((($GLOBALS['Data_Function_apply'])(((($GLOBALS['Data_String_Regex_regexImpl'])($GLOBALS['Data_Either_Left']))($GLOBALS['Data_Either_Right']))($s_0)))(\Data\String\Regex\majData_majString_majRegex_rendermajFlags($f_1)));
   goto __end;;
   __end:
   return 2 < $__num ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;

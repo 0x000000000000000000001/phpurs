@@ -5,15 +5,14 @@ import * as Data_Semigroup_Foldable from "../Data.Semigroup.Foldable/index.js";
 import * as Data_String_CodeUnits from "../Data.String.CodeUnits/index.js";
 import * as Data_String_NonEmpty_Internal from "../Data.String.NonEmpty.Internal/index.js";
 import * as Data_String_Unsafe from "../Data.String.Unsafe/index.js";
-var fromJust = /* #__PURE__ */ Data_Maybe.fromJust();
 var toNonEmptyString = Data_String_NonEmpty_Internal.NonEmptyString;
 var snoc = function (c) {
     return function (s) {
         return toNonEmptyString(s + Data_String_CodeUnits.singleton(c));
     };
 };
-var singleton = function ($23) {
-    return toNonEmptyString(Data_String_CodeUnits.singleton($23));
+var singleton = function ($16) {
+    return toNonEmptyString(Data_String_CodeUnits.singleton($16));
 };
 var liftS = function (f) {
     return function (v) {
@@ -21,34 +20,34 @@ var liftS = function (f) {
     };
 };
 var takeWhile = function (f) {
-    var $24 = liftS(Data_String_CodeUnits.takeWhile(f));
-    return function ($25) {
-        return Data_String_NonEmpty_Internal.fromString($24($25));
+    var $17 = liftS(Data_String_CodeUnits.takeWhile(f));
+    return function ($18) {
+        return Data_String_NonEmpty_Internal.fromString($17($18));
     };
 };
 var lastIndexOf$prime = function (pat) {
-    var $26 = Data_String_CodeUnits["lastIndexOf$prime"](pat);
-    return function ($27) {
-        return liftS($26($27));
+    var $19 = Data_String_CodeUnits["lastIndexOf$prime"](pat);
+    return function ($20) {
+        return liftS($19($20));
     };
 };
-var lastIndexOf = function ($28) {
-    return liftS(Data_String_CodeUnits.lastIndexOf($28));
+var lastIndexOf = function ($21) {
+    return liftS(Data_String_CodeUnits.lastIndexOf($21));
 };
 var indexOf$prime = function (pat) {
-    var $29 = Data_String_CodeUnits["indexOf$prime"](pat);
-    return function ($30) {
-        return liftS($29($30));
+    var $22 = Data_String_CodeUnits["indexOf$prime"](pat);
+    return function ($23) {
+        return liftS($22($23));
     };
 };
-var indexOf = function ($31) {
-    return liftS(Data_String_CodeUnits.indexOf($31));
+var indexOf = function ($24) {
+    return liftS(Data_String_CodeUnits.indexOf($24));
 };
 var fromNonEmptyString = function (v) {
     return v;
 };
-var length = function ($32) {
-    return Data_String_CodeUnits.length(fromNonEmptyString($32));
+var length = function ($25) {
+    return Data_String_CodeUnits.length(fromNonEmptyString($25));
 };
 var splitAt = function (i) {
     return function (nes) {
@@ -62,8 +61,8 @@ var splitAt = function (i) {
 var take = function (i) {
     return function (nes) {
         var s = fromNonEmptyString(nes);
-        var $18 = i < 1;
-        if ($18) {
+        var $11 = i < 1;
+        if ($11) {
             return Data_Maybe.Nothing.value;
         };
         return new Data_Maybe.Just(toNonEmptyString(Data_String_CodeUnits.take(i)(s)));
@@ -72,22 +71,25 @@ var take = function (i) {
 var takeRight = function (i) {
     return function (nes) {
         var s = fromNonEmptyString(nes);
-        var $19 = i < 1;
-        if ($19) {
+        var $12 = i < 1;
+        if ($12) {
             return Data_Maybe.Nothing.value;
         };
         return new Data_Maybe.Just(toNonEmptyString(Data_String_CodeUnits.takeRight(i)(s)));
     };
 };
-var toChar = function ($33) {
-    return Data_String_CodeUnits.toChar(fromNonEmptyString($33));
+var toChar = function ($26) {
+    return Data_String_CodeUnits.toChar(fromNonEmptyString($26));
 };
-var toCharArray = function ($34) {
-    return Data_String_CodeUnits.toCharArray(fromNonEmptyString($34));
+var toCharArray = function ($27) {
+    return Data_String_CodeUnits.toCharArray(fromNonEmptyString($27));
 };
-var toNonEmptyCharArray = function ($36) {
-    return fromJust(Data_Array_NonEmpty.fromArray(toCharArray($36)));
-};
+var toNonEmptyCharArray = /* #__PURE__ */ (function () {
+    var $28 = Data_Maybe.fromJust();
+    return function ($29) {
+        return $28(Data_Array_NonEmpty.fromArray(toCharArray($29)));
+    };
+})();
 var uncons = function (nes) {
     var s = fromNonEmptyString(nes);
     return {
@@ -104,20 +106,23 @@ var fromCharArray = function (v) {
     };
     return new Data_Maybe.Just(toNonEmptyString(Data_String_CodeUnits.fromCharArray(v)));
 };
-var fromNonEmptyCharArray = function ($38) {
-    return fromJust(fromCharArray(Data_Array_NonEmpty.toArray($38)));
-};
+var fromNonEmptyCharArray = /* #__PURE__ */ (function () {
+    var $30 = Data_Maybe.fromJust();
+    return function ($31) {
+        return $30(fromCharArray(Data_Array_NonEmpty.toArray($31)));
+    };
+})();
 var dropWhile = function (f) {
-    var $39 = liftS(Data_String_CodeUnits.dropWhile(f));
-    return function ($40) {
-        return Data_String_NonEmpty_Internal.fromString($39($40));
+    var $32 = liftS(Data_String_CodeUnits.dropWhile(f));
+    return function ($33) {
+        return Data_String_NonEmpty_Internal.fromString($32($33));
     };
 };
 var dropRight = function (i) {
     return function (nes) {
         var s = fromNonEmptyString(nes);
-        var $21 = i >= Data_String_CodeUnits.length(s);
-        if ($21) {
+        var $14 = i >= Data_String_CodeUnits.length(s);
+        if ($14) {
             return Data_Maybe.Nothing.value;
         };
         return new Data_Maybe.Just(toNonEmptyString(Data_String_CodeUnits.dropRight(i)(s)));
@@ -126,23 +131,23 @@ var dropRight = function (i) {
 var drop = function (i) {
     return function (nes) {
         var s = fromNonEmptyString(nes);
-        var $22 = i >= Data_String_CodeUnits.length(s);
-        if ($22) {
+        var $15 = i >= Data_String_CodeUnits.length(s);
+        if ($15) {
             return Data_Maybe.Nothing.value;
         };
         return new Data_Maybe.Just(toNonEmptyString(Data_String_CodeUnits.drop(i)(s)));
     };
 };
-var countPrefix = function ($41) {
-    return liftS(Data_String_CodeUnits.countPrefix($41));
+var countPrefix = function ($34) {
+    return liftS(Data_String_CodeUnits.countPrefix($34));
 };
 var cons = function (c) {
     return function (s) {
         return toNonEmptyString(Data_String_CodeUnits.singleton(c) + s);
     };
 };
-var charAt = function ($42) {
-    return liftS(Data_String_CodeUnits.charAt($42));
+var charAt = function ($35) {
+    return liftS(Data_String_CodeUnits.charAt($35));
 };
 export {
     fromCharArray,

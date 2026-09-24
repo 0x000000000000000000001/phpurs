@@ -91,26 +91,32 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_execute_effect')) {
+  function phpurs_execute_effect($val) {
+    if (\is_callable($val)) {
+      return $val($GLOBALS['Data_Unit_unit']);
+    }
+    return $val;
+  }
+}
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_ref_new')) {
+  function phpurs_ref_new($value) {
+    return (object)['value' => $value];
+  }
+  function phpurs_ref_read($ref) {
+    return $ref->value;
+  }
+  function phpurs_ref_write($ref, $value) {
+    $ref->value = $value;
+    return null;
+  }
+}
 
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
 
 
 
-// Middle_middle_closure
-$GLOBALS['Middle_middle_closure'] = $GLOBALS['Test_test'];
-
 // Middle_middle
-function majMiddle_middle($v_0, $v_1 = null) {
-  $__num = \func_num_args();
-  $__fn = __NAMESPACE__ . '\\' . 'majMiddle_middle';
-  if ($__num < 2) {
-    return phpurs_curry_fallback($__fn, \func_get_args(), 2);
-  }
-  $__res = ($GLOBALS['Middle_middle_closure'])($v_0, $v_1);
-  goto __end;;
-  __end:
-  return 2 < $__num ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
-}
-$GLOBALS['Middle_middle'] = __NAMESPACE__ . '\\majMiddle_middle';
+$GLOBALS['Middle_middle'] = $GLOBALS['Test_test'];
 

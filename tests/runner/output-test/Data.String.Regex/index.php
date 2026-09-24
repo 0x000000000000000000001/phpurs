@@ -103,6 +103,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_execute_effect')) {
+  function phpurs_execute_effect($val) {
+    if (\is_callable($val)) {
+      return $val($GLOBALS['Data_Unit_unit']);
+    }
+    return $val;
+  }
+}
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_ref_new')) {
+  function phpurs_ref_new($value) {
+    return (object)['value' => $value];
+  }
+  function phpurs_ref_read($ref) {
+    return $ref->value;
+  }
+  function phpurs_ref_write($ref, $value) {
+    $ref->value = $value;
+    return null;
+  }
+}
 
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 $ffi_Data_String_Regex = \call_user_func(function() {
@@ -111,13 +131,7 @@ $showRegexImpl = function($r) use (&$showRegexImpl) {
     return $r->pattern;
 };
 
-$regexImpl = function($left, $right = null, $s1 = null, $s2 = null) use (&$regexImpl) {
-    if (\func_num_args() < 4) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$regexImpl) {
-            return $regexImpl(...\array_merge($__args, $more));
-        };
-    }
+$regexImpl = function($left, $right, $s1, $s2) use (&$regexImpl) {
     $pattern = '/' . $s1 . '/' . $s2;
     // Strip modifiers that PHP doesn't support
     $php_flags = str_replace(['g', 'y'], '', $s2);
@@ -144,38 +158,28 @@ $flagsImpl = function($r) use (&$flagsImpl) {
     ];
 };
 
-$test = function($r, $s = null) use (&$test) {
-    if (\func_num_args() < 2) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$test) {
-            return $test(...\array_merge($__args, $more));
-        };
-    }
+$test = function($r, $s) use (&$test) {
     return preg_match($r->pcre, $s) === 1;
 };
 
-$_match = function($just, $nothing = null, $r = null, $s = null) use (&$_match) {
-    if (\func_num_args() < 4) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$_match) {
-            return $_match(...\array_merge($__args, $more));
-        };
-    }
+$_match = function($just, $nothing, $r, $s) use (&$_match) {
     if (strpos($r->flags, 'g') !== false) {
-        $matched = preg_match_all($r->pcre, $s, $matches);
+        $matched = preg_match_all($r->pcre, $s, $matches, PREG_UNMATCHED_AS_NULL);
         if ($matched) {
             $res = [];
             foreach ($matches[0] as $m) {
-                $res[] = $m === "" ? $nothing : $just($m);
+                $res[] = $m === null ? $nothing : $just($m);
             }
             return $just($res);
         }
     } else {
-        $matched = preg_match($r->pcre, $s, $matches);
+        $matched = preg_match($r->pcre, $s, $matches, PREG_UNMATCHED_AS_NULL);
         if ($matched) {
             $res = [];
-            foreach ($matches as $m) {
-                $res[] = $m === "" ? $nothing : $just($m);
+            $i = 0;
+            while (\array_key_exists($i, $matches)) {
+                $res[] = $matches[$i] === null ? $nothing : $just($matches[$i]);
+                $i++;
             }
             return $just($res);
         }
@@ -183,60 +187,40 @@ $_match = function($just, $nothing = null, $r = null, $s = null) use (&$_match) 
     return $nothing;
 };
 
-$replace = function($r, $s1 = null, $s2 = null) use (&$replace) {
-    if (\func_num_args() < 3) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$replace) {
-            return $replace(...\array_merge($__args, $more));
-        };
-    }
+$replace = function($r, $s1, $s2) use (&$replace) {
     $limit = strpos($r->flags, 'g') !== false ? -1 : 1;
     // $s1 in PCRE uses $1 for groups whereas JS uses $1 or \1. We assume s1 is compatible.
     // However, JS replace uses $1, PCRE preg_replace also uses $1.
     return preg_replace($r->pcre, $s1, $s2, $limit);
 };
 
-$_replaceBy = function($just, $nothing = null, $r = null, $f = null, $s = null) use (&$_replaceBy) {
-    if (\func_num_args() < 5) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$_replaceBy) {
-            return $_replaceBy(...\array_merge($__args, $more));
-        };
-    }
+$_replaceBy = function($just, $nothing, $r, $f, $s) use (&$_replaceBy) {
     $limit = strpos($r->flags, 'g') !== false ? -1 : 1;
     return preg_replace_callback($r->pcre, function($matches) use ($f, $just, $nothing) {
         $match = $matches[0];
         $groups = [];
-        for ($i = 1; $i < \count($matches); $i++) {
-            $groups[] = (!isset($matches[$i]) || $matches[$i] === "") ? $nothing : $just($matches[$i]);
+        $i = 1;
+        while (\array_key_exists($i, $matches)) {
+            $groups[] = $matches[$i] === null ? $nothing : $just($matches[$i]);
+            $i++;
         }
         $fn = $f($match);
         return $fn($groups);
-    }, $s, $limit);
+    }, $s, $limit, $count, PREG_UNMATCHED_AS_NULL);
 };
 
-$_search = function($just, $nothing = null, $r = null, $s = null) use (&$_search) {
-    if (\func_num_args() < 4) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$_search) {
-            return $_search(...\array_merge($__args, $more));
-        };
-    }
+$_search = function($just, $nothing, $r, $s) use (&$_search) {
     if (preg_match($r->pcre, $s, $matches, PREG_OFFSET_CAPTURE)) {
         return $just($matches[0][1]);
     }
     return $nothing;
 };
 
-$split = function($r, $s = null) use (&$split) {
-    if (\func_num_args() < 2) {
-        $__args = \func_get_args();
-        return function(...$more) use ($__args, &$split) {
-            return $split(...\array_merge($__args, $more));
-        };
+$split = function($r, $s) use (&$split) {
+    if ($r->source === "") {
+        return preg_split($r->pcre, $s, -1, PREG_SPLIT_NO_EMPTY);
     }
-    $limit = strpos($r->flags, 'g') !== false ? -1 : 2;
-    return preg_split($r->pcre, $s, $limit);
+    return preg_split($r->pcre, $s);
 };
 
 $exports['showRegexImpl'] = $showRegexImpl;
@@ -259,7 +243,7 @@ function majData_majString_majRegex__match($v0, $v1 = null, $v2 = null, $v3 = nu
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['_match'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('_match', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['_match'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2, $v3);
 }
 $GLOBALS['Data_String_Regex__match'] = __NAMESPACE__ . '\\majData_majString_majRegex__match';
@@ -271,7 +255,7 @@ function majData_majString_majRegex__replacemajBy($v0, $v1 = null, $v2 = null, $
     return phpurs_curry_fallback($__fn, \func_get_args(), 5);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['_replaceBy'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('_replaceBy', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['_replaceBy'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2, $v3, $v4);
 }
 $GLOBALS['Data_String_Regex__replaceBy'] = __NAMESPACE__ . '\\majData_majString_majRegex__replacemajBy';
@@ -283,7 +267,7 @@ function majData_majString_majRegex__search($v0, $v1 = null, $v2 = null, $v3 = n
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['_search'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('_search', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['_search'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2, $v3);
 }
 $GLOBALS['Data_String_Regex__search'] = __NAMESPACE__ . '\\majData_majString_majRegex__search';
@@ -295,7 +279,7 @@ function majData_majString_majRegex_flagsmajImpl($v0) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['flagsImpl'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('flagsImpl', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['flagsImpl'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0);
 }
 $GLOBALS['Data_String_Regex_flagsImpl'] = __NAMESPACE__ . '\\majData_majString_majRegex_flagsmajImpl';
@@ -307,7 +291,7 @@ function majData_majString_majRegex_regexmajImpl($v0, $v1 = null, $v2 = null, $v
     return phpurs_curry_fallback($__fn, \func_get_args(), 4);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['regexImpl'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('regexImpl', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['regexImpl'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2, $v3);
 }
 $GLOBALS['Data_String_Regex_regexImpl'] = __NAMESPACE__ . '\\majData_majString_majRegex_regexmajImpl';
@@ -319,7 +303,7 @@ function majData_majString_majRegex_replace($v0, $v1 = null, $v2 = null): string
     return phpurs_curry_fallback($__fn, \func_get_args(), 3);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['replace'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('replace', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['replace'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1, $v2);
 }
 $GLOBALS['Data_String_Regex_replace'] = __NAMESPACE__ . '\\majData_majString_majRegex_replace';
@@ -331,7 +315,7 @@ function majData_majString_majRegex_showmajRegexmajImpl($v0): string|\Closure {
     return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['showRegexImpl'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('showRegexImpl', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['showRegexImpl'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0);
 }
 $GLOBALS['Data_String_Regex_showRegexImpl'] = __NAMESPACE__ . '\\majData_majString_majRegex_showmajRegexmajImpl';
@@ -343,7 +327,7 @@ function majData_majString_majRegex_source($v0): string|\Closure {
     return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['source'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('source', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['source'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0);
 }
 $GLOBALS['Data_String_Regex_source'] = __NAMESPACE__ . '\\majData_majString_majRegex_source';
@@ -355,7 +339,7 @@ function majData_majString_majRegex_split($v0, $v1 = null) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['split'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('split', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['split'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1);
 }
 $GLOBALS['Data_String_Regex_split'] = __NAMESPACE__ . '\\majData_majString_majRegex_split';
@@ -367,7 +351,7 @@ function majData_majString_majRegex_test($v0, $v1 = null): bool|\Closure {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
   global $ffi_Data_String_Regex;
-  $f = ($ffi_Data_String_Regex['test'] ?? new class { public function __invoke(...$args) { return $this; } });
+  $f = (\array_key_exists('test', $ffi_Data_String_Regex) ? $ffi_Data_String_Regex['test'] : new class { public function __invoke(...$args) { return $this; } });
   return $f($v0, $v1);
 }
 $GLOBALS['Data_String_Regex_test'] = __NAMESPACE__ . '\\majData_majString_majRegex_test';
@@ -380,7 +364,7 @@ $GLOBALS['Data_String_Regex_test'] = __NAMESPACE__ . '\\majData_majString_majReg
 $GLOBALS['Data_String_Regex_showRegex'] = (object)["show" => $GLOBALS['Data_String_Regex_showRegexImpl']];
 
 // Data_String_Regex_search_closure
-$GLOBALS['Data_String_Regex_search_closure'] = (($GLOBALS['Data_String_Regex__search'])($GLOBALS['Data_Maybe_Just']))(new \Data\Maybe\Data_Maybe_Nothing());
+$GLOBALS['Data_String_Regex_search_closure'] = (($GLOBALS['Data_String_Regex__search'])($GLOBALS['Data_Maybe_Just']))($GLOBALS['Data_Maybe_Nothing']);
 
 // Data_String_Regex_search
 function majData_majString_majRegex_search($v_0, $v_1 = null) {
@@ -397,7 +381,7 @@ function majData_majString_majRegex_search($v_0, $v_1 = null) {
 $GLOBALS['Data_String_Regex_search'] = __NAMESPACE__ . '\\majData_majString_majRegex_search';
 
 // Data_String_Regex_replace'_closure
-$GLOBALS['Data_String_Regex_replace__prime___closure'] = (($GLOBALS['Data_String_Regex__replaceBy'])($GLOBALS['Data_Maybe_Just']))(new \Data\Maybe\Data_Maybe_Nothing());
+$GLOBALS['Data_String_Regex_replace__prime___closure'] = (($GLOBALS['Data_String_Regex__replaceBy'])($GLOBALS['Data_Maybe_Just']))($GLOBALS['Data_Maybe_Nothing']);
 
 // Data_String_Regex_replace'
 function majData_majString_majRegex_replace__prime__($v_0, $v_1 = null, $v_2 = null): string|\Closure {
@@ -420,49 +404,49 @@ function majData_majString_majRegex_rendermajFlags($v_0): string|\Closure {
   if ($__num < 1) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
-  $__t0 = null;;
+  $__t0 = null;
   if (($v_0)->{'global'}) {
 $__t0 = "g";
 goto end_branch_0;;
 };
   $__t0 = "";
   end_branch_0:;
-  $__t1 = null;;
+  $__t1 = null;
   if (($v_0)->{'ignoreCase'}) {
 $__t1 = "i";
 goto end_branch_1;;
 };
   $__t1 = "";
   end_branch_1:;
-  $__t2 = null;;
+  $__t2 = null;
   if (($v_0)->{'multiline'}) {
 $__t2 = "m";
 goto end_branch_2;;
 };
   $__t2 = "";
   end_branch_2:;
-  $__t3 = null;;
+  $__t3 = null;
   if (($v_0)->{'dotAll'}) {
 $__t3 = "s";
 goto end_branch_3;;
 };
   $__t3 = "";
   end_branch_3:;
-  $__t4 = null;;
+  $__t4 = null;
   if (($v_0)->{'sticky'}) {
 $__t4 = "y";
 goto end_branch_4;;
 };
   $__t4 = "";
   end_branch_4:;
-  $__t5 = null;;
+  $__t5 = null;
   if (($v_0)->{'unicode'}) {
 $__t5 = "u";
 goto end_branch_5;;
 };
   $__t5 = "";
   end_branch_5:;
-  $__res = ((($GLOBALS['Data_Semigroup_semigroupString'])->{'append'})($__t0))(((($GLOBALS['Data_Semigroup_semigroupString'])->{'append'})($__t1))(((($GLOBALS['Data_Semigroup_semigroupString'])->{'append'})($__t2))(((($GLOBALS['Data_Semigroup_semigroupString'])->{'append'})($__t3))(((($GLOBALS['Data_Semigroup_semigroupString'])->{'append'})($__t4))($__t5)))));
+  $__res = ((($GLOBALS['Data_Semigroup_append'])($GLOBALS['Data_Semigroup_semigroupString']))($__t0))(((($GLOBALS['Data_Semigroup_append'])($GLOBALS['Data_Semigroup_semigroupString']))($__t1))(((($GLOBALS['Data_Semigroup_append'])($GLOBALS['Data_Semigroup_semigroupString']))($__t2))(((($GLOBALS['Data_Semigroup_append'])($GLOBALS['Data_Semigroup_semigroupString']))($__t3))(((($GLOBALS['Data_Semigroup_append'])($GLOBALS['Data_Semigroup_semigroupString']))($__t4))($__t5)))));
   goto __end;;
   __end:
   return 1 < $__num ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -476,7 +460,7 @@ function majData_majString_majRegex_regex(string $s_0, $f_1 = null) {
   if ($__num < 2) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 2);
   }
-  $__res = \Data\String\Regex\majData_majString_majRegex_regexmajImpl($GLOBALS['Data_Either_Left'], $GLOBALS['Data_Either_Right'], $s_0, \Data\String\Regex\majData_majString_majRegex_rendermajFlags($f_1));
+  $__res = (($GLOBALS['Data_Function_apply'])(((($GLOBALS['Data_String_Regex_regexImpl'])($GLOBALS['Data_Either_Left']))($GLOBALS['Data_Either_Right']))($s_0)))(\Data\String\Regex\majData_majString_majRegex_rendermajFlags($f_1));
   goto __end;;
   __end:
   return 2 < $__num ? $__res(...\array_slice(\func_get_args(), 2)) : $__res;
@@ -490,7 +474,7 @@ function majData_majString_majRegex_parsemajFlags(string $s_0) {
   if ($__num < 1) {
     return phpurs_curry_fallback($__fn, \func_get_args(), 1);
   }
-  $__res = (object)["global" => \Control\Semigroupoid\majControl_majSemigroupoid_composemajImpl($GLOBALS['Data_Maybe_isJust'], ($GLOBALS['Data_String_CodeUnits_indexOf'])("g"), $s_0), "ignoreCase" => \Control\Semigroupoid\majControl_majSemigroupoid_composemajImpl($GLOBALS['Data_Maybe_isJust'], ($GLOBALS['Data_String_CodeUnits_indexOf'])("i"), $s_0), "multiline" => \Control\Semigroupoid\majControl_majSemigroupoid_composemajImpl($GLOBALS['Data_Maybe_isJust'], ($GLOBALS['Data_String_CodeUnits_indexOf'])("m"), $s_0), "dotAll" => \Control\Semigroupoid\majControl_majSemigroupoid_composemajImpl($GLOBALS['Data_Maybe_isJust'], ($GLOBALS['Data_String_CodeUnits_indexOf'])("s"), $s_0), "sticky" => \Control\Semigroupoid\majControl_majSemigroupoid_composemajImpl($GLOBALS['Data_Maybe_isJust'], ($GLOBALS['Data_String_CodeUnits_indexOf'])("y"), $s_0), "unicode" => \Control\Semigroupoid\majControl_majSemigroupoid_composemajImpl($GLOBALS['Data_Maybe_isJust'], ($GLOBALS['Data_String_CodeUnits_indexOf'])("u"), $s_0)];
+  $__res = (object)["global" => (($GLOBALS['Data_String_CodeUnits_contains'])("g"))($s_0), "ignoreCase" => (($GLOBALS['Data_String_CodeUnits_contains'])("i"))($s_0), "multiline" => (($GLOBALS['Data_String_CodeUnits_contains'])("m"))($s_0), "dotAll" => (($GLOBALS['Data_String_CodeUnits_contains'])("s"))($s_0), "sticky" => (($GLOBALS['Data_String_CodeUnits_contains'])("y"))($s_0), "unicode" => (($GLOBALS['Data_String_CodeUnits_contains'])("u"))($s_0)];
   goto __end;;
   __end:
   return 1 < $__num ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
@@ -498,7 +482,7 @@ function majData_majString_majRegex_parsemajFlags(string $s_0) {
 $GLOBALS['Data_String_Regex_parseFlags'] = __NAMESPACE__ . '\\majData_majString_majRegex_parsemajFlags';
 
 // Data_String_Regex_match_closure
-$GLOBALS['Data_String_Regex_match_closure'] = (($GLOBALS['Data_String_Regex__match'])($GLOBALS['Data_Maybe_Just']))(new \Data\Maybe\Data_Maybe_Nothing());
+$GLOBALS['Data_String_Regex_match_closure'] = (($GLOBALS['Data_String_Regex__match'])($GLOBALS['Data_Maybe_Just']))($GLOBALS['Data_Maybe_Nothing']);
 
 // Data_String_Regex_match
 function majData_majString_majRegex_match($v_0, $v_1 = null) {
@@ -515,7 +499,13 @@ function majData_majString_majRegex_match($v_0, $v_1 = null) {
 $GLOBALS['Data_String_Regex_match'] = __NAMESPACE__ . '\\majData_majString_majRegex_match';
 
 // Data_String_Regex_flags_closure
-$GLOBALS['Data_String_Regex_flags_closure'] = (($GLOBALS['Control_Semigroupoid_composeImpl'])($GLOBALS['Data_String_Regex_Flags_RegexFlags']))($GLOBALS['Data_String_Regex_flagsImpl']);
+$GLOBALS['Data_String_Regex_flags_closure'] = ((($GLOBALS['Control_Semigroupoid_compose'])($GLOBALS['Control_Semigroupoid_semigroupoidFn']))(function($x_0) {
+  $__num = \func_num_args();
+  $__res = $x_0;
+  goto __end;;
+  __end:
+  return $__num > 1 ? $__res(...\array_slice(\func_get_args(), 1)) : $__res;
+}))($GLOBALS['Data_String_Regex_flagsImpl']);
 
 // Data_String_Regex_flags
 function majData_majString_majRegex_flags($v_0) {

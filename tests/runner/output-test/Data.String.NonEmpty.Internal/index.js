@@ -10,8 +10,6 @@ import * as Data_Show from "../Data.Show/index.js";
 import * as Data_String_CodeUnits from "../Data.String.CodeUnits/index.js";
 import * as Data_String_Common from "../Data.String.Common/index.js";
 import * as Data_Symbol from "../Data.Symbol/index.js";
-var show = /* #__PURE__ */ Data_Show.show(Data_Show.showString);
-var composeKleisliFlipped = /* #__PURE__ */ Control_Bind.composeKleisliFlipped(Data_Maybe.bindMaybe);
 var fromJust = /* #__PURE__ */ Data_Maybe.fromJust();
 var NonEmptyString = function (x) {
     return x;
@@ -30,13 +28,12 @@ var toLower = function (v) {
 };
 var showNonEmptyString = {
     show: function (v) {
-        return "(NonEmptyString.unsafeFromString " + (show(v) + ")");
+        return "(NonEmptyString.unsafeFromString " + (Data_Show.show(Data_Show.showString)(v) + ")");
     }
 };
-var show1 = /* #__PURE__ */ Data_Show.show(showNonEmptyString);
 var showNonEmptyReplacement = {
     show: function (v) {
-        return "(NonEmptyReplacement " + (show1(v) + ")");
+        return "(NonEmptyReplacement " + (Data_Show.show(showNonEmptyString)(v) + ")");
     }
 };
 var semigroupNonEmptyString = Data_Semigroup.semigroupString;
@@ -63,10 +60,9 @@ var prependString = function (s1) {
 var ordNonEmptyString = Data_Ord.ordString;
 var ordNonEmptyReplacement = ordNonEmptyString;
 var nonEmptyNonEmpty = function (dictIsSymbol) {
-    var reflectSymbol = Data_Symbol.reflectSymbol(dictIsSymbol);
     return {
         nes: function (p) {
-            return reflectSymbol(p);
+            return Data_Symbol.reflectSymbol(dictIsSymbol)(p);
         }
     };
 };
@@ -90,33 +86,32 @@ var liftS = function (f) {
         return f(v);
     };
 };
-var startsWith = function ($59) {
-    return liftS(Data_String_CodeUnits.startsWith($59));
+var startsWith = function ($48) {
+    return liftS(Data_String_CodeUnits.startsWith($48));
 };
 var joinWith1 = function (dictFoldable1) {
-    var intercalate = Data_Foldable.intercalate(dictFoldable1.Foldable0())(Data_Monoid.monoidString);
+    var Foldable0 = dictFoldable1.Foldable0();
     return function (v) {
-        var $60 = intercalate(v);
-        return function ($61) {
-            return NonEmptyString($60($61));
+        var $49 = Data_Foldable.intercalate(Foldable0)(Data_Monoid.monoidString)(v);
+        return function ($50) {
+            return NonEmptyString($49($50));
         };
     };
 };
 var joinWith = function (dictFoldable) {
-    var intercalate = Data_Foldable.intercalate(dictFoldable)(Data_Monoid.monoidString);
     return function (splice) {
-        var $62 = intercalate(splice);
-        return function ($63) {
-            return $62($63);
+        var $51 = Data_Foldable.intercalate(dictFoldable)(Data_Monoid.monoidString)(splice);
+        return function ($52) {
+            return $51($52);
         };
     };
 };
 var join1With = function (dictFoldable1) {
-    var joinWith2 = joinWith(dictFoldable1.Foldable0());
+    var Foldable0 = dictFoldable1.Foldable0();
     return function (splice) {
-        var $64 = joinWith2(splice);
-        return function ($65) {
-            return NonEmptyString($64($65));
+        var $53 = joinWith(Foldable0)(splice);
+        return function ($54) {
+            return NonEmptyString($53($54));
         };
     };
 };
@@ -127,26 +122,26 @@ var fromString = function (v) {
     return new Data_Maybe.Just(v);
 };
 var stripPrefix = function (pat) {
-    return composeKleisliFlipped(fromString)(liftS(Data_String_CodeUnits.stripPrefix(pat)));
+    return Control_Bind.composeKleisliFlipped(Data_Maybe.bindMaybe)(fromString)(liftS(Data_String_CodeUnits.stripPrefix(pat)));
 };
 var stripSuffix = function (pat) {
-    return composeKleisliFlipped(fromString)(liftS(Data_String_CodeUnits.stripSuffix(pat)));
+    return Control_Bind.composeKleisliFlipped(Data_Maybe.bindMaybe)(fromString)(liftS(Data_String_CodeUnits.stripSuffix(pat)));
 };
 var trim = function (v) {
     return fromString(Data_String_Common.trim(v));
 };
 var unsafeFromString = function () {
-    return function ($66) {
-        return fromJust(fromString($66));
+    return function ($55) {
+        return fromJust(fromString($55));
     };
 };
 var eqNonEmptyString = Data_Eq.eqString;
 var eqNonEmptyReplacement = eqNonEmptyString;
-var endsWith = function ($67) {
-    return liftS(Data_String_CodeUnits.endsWith($67));
+var endsWith = function ($56) {
+    return liftS(Data_String_CodeUnits.endsWith($56));
 };
-var contains = function ($68) {
-    return liftS(Data_String_CodeUnits.contains($68));
+var contains = function ($57) {
+    return liftS(Data_String_CodeUnits.contains($57));
 };
 var appendString = function (v) {
     return function (s2) {

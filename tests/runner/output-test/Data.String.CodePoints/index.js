@@ -26,12 +26,6 @@ var $runtime_lazy = function (name, moduleName, init) {
         return val;
     };
 };
-var fromEnum = /* #__PURE__ */ Data_Enum.fromEnum(Data_Enum.boundedEnumChar);
-var map = /* #__PURE__ */ Data_Functor.map(Data_Maybe.functorMaybe);
-var unfoldr = /* #__PURE__ */ Data_Unfoldable.unfoldr(Data_Unfoldable.unfoldableArray);
-var div = /* #__PURE__ */ Data_EuclideanRing.div(Data_EuclideanRing.euclideanRingInt);
-var mod = /* #__PURE__ */ Data_EuclideanRing.mod(Data_EuclideanRing.euclideanRingInt);
-var compare = /* #__PURE__ */ Data_Ord.compare(Data_Ord.ordInt);
 var CodePoint = function (x) {
     return x;
 };
@@ -51,46 +45,13 @@ var isTrail = function (cu) {
 var isLead = function (cu) {
     return 55296 <= cu && cu <= 56319;
 };
-var uncons = function (s) {
-    var v = Data_String_CodeUnits.length(s);
-    if (v === 0) {
-        return Data_Maybe.Nothing.value;
-    };
-    if (v === 1) {
-        return new Data_Maybe.Just({
-            head: fromEnum(Data_String_Unsafe.charAt(0)(s)),
-            tail: ""
-        });
-    };
-    var cu1 = fromEnum(Data_String_Unsafe.charAt(1)(s));
-    var cu0 = fromEnum(Data_String_Unsafe.charAt(0)(s));
-    var $43 = isLead(cu0) && isTrail(cu1);
-    if ($43) {
-        return new Data_Maybe.Just({
-            head: unsurrogate(cu0)(cu1),
-            tail: Data_String_CodeUnits.drop(2)(s)
-        });
-    };
-    return new Data_Maybe.Just({
-        head: cu0,
-        tail: Data_String_CodeUnits.drop(1)(s)
-    });
-};
-var unconsButWithTuple = function (s) {
-    return map(function (v) {
-        return new Data_Tuple.Tuple(v.head, v.tail);
-    })(uncons(s));
-};
-var toCodePointArrayFallback = function (s) {
-    return unfoldr(unconsButWithTuple)(s);
-};
 var unsafeCodePointAt0Fallback = function (s) {
-    var cu0 = fromEnum(Data_String_Unsafe.charAt(0)(s));
-    var $47 = isLead(cu0) && Data_String_CodeUnits.length(s) > 1;
-    if ($47) {
-        var cu1 = fromEnum(Data_String_Unsafe.charAt(1)(s));
-        var $48 = isTrail(cu1);
-        if ($48) {
+    var cu0 = Data_Enum.fromEnum(Data_Enum.boundedEnumChar)(Data_String_Unsafe.charAt(0)(s));
+    var $22 = isLead(cu0) && Data_String_CodeUnits.length(s) > 1;
+    if ($22) {
+        var cu1 = Data_Enum.fromEnum(Data_Enum.boundedEnumChar)(Data_String_Unsafe.charAt(1)(s));
+        var $23 = isTrail(cu1);
+        if ($23) {
             return unsurrogate(cu0)(cu1);
         };
         return cu0;
@@ -98,40 +59,33 @@ var unsafeCodePointAt0Fallback = function (s) {
     return cu0;
 };
 var unsafeCodePointAt0 = /* #__PURE__ */ $foreign["_unsafeCodePointAt0"](unsafeCodePointAt0Fallback);
-var toCodePointArray = /* #__PURE__ */ $foreign["_toCodePointArray"](toCodePointArrayFallback)(unsafeCodePointAt0);
-var length = function ($74) {
-    return Data_Array.length(toCodePointArray($74));
-};
-var lastIndexOf = function (p) {
-    return function (s) {
-        return map(function (i) {
-            return length(Data_String_CodeUnits.take(i)(s));
-        })(Data_String_CodeUnits.lastIndexOf(p)(s));
-    };
-};
-var indexOf = function (p) {
-    return function (s) {
-        return map(function (i) {
-            return length(Data_String_CodeUnits.take(i)(s));
-        })(Data_String_CodeUnits.indexOf(p)(s));
-    };
-};
 var fromCharCode = /* #__PURE__ */ (function () {
-    var $75 = Data_Enum.toEnumWithDefaults(Data_Enum.boundedEnumChar)(Data_Bounded.bottom(Data_Bounded.boundedChar))(Data_Bounded.top(Data_Bounded.boundedChar));
-    return function ($76) {
-        return Data_String_CodeUnits.singleton($75($76));
+    var $53 = Data_Enum.toEnumWithDefaults(Data_Enum.boundedEnumChar)(Data_Bounded.bottom(Data_Bounded.boundedChar))(Data_Bounded.top(Data_Bounded.boundedChar));
+    return function ($54) {
+        return Data_String_CodeUnits.singleton($53($54));
     };
 })();
 var singletonFallback = function (v) {
     if (v <= 65535) {
         return fromCharCode(v);
     };
-    var lead = div(v - 65536 | 0)(1024) + 55296 | 0;
-    var trail = mod(v - 65536 | 0)(1024) + 56320 | 0;
+    var lead = Data_EuclideanRing.div(Data_EuclideanRing.euclideanRingInt)(v - 65536 | 0)(1024) + 55296 | 0;
+    var trail = Data_EuclideanRing.mod(Data_EuclideanRing.euclideanRingInt)(v - 65536 | 0)(1024) + 56320 | 0;
     return fromCharCode(lead) + fromCharCode(trail);
 };
 var fromCodePointArray = /* #__PURE__ */ $foreign["_fromCodePointArray"](singletonFallback);
 var singleton = /* #__PURE__ */ $foreign["_singleton"](singletonFallback);
+var uncons = function (v) {
+    if (v === "") {
+        return Data_Maybe.Nothing.value;
+    };
+    var h = unsafeCodePointAt0(v);
+    var l = Data_String_CodeUnits.length(singleton(h));
+    return new Data_Maybe.Just({
+        head: h,
+        tail: Data_String_CodeUnits.drop(l)(v)
+    });
+};
 var takeFallback = function (v) {
     return function (v1) {
         if (v < 1) {
@@ -145,22 +99,48 @@ var takeFallback = function (v) {
     };
 };
 var take = /* #__PURE__ */ $foreign["_take"](takeFallback);
-var lastIndexOf$prime = function (p) {
-    return function (i) {
-        return function (s) {
-            var i$prime = Data_String_CodeUnits.length(take(i)(s));
-            return map(function (k) {
-                return length(Data_String_CodeUnits.take(k)(s));
-            })(Data_String_CodeUnits["lastIndexOf$prime"](p)(i$prime)(s));
-        };
-    };
-};
 var splitAt = function (i) {
     return function (s) {
         var before = take(i)(s);
         return {
             before: before,
             after: Data_String_CodeUnits.drop(Data_String_CodeUnits.length(before))(s)
+        };
+    };
+};
+var unconsButWithTuple = function (s) {
+    return Data_Functor.map(Data_Maybe.functorMaybe)(function (v) {
+        return new Data_Tuple.Tuple(v.head, v.tail);
+    })(uncons(s));
+};
+var toCodePointArrayFallback = function (s) {
+    return Data_Unfoldable.unfoldr(Data_Unfoldable.unfoldableArray)(unconsButWithTuple)(s);
+};
+var toCodePointArray = /* #__PURE__ */ $foreign["_toCodePointArray"](toCodePointArrayFallback)(unsafeCodePointAt0);
+var length = function ($55) {
+    return Data_Array.length(toCodePointArray($55));
+};
+var indexOf = function (p) {
+    return function (s) {
+        return Data_Functor.map(Data_Maybe.functorMaybe)(function (i) {
+            return length(Data_String_CodeUnits.take(i)(s));
+        })(Data_String_CodeUnits.indexOf(p)(s));
+    };
+};
+var lastIndexOf = function (p) {
+    return function (s) {
+        return Data_Functor.map(Data_Maybe.functorMaybe)(function (i) {
+            return length(Data_String_CodeUnits.take(i)(s));
+        })(Data_String_CodeUnits.lastIndexOf(p)(s));
+    };
+};
+var lastIndexOf$prime = function (p) {
+    return function (i) {
+        return function (s) {
+            var i$prime = Data_String_CodeUnits.length(take(i)(s));
+            return Data_Functor.map(Data_Maybe.functorMaybe)(function (k) {
+                return length(Data_String_CodeUnits.take(k)(s));
+            })(Data_String_CodeUnits["lastIndexOf$prime"](p)(i$prime)(s));
         };
     };
 };
@@ -174,7 +154,7 @@ var eqCodePoint = {
 var ordCodePoint = {
     compare: function (x) {
         return function (y) {
-            return compare(x)(y);
+            return Data_Ord.compare(Data_Ord.ordInt)(x)(y);
         };
     },
     Eq0: function () {
@@ -190,7 +170,7 @@ var indexOf$prime = function (p) {
     return function (i) {
         return function (s) {
             var s$prime = drop(i)(s);
-            return map(function (k) {
+            return Data_Functor.map(Data_Maybe.functorMaybe)(function (k) {
                 return i + length(Data_String_CodeUnits.take(k)(s$prime)) | 0;
             })(Data_String_CodeUnits.indexOf(p)(s$prime));
         };
@@ -206,8 +186,8 @@ var countTail = function ($copy_p) {
             function $tco_loop(p, s, accum) {
                 var v = uncons(s);
                 if (v instanceof Data_Maybe.Just) {
-                    var $61 = p(v.value0.head);
-                    if ($61) {
+                    var $40 = p(v.value0.head);
+                    if ($40) {
                         $tco_var_p = p;
                         $tco_var_s = v.value0.tail;
                         $copy_accum = accum + 1 | 0;
@@ -242,9 +222,12 @@ var takeWhile = function (p) {
         return take(countPrefix(p)(s))(s);
     };
 };
-var codePointFromChar = function ($77) {
-    return CodePoint(fromEnum($77));
-};
+var codePointFromChar = /* #__PURE__ */ (function () {
+    var $56 = Data_Enum.fromEnum(Data_Enum.boundedEnumChar);
+    return function ($57) {
+        return CodePoint($56($57));
+    };
+})();
 var codePointAtFallback = function ($copy_n) {
     return function ($copy_s) {
         var $tco_var_n = $copy_n;
@@ -253,8 +236,8 @@ var codePointAtFallback = function ($copy_n) {
         function $tco_loop(n, s) {
             var v = uncons(s);
             if (v instanceof Data_Maybe.Just) {
-                var $66 = n === 0;
-                if ($66) {
+                var $45 = n === 0;
+                if ($45) {
                     $tco_done = true;
                     return new Data_Maybe.Just(v.value0.head);
                 };
@@ -292,7 +275,7 @@ var boundedCodePoint = {
         return ordCodePoint;
     }
 };
-var boundedEnumCodePoint = /* #__PURE__ */ (function () {
+var $lazy_boundedEnumCodePoint = /* #__PURE__ */ $runtime_lazy("boundedEnumCodePoint", "Data.String.CodePoints", function () {
     return {
         cardinality: 1114111 + 1 | 0,
         fromEnum: function (v) {
@@ -314,16 +297,17 @@ var boundedEnumCodePoint = /* #__PURE__ */ (function () {
             return $lazy_enumCodePoint(0);
         }
     };
-})();
+});
 var $lazy_enumCodePoint = /* #__PURE__ */ $runtime_lazy("enumCodePoint", "Data.String.CodePoints", function () {
     return {
-        succ: Data_Enum.defaultSucc(Data_Enum.toEnum(boundedEnumCodePoint))(Data_Enum.fromEnum(boundedEnumCodePoint)),
-        pred: Data_Enum.defaultPred(Data_Enum.toEnum(boundedEnumCodePoint))(Data_Enum.fromEnum(boundedEnumCodePoint)),
+        succ: Data_Enum.defaultSucc(Data_Enum.toEnum($lazy_boundedEnumCodePoint(0)))(Data_Enum.fromEnum($lazy_boundedEnumCodePoint(0))),
+        pred: Data_Enum.defaultPred(Data_Enum.toEnum($lazy_boundedEnumCodePoint(0)))(Data_Enum.fromEnum($lazy_boundedEnumCodePoint(0))),
         Ord0: function () {
             return ordCodePoint;
         }
     };
 });
+var boundedEnumCodePoint = /* #__PURE__ */ $lazy_boundedEnumCodePoint(63);
 var enumCodePoint = /* #__PURE__ */ $lazy_enumCodePoint(59);
 export {
     codePointFromChar,

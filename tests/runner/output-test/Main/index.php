@@ -94,6 +94,26 @@ if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
     };
   }
 }
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_execute_effect')) {
+  function phpurs_execute_effect($val) {
+    if (\is_callable($val)) {
+      return $val($GLOBALS['Data_Unit_unit']);
+    }
+    return $val;
+  }
+}
+if (!\function_exists(__NAMESPACE__ . '\\phpurs_ref_new')) {
+  function phpurs_ref_new($value) {
+    return (object)['value' => $value];
+  }
+  function phpurs_ref_read($ref) {
+    return $ref->value;
+  }
+  function phpurs_ref_write($ref, $value) {
+    $ref->value = $value;
+    return null;
+  }
+}
 
 $GLOBALS['Prim_undefined'] = function() { throw new \Exception("undefined"); };
 
@@ -129,5 +149,5 @@ function majMain_f1($g_0) {
 $GLOBALS['Main_f1'] = __NAMESPACE__ . '\\majMain_f1';
 
 // Main_main
-$GLOBALS['Main_main'] = ($GLOBALS['Effect_Console_log'])("Done");
+$GLOBALS['Main_main'] = (($GLOBALS['Data_Function_apply'])($GLOBALS['Effect_Console_log']))(\Main\majMain_f1($GLOBALS['Main_f2']));
 

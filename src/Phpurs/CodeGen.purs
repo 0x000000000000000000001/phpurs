@@ -24,6 +24,7 @@ import Phpurs.EnumRegions as EnumRegions
 import Phpurs.ThunkFusion as ThunkFusion
 import Phpurs.PartialBindings as PartialBindings
 import Phpurs.NullableConstructors as Nullable
+import Phpurs.ArrayRefs as ArrayRefs
 import Phpurs.CopyCleanup as CopyCleanup
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
 import Data.Maybe (Maybe(..), isJust, fromMaybe)
@@ -921,6 +922,19 @@ translate imports input =
       ) tcoBindings)
 
     privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.unions [ regions.privateNames, fusion.privateNames, partialBindings.privateNames ])
+    isArrayType = case _ of
+      ADT name _ _ -> Set.member name regions.arrayLayouts
+      _ -> false
+    -- Private workers whose parameters hold packed arrays; ArrayRefs promotes
+    -- them to references where every call site can hand over ownership.
+    arrayParams = Map.fromFoldable (Array.mapMaybe (\(Tuple (Ident name) expr) ->
+        if Set.member (modPrefix <> name) privateNames then
+          case extractFuncType expr of
+            Just { fArgs } ->
+              let idxs = Array.mapMaybe identity (Array.mapWithIndex (\i ty -> if isArrayType ty then Just i else Nothing) fArgs)
+              in if Array.null idxs then Nothing else Just (Tuple (modPrefix <> name) (Set.fromFoldable idxs))
+            Nothing -> Nothing
+        else Nothing) (Array.concatMap _.bindings tcoBindings))
     regionWorkers = Set.map (\ident -> modPrefix <> unwrap ident) regions.privateNames
     privateClasses = Set.map (\name ->
       "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") (unwrap mod.name) <> "\\" <> modPrefix
@@ -942,8 +956,9 @@ translate imports input =
       _ -> d
       else d
   in
-    CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses }
-      (Nullable.lower nullableClasses (optimized { decls = map hideWorker optimized.decls }))
+    ArrayRefs.optimize arrayParams privateClasses
+      (CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses }
+        (Nullable.lower nullableClasses (optimized { decls = map hideWorker optimized.decls })))
 
 dedupArgs :: Array String -> Array String
 dedupArgs args = Array.mapWithIndex

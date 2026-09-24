@@ -66,7 +66,7 @@ genNativeCurryWithRoot :: Boolean -> String -> Map String Int -> String -> Array
 genNativeCurryWithRoot compactRoot currentModPrefix allArities name args retType stmts =
   let
     argStr = joinWith ", " (mapWithIndex (\i a -> 
-      let t = if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
+      let t = if a.type_ == "&" then "&" else if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
       in t <> "$" <> safeName a.name <> (if i > 0 then " = null" else "")
     ) args)
     retStr = if retType == "mixed" || retType == "" then "" else if retType == "\\Closure" then ": \\Closure" else ": " <> retType <> "|\\Closure"

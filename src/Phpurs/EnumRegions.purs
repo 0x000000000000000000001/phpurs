@@ -360,13 +360,13 @@ freshPrefix mod = go 0
   go n = let prefix = "__phpurs_enum_" <> show n <> "_"
     in if A.any (String.contains (Pattern prefix)) names then go (n + 1) else prefix
 
-optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident, privateConstructors :: Set String, nullableConstructors :: Map String Boolean }
+optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident, privateConstructors :: Set String, nullableConstructors :: Map String Boolean, arrayLayouts :: Set String }
 optimize mod
   | not (A.any compactLayout mod.dataDecls)
       || A.length mod.dataDecls > 64
       || A.length mod.bindings > 256
       || A.any (\d -> A.length d.constructors > 64 || A.any (\c -> A.length c.fields > 64) d.constructors) mod.dataDecls =
-      { module_: mod, privateNames: Set.empty, privateConstructors: Set.empty, nullableConstructors: Map.empty }
+      { module_: mod, privateNames: Set.empty, privateConstructors: Set.empty, nullableConstructors: Map.empty, arrayLayouts: Set.empty }
   | otherwise =
       let
         ctx = context mod
@@ -384,6 +384,11 @@ optimize mod
         layouts = A.mapMaybe (\d -> if Set.member (unwrap mod.name <> "." <> d.name) selected.layouts && not (isEnum d)
           then Just (d { name = prefix <> d.name, constructors = map (\c -> c { name = prefix <> c.name, fields = map (renameType ctx prefix selected) c.fields }) d.constructors })
           else Nothing) mod.dataDecls
+        -- Private nullable-product layouts (objects). Their full names let
+        -- CodeGen identify the worker parameters that may be updated in place.
+        arrayLayouts = Set.fromFoldable (A.mapMaybe (\d -> case Nullable.layout d of
+          Just _ -> Just (unwrap mod.name <> "." <> d.name)
+          Nothing -> Nothing) layouts)
       in
         { module_: mod { bindings = bindings <> copies, dataDecls = mod.dataDecls <> layouts }
         , privateNames: Set.map renamed selected.workers
@@ -393,4 +398,5 @@ optimize mod
         , nullableConstructors: Map.fromFoldable (A.concatMap (\d -> case Nullable.layout d of
             Just l -> [ Tuple l.empty true, Tuple l.boxed false ]
             Nothing -> []) layouts)
+        , arrayLayouts
         }

@@ -747,11 +747,16 @@ translate imports input =
             safeCtorName = String.replaceAll (Pattern "'") (Replacement "_prime_") ctor.name
             structName = modPrefix <> safeCtorName
             safeTagStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctor.name
+            isPrivate = Set.member ctor.name regions.privateConstructors
             -- Internal field types are proven before rewriting. PHP promoted
             -- property checks add a cost to each allocation without adding a
             -- check at a public boundary; keep those checks on public classes.
-            argsStr = Array.mapWithIndex (\i typ -> "public " <> (if Set.member ctor.name regions.privateConstructors then "" else exprTypeToPhpType typ) <> " $value" <> show i) ctor.fields
-            structDecl = "final class " <> structName <> " { public $tag = '" <> safeTagStr <> "'; public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
+            argsStr = Array.mapWithIndex (\i typ -> "public " <> (if isPrivate then "" else exprTypeToPhpType typ) <> " $value" <> show i) ctor.fields
+            -- Generated pattern matches use `instanceof`, never a tag read, and
+            -- private constructors never cross an FFI or public boundary. The
+            -- public `$tag` is part of the visible representation only.
+            tagDecl = if isPrivate then "" else "public $tag = '" <> safeTagStr <> "'; "
+            structDecl = "final class " <> structName <> " { " <> tagDecl <> "public function __construct(" <> String.joinWith ", " argsStr <> ") {} }"
           in
             [ structDecl ]
         ) decl.constructors

@@ -108,6 +108,8 @@ const treePhp=printPhpFile(false)('')(treeFile.arities)(treeFile);
 assert.ok(treePhp.includes('final class Demo___phpurs_enum_0_Box'));
 assert.match(treePhp,/final class Demo_Box[^\n]*public int \$value1/);
 assert.doesNotMatch(treePhp.match(/final class Demo___phpurs_enum_0_Box[^\n]*/)[0],/int \$value/);
+assert.doesNotMatch(treePhp.match(/final class Demo___phpurs_enum_0_Box[^\n]*/)[0],/\$tag/,'private constructors carry no tag');
+assert.match(treePhp,/final class Demo_Box \{ public \$tag = 'Box';/,'public constructors keep the tag');
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_enum_/.test(treePhp));
 const treeRun=spawnSync('php',[],{input:treePhp+`\nif (\\Demo\\majDemo_score(-1)!==0 || \\Demo\\majDemo_score(1)!==1) throw new \\Exception('tree');\ntry { new \\Demo\\Demo_Box(new \\Demo\\Demo_Red(), []); throw new \\Exception('public field check lost'); } catch (\\TypeError $expected) {}\necho "Done\\n";`,encoding:'utf8'});
 assert.equal(treeRun.status,0,treeRun.stdout+treeRun.stderr);

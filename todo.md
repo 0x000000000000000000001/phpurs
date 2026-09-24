@@ -320,6 +320,19 @@ Référence officielle actuelle : README principal, Church 8,794 ms, RBTree 107,
 
 Validation : 14 résultats par processus, médiane par ligne sur trois processus, total = somme des médianes. Le coût de compilation reste borné par les mêmes budgets et refus. Voir [le bilan de campagne](../../altbak.pub/docs/benchmark-results/2026-09-24-php-enum-regions.md).
 
+## R16 — P1 — Supprimer le tag des constructeurs privés
+
+**Intégré au générateur et mesuré ; aucune campagne README republiée à cette étape.** Les constructeurs privés d'`EnumRegions` portaient un `$tag` que le code généré ne lit jamais : les correspondances passent par `instanceof` (`translateOperator1 (OpIsTag ...)`), les énumérations prouvées sont des entiers et les frontières FFI/publiques restent exclues. Le `$tag` est conservé sur les classes publiques.
+
+- [x] Vérifier l'absence de toute lecture `->{'tag'}` dans le PHP généré et le rôle réel d'`OpIsTag` avant de retirer la propriété.
+- [x] Mesurer le potentiel sur copies appariées : RBTree isolé, quatre tours ABBA, quatre variantes A–D ; C (sans tag) ≈ 4 % sous la référence, B/D (champs typés) +30 à 35 %.
+- [x] Confirmer le résultat négatif des champs typés et conserver les champs privés non typés.
+- [x] Mesurer le programme complet sur un même TAST, seule la déclaration diffère : 120,09–120,37 ms avec tag contre 115,19–116,64 ms sans, soit 4,3 ms / 3,6 %.
+- [x] Ajouter deux assertions de régression dans `enum-regions.mjs` (privé sans `$tag`, public avec) ; les neuf suites passent.
+- [x] Vérifier que seul `Test.RBTree/index.php` change parmi les modules à constructeurs privés, et qu'aucun build FFI n'en contient.
+
+Validation : quatorze résultats dans les deux variantes, aucun accès `tag` généré, préfixe public inchangé, coût de compilation inchangé. Voir [le bilan](audit/2026-09-24/private-tag/report.md).
+
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 
 Constat : Main.purs, lignes 96–98, renvoie toujours Nothing dans onSkipModule ; le cache importé n'est pas utilisé. Le helper PBO actuel fondé sur version et mtime CoreFn ne couvre pas à lui seul FFI, directives et dépendances.

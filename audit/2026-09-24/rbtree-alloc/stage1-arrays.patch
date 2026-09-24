@@ -1,0 +1,61 @@
+diff --git a/src/Phpurs/EnumRegions.purs b/src/Phpurs/EnumRegions.purs
+index b649e63..66f37f8 100644
+--- a/src/Phpurs/EnumRegions.purs
++++ b/src/Phpurs/EnumRegions.purs
+@@ -266,6 +266,23 @@ renameType ctx prefix selected ty = case ty of
+   where
+   recur = renameType ctx prefix selected
+ 
++-- Private nullable-product layouts are represented as packed PHP arrays: the
++-- empty constructor stays `null` (Nullable.lower) and the boxed constructor
++-- becomes `[field0, field1, ...]`. The PHP copy-on-write then makes plain
++-- rebuilds of a node allocation-free whenever the value is not shared.
++arrayCtor :: forall r. Context -> { layouts :: Set String | r } -> Qualified Ident -> Maybe Int
++arrayCtor ctx selected q = do
++  c <- Map.lookup q ctx.constructors
++  layoutName <- case c.type_ of
++    ADT name _ _ -> Just name
++    _ -> Nothing
++  if Set.member layoutName selected.layouts then do
++    d <- Map.lookup layoutName ctx.layouts
++    l <- Nullable.layout d
++    let Qualified _ (Ident ctorName) = q
++    if ctorName == l.boxed && not (A.null c.fields) then Just (A.length c.fields) else Nothing
++  else Nothing
++
+ -- This same structural rewrite applies to a proven entry expression and to
+ -- copies of its complete call graph. Original workers/layouts are kept intact.
+ rewrite :: forall r. Context -> String -> { workers :: Set Ident, layouts :: Set String | r } -> NeutralExpr -> NeutralExpr
+@@ -282,12 +299,15 @@ rewrite ctx prefix selected (NeutralExpr syntax) = NeutralExpr case map recur sy
+     _ -> Var q
+   CtorSaturated q ct pn ident fields -> case Map.lookup q ctx.constructors >>= _.tag of
+     Just tag -> Lit (LitInt tag)
+-    _ -> CtorSaturated (renameCtor q) ct (renameProper pn) (renameIdent ident) fields
++    _
++      | isJust (arrayCtor ctx selected q) -> Lit (LitArray (map snd fields))
++      | otherwise -> CtorSaturated (renameCtor q) ct (renameProper pn) (renameIdent ident) fields
+   PrimOp (Op1 (OpIsTag q) value) -> case Map.lookup q ctx.constructors >>= _.tag of
+     Just tag -> PrimOp (Op2 (OpIntOrd OpEq) value (NeutralExpr (Lit (LitInt tag))))
+     _ -> PrimOp (Op1 (OpIsTag (renameCtor q)) value)
+-  Accessor value (GetCtorField q ct pn ident field index) ->
+-    Accessor value (GetCtorField (renameCtor q) ct (renameProper pn) (renameIdent ident) field index)
++  Accessor value (GetCtorField q ct pn ident field index) -> case arrayCtor ctx selected q of
++    Just _ -> PrimOp (Op2 OpArrayIndex value (NeutralExpr (Lit (LitInt index))))
++    Nothing -> Accessor value (GetCtorField (renameCtor q) ct (renameProper pn) (renameIdent ident) field index)
+   other -> other
+   where
+   recur = rewrite ctx prefix selected
+diff --git a/tests/codegen/nullable-constructors.mjs b/tests/codegen/nullable-constructors.mjs
+index 7620a44..43bb78d 100644
+--- a/tests/codegen/nullable-constructors.mjs
++++ b/tests/codegen/nullable-constructors.mjs
+@@ -96,7 +96,8 @@ const readOuter=fn('readOuter',[outer],int,branch(tag('NoOuter',loc(0,outer)),li
+ const nested=mod(fn('score',[int],int,call('readOuter',[typed(outer,call('makeOuter',[loc(0)]))])),[make,read,makeOuter,readOuter],[decl,outerDecl]);
+ assert.equal(M.size(optimize(nested).nullableConstructors),4);
+ const nestedPhp=render(nested);
+-assert.match(nestedPhp,/new \\Demo\\Demo___phpurs_enum_0_Wrap\(/);
++assert.doesNotMatch(nestedPhp,/new \\Demo\\Demo___phpurs_enum_0_Wrap\(/,'private boxed constructors are packed arrays');
++assert.match(nestedPhp,/function majDemo___phpurs_enum_0_makemajOuter[\s\S]*?\$__t0 = \[/,'private Wrap is built as an array literal');
+ const nestedRun=spawnSync('php',[],{input:nestedPhp+`
+ foreach ([[-1,-100],[0,99],[9,109]] as [$n,$want]) if (\\Demo\\majDemo_score($n)!==$want) throw new \\Exception('nested null');
+ $wrapped=\\Demo\\majDemo_makemajOuter(0);

@@ -9,7 +9,6 @@ package:
     - st
     - exceptions
     - integers
-    - math
     - strings
     - enums
     - foreign-object
@@ -43,8 +42,6 @@ workspace:
       path: "../../../phpurs-exceptions"
     integers:
       path: "../../../phpurs-integers"
-    math:
-      path: "../../../phpurs-math"
     strings:
       path: "../../../phpurs-strings"
     enums:

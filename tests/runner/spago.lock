@@ -15,7 +15,6 @@
             "foreign-object",
             "functions",
             "integers",
-            "math",
             "numbers",
             "partial",
             "prelude",
@@ -655,9 +654,6 @@
       "integers": {
         "path": "../../../phpurs-integers"
       },
-      "math": {
-        "path": "../../../phpurs-math"
-      },
       "numbers": {
         "path": "../../../phpurs-numbers"
       },
@@ -969,11 +965,6 @@
         "tuples",
         "unfoldable"
       ]
-    },
-    "math": {
-      "type": "local",
-      "path": "../../../phpurs-math",
-      "dependencies": []
     },
     "maybe": {
       "type": "registry",

@@ -114,7 +114,7 @@ translateOperator2 OpIntBitZeroFillShiftRight l r = PhpBinOp ">>" l r
 translateOperator2 (OpIntNum OpAdd) l r = PhpBinOp "+" l r
 translateOperator2 (OpIntNum OpSubtract) l r = PhpBinOp "-" l r
 translateOperator2 (OpIntNum OpMultiply) l r = PhpBinOp "*" l r
-translateOperator2 (OpIntNum OpDivide) l r = PhpBinOp "/" l r
+translateOperator2 (OpIntNum OpDivide) l r = PhpCall (PhpRaw "\\intdiv") [ l, r ]
 translateOperator2 (OpIntNum OpMod) l r = PhpBinOp "%" l r
 translateOperator2 (OpIntOrd OpEq) l r = PhpBinOp "===" l r
 translateOperator2 (OpIntOrd OpNotEq) l r = PhpBinOp "!==" l r
@@ -152,6 +152,7 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
     in
       Tuple innerFn (innerArgs <> toArray args)
   Typed _ inner -> flattenApp inner
+  Syn.TypeApp inner _ -> flattenApp inner
   _ -> Tuple tcoExpr []
 
 translateExprImpl :: String -> Array String -> Map String String -> Map String String -> Maybe String -> Array LoopCtx -> Boolean -> Int -> TcoExpr -> TranslationRes

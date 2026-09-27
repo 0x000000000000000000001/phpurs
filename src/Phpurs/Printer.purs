@@ -218,7 +218,11 @@ printExpr currentModPrefix allArities expr = case expr of
           PhpCall abs args -> "(" <> printExpr currentModPrefix allArities abs <> ")(" <> joinWith ", " (map (printExpr currentModPrefix allArities) args) <> ")"
           _ -> "/* ERROR: Impossible PhpCall match */"
   PhpInt i -> showInt32Impl i
-  PhpNumber n -> show n
+  PhpNumber n -> case show n of
+    "Infinity" -> "\\INF"
+    "-Infinity" -> "-\\INF"
+    "NaN" -> "\\NAN"
+    s -> s
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
   PhpArray arr -> "[" <> joinWith ", " (map (printExpr currentModPrefix allArities) arr) <> "]"

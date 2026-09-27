@@ -407,3 +407,56 @@ Bugs corrigés en chemin, tous documentés ci-dessus : applications curryfiées
 
 Prérequis de republication : campagne multi-processus en fenêtre calme (la
 machine reste partagée).
+
+## Consolidation de la correction (27 septembre)
+
+Le passe `ArrayRefs` ne prouvait pas la propriété qu'il exploite : « dernière
+lecture d'une variable » et « passage par `&` » n'établissent pas qu'un objet
+PHP n'a pas d'autre alias. Trois formes générées montraient la corruption
+d'une version conservée, reproduites dans
+`tests/codegen/array-refs-ownership.mjs` :
+
+1. **alias du registre TCO** (`$keep = $acc` avant l'appel consommateur) : la
+   racine conservée prenait la valeur du nouvel arbre ;
+2. **instantané d'un champ** (`$probe = $p->value1`) relu après l'appel
+   récursif qui mute ce sous-arbre ;
+3. **capture d'une fermeture** et **stockage dans un tableau** du registre
+   consommé, observés après la boucle.
+
+Le durcissement rend ces formes refusées :
+
+- **scan de possession du corps entier** pour le propriétaire (`$p`, champ,
+  ou registre) : refus des alias (`$x = $p`), des instantanés de champ relus
+  après consommation du même champ, des conteneurs, fermetures, globales, du
+  PHP brut mentionnant la variable, et de tout argument vers une fonction
+  hors des candidats de la région ;
+- **lectures autorisées** : accès de champ, comparaisons, `instanceof`,
+  arguments aux positions promues, retour du nœud nu ;
+- **registres TCO** : seuls le liage d'entrée, la lecture de boucle, l'appel
+  consommateur, la réécriture du porteur et le retour de l'accumulateur sont
+  admis ; toute autre occurrence refuse la promotion ;
+- **auto-contrôle du callee** : la même analyse tourne sur le corps de la
+  fonction qui possède le paramètre promu, donc un worker ne peut ni stocker
+  ni capturer son argument ;
+- **DAG interne** : toute construction d'une classe privée répétant une
+  variable ou une lecture de champ (`new T(x, …, x)`) désactive le passe pour
+  le fichier, car une mise à jour atteindrait les deux champs à la fois ;
+- `otherAccessor` interdit en outre de déplacer un enfant d'un champ vers un
+  autre lors d'une reconstruction.
+
+Les régressions exécutent le PHP généré et vérifient la sémantique
+persistante (forme des arbres conservés, instantanés, fermetures, branches
+d'un DAG), plus un contrôle positif qui garde la promotion du cas canonique.
+Vérifications : suite codegen **12/12**, RBTree natif (JIT 1255)
+**58,0–59,4 ms** selon le bruit machine (publié : 58,29 ms), suite native
+complète `values_validated=true`. `ins` et `insert` restent promus avec
+19 écritures de champs ; `balance` est laissé by-value (ses mutations étaient
+déjà inertes). Aucune republication nécessaire : le code RBTree généré est
+inchangé.
+
+Hypothèses résiduelles, documentées en tête de `Phpurs/ArrayRefs.purs` : les
+fonctions candidates ne retiennent pas leurs paramètres de valeur ; les
+locaux ont une affectation unique mais l'ordre définition/utilisation n'est
+pas vérifié ; les alias créés hors du programme compilé (FFI, globales) ne
+sont pas couverts ; l'analyse est aveugle aux types et s'appuie sur les
+champs `valueN`.

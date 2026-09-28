@@ -74,6 +74,17 @@ safeQual (Qualified mbMod (Ident i)) = case mbMod of
   Just (ModuleName m) -> String.replaceAll (Pattern ".") (Replacement "_") m <> "_" <> i
   Nothing -> i
 
+isLogicalShortCircuit :: BackendOperator2 -> Boolean
+isLogicalShortCircuit = case _ of
+  OpBooleanAnd -> true
+  OpBooleanOr -> true
+  _ -> false
+
+-- | Evaluates an operand's statements inside a zero-argument closure so a
+-- | short-circuiting operator only runs them when required.
+deferStatements :: forall a. Array String -> { stmts :: Array PhpExpr, expr :: PhpExpr | a } -> PhpExpr
+deferStatements captures res = PhpCall (PhpFunction captures [] "" (res.stmts <> [ PhpReturn res.expr ])) []
+
 translateOperator1 :: BackendOperator1 -> PhpExpr -> PhpExpr
 translateOperator1 OpBooleanNot e = PhpBinOp "!" (PhpRaw "") e
 translateOperator1 OpIntBitNot e = PhpBinOp "~" (PhpRaw "") e
@@ -653,8 +664,17 @@ translateExprImpl_ modNameStr recVars namedBound bound mbNamedVar loopCtx isTail
       let
         res1 = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false nextId e1
         res2 = translateExprImpl_ modNameStr recVars namedBound bound Nothing [] false false res1.nextId e2
+        -- `&&` and `||` short-circuit: the right operand's statements must only
+        -- run when it is evaluated. A nested branch in the right operand would
+        -- otherwise read fields of a constructor the left operand ruled out.
+        lazyRight = isLogicalShortCircuit op2 && not (Array.null res2.stmts)
+        captures = Array.nub (map (\v -> let mapped = fromMaybe v (Map.lookup v bound) in if Array.elem mapped recVars then "&" <> mapped else mapped) (Array.fromFoldable (freeVars e2)))
+        rightExpr = if lazyRight then deferStatements captures res2 else res2.expr
       in
-        { stmts: res1.stmts <> res2.stmts, expr: translateOperator2 op2 res1.expr res2.expr, nextId: res2.nextId }
+        { stmts: res1.stmts <> (if lazyRight then [] else res2.stmts)
+        , expr: translateOperator2 op2 res1.expr rightExpr
+        , nextId: res2.nextId
+        }
 
   PrimEffect effect -> case effect of
     EffectRefNew val ->
@@ -862,7 +882,7 @@ translate imports input =
                           Nothing ->
                            let
                              res = translateExprImpl_ modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false false 0 expr
-                             arity = extractTypeArity expr
+                             arity = max 0 (extractTypeArity expr - appliedArgs expr)
                            in
                              if arity > 0 then
                                let
@@ -884,7 +904,7 @@ translate imports input =
               Array.concatMap
                 ( \(Tuple (Ident name) expr) ->
                     let
-                      arity = extractTypeArity expr
+                      arity = max 0 (extractTypeArity expr - appliedArgs expr)
                     in
                       case extractUncurriedAbs Map.empty expr of
                         Just fn ->
@@ -918,7 +938,7 @@ translate imports input =
 
     moduleArities = Map.fromFoldable (Array.concatMap (\group -> 
         Array.mapMaybe (\(Tuple ident tcoExpr) -> 
-          Just (Tuple (modPrefix <> safeIdent ident) (extractTypeArity tcoExpr))
+          Just (Tuple (modPrefix <> safeIdent ident) (max 0 (extractTypeArity tcoExpr - appliedArgs tcoExpr)))
         ) group.bindings
       ) tcoBindings)
 
@@ -1011,4 +1031,16 @@ extractTypeArity :: TcoExpr -> Int
 extractTypeArity (TcoExpr _ syntax) = case syntax of
   Typed (Func args _) _ -> Array.length args
   Typed _ inner -> extractTypeArity inner
+  _ -> 0
+
+-- | A partial application can retain the callee's pre-application type
+-- | annotation, including a dictionary argument that the expression already
+-- | applied. Subtract the arguments present in the expression so a generated
+-- | wrapper matches the arity of the value it forwards to.
+appliedArgs :: TcoExpr -> Int
+appliedArgs (TcoExpr _ syntax) = case syntax of
+  Typed _ inner -> appliedArgs inner
+  App f args -> Array.length (toArray args) + appliedArgs f
+  UncurriedApp _ args -> Array.length args
+  Syn.TypeApp inner _ -> appliedArgs inner
   _ -> 0

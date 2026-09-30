@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import * as Syn from '../../output/PureScript.Backend.Optimizer.Syntax/index.js';
 import * as Core from '../../output/PureScript.Backend.Optimizer.CoreFn/index.js';
 import { analyze } from '../../output/PureScript.Backend.Optimizer.Codegen.Tco/index.js';
-import { translateExprImpl } from '../../output/Phpurs.CodeGen/index.js';
+import { initialContext, translateExpr } from '../../output/Phpurs.CodeGen/index.js';
 import { printExpr } from '../../output/Phpurs.Printer/index.js';
 import { PhpReturn } from '../../output/Phpurs.PhpAst/index.js';
 import { empty, insert } from '../../output/Data.Map/index.js';
@@ -19,7 +19,8 @@ const subtract = (left, right) => new Syn.PrimOp(new Syn.Op2(new Syn.OpIntNum(Sy
 const branch = new Syn.Branch([new Syn.Pair(new Syn.Local(new Just('flag'), 0), binding(11))], binding(22));
 
 function generate(expr, isTail = true, loops = [], bound = empty) {
-  const result = translateExprImpl('Test')([])(empty)(bound)(none)(loops)(isTail)(0)(analyze([])(expr));
+  const context = { ...initialContext('Test'), boundVars: bound, loops, isTail };
+  const result = translateExpr(context)(0)(analyze([])(expr));
   return [...result.stmts, new PhpReturn(result.expr)].map(printExpr('Test')(empty)).join(';\n') + ';';
 }
 

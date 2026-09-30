@@ -1,0 +1,122 @@
+# Working on the compiler
+
+## Two compiler roles
+
+The backend is a PureScript program compiled to JavaScript and run by Node.js.
+The programs it translates are compiled to enriched CoreFn by the TAST fork.
+
+- **Build phpurs:** `npm run build` uses the upstream `purescript@0.15.16` and
+  Spago development dependencies in this checkout. It compiles `src` into
+  `output` and bundles `Main` into `bin/phpurs.js`.
+- **Build a PHP program:** put the TAST-capable `purs` on `PATH`, then run the
+  application's Spago build. Its `corefn.json` must include `dataDecls`,
+  `classDecls` and `typeTable`.
+
+Keep npm's local compiler selection scoped to the host build. Exporting this
+checkout's `node_modules/.bin` into the application environment selects the
+wrong `purs` for PHP generation.
+
+The local optimizer dependency and sibling library layout are described in
+the [README](../README.md#build-the-backend).
+
+## Source map
+
+| Area | Entry point | Responsibility |
+| --- | --- | --- |
+| Build orchestration | [`Main.purs`](../src/Main.purs) | Load input, invoke PBO, discover FFI, write modules and entrypoints. |
+| Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO, lower bindings and expressions to PHP AST. |
+| Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
+| Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
+| PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
+| PHP printing and helpers | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and runtime preamble. |
+| FFI wrappers | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Flatten foreign signatures and emit public calling wrappers. |
+| Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
+
+## Pass order
+
+`CodeGen.translate` is the place to read the pipeline. The order matters because
+later passes consume both the rewritten code and the proofs attached to private
+workers and constructors.
+
+1. **`PartialBindings`** reuses partial applications inside proven private regions.
+2. **`ThunkFusion`** creates scalar workers for eligible immediately forced chains.
+3. **`EnumRegions`** proves closed regions and prepares private representations.
+4. **`analyzeBindings`** runs PBO's tail-call analysis. Within recursive groups,
+   safe initializations precede expressions that can call into the group.
+5. **`translateBindingGroup` / `translateExpr`** construct PHP declarations and
+   bodies. `CompactLoops` runs while emitting eligible top-level recursive functions.
+6. **`TailInline`** simplifies terminal control flow and inlines eligible leaves.
+7. Private workers become **`PhpPrivateFunction`** declarations.
+8. **`NullableConstructors`** lowers proven private empty constructors to `null`.
+9. **`CopyCleanup`** removes redundant copies using the private-region metadata.
+10. **`ArrayRefs`** promotes owned arguments and rewrites eligible node rebuilds.
+
+The private scalar signatures are cleared before terminal inlining, where the
+typed-region proof already establishes the argument types. Public signatures
+and constructor representations are still generated at their boundaries.
+
+## Expression translation contracts
+
+`translateExpr context nextId expr` returns a `TranslationResult`:
+
+- `stmts` must execute before `expr` is consumed.
+- `nextId` is the next available temporary/label ID. Thread it through sibling
+  translations; independently restarting the counter can alias live locals.
+- `TranslationContext.boundVars` maps optimizer local IDs to renamed PHP locals.
+- `recursiveVars` identifies captures that need PHP references so a closure can
+  observe its own eventual initialization.
+- `loops` and `isTail` identify legal tail jumps. Arguments are evaluated into
+  temporaries before loop parameters are reassigned, preserving simultaneous updates.
+- `inEffectBlock` says the expression is already inside an effect-executing body.
+  Otherwise an effect node is wrapped in a zero-argument closure.
+
+`translateValue` resets the tail/effect position for operands while retaining
+their lexical scope. Binding bodies inherit the surrounding position; a new
+function body starts its own tail-call scope.
+
+Two details are easy to lose in a refactor:
+
+- **Short-circuiting:** the right operand of `&&` or `||` may produce statements.
+  Those statements belong inside a deferred operand, not before the operator.
+- **Remaining arity:** an application can keep an annotation containing arguments
+  already supplied, including dictionaries. `remainingArity` is shared by global
+  forwarding wrappers and the printer's arity table. The flattened function type
+  used for signatures serves a different purpose.
+- **Callable effect results:** `EffectFn` and `EffectBind` execute opaque actions
+  once. An explicit effect body has already produced its result, which may itself
+  be an action or canceler. `Typed` and `TypeApp` preserve this distinction.
+  `effect-results.mjs` checks execution order and repeated use of returned actions.
+
+For ownership rewrites, read the contract at the top of `ArrayRefs.purs` together
+with `array-refs-ownership.mjs`: a last use at one call site is insufficient when
+another binding retains an alias or a constructor shares a child.
+
+## Validation commands
+
+From this repository:
+
+```bash
+npm run build
+npm run test:codegen
+
+# With the TAST fork and application Spago on PATH:
+./bin/test
+./bin/modtest
+```
+
+The codegen command runs the existing `.mjs` suites serially with Node's test
+runner. They import freshly compiled modules from `output`; several also run
+the generated PHP and check captures, effects, persistent values and boundaries.
+`branch-slots.mjs` uses `initialContext` and `translateExpr` directly when PBO
+would otherwise erase the shape under test.
+
+`bin/test` accepts fixture names for targeted work. Its `tests/runner/src` and
+output directories are scratch space. `bin/modtest` exercises executable sibling
+package suites; asynchronous suites must reach their completion marker as well
+as exit successfully.
+
+For compiler-wide refactors, comparing freshly generated PHP before and after
+is useful alongside execution tests. The benchmark checkout provides the usual
+`./bin/php/run -c` workflow (`runp`); it rebuilds the host backend and then uses
+the TAST compiler for the workloads. Published reference measurements live in
+`altbak.pub/README.md`.

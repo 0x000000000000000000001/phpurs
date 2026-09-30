@@ -11,36 +11,36 @@ module Phpurs.CodeGen
 
 import Prelude
 
-import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level(..), Pair(..), BackendAccessor(..), BackendOperator(..), BackendEffect(..))
-import PureScript.Backend.Optimizer.Syntax as Syn
-import PureScript.Backend.Optimizer.Codegen.Tco as Tco
-import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..), tcoAnalysisOf, TcoRef(..), TcoUsage(..), TcoAnalysis(..))
-import PureScript.Backend.Optimizer.CoreFn (Qualified(..), Ident(..), ModuleName(..), Literal(..), Prop(..), ExprType(..))
-import PureScript.Backend.Optimizer.Convert (BackendModule)
-import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
-import Phpurs.CodeGen.Operators (isLogicalShortCircuit, translateOperator1, translateOperator2)
-import Phpurs.CodeGen.Types (exprTypeToPhpType, extractFuncType, getRetType, remainingArity, zipArgsWithTypes)
-import Phpurs.TailInline as TailInline
-import Phpurs.CompactLoops as CompactLoops
-import Phpurs.EnumRegions as EnumRegions
-import Phpurs.ThunkFusion as ThunkFusion
-import Phpurs.PartialBindings as PartialBindings
-import Phpurs.NullableConstructors as Nullable
-import Phpurs.ArrayRefs as ArrayRefs
-import Phpurs.CopyCleanup as CopyCleanup
-import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Array.NonEmpty (toArray, fromArray)
-import Data.Tuple (Tuple(..))
 import Data.Array as Array
+import Data.Array.NonEmpty (fromArray, toArray)
+import Data.Foldable (all, foldMap, foldl)
+import Data.Map (Map)
+import Data.Map as Map
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Newtype (unwrap)
+import Data.Set as Set
 import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
-import Data.Foldable (all, foldl, foldMap)
 import Data.Traversable (traverse)
-import Data.Newtype (unwrap)
-import Data.Map as Map
-import Data.Map (Map)
-import Data.Set as Set
+import Data.Tuple (Tuple(..))
+import Phpurs.ArrayRefs as ArrayRefs
+import Phpurs.CodeGen.Operators (isLogicalShortCircuit, translateOperator1, translateOperator2)
+import Phpurs.CodeGen.Types (exprTypeToPhpType, extractFuncType, getRetType, remainingArity, zipArgsWithTypes)
+import Phpurs.CompactLoops as CompactLoops
+import Phpurs.CopyCleanup as CopyCleanup
+import Phpurs.EnumRegions as EnumRegions
+import Phpurs.NullableConstructors as Nullable
+import Phpurs.PartialBindings as PartialBindings
+import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
+import Phpurs.TailInline as TailInline
+import Phpurs.ThunkFusion as ThunkFusion
+import PureScript.Backend.Optimizer.Codegen.Tco (TcoAnalysis(..), TcoExpr(..), TcoRef(..), TcoUsage(..), tcoAnalysisOf)
+import PureScript.Backend.Optimizer.Codegen.Tco as Tco
+import PureScript.Backend.Optimizer.Convert (BackendModule)
+import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Literal(..), ModuleName(..), Prop(..), Qualified(..))
+import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
+import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendEffect(..), BackendOperator(..), BackendSyntax(..), Level(..), Pair(..))
+import PureScript.Backend.Optimizer.Syntax as Syn
 
 -- | Statements must execute before the result expression is consumed. `nextId`
 -- | is threaded through siblings so their live temporaries cannot collide.
@@ -53,12 +53,13 @@ type LoopContext = { ident :: String, params :: Array String, varPrefix :: Strin
 type TranslationContext =
   { moduleName :: String
   , recursiveVars :: Array String
-  , boundVars :: Map String String
+  , boundVars :: Map String String -- Optimizer local IDs -> renamed PHP locals.
   , loops :: Array LoopContext
   , isTail :: Boolean
-  , inEffectBlock :: Boolean
+  , inEffectBlock :: Boolean -- Already lowering an effect-executing body.
   }
 
+-- | The module name uses the PHP global-key spelling, e.g. `Data_Maybe`.
 initialContext :: String -> TranslationContext
 initialContext moduleName =
   { moduleName
@@ -117,11 +118,11 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
 translateExpr :: TranslationContext -> Int -> TcoExpr -> TranslationResult
 translateExpr ctx nextId tcoExpr
   | isEffectNode tcoExpr && not ctx.inEffectBlock =
-      let
-        res = translateExpr (ctx { isTail = false, inEffectBlock = true }) nextId tcoExpr
-        useVars = Array.nub (closureCaptures ctx tcoExpr)
-      in
-        { stmts: [], expr: PhpFunction useVars [] "" (res.stmts <> [ PhpReturn res.expr ]), nextId: res.nextId }
+    let
+      res = translateExpr (ctx { isTail = false, inEffectBlock = true }) nextId tcoExpr
+      useVars = Array.nub (closureCaptures ctx tcoExpr)
+    in
+      { stmts: [], expr: PhpFunction useVars [] "" (res.stmts <> [ PhpReturn res.expr ]), nextId: res.nextId }
   | otherwise = translateSyntax ctx nextId tcoExpr
 
 translateSyntax :: TranslationContext -> Int -> TcoExpr -> TranslationResult
@@ -160,7 +161,11 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
         in
           { stmts: acc.stmts, expr: PhpAssocArray acc.exprs, nextId: acc.nextId }
 
-  Var qi -> { stmts: [], expr: PhpGlobalVar (case qi of (Qualified mbMod _) -> map (\(ModuleName m) -> String.split (Pattern ".") m) mbMod) (case qi of (Qualified _ (Ident i)) -> i), nextId }
+  Var (Qualified moduleName (Ident name)) ->
+    { stmts: []
+    , expr: PhpGlobalVar (map (\(ModuleName m) -> String.split (Pattern ".") m) moduleName) name
+    , nextId
+    }
 
   Local ident level ->
     let
@@ -175,13 +180,13 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
       
       Tuple flatFn flatArgs = flattenApp tcoExpr
       
-      isTailCallTo = if isTail then case flatFn of
+      tailTarget = if isTail then case flatFn of
         TcoExpr _ (Local mbIdent (Level l)) ->
           let v = fromMaybe (localId mbIdent (Level l)) (Map.lookup (localId mbIdent (Level l)) bound)
-          in Array.findIndex (\ctx -> ctx.ident == v) loopCtx
+          in Array.find (\loop -> loop.ident == v) loopCtx
         TcoExpr _ (Var (Qualified mbMod (Ident name))) ->
           let fullName = fromMaybe "" (map (\(ModuleName m) -> String.joinWith "_" (String.split (Pattern ".") m) <> "_") mbMod) <> name
-          in Array.findIndex (\ctx -> ctx.ident == fullName) loopCtx
+          in Array.find (\loop -> loop.ident == fullName) loopCtx
         _ -> Nothing
       else Nothing
 
@@ -195,11 +200,9 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
         { stmts: resFn.stmts, exprs: [], nextId: resFn.nextId }
         argsArr
 
-    in case isTailCallTo of
-      Just index ->
+    in case tailTarget of
+      Just targetCtx ->
         let
-          targetCtx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.index loopCtx index)
-          
           flatAccFinal = foldl
             ( \acc arg@(TcoExpr _ _) ->
                 let
@@ -223,12 +226,12 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
     let
       resFn = translateValue ctx nextId fn
       
-      isTailCallTo = if isTail then case resFn.expr of
+      tailTarget = if isTail then case resFn.expr of
         PhpGlobalVar mbMod name ->
           let fullName = fromMaybe "" (map (\m -> String.joinWith "_" m <> "_") mbMod) <> name
-          in Array.findIndex (\ctx -> ctx.ident == fullName) loopCtx
+          in Array.find (\loop -> loop.ident == fullName) loopCtx
         PhpVar v ->
-          Array.findIndex (\ctx -> ctx.ident == v) loopCtx
+          Array.find (\loop -> loop.ident == v) loopCtx
         _ -> Nothing
       else Nothing
 
@@ -242,10 +245,9 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
         { stmts: [], exprs: [], nextId: resFn.nextId }
         args
         
-    in case isTailCallTo of
-      Just index ->
+    in case tailTarget of
+      Just targetCtx ->
         let
-          targetCtx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.index loopCtx index)
           tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (accArgs.nextId + i)) e) accArgs.exprs
           assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (targetCtx.varPrefix <> (fromMaybe "" (Array.index targetCtx.params i))) (PhpVar ("__tco_" <> show (accArgs.nextId + i)))) accArgs.exprs
           
@@ -301,9 +303,10 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
       types = extractFuncType tcoExpr
       argsWithTypes = zipArgsWithTypes argsArray types
       retType = getRetType (Array.length argsArray) types
-      -- An uncurried effect function performs its effect when saturated, like
-      -- the FFI EffectFn it represents; the effect value may still be deferred.
-      bodyExpr = PhpCall (PhpRaw "phpurs_execute_effect") [ resBody.expr ]
+      -- Saturating an EffectFn executes its body once. Explicit effect nodes
+      -- have already been lowered to statements and a result; that result may
+      -- itself be an action or canceler and must not be executed here.
+      bodyExpr = executeIfOpaque body resBody.expr
     in
       { stmts: [], expr: PhpFunction useVars argsWithTypes retType (resBody.stmts <> [ PhpReturn bodyExpr ]), nextId: resBody.nextId }
 
@@ -366,20 +369,18 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
             in { ident: newName, params: fn.args, varPrefix: "__tco_var_" <> newName <> "_" <> show nextId <> "_", labelName: "tco_loop_" <> newName <> "_" <> show nextId }
           ) fns
           
-          combinedLoopCtx = loopCtxs
-          
           fnWrapperStmts = map
             ( \fn ->
                 let
                   newName = fromMaybe fn.ident (Map.lookup fn.ident newBound)
-                  ctx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.find (\c -> c.ident == newName) loopCtxs)
+                  loop = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.find (\c -> c.ident == newName) loopCtxs)
                   
-                  loopVars = map (\p -> ctx.varPrefix <> p) fn.args
+                  loopVars = map (\p -> loop.varPrefix <> p) fn.args
                   
                   initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
                   
                   resBodyMut = translateExpr
-                    (ctx { recursiveVars = combinedRecVars, boundVars = newBound, loops = combinedLoopCtx, isTail = true, inEffectBlock = false })
+                    (ctx { recursiveVars = combinedRecVars, boundVars = newBound, loops = loopCtxs, isTail = true, inEffectBlock = false })
                     nextId fn.body
                   
                   mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs)
@@ -389,7 +390,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
                   useVarsOuter = mutVarsToCaptureOuter <> useVarsLoop
                   
                   innerLoopInit = Array.mapWithIndex (\i p -> PhpAssign p (PhpVar (fromMaybe "" (Array.index loopVars i)))) fn.args
-                  innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
+                  innerFuncBody = [ PhpLabel loop.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
                   
                 in
                   let
@@ -596,13 +597,22 @@ isSafeRecursiveInit currentModule group = go
     Update a props -> go a && all (\(Prop _ value) -> go value) props
     CtorSaturated _ _ _ _ values -> all (\(Tuple _ value) -> go value) values
     PrimOp op -> all go op
+    -- Pure applications such as a composed `pure` implementation can also be
+    -- initialized early when they are independent of the recursive group.
+    -- Inspect callback bodies too: the callee may invoke them immediately.
+    App _ _ -> all independent expr
+    UncurriedApp _ _ -> all independent expr
     Typed _ a -> go a
     Syn.TypeApp a _ -> go a
     _ -> false
 
+  independent (TcoExpr _ expr) = case expr of
+    Var (Qualified (Just mn) ident) | mn == currentModule -> not (Array.elem ident group)
+    _ -> all independent expr
+
 -- | Main translation function.
--- | Takes the list of module imports and a `BackendModule` (containing `TcoExpr` bindings)
--- | and returns a fully constructed `PhpFile` ready for printing.
+-- | Takes module imports and the optimizer's `BackendModule`, performs local TCO
+-- | analysis and returns a fully constructed `PhpFile` ready for printing.
 translate :: Array (Array String) -> BackendModule -> PhpFile
 translate imports input =
   let
@@ -610,7 +620,6 @@ translate imports input =
     fusion = ThunkFusion.optimize partialBindings.module_
     regions = EnumRegions.optimize fusion.module_
     mod = regions.module_
-    _startLog = if unwrap mod.name == "Phpurs.PhpAst" then unsafePerformEffect (Console.log "translate START") else unit
     modNameStr = String.replaceAll (Pattern ".") (Replacement "_") (unwrap mod.name)
     modPrefix = modNameStr <> "_"
     
@@ -635,145 +644,11 @@ translate imports input =
         ) decl.constructors
       ) mod.dataDecls
 
-    Tuple _ tcoBindings = foldl
-      (\(Tuple env acc) group ->
-          let
-            neBindings = fromArray group.bindings
-            env' = case neBindings of
-              Just ne | group.recursive -> Tco.topLevelTcoEnvGroup mod.name ne <> env
-              _ -> env
-            tcoBinds = map (\(Tuple k v) -> 
-              let
-                res = if modNameStr == "Phpurs_PhpAst" then trace ("Tco.analyze START for " <> unwrap k) \_ -> Tco.analyze env' v else Tco.analyze env' v
-              in Tuple k (if modNameStr == "Phpurs_PhpAst" then trace ("Tco.analyze END for " <> unwrap k) \_ -> res else res)
-            ) group.bindings
-            orderedBinds =
-              if group.recursive then
-                let
-                  groupIdents = map (\(Tuple ident _) -> ident) group.bindings
-                  ready = Array.partition (\(Tuple _ expr) -> isSafeRecursiveInit mod.name groupIdents expr) tcoBinds
-                in ready.yes <> ready.no
-              else tcoBinds
-          in
-            Tuple env' (Array.snoc acc { recursive: group.recursive, bindings: orderedBinds })
-      )
-      (Tuple [] [])
-      mod.bindings
-
-    _declsLog = if modNameStr == "Phpurs_PhpAst" then unsafePerformEffect (Console.log "Tco.analyze finished all bindings") else unit
-    decls = Array.concatMap
-      ( \group ->
-          let
-            recVars = if group.recursive then map (\(Tuple (Ident name) _) -> modPrefix <> name) group.bindings else []
-          in
-            if group.recursive && Array.length group.bindings == 1 then
-              let
-                mutRecBinds = traverse (\(Tuple (Ident name) val) -> map (\abs -> { ident: modPrefix <> name, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }) (extractUncurriedAbs Map.empty val)) group.bindings
-              in case mutRecBinds of
-                Just fns ->
-                  let
-                    loopCtxs = map (\fn ->
-                      { ident: fn.ident, params: fn.args, varPrefix: "__tco_var_" <> fn.ident <> "_", labelName: "tco_loop_" <> fn.ident }
-                    ) fns
-                    
-                    fnWrapperStmts = map
-                      ( \fn ->
-                          let
-                            ctx = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.find (\c -> c.ident == fn.ident) loopCtxs)
-                            loopVars = map (\p -> ctx.varPrefix <> p) fn.args
-                            initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
-                            
-                            resBodyMut = translateExprImpl_ modNameStr recVars Map.empty Map.empty Nothing loopCtxs true false 0 fn.body
-                            
-                            mappedFvs = map (\v -> v) (Array.fromFoldable fn.fvs)
-                            useVarsOuter = Array.nub (map (\mapped -> if Array.elem mapped recVars then "&" <> mapped else mapped) mappedFvs)
-                            
-                            innerLoopInit = Array.mapWithIndex (\i p -> PhpAssign p (PhpVar (fromMaybe "" (Array.index loopVars i)))) fn.args
-                            innerFuncBody = [ PhpLabel ctx.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
-                              
-                          in
-                             let
-                               types = extractFuncType fn.originalVal
-                               argsWithTypes = zipArgsWithTypes fn.args types
-                               retType = getRetType (Array.length fn.args) types
-                             in
-                             { identifier: fn.ident, expression: CompactLoops.optimize ctx.labelName types (PhpNativeFunction fn.ident argsWithTypes retType (initVarStmts <> innerFuncBody)) }
-                      )
-                      fns
-                  in
-                    fnWrapperStmts
-                Nothing ->
-                  Array.concatMap
-                    ( \(Tuple (Ident name) expr) ->
-                        case extractUncurriedAbs Map.empty expr of
-                          Just fn ->
-                             let res = translateExprImpl_ modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] true false 0 fn.body
-                                 types = extractFuncType expr
-                                 argsWithTypes = zipArgsWithTypes fn.args types
-                                 retType = getRetType (Array.length fn.args) types
-                             in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType (res.stmts <> [ PhpReturn res.expr ]) } ]
-                          Nothing ->
-                           let
-                             res = translateExprImpl_ modNameStr recVars Map.empty Map.empty (Just (modPrefix <> name)) [] false false 0 expr
-                             arity = max 0 (extractTypeArity expr - appliedArgs expr)
-                           in
-                             if arity > 0 then
-                               let
-                                 closureName = modPrefix <> name <> "_closure"
-                                 args = Array.mapWithIndex (\i _ -> "v_" <> show i) (Array.replicate arity unit)
-                                 callExpr = PhpCall (PhpGlobalVar Nothing closureName) (map PhpVar args)
-                                 types = extractFuncType expr
-                                 argsWithTypes = zipArgsWithTypes args types
-                                 retType = getRetType arity types
-                                 nativeFunc = { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType [ PhpReturn callExpr ] }
-                                 closureAssign = { identifier: closureName, expression: PhpGlobalAssign closureName (wrapInStmts [] res.stmts res.expr) }
-                               in
-                                 [ closureAssign, nativeFunc ]
-                             else
-                               [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
-                    )
-                    group.bindings
-            else
-              Array.concatMap
-                ( \(Tuple (Ident name) expr) ->
-                    let
-                      arity = max 0 (extractTypeArity expr - appliedArgs expr)
-                    in
-                      case extractUncurriedAbs Map.empty expr of
-                        Just fn ->
-                           let res = translateExprImpl_ modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] true false 0 fn.body
-                               types = extractFuncType expr
-                               argsWithTypes = zipArgsWithTypes fn.args types
-                               retType = getRetType (Array.length fn.args) types
-                           in [ { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType (res.stmts <> [ PhpReturn res.expr ]) } ]
-                        Nothing ->
-                           let
-                             res = translateExprImpl_ modNameStr [] Map.empty Map.empty (Just (modPrefix <> name)) [] false false 0 expr
-                           in
-                             if arity > 0 then
-                               let
-                                 closureName = modPrefix <> name <> "_closure"
-                                 args = Array.mapWithIndex (\i _ -> "v_" <> show i) (Array.replicate arity unit)
-                                 callExpr = PhpCall (PhpGlobalVar Nothing closureName) (map PhpVar args)
-                                 types = extractFuncType expr
-                                 argsWithTypes = zipArgsWithTypes args types
-                                 retType = getRetType arity types
-                                 nativeFunc = { identifier: modPrefix <> name, expression: PhpNativeFunction (modPrefix <> name) argsWithTypes retType [ PhpReturn callExpr ] }
-                                 closureAssign = { identifier: closureName, expression: PhpGlobalAssign closureName (wrapInStmts [] res.stmts res.expr) }
-                               in
-                                 [ closureAssign, nativeFunc ]
-                             else
-                               [ { identifier: modPrefix <> name, expression: PhpGlobalAssign (modPrefix <> name) (wrapInStmts [] res.stmts res.expr) } ]
-                )
-                group.bindings
-      )
-      tcoBindings
-
-    moduleArities = Map.fromFoldable (Array.concatMap (\group -> 
-        Array.mapMaybe (\(Tuple ident tcoExpr) -> 
-          Just (Tuple (modPrefix <> safeIdent ident) (max 0 (extractTypeArity tcoExpr - appliedArgs tcoExpr)))
-        ) group.bindings
-      ) tcoBindings)
+    tcoBindings = analyzeBindings mod
+    decls = Array.concatMap (translateBindingGroup modNameStr) tcoBindings
+    moduleArities = Map.fromFoldable (Array.concatMap
+      (\group -> map (\(Tuple (Ident name) expr) -> Tuple (modPrefix <> name) (remainingArity expr)) group.bindings)
+      tcoBindings)
 
     privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.unions [ regions.privateNames, fusion.privateNames, partialBindings.privateNames ])
     isArrayType = case _ of
@@ -804,46 +679,125 @@ translate imports input =
       PhpNativeFunction name args _ body -> d { expression = PhpNativeFunction name (map (\a -> a { type_ = "" }) args) "" body }
       _ -> d
       else d
-    optimized = TailInline.optimize { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls: map internalSignatures decls, imports, arities: moduleArities }
     hideWorker d = if Set.member d.identifier privateNames then case d.expression of
       PhpNativeFunction name args ret body -> d { expression = PhpPrivateFunction name args ret body }
       _ -> d
       else d
+    -- Keep the pass order explicit: later passes consume the forms and private
+    -- layout proofs established by the earlier ones.
+    phpFile = { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls: map internalSignatures decls, imports, arities: moduleArities }
+    inlined = TailInline.optimize phpFile
+    privateWorkers = inlined { decls = map hideWorker inlined.decls }
+    nullable = Nullable.lower nullableClasses privateWorkers
+    cleaned = CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses } nullable
   in
-    ArrayRefs.optimize arrayParams privateClasses
-      (CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses }
-        (Nullable.lower nullableClasses (optimized { decls = map hideWorker optimized.decls })))
+    ArrayRefs.optimize arrayParams privateClasses cleaned
 
-dedupArgs :: Array String -> Array String
-dedupArgs args = Array.mapWithIndex
-  ( \idx name ->
-      let
-        isShadowed = isJust (Array.findIndex (\x -> x == name) (Array.drop (idx + 1) args))
-      in
-        if isShadowed || name == "__unused" || name == "$__unused" || name == "_" then name <> "_" <> show idx
-        else name
-  )
-  args
+type AnalyzedBindingGroup =
+  { recursive :: Boolean
+  , bindings :: Array (Tuple Ident TcoExpr)
+  }
+
+analyzeBindings :: BackendModule -> Array AnalyzedBindingGroup
+analyzeBindings mod =
+  let Tuple _ groups = foldl analyzeGroup (Tuple [] []) mod.bindings
+  in groups
+  where
+  analyzeGroup (Tuple env groups) group =
+    let
+      nextEnv = case fromArray group.bindings of
+        Just nonEmptyBindings | group.recursive -> Tco.topLevelTcoEnvGroup mod.name nonEmptyBindings <> env
+        _ -> env
+      bindings = map (\(Tuple ident expr) -> Tuple ident (Tco.analyze nextEnv expr)) group.bindings
+      orderedBindings =
+        if group.recursive then
+          let
+            groupIdents = map (\(Tuple ident _) -> ident) group.bindings
+            ready = Array.partition (\(Tuple _ expr) -> isSafeRecursiveInit mod.name groupIdents expr) bindings
+          in ready.yes <> ready.no
+        else bindings
+    in
+      Tuple nextEnv (Array.snoc groups { recursive: group.recursive, bindings: orderedBindings })
+
+translateBindingGroup :: String -> AnalyzedBindingGroup -> Array PhpDecl
+translateBindingGroup moduleName group = case group.bindings of
+  [ Tuple (Ident name) expr ] | group.recursive ->
+    let
+      identifier = moduleName <> "_" <> name
+      ctx = (initialContext moduleName) { recursiveVars = [ identifier ] }
+    in
+      case extractUncurriedAbs expr of
+        Just fn ->
+          let
+            loop = { ident: identifier, params: fn.args, varPrefix: "__tco_var_" <> identifier <> "_", labelName: "tco_loop_" <> identifier }
+            initVars = map (\param -> PhpAssign (loop.varPrefix <> param) (PhpVar param)) fn.args
+            bindParams = map (\param -> PhpAssign param (PhpVar (loop.varPrefix <> param))) fn.args
+            result = translateExpr (ctx { loops = [ loop ], isTail = true }) 0 fn.body
+            body = initVars <> [ PhpLabel loop.labelName ] <> bindParams <> result.stmts <> [ PhpReturn result.expr ]
+            types = extractFuncType expr
+            params = zipArgsWithTypes fn.args types
+            returnType = getRetType (Array.length fn.args) types
+          in
+            [ { identifier, expression: CompactLoops.optimize loop.labelName types (PhpNativeFunction identifier params returnType body) } ]
+        Nothing -> translateBinding ctx identifier expr
+  _ -> Array.concatMap
+    (\(Tuple (Ident name) expr) -> translateBinding (initialContext moduleName) (moduleName <> "_" <> name) expr)
+    group.bindings
+
+-- | A lambda becomes a native function. A function-valued expression is first
+-- | initialized once, then exposed through a forwarding wrapper of its remaining
+-- | arity. Plain values need only the global initialization.
+translateBinding :: TranslationContext -> String -> TcoExpr -> Array PhpDecl
+translateBinding ctx identifier expr = case extractUncurriedAbs expr of
+  Just fn ->
+    let
+      result = translateExpr (ctx { isTail = true }) 0 fn.body
+      types = extractFuncType expr
+      params = zipArgsWithTypes fn.args types
+      returnType = getRetType (Array.length fn.args) types
+    in
+      [ { identifier, expression: PhpNativeFunction identifier params returnType (result.stmts <> [ PhpReturn result.expr ]) } ]
+  Nothing ->
+    let
+      result = translateExpr ctx 0 expr
+      value = wrapInStmts [] result.stmts result.expr
+      arity = remainingArity expr
+    in
+      if arity > 0 then
+        let
+          closureName = identifier <> "_closure"
+          args = Array.mapWithIndex (\index _ -> "v_" <> show index) (Array.replicate arity unit)
+          call = PhpCall (PhpGlobalVar Nothing closureName) (map PhpVar args)
+          types = extractFuncType expr
+          params = zipArgsWithTypes args types
+          returnType = getRetType arity types
+        in
+          [ { identifier: closureName, expression: PhpGlobalAssign closureName value }
+          , { identifier, expression: PhpNativeFunction identifier params returnType [ PhpReturn call ] }
+          ]
+      else
+        [ { identifier, expression: PhpGlobalAssign identifier value } ]
+
 totalUsagesOf :: TcoRef -> TcoAnalysis -> Int
 totalUsagesOf ref (TcoAnalysis { usages }) = case Map.lookup ref usages of
   Just (TcoUsage { total }) -> total
   _ -> 0
 
-
-
-extractUncurriedAbs :: Map String String -> TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Array String }
-extractUncurriedAbs bound tcoExpr@(TcoExpr _ syntax) = case syntax of
+extractUncurriedAbs :: TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Array String }
+extractUncurriedAbs tcoExpr@(TcoExpr _ syntax) = case syntax of
   UncurriedAbs args body ->
     Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
   Abs args body ->
     let
       thisArgs = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
-    in case extractUncurriedAbs bound body of
+    in case extractUncurriedAbs body of
       Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Array.nub (Array.fromFoldable (freeVars tcoExpr) <> inner.fvs) }
       Nothing -> Just { args: thisArgs, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
-  Typed _ inner -> extractUncurriedAbs bound inner
+  Typed _ inner -> extractUncurriedAbs inner
   _ -> Nothing
 
+-- | Explicit effect syntax produces its result inside an effect block. Outside
+-- | such a block, the same classification tells us to defer its execution.
 isEffectNode :: TcoExpr -> Boolean
 isEffectNode (TcoExpr _ syntax) = case syntax of
   EffectBind _ _ _ _ -> true
@@ -853,27 +807,13 @@ isEffectNode (TcoExpr _ syntax) = case syntax of
   UncurriedEffectApp _ _ -> true
   Let _ _ _ body -> isEffectNode body
   LetRec _ _ body -> isEffectNode body
+  -- Annotations preserve the body's evaluation convention, including when an
+  -- EffectBind or EffectFn returns an already computed callable value.
+  Typed _ body -> isEffectNode body
+  Syn.TypeApp body _ -> isEffectNode body
   _ -> false
 
 executeIfOpaque :: TcoExpr -> PhpExpr -> PhpExpr
 executeIfOpaque expr phpExpr =
   if isEffectNode expr then phpExpr
   else PhpCall (PhpRaw "phpurs_execute_effect") [ phpExpr ]
-
-extractTypeArity :: TcoExpr -> Int
-extractTypeArity (TcoExpr _ syntax) = case syntax of
-  Typed (Func args _) _ -> Array.length args
-  Typed _ inner -> extractTypeArity inner
-  _ -> 0
-
--- | A partial application can retain the callee's pre-application type
--- | annotation, including a dictionary argument that the expression already
--- | applied. Subtract the arguments present in the expression so a generated
--- | wrapper matches the arity of the value it forwards to.
-appliedArgs :: TcoExpr -> Int
-appliedArgs (TcoExpr _ syntax) = case syntax of
-  Typed _ inner -> appliedArgs inner
-  App f args -> Array.length (toArray args) + appliedArgs f
-  UncurriedApp _ args -> Array.length args
-  Syn.TypeApp inner _ -> appliedArgs inner
-  _ -> 0

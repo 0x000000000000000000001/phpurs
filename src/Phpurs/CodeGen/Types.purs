@@ -42,7 +42,7 @@ getRetType arity = case _ of
   Nothing -> ""
 
 -- | Only scalar types currently become PHP signature checks. An empty string
--- | leaves the value untyped at this boundary; it does not imply PHP `mixed`.
+-- | omits the PHP type declaration at this boundary.
 exprTypeToPhpType :: ExprType -> String
 exprTypeToPhpType = case _ of
   Int -> "int"

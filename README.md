@@ -37,7 +37,7 @@ Use those documented baselines for performance comparisons, preserving the workl
 For development and application compilation, provide:
 
 - Node.js and npm to build and execute the backend's JavaScript bundle. The bundled esbuild dependency requires Node.js 18 or newer; your Spago version may require a newer Node.js.
-- Spago on `PATH`; the compiler's [spago.yaml](spago.yaml) uses registry package set `77.10.1`. Spago is not installed by this repository's `package.json`.
+- Spago on `PATH` for application builds. This repository pins Spago and upstream PureScript `0.15.16` as npm development dependencies for building the backend itself; [spago.yaml](spago.yaml) uses registry package set `77.10.1`.
 - The TAST-capable `purs` fork for programs targeting PHP. Rebuild their output with that compiler when switching from upstream PureScript.
 - PHP **8.4+** as the target documented here, and Composer for FFI packages with PHP dependencies. Fibers themselves were introduced in PHP 8.1.
 - The matching optimizer checkout and PHP library forks described below.
@@ -247,6 +247,8 @@ Install the Aff package's Composer dependencies and load the autoloader before r
 
 ## Development and testing
 
+See the [compiler maintenance guide](docs/compiler.md) for the source map, pass order and translation invariants. `npm run build` selects the upstream host compiler through npm's local `PATH`; fixture and package builds need the TAST fork on their own `PATH`.
+
 ### Library checkouts
 
 The [bin/pkg](bin/pkg) list defines the core packages required by the compiler's passing-test runner. Clone them beside the compiler:
@@ -275,9 +277,7 @@ node tests/codegen/enum-regions.mjs
 The [tests/codegen](tests/codegen) scripts exercise individual optimization passes and representation boundaries. They import the compiler modules from `output`, and some execute PHP, so rebuild those modules after changing compiler code. To run the whole group:
 
 ```bash
-for test_file in tests/codegen/*.mjs; do
-  node "$test_file" || exit 1
-done
+npm run test:codegen
 ```
 
 Package-level tests live in sibling repositories. `./bin/modtest` runs the siblings that provide an executable `bin/test`; `./bin/modtest -c` rebuilds the backend first. Install each package's declared runtime dependencies before those tests, especially Composer dependencies for Aff.

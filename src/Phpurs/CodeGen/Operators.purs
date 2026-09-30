@@ -56,7 +56,7 @@ translateOperator2 operator left right = case operator of
   OpIntNum OpAdd -> binary "+"
   OpIntNum OpSubtract -> binary "-"
   OpIntNum OpMultiply -> binary "*"
-  -- PHP's `/` returns a float even for integer operands.
+  -- PHP's `/` can return a float for integer operands.
   OpIntNum OpDivide -> PhpCall (PhpRaw "\\intdiv") [ left, right ]
   OpIntNum OpMod -> binary "%"
   OpIntOrd comparison -> translateComparison comparison left right

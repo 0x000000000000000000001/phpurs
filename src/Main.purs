@@ -5,30 +5,22 @@ import Phpurs.Metrics as Metrics
 
 import Effect (Effect)
 import Effect.Class (liftEffect)
-import Effect.Aff (Aff, launchAff_, attempt)
+import Effect.Aff (launchAff_, attempt)
 import Effect.Console as Console
 import Node.FS.Aff as FS
-import Node.FS.Stats as Stats
 import Node.Encoding (Encoding(..))
 import Node.Process as Process
-import Data.Argonaut.Parser (jsonParser)
 import Data.Foldable (foldl)
-import Data.Either (Either(..), isRight)
-import Data.Bifunctor (lmap)
-import Data.Argonaut.Decode.Error (printJsonDecodeError)
 import Data.Array as Array
-import Data.List as List
-import Data.Maybe (Maybe(..), isJust, maybe, fromMaybe)
+import Data.Maybe (Maybe(..), isJust, fromMaybe)
 import Data.Map as Map
 import Data.Set as Set
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.String as String
-import PureScript.Backend.Optimizer.CoreFn.Json (decodeModule)
-import PureScript.Backend.Optimizer.CoreFn.Sort (sortModules)
 import PureScript.Backend.Optimizer.Builder (buildModules)
-import PureScript.Backend.Optimizer.CoreFn (Module(..), Ann, Ident(..), importName, Qualified(..), ModuleName(..), ExprType(..))
+import PureScript.Backend.Optimizer.CoreFn (Module(..), Ident(..), importName, ModuleName(..), ExprType(..))
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 import Phpurs.CodeGen (translate)
 import Phpurs.GenNativeForeign (genNativeWrapper, flattenFuncType)
@@ -36,14 +28,13 @@ import Phpurs.Printer (printPhpFile, safeName, safeFuncName)
 import Phpurs.ComposerMerge (mergeComposers)
 import PureScript.Backend.Optimizer.FfiSupport (findFfiFile)
 import Data.Newtype (unwrap)
-import Data.String (joinWith, replace, replaceAll, trim, length, contains)
+import Data.String (joinWith, replace, replaceAll, trim, length)
 import Effect.Ref as Ref
-import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, checkCache, writeCache, loadDirectives)
+import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, loadDirectives)
 import PureScript.Backend.Optimizer.Reachability (moduleReachability)
 
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..))
-import PureScript.Backend.Optimizer.Convert (BackendBindingGroup(..))
 
 countNodes :: NeutralExpr -> Int
 countNodes (NeutralExpr expr) = 1 + case expr of
@@ -68,9 +59,6 @@ countNodes (NeutralExpr expr) = 1 + case expr of
   Branch _ _ -> 0
   PrimOp _ -> 0
   _ -> 0
-
-cacheVersion :: String
-cacheVersion = "1.0.0"
 
 main :: Effect Unit
 main = launchAff_ $ Metrics.measure "backend total" \_ -> do
@@ -97,9 +85,7 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
       , foreignSemantics: coreForeignSemantics
       , traceIdents: Set.empty
       , onPrepareModule: \_ m -> pure m
-      , onSkipModule: \_ (Module coreFnMod) -> do
-          let modNameStr = unwrap coreFnMod.name
-          pure Nothing
+      , onSkipModule: \_ _ -> pure Nothing
       , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
           let modNameStr = unwrap backendMod.name
           let totalNodes = foldl (+) 0 (map (\bg -> foldl (+) 0 (map (\(Tuple _ expr) -> countNodes expr) bg.bindings)) backendMod.bindings)

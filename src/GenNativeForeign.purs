@@ -3,6 +3,7 @@ module Phpurs.GenNativeForeign where
 import Prelude
 import Data.Array as Array
 import Data.String as String
+import Phpurs.CodeGen.Types (exprTypeToPhpType)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..))
 
 stripForAll :: ExprType -> ExprType
@@ -17,14 +18,6 @@ flattenFuncType ty = case stripForAll ty of
     in
       { args: args <> inner.args, ret: inner.ret }
   other -> { args: [], ret: other }
-
-exprTypeToPhpType :: ExprType -> String
-exprTypeToPhpType = case _ of
-  Int -> "int"
-  Number -> "float"
-  String -> "string"
-  Boolean -> "bool"
-  _ -> ""
 
 genNativeWrapper :: String -> String -> String -> String -> ExprType -> String
 genNativeWrapper globalKey funcName ffiBaseVar ffiVar exprType =

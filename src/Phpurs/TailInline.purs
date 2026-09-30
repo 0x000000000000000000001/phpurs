@@ -10,6 +10,7 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String as String
 import Data.Tuple (Tuple(..))
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
+import Phpurs.PhpAst.Traversal (localChildren, mapBlocks)
 
 -- Count expression nodes, not just statements; cap both each copied body and
 -- the total added body/argument nodes per caller. No iterative expansion.
@@ -19,41 +20,10 @@ bodyBudget = 1536
 callerBudget :: Int
 callerBudget = 3072
 
--- Expression traversal does not cross a closure boundary. Candidates containing
--- closures are excluded; callers' closures must keep their own locals and returns.
-children :: PhpExpr -> Array PhpExpr
-children = case _ of
-  PhpCall f args -> [f] <> args
-  PhpDirectCall _ args -> args
-  PhpArray xs -> xs
-  PhpAssocArray xs -> map _.value xs
-  PhpPropertyAccess e _ -> [e]
-  PhpRecordAccess e _ -> [e]
-  PhpArrayIndex e ix -> [e, ix]
-  PhpAssign _ e -> [e]
-  PhpAssignExpr a b -> [a, b]
-  PhpIf c t e -> [c] <> t <> e
-  PhpMatch s cs d -> [s, d] <> Array.concatMap (\c -> [c.val, c.body]) cs
-  PhpThrow e -> [e]
-  PhpTernary c t e -> [c, t, e]
-  PhpReturn e -> [e]
-  PhpBinOp _ a b -> [a, b]
-  PhpWhile c b -> [c] <> b
-  PhpNew _ args -> args
-  PhpClone e -> [e]
-  PhpSwitch s cs d -> [s] <> Array.concatMap (\c -> c.matchCases <> c.stmts) cs <> fromMaybe [] d
-  PhpInstanceOf e _ -> [e]
-  _ -> []
-
+-- Candidates containing closures are excluded; callers' closures keep their
+-- own locals and returns. Only the name scans below explicitly enter them.
 nodes :: PhpExpr -> Array PhpExpr
-nodes e = [e] <> Array.concatMap nodes (children e)
-
-mapBlocks :: (Array PhpExpr -> Array PhpExpr) -> PhpExpr -> PhpExpr
-mapBlocks f = case _ of
-  PhpIf c t e -> PhpIf c (f t) (f e)
-  PhpWhile c b -> PhpWhile c (f b)
-  PhpSwitch s cs d -> PhpSwitch s (map (\c -> c { stmts = f c.stmts }) cs) (map f d)
-  e -> e
+nodes e = [e] <> Array.concatMap nodes (localChildren e)
 
 returnLabels :: Array PhpExpr -> Map.Map String String
 returnLabels xs =
@@ -202,7 +172,7 @@ localNames = case _ of
   PhpVar v -> [v]
   PhpAssign v e -> [v] <> localNames e
   PhpFunction caps args _ body -> map captureName caps <> map _.name args <> foldMap localNames body
-  e -> foldMap localNames (children e)
+  e -> foldMap localNames (localChildren e)
 
 captureName :: String -> String
 captureName s = if String.take 1 s == "&" then String.drop 1 s else s
@@ -211,13 +181,13 @@ readNames :: PhpExpr -> Array String
 readNames = case _ of
   PhpVar v -> [v]
   PhpFunction caps _ _ body -> map captureName caps <> foldMap readNames body
-  e -> foldMap readNames (children e)
+  e -> foldMap readNames (localChildren e)
 
 -- Eliminating an assignment must not hide it from an escaping closure.
 capturedNames :: PhpExpr -> Array String
 capturedNames = case _ of
   PhpFunction caps _ _ body -> map captureName caps <> foldMap capturedNames body
-  e -> foldMap capturedNames (children e)
+  e -> foldMap capturedNames (localChildren e)
 
 -- An inlined body must leave the caller just as the original call did. Reject
 -- fallthrough bodies instead of relying on PHP's implicit null return.

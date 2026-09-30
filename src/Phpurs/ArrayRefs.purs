@@ -26,12 +26,13 @@ import Data.Array as A
 import Data.Int as Int
 import Data.Map (Map)
 import Data.Map as Map
-import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Set (Set)
 import Data.Set as Set
 import Data.String as String
 import Data.Tuple (Tuple(..))
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
+import Phpurs.PhpAst.Traversal (children, mapBlocks)
 
 optimize :: Map String (Set Int) -> Set String -> PhpFile -> PhpFile
 optimize candidates privateClasses file =
@@ -103,35 +104,12 @@ setFunction e args body = case e of
   PhpPrivateFunction name _ ret _ -> PhpPrivateFunction name args ret body
   _ -> e
 
+-- | Ownership scans keep match arms before the fallback in their dependency
+-- | enumeration. All other nodes use the shared traversal across every scope.
 exprChildren :: PhpExpr -> Array PhpExpr
 exprChildren = case _ of
-  PhpFunction _ _ _ body -> body
-  PhpCompactFunction _ _ _ body -> body
-  PhpCompactLoop _ _ _ body -> body
-  PhpNativeFunction _ _ _ body -> body
-  PhpPrivateFunction _ _ _ body -> body
-  PhpGlobalAssign _ e -> [ e ]
-  PhpDirectCall _ args -> args
-  PhpCall f args -> A.cons f args
-  PhpArray es -> es
-  PhpAssocArray kvs -> map _.value kvs
-  PhpPropertyAccess e _ -> [ e ]
-  PhpRecordAccess e _ -> [ e ]
-  PhpArrayIndex a b -> [ a, b ]
-  PhpAssign _ e -> [ e ]
-  PhpAssignExpr a b -> [ a, b ]
-  PhpIf c t e -> A.cons c (t <> e)
   PhpMatch s cases d -> A.cons s (A.concatMap (\c -> [ c.val, c.body ]) cases <> [ d ])
-  PhpThrow e -> [ e ]
-  PhpTernary a b c -> [ a, b, c ]
-  PhpReturn e -> [ e ]
-  PhpBinOp _ a b -> [ a, b ]
-  PhpWhile c body -> A.cons c body
-  PhpNew _ args -> args
-  PhpClone e -> [ e ]
-  PhpSwitch s cases d -> A.cons s (A.concatMap (\c -> c.matchCases <> c.stmts) cases <> fromMaybe [] d)
-  PhpInstanceOf e _ -> [ e ]
-  _ -> []
+  e -> children e
 
 varsIn :: PhpExpr -> Array String
 varsIn e = case e of
@@ -178,9 +156,6 @@ fieldIndexOf :: String -> Maybe Int
 fieldIndexOf f = case String.stripPrefix (String.Pattern "value") f of
   Just digits -> Int.fromString digits
   Nothing -> Nothing
-
-arrayAccessor :: String -> Int -> PhpExpr
-arrayAccessor p i = PhpArrayIndex (PhpVar p) (PhpInt i)
 
 -- Other-field reads of the parent stay allowed; re-reading the mutated field
 -- or aliasing the parent would observe the update and is refused.
@@ -659,7 +634,7 @@ collectAssigns statements = A.foldl collect Map.empty (allStatements statements)
   where
   allStatements ss = A.concatMap statementAndChildren ss
   statementAndChildren st = A.cons st case st of
-    PhpIf c t e -> allStatements t <> allStatements e
+    PhpIf _ t e -> allStatements t <> allStatements e
     PhpSwitch _ cases d -> A.concatMap (\cs -> allStatements cs.stmts) cases <> fromMaybe [] d
     PhpWhile _ body -> allStatements body
     _ -> []
@@ -688,10 +663,7 @@ mutateRebuilds privateClasses promoted body = rewriteList assigns body
       case findMutation table args of
         Just m -> m.writes <> [ PhpReturn (PhpVar m.node) ]
         Nothing -> [ st ]
-    PhpIf c t e -> [ PhpIf c (rewriteList table t) (rewriteList table e) ]
-    PhpSwitch s cases d -> [ PhpSwitch s (map (\cs -> cs { stmts = rewriteList table cs.stmts }) cases) (map (rewriteList table) d) ]
-    PhpWhile c b -> [ PhpWhile c (rewriteList table b) ]
-    _ -> [ st ]
+    other -> [ mapBlocks (rewriteList table) other ]
 
   findMutation table args = A.head (A.mapMaybe (tryParam table args) promoted)
 

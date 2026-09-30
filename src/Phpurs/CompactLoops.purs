@@ -8,6 +8,7 @@ import Data.Foldable (all, any)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String as String
 import Phpurs.PhpAst (PhpExpr(..))
+import Phpurs.PhpAst.Traversal (localChildren, mapBranches)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..))
 
 type Signature = { fArgs :: Array ExprType, fRet :: ExprType }
@@ -23,40 +24,9 @@ scalar = case _ of
   Unit -> true
   _ -> false
 
-children :: PhpExpr -> Array PhpExpr
-children = case _ of
-  PhpCall f xs -> [f] <> xs
-  PhpDirectCall _ xs -> xs
-  PhpArray xs -> xs
-  PhpAssocArray xs -> map _.value xs
-  PhpPropertyAccess e _ -> [e]
-  PhpRecordAccess e _ -> [e]
-  PhpArrayIndex e i -> [e, i]
-  PhpAssign _ e -> [e]
-  PhpAssignExpr a b -> [a, b]
-  PhpIf c t e -> [c] <> t <> e
-  PhpMatch s cs d -> [s, d] <> Array.concatMap (\c -> [c.val, c.body]) cs
-  PhpThrow e -> [e]
-  PhpTernary c t e -> [c, t, e]
-  PhpReturn e -> [e]
-  PhpBinOp _ a b -> [a, b]
-  PhpWhile c b -> [c] <> b
-  PhpNew _ xs -> xs
-  PhpClone e -> [e]
-  PhpSwitch s cs d -> [s] <> Array.concatMap (\c -> c.matchCases <> c.stmts) cs <> fromMaybe [] d
-  PhpInstanceOf e _ -> [e]
-  -- Closures have a separate lexical scope, inspected explicitly below.
-  _ -> []
-
+-- Closures have a separate lexical scope, inspected explicitly below.
 nodes :: PhpExpr -> Array PhpExpr
-nodes e = [e] <> Array.concatMap nodes (children e)
-
--- Names assigned at this function's level only, not inside its closures.
-mapBlocks :: (Array PhpExpr -> Array PhpExpr) -> PhpExpr -> PhpExpr
-mapBlocks f = case _ of
-  PhpIf c t e -> PhpIf c (f t) (f e)
-  PhpSwitch s cs d -> PhpSwitch s (map (\c -> c { stmts = f c.stmts }) cs) (map f d)
-  e -> e
+nodes e = [e] <> Array.concatMap nodes (localChildren e)
 
 optimize :: String -> Maybe Signature -> PhpExpr -> PhpExpr
 optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret body)
@@ -73,7 +43,7 @@ optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret bo
       mentions tracked = case _ of
         PhpVar v -> Array.elem v tracked
         PhpFunction caps _ _ _ -> any (\v -> Array.elem (stripRef v) tracked) caps
-        e -> any (mentions tracked) (children e)
+        e -> any (mentions tracked) (localChildren e)
       stripRef v = if String.take 1 v == "&" then String.drop 1 v else v
       close 0 _ = Nothing
       close n tracked =
@@ -113,14 +83,14 @@ optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret bo
           hasLoop = any (case _ of
             PhpGoto l -> l == loopLabel
             _ -> false) ns
-          count = Array.length $ Array.filter candidate $ Array.concatMap children ns
+          count = Array.length $ Array.filter candidate $ Array.concatMap localChildren ns
           convert = case _ of
             fn@(PhpFunction caps params r stmts) | candidate fn -> PhpCompactFunction caps params r stmts
             e -> e
           go = map (case _ of
             PhpAssign v e -> PhpAssign v (convert e)
             PhpReturn e -> PhpReturn (convert e)
-            e -> mapBlocks go e)
+            e -> mapBranches go e)
         in if hasLoop && count > 0 && all safeOuter body
           then PhpCompactLoop name args ret (go body)
           else original
@@ -139,7 +109,7 @@ safeInner tracked = go
   tainted = case _ of
     PhpVar v -> Array.elem v tracked
     PhpFunction caps _ _ _ -> any (flip Array.elem tracked) caps
-    e -> any tainted (children e)
+    e -> any tainted (localChildren e)
   go = case _ of
     PhpVar v -> not (Array.elem v tracked)
     PhpGlobalVar _ _ -> true

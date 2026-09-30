@@ -28,6 +28,7 @@ the [README](../README.md#build-the-backend).
 | Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
+| PHP AST traversal | [`PhpAst/Traversal.purs`](../src/Phpurs/PhpAst/Traversal.purs) | Enumerate children with explicit scope boundaries and map expression children or statement blocks. |
 | PHP printing | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and module layout. |
 | Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes, curry fallback, effect execution and reference helpers. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
@@ -102,6 +103,26 @@ Key invariants to preserve in a refactor:
 For ownership rewrites, read the contract at the top of `ArrayRefs.purs` together
 with `array-refs-ownership.mjs`: a last use at one call site is insufficient when
 another binding retains an alias or a constructor shares a child.
+
+## PHP AST traversal contracts
+
+The shared traversal module provides structural operations with explicit scope:
+
+- `children` includes nested function bodies and global initializers;
+  `localChildren` treats those declarations as opaque.
+- `mapChildren` maps every direct expression child, including function bodies.
+  Its caller controls recursion and any scope-sensitive rewriting.
+- `mapBranches` rewrites the statement lists of `if` and `switch`; `mapBlocks`
+  also handles `while`. Both retain conditions, case labels and nested functions.
+
+Passes own their eligibility rules and budgets. In particular,
+`CopyCleanup.supportedChildren` is an allowlist that can reject a worker, whereas
+the shared child enumeration only describes structure. Enumeration order is not
+PHP evaluation order: the shared match traversal lists the fallback before the
+arms; `ArrayRefs` explicitly retains its arms-before-fallback scan order.
+
+When extending `PhpExpr`, update both exhaustive matches in `PhpAst.Traversal`
+and review each optimization's admissible forms and scope assumptions.
 
 ## File emission contracts
 

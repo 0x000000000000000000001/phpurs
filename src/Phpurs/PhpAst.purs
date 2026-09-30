@@ -2,6 +2,8 @@
 -- | This is the intermediate representation between PureScript's optimized `NeutralExpr`
 -- | and the final PHP string generation. It models PHP constructs like closures,
 -- | arrays, objects, and control flow.
+-- | Structural traversals live in `Phpurs.PhpAst.Traversal`; update its exhaustive
+-- | matches when adding expression forms.
 module Phpurs.PhpAst where
 
 import Prelude

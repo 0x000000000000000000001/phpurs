@@ -14,6 +14,7 @@ import Data.Set as Set
 import Data.String as String
 import Data.Tuple (Tuple(..))
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
+import Phpurs.PhpAst.Traversal (mapBlocks)
 import Phpurs.TailInline (simplifyReturns)
 
 nodeBudget :: Int
@@ -28,8 +29,8 @@ widthBudget = 512
 -- Decline the whole worker on opaque code, nested functions, mutations through
 -- aliases, or dynamic callbacks. This also protects return-threading from
 -- references captured by a closure. New AST forms must opt in explicitly.
-children :: PhpExpr -> Maybe (Array PhpExpr)
-children = case _ of
+supportedChildren :: PhpExpr -> Maybe (Array PhpExpr)
+supportedChildren = case _ of
   PhpVar _ -> Just []
   PhpGlobalVar _ _ -> Just []
   PhpInt _ -> Just []
@@ -70,16 +71,9 @@ inspect body = go 0 Nil (push 0 body Nil)
   go _ result Nil = Just (A.fromFoldable result)
   go count result (Cons (Tuple depth e) rest)
     | count >= nodeBudget || depth > depthBudget = Nothing
-    | otherwise = case children e of
+    | otherwise = case supportedChildren e of
         Just cs | A.length cs <= widthBudget -> go (count + 1) (Cons e result) (push (depth + 1) cs rest)
         _ -> Nothing
-
-mapBlocks :: (Array PhpExpr -> Array PhpExpr) -> PhpExpr -> PhpExpr
-mapBlocks f = case _ of
-  PhpIf c t e -> PhpIf c (f t) (f e)
-  PhpSwitch s cs d -> PhpSwitch s (map (\c -> c { stmts = f c.stmts }) cs) (map f d)
-  PhpWhile c b -> PhpWhile c (f b)
-  e -> e
 
 -- Generated constructors have no user code/destructors; field reads refer to
 -- their declared native properties. No callback/call can change a source local
@@ -112,7 +106,7 @@ replaceLocal name source = go
 
 mentions :: String -> PhpExpr -> Boolean
 mentions name (PhpVar v) = name == v
-mentions name e = any (mentions name) (fromMaybe [] (children e))
+mentions name e = any (mentions name) (fromMaybe [] (supportedChildren e))
 
 terminalCopies :: Set String -> Array PhpExpr -> Array PhpExpr
 terminalCopies constructors = go

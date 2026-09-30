@@ -19,6 +19,7 @@ import Data.Array as Array
 import Data.Tuple (Tuple(..))
 import Data.Foldable (foldl)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
+import Phpurs.PhpAst.Traversal (mapBlocks)
 import Phpurs.Printer.Runtime as Runtime
 
 foreign import showInt32Impl :: Int -> String
@@ -58,11 +59,7 @@ replaceReturn = concatMap replaceExpr
   where
     replaceExpr :: PhpExpr -> Array PhpExpr
     replaceExpr (PhpReturn e) = [PhpAssign "__res" e, PhpGoto "__end"]
-    replaceExpr (PhpIf cond t e) = [PhpIf cond (replaceReturn t) (replaceReturn e)]
-    replaceExpr (PhpWhile cond body) = [PhpWhile cond (replaceReturn body)]
-    replaceExpr (PhpSwitch cond cases def) = 
-      [PhpSwitch cond (map (\c -> c { stmts = replaceReturn c.stmts }) cases) (map replaceReturn def)]
-    replaceExpr other = [other]
+    replaceExpr other = [mapBlocks replaceReturn other]
 
 genNativeCurry :: Map String Int -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
 genNativeCurry = genNativeCurryWithRoot false

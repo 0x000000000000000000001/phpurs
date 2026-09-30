@@ -1,40 +1,47 @@
-module Main where
+-- | Load typed modules, invoke the optimizer and coordinate PHP file emission.
+module Main (main) where
 
 import Prelude
-import Phpurs.Metrics as Metrics
 
-import Effect (Effect)
-import Effect.Class (liftEffect)
-import Effect.Aff (launchAff_, attempt)
-import Effect.Console as Console
-import Node.FS.Aff as FS
-import Node.Encoding (Encoding(..))
-import Node.Process as Process
-import Data.Foldable (foldl)
 import Data.Array as Array
-import Data.Maybe (Maybe(..), isJust, fromMaybe)
+import Data.Foldable (foldl)
 import Data.Map as Map
+import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Newtype (unwrap)
 import Data.Set as Set
+import Data.String as String
+import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
-import Data.String.Pattern (Pattern(..), Replacement(..))
-import Data.String as String
-import PureScript.Backend.Optimizer.Builder (buildModules)
-import PureScript.Backend.Optimizer.CoreFn (Module(..), Ident(..), importName, ModuleName(..), ExprType(..))
-import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
-import Phpurs.CodeGen (translate)
-import Phpurs.GenNativeForeign (genNativeWrapper, flattenFuncType)
-import Phpurs.Printer (printPhpFile, safeName, safeFuncName)
-import Phpurs.ComposerMerge (mergeComposers)
-import PureScript.Backend.Optimizer.FfiSupport (findFfiFile)
-import Data.Newtype (unwrap)
-import Data.String (joinWith, replace, replaceAll, trim, length)
+import Effect (Effect)
+import Effect.Aff (Aff, attempt, launchAff_)
+import Effect.Class (liftEffect)
+import Effect.Console as Console
 import Effect.Ref as Ref
-import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, parseCLIArgs, loadDirectives)
+import Node.Encoding (Encoding(..))
+import Node.FS.Aff as FS
+import Node.Process as Process
+import Phpurs.CodeGen (translate)
+import Phpurs.ComposerMerge (mergeComposers)
+import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
+import Phpurs.GenNativeForeign (genForeignModule)
+import Phpurs.Metrics as Metrics
+import Phpurs.Printer (printPhpFile)
+import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, loadDirectives, parseCLIArgs)
+import PureScript.Backend.Optimizer.Builder (buildModules)
+import PureScript.Backend.Optimizer.CoreFn (Ident(..), Module(..), ModuleName(..), importName)
+import PureScript.Backend.Optimizer.FfiSupport (findFfiFile)
 import PureScript.Backend.Optimizer.Reachability (moduleReachability)
-
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
+import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..))
+
+readForeignSource :: { ffiDir :: Maybe String, moduleName :: String, modulePath :: String } -> Aff String
+readForeignSource { ffiDir, moduleName, modulePath } = do
+  path <- liftEffect $ findFfiFile ".php" [ "bak/spago.d/php/p" ] ffiDir moduleName (Just modulePath)
+  case path of
+    Nothing -> pure ""
+    Just ffiPath -> FS.readTextFile UTF8 ffiPath
 
 countNodes :: NeutralExpr -> Int
 countNodes (NeutralExpr expr) = 1 + case expr of
@@ -96,49 +103,18 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
             importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
             phpFile = translate importsArray backendMod
 
-          ffiPathMb <- liftEffect $ findFfiFile ".php" ["bak/spago.d/php/p"] args.mbFfiDir modNameStr (Just coreFnMod.path)
-          ffiCode <- case ffiPathMb of
-            Nothing -> pure ""
-            Just ffiPath -> do
-              content <- FS.readTextFile UTF8 ffiPath
-              pure (trim (replace (Pattern "<?php\n") (Replacement "") (replace (Pattern "<?php") (Replacement "") content)))
-
-          let
-            phpModName = replaceAll (Pattern ".") (Replacement "_") modNameStr
-            getArity = case _ of
-              Just t -> Array.length (flattenFuncType t).args
-              Nothing -> 0
-
-            foreignArities = Map.fromFoldable $ map (\(Tuple (Ident f) type_) -> Tuple (safeName (phpModName <> "_" <> f)) (getArity type_)) (Map.toUnfoldable backendMod.foreign :: Array _)
-
+          foreignSource <- readForeignSource { ffiDir: args.mbFfiDir, moduleName: modNameStr, modulePath: coreFnMod.path }
+          let foreignModule = genForeignModule { moduleName: backendMod.name, bindings: backendMod.foreign, source: foreignSource }
           currentArities <- liftEffect $ Ref.read globalAritiesRef
-          let allArities = Map.union foreignArities (Map.union phpFile.arities currentArities)
+          let allArities = Map.union foreignModule.arities (Map.union phpFile.arities currentArities)
           liftEffect $ Ref.write allArities globalAritiesRef
 
-          let
-            getType = case _ of
-              Just t -> t
-              Nothing -> Any
-            wrappedFfiCode =
-              if length ffiCode > 0 then
-                let
-                  closureStart = "$ffi_" <> phpModName <> " = \\call_user_func(function() {\n  $exports = [];\n"
-                  closureEnd = "\n  return $exports;\n});\n"
-                  mappings = joinWith "\n" (map (\(Tuple (Ident f) type_) -> genNativeWrapper (safeName (phpModName <> "_" <> f)) (safeFuncName (phpModName <> "_" <> f)) ("$ffi_" <> phpModName) ("(\\array_key_exists('" <> f <> "', $ffi_" <> phpModName <> ") ? $ffi_" <> phpModName <> "['" <> f <> "'] : new class { public function __invoke(...$args) { return $this; } })") (getType type_)) (Map.toUnfoldable backendMod.foreign))
-                in
-                  closureStart <> ffiCode <> closureEnd <> mappings <> "\n"
-              else
-                let
-                  mappings = joinWith "\n" (map (\(Tuple (Ident f) type_) -> genNativeWrapper (safeName (phpModName <> "_" <> f)) (safeFuncName (phpModName <> "_" <> f)) "null" "new class { public function __invoke(...$args) { return $this; } }" (getType type_)) (Map.toUnfoldable backendMod.foreign))
-                in
-                  mappings <> (if length mappings > 0 then "\n" else "")
-
           if args.bundle then do
-            let phpCodeBundle = printPhpFile true wrappedFfiCode allArities phpFile
+            let phpCodeBundle = printPhpFile true foreignModule.code allArities phpFile
             liftEffect $ Ref.modify_ (\s -> s <> phpCodeBundle <> "\n") bundleContentRef
           else pure unit
 
-          let phpCode = printPhpFile false wrappedFfiCode allArities phpFile
+          let phpCode = printPhpFile false foreignModule.code allArities phpFile
           FS.writeTextFile UTF8 (outputDir <> "/" <> modNameStr <> "/index.php") phpCode
       }
       finalModules
@@ -153,25 +129,17 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
 
     _ <- traverse
       ( \mainMod -> do
-          let
-            autoloadStr = case args.mbAutoloadPath of
-              Just p -> "if (file_exists(__DIR__ . '/../../" <> p <> "')) require_once __DIR__ . '/../../" <> p <> "';\nelseif (file_exists('" <> p <> "')) require_once '" <> p <> "';\n"
-              Nothing -> "if (file_exists(__DIR__ . '/../../vendor/autoload.php')) require_once __DIR__ . '/../../vendor/autoload.php';\n"
-
-            sanitizedMain = String.replaceAll (Pattern ".") (Replacement "_") mainMod <> "_main"
-            callStr = "$GLOBALS['" <> sanitizedMain <> "']();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+          let entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath }
 
           if args.bundle then do
             bundleContent <- liftEffect $ Ref.read bundleContentRef
-            let entryPoint = "namespace {\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n" <> callStr <> "}\n"
-            FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> entryPoint)
+            FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
           else pure unit
 
           let
             reachableSet = moduleReachability [ModuleName mainMod] backendModules
             reachable = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
-            requires = joinWith "" (map (\(Module m) -> "require_once __DIR__ . '/../" <> unwrap m.name <> "/index.php';\n") reachable)
-            modEntryPoint = "<?php\n" <> autoloadStr <> "set_exception_handler(function($e) { echo 'FATAL: ' . $e->getMessage() . \"\\n\" . $e->getTraceAsString() . \"\\n\"; exit(1); });\n" <> requires <> callStr
+            modEntryPoint = printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachable)
           liftEffect $ Console.log $ "Writing main.mod.php for " <> mainMod
           FS.writeTextFile UTF8 (outputDir <> "/" <> mainMod <> "/main.mod.php") modEntryPoint
       )

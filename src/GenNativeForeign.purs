@@ -1,16 +1,75 @@
-module Phpurs.GenNativeForeign where
+-- | Prepare a module's foreign exports and their public PHP calling wrappers.
+module Phpurs.GenNativeForeign
+  ( ForeignModule
+  , genForeignModule
+  ) where
 
 import Prelude
+
 import Data.Array as Array
+import Data.Map (Map)
+import Data.Map as Map
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String as String
+import Data.String.Pattern (Pattern(..), Replacement(..))
+import Data.Tuple (Tuple(..))
 import Phpurs.CodeGen.Types (exprTypeToPhpType)
-import PureScript.Backend.Optimizer.CoreFn (ExprType(..))
+import Phpurs.Printer (safeFuncName, safeName)
+import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), ModuleName(..))
+
+type ForeignModule = { arities :: Map String Int, code :: String }
+
+type ForeignSignature = { args :: Array ExprType, ret :: ExprType }
+
+-- | The export key and native function name have different PHP escaping rules.
+-- | A missing FFI base means the wrapper has no export table to capture.
+type ForeignBinding =
+  { globalKey :: String
+  , funcName :: String
+  , ffiBaseVar :: Maybe String
+  , ffiValue :: String
+  , signature :: ForeignSignature
+  }
+
+-- | Keep arities and wrappers together so both use the same flattened foreign
+-- | signature. Source is the original FFI file, including its optional PHP tag.
+genForeignModule
+  :: { moduleName :: ModuleName, bindings :: Map Ident (Maybe ExprType), source :: String }
+  -> ForeignModule
+genForeignModule { moduleName: ModuleName name, bindings, source } =
+  let
+    phpModName = String.replaceAll (Pattern ".") (Replacement "_") name
+    ffiBase = "$ffi_" <> phpModName
+    ffiCode = String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") source))
+    hasSource = ffiCode /= ""
+    missingForeign = "new class { public function __invoke(...$args) { return $this; } }"
+    prepareBinding (Tuple (Ident ident) type_) =
+      let fullName = phpModName <> "_" <> ident
+      in
+        { globalKey: safeName fullName
+        , funcName: safeFuncName fullName
+        , ffiBaseVar: if hasSource then Just ffiBase else Nothing
+        , ffiValue: if hasSource then
+            "(\\array_key_exists('" <> ident <> "', " <> ffiBase <> ") ? " <> ffiBase <> "['" <> ident <> "'] : " <> missingForeign <> ")"
+          else missingForeign
+        , signature: flattenFuncType (fromMaybe Any type_)
+        }
+    prepared = map prepareBinding (Map.toUnfoldable bindings :: Array _)
+    mappings = String.joinWith "\n" (map genNativeWrapper prepared)
+    code = if hasSource then
+      ffiBase <> " = \\call_user_func(function() {\n  $exports = [];\n"
+        <> ffiCode <> "\n  return $exports;\n});\n" <> mappings <> "\n"
+      else mappings <> (if mappings /= "" then "\n" else "")
+  in
+    { arities: Map.fromFoldable (map (\binding -> Tuple binding.globalKey (Array.length binding.signature.args)) prepared)
+    , code
+    }
 
 stripForAll :: ExprType -> ExprType
 stripForAll (ForAll _ t) = stripForAll t
 stripForAll t = t
 
-flattenFuncType :: ExprType -> { args :: Array ExprType, ret :: ExprType }
+flattenFuncType :: ExprType -> ForeignSignature
 flattenFuncType ty = case stripForAll ty of
   Func args ret ->
     let
@@ -19,14 +78,13 @@ flattenFuncType ty = case stripForAll ty of
       { args: args <> inner.args, ret: inner.ret }
   other -> { args: [], ret: other }
 
-genNativeWrapper :: String -> String -> String -> String -> ExprType -> String
-genNativeWrapper globalKey funcName ffiBaseVar ffiVar exprType =
+genNativeWrapper :: ForeignBinding -> String
+genNativeWrapper { globalKey, funcName, ffiBaseVar, ffiValue, signature: flat } =
   let
-    flat = flattenFuncType exprType
     arity = Array.length flat.args
   in
     if arity <= 0 then
-      "$GLOBALS['" <> globalKey <> "'] = " <> ffiVar <> ";"
+      "$GLOBALS['" <> globalKey <> "'] = " <> ffiValue <> ";"
     else
       let
         argsWithTypes = Array.mapWithIndex
@@ -42,7 +100,9 @@ genNativeWrapper globalKey funcName ffiBaseVar ffiVar exprType =
         retPhpTy = exprTypeToPhpType flat.ret
         retTypeSig = if retPhpTy == "" then "" else ": " <> retPhpTy <> "|\\Closure"
 
-        globalDecl = if ffiBaseVar == "null" then "" else "  global " <> ffiBaseVar <> ";\n"
+        globalDecl = case ffiBaseVar of
+          Just name -> "  global " <> name <> ";\n"
+          Nothing -> ""
 
         fallbackStr =
           "  $__num = \\func_num_args();\n"
@@ -62,7 +122,7 @@ genNativeWrapper globalKey funcName ffiBaseVar ffiVar exprType =
           <> fallbackStr
           <> globalDecl
           <> "  $f = "
-          <> ffiVar
+          <> ffiValue
           <> ";\n"
           <> "  return $f("
           <> String.joinWith ", " callArgs

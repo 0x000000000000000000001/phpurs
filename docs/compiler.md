@@ -29,7 +29,8 @@ the [README](../README.md#build-the-backend).
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
 | PHP printing and helpers | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and runtime preamble. |
-| FFI wrappers | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Flatten foreign signatures and emit public calling wrappers. |
+| FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
+| Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
 ## Pass order
@@ -100,6 +101,26 @@ Key invariants to preserve in a refactor:
 For ownership rewrites, read the contract at the top of `ArrayRefs.purs` together
 with `array-refs-ownership.mjs`: a last use at one call site is insufficient when
 another binding retains an alias or a constructor shares a child.
+
+## File emission contracts
+
+`Main` discovers and reads foreign files, selects reachable modules and writes
+the generated files. Pure rendering is delegated through two interfaces:
+
+- `genForeignModule { moduleName, bindings, source }` accepts the original FFI
+  source and returns `{ code, arities }`. Each foreign signature is flattened
+  once for both the wrapper and its arity. The internal wrapper record names
+  the global key, native function name, optional export table and value expression;
+  global-key escaping and native-function escaping are distinct operations.
+- `printModularEntryPoint` and `printBundleEntryPoint` share
+  `{ mainModule, autoloadPath }` options and the same startup sequence: load
+  Composer, install the exception handler, call main, then run Revolt. Modular
+  entrypoints receive the reachable dependencies in topological order and require
+  them before the main call.
+
+Foreign arities take precedence over current-module arities, which take precedence
+over previously emitted modules. Keep that merge before printing either form of
+the module so direct calls and public wrappers agree.
 
 ## Validation commands
 

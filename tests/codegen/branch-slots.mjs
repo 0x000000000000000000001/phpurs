@@ -21,7 +21,7 @@ const branch = new Syn.Branch([new Syn.Pair(new Syn.Local(new Just('flag'), 0), 
 function generate(expr, isTail = true, loops = [], bound = empty) {
   const context = { ...initialContext('Test'), boundVars: bound, loops, isTail };
   const result = translateExpr(context)(0)(analyze([])(expr));
-  return [...result.stmts, new PhpReturn(result.expr)].map(printExpr('Test')(empty)).join(';\n') + ';';
+  return [...result.stmts, new PhpReturn(result.expr)].map(printExpr(empty)).join(';\n') + ';';
 }
 
 function execute(body, expected) {

@@ -12,7 +12,7 @@ const generate = (captures, body, args = ['x']) => {
     ...(at ? [new PhpRaw(body.slice(0, at))] : []),
     new PhpReturn(new PhpRaw(body.slice(at + 7))),
   ];
-  return genCurry('Test')(empty)(args.map(name => ({ name, type_: '' })))('')(captures)(stmts);
+  return genCurry(empty)(args.map(name => ({ name, type_: '' })))('')(captures)(stmts);
 };
 const captured = generate(['seed'], 'return $seed + $x');
 const reference = generate(['&seed'], 'return $seed + $x');

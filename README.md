@@ -297,7 +297,7 @@ It currently selects upstream PureScript `0.15.15`. That can serve as a host com
 1. **Typed input:** the optimizer fork's `App` loader reads and sorts the enriched `corefn.json` modules. TAST preserves structural types, declaration layouts and polymorphic instantiations.
 2. **Optimization:** `buildModules` applies the shared optimizer's analysis, directives and rewrites to produce `BackendModule` values.
 3. **PHP lowering:** [Phpurs.CodeGen](src/Phpurs/CodeGen.purs) applies PHP-specific transformations and TCO analysis, then constructs [PhpAst](src/Phpurs/PhpAst.purs). Specialized representations are used where proven; unsupported shapes retain the general representation.
-4. **FFI and printing:** [GenNativeForeign](src/GenNativeForeign.purs) prepares foreign export tables, typed calling wrappers and arities together; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source.
+4. **FFI and printing:** [GenNativeForeign](src/GenNativeForeign.purs) prepares foreign export tables, typed calling wrappers and arities together; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source using the shared [runtime preamble](src/Phpurs/Printer/Runtime.purs).
 5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [Phpurs.EntryPoint](src/Phpurs/EntryPoint.purs) renders their shared startup and Revolt execution. [ComposerMerge](src/ComposerMerge.js) collects PHP package requirements.
 
 Spago provides incremental compilation of the backend itself. The current `Main` does not call the optimizer cache helpers, so generated PHP is rebuilt on each backend invocation. Rebuild the compiler bundle after changing its source.

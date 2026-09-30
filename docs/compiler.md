@@ -28,7 +28,8 @@ the [README](../README.md#build-the-backend).
 | Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
-| PHP printing and helpers | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and runtime preamble. |
+| PHP printing | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and module layout. |
+| Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes, curry fallback, effect execution and reference helpers. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
@@ -121,6 +122,24 @@ the generated files. Pure rendering is delegated through two interfaces:
 Foreign arities take precedence over current-module arities, which take precedence
 over previously emitted modules. Keep that merge before printing either form of
 the module so direct calls and public wrappers agree.
+
+## Printing contracts
+
+`printExpr arities expr` uses the arity table to select saturated native calls.
+Global references carry their module qualification in the PHP AST. Their global
+keys and native names go through the same identifier construction before their
+respective escaping rules are applied.
+
+`genCurry arities params returnType captures body` renders a closure. Capture
+clauses and return signatures have shared renderers. `printCurryStatements`
+rewrites returns to a common exit before applying extra arguments to the result;
+that rewrite stays within the current function's scope.
+
+`Printer.Runtime.preamble` is shared by modular files and bundles. The generic
+data classes (arities 0–12) and fixed-parameter curry fallbacks (one to four missing
+arguments) are generated from common templates. Larger partial applications use
+the variadic fallback. Effect and reference helpers are kept as readable PHP
+blocks in the same module.
 
 ## Validation commands
 

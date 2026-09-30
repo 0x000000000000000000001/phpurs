@@ -72,9 +72,19 @@ and constructor representations are still generated at their boundaries.
 
 `translateValue` resets the tail/effect position for operands while retaining
 their lexical scope. Binding bodies inherit the surrounding position; a new
-function body starts its own tail-call scope.
+function body starts its own tail-call scope. `translateValues` shares operand
+lowering and temporary allocation across arrays, constructors and calls.
 
-Two details are easy to lose in a refactor:
+Tail-loop construction has two shared helpers:
+
+- `translateTailJump` saves all arguments into temporaries, updates the loop
+  slots, then jumps. Curried and uncurried calls use the same protocol.
+- `wrapLoopBody` initializes those slots once, places the loop label, then binds
+  the parameters on each iteration. Local closures and top-level functions use
+  the same body layout. Local loop lowering accepts a single recursive function;
+  other recursive groups use the ordinary reference-capturing closures.
+
+Key invariants to preserve in a refactor:
 
 - **Short-circuiting:** the right operand of `&&` or `||` may produce statements.
   Those statements belong inside a deferred operand, not before the operator.
@@ -115,8 +125,19 @@ output directories are scratch space. `bin/modtest` exercises executable sibling
 package suites; asynchronous suites must reach their completion marker as well
 as exit successfully.
 
-For compiler-wide refactors, comparing freshly generated PHP before and after
-is useful alongside execution tests. The benchmark checkout provides the usual
-`./bin/php/run -c` workflow (`runp`); it rebuilds the host backend and then uses
-the TAST compiler for the workloads. Published reference measurements live in
-`altbak.pub/README.md`.
+For routine refactors, use b8x's generated PHP as the main differential check:
+
+1. Freeze one TAST input tree (`corefn.json`), its PHP FFI dependencies and the
+   backend options. Preserve relative module paths used to resolve FFI files.
+2. Build the baseline backend, generate PHP from that snapshot and save it.
+3. Build the refactored backend and generate again into a fresh copy of the same
+   input tree. Compare file contents byte for byte **and** the relative file set,
+   including entrypoints, so added or missing files cannot be hidden by stale output.
+4. Run `npm run test:codegen` for the focused compiler checks.
+
+Behavior changes also need the relevant executable regression or fixture. Run
+the complete fixture/library suites at broader milestones.
+
+The benchmark checkout provides the usual `./bin/php/run -c` workflow (`runp`);
+it rebuilds the host backend and then uses the TAST compiler for the workloads.
+Published reference measurements live in `altbak.pub/README.md`.

@@ -21,7 +21,6 @@ import Data.Newtype (unwrap)
 import Data.Set as Set
 import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
-import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import Phpurs.ArrayRefs as ArrayRefs
 import Phpurs.CodeGen.Operators (isLogicalShortCircuit, translateOperator1, translateOperator2)
@@ -39,12 +38,14 @@ import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Literal(..), ModuleName(..), Prop(..), Qualified(..))
 import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
-import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendEffect(..), BackendOperator(..), BackendSyntax(..), Level(..), Pair(..))
+import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendEffect(..), BackendOperator(..), BackendSyntax(..), Pair(..))
 import PureScript.Backend.Optimizer.Syntax as Syn
 
 -- | Statements must execute before the result expression is consumed. `nextId`
 -- | is threaded through siblings so their live temporaries cannot collide.
 type TranslationResult = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: Int }
+
+type TranslatedValues = { stmts :: Array PhpExpr, exprs :: Array PhpExpr, nextId :: Int }
 
 type LoopContext = { ident :: String, params :: Array String, varPrefix :: String, labelName :: String }
 
@@ -76,14 +77,24 @@ valueContext ctx = ctx { loops = [], isTail = false, inEffectBlock = false }
 translateValue :: TranslationContext -> Int -> TcoExpr -> TranslationResult
 translateValue ctx = translateExpr (valueContext ctx)
 
+-- | Lower sibling operands in order, sharing a single temporary counter.
+translateValues :: TranslationContext -> Int -> Array TcoExpr -> TranslatedValues
+translateValues ctx nextId = foldl step { stmts: [], exprs: [], nextId }
+  where
+  step acc expr =
+    let result = translateValue ctx acc.nextId expr
+    in { stmts: acc.stmts <> result.stmts, exprs: Array.snoc acc.exprs result.expr, nextId: result.nextId }
+
+renameLocal :: TranslationContext -> String -> String
+renameLocal ctx name = fromMaybe name (Map.lookup name ctx.boundVars)
+
 -- | Recursive closures capture the renamed binding by reference so they see
 -- | its eventual initialization. Ordinary captures keep PHP's value semantics.
+captureVariable :: TranslationContext -> String -> String
+captureVariable ctx name = if Array.elem name ctx.recursiveVars then "&" <> name else name
+
 closureCaptures :: TranslationContext -> TcoExpr -> Array String
-closureCaptures ctx expr = map capture (Array.fromFoldable (freeVars expr))
-  where
-  capture name =
-    let renamed = fromMaybe name (Map.lookup name ctx.boundVars)
-    in if Array.elem renamed ctx.recursiveVars then "&" <> renamed else renamed
+closureCaptures ctx expr = map (captureVariable ctx <<< renameLocal ctx) (Array.fromFoldable (freeVars expr))
 
 -- Terminal alternatives may share these slots: evaluating the binding itself
 -- cannot introduce statements or capture a reference to the slot being written.
@@ -115,6 +126,37 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
   Syn.TypeApp inner _ -> flattenApp inner
   _ -> Tuple tcoExpr []
 
+findTailTarget :: TranslationContext -> String -> Maybe LoopContext
+findTailTarget ctx ident =
+  if ctx.isTail then Array.find (\loop -> loop.ident == ident) ctx.loops
+  else Nothing
+
+-- | Save every argument before updating any loop parameter: recursive calls
+-- | may swap parameters or reuse their old values in later arguments.
+translateTailJump :: LoopContext -> TranslatedValues -> TranslationResult
+translateTailJump loop args =
+  let
+    tempName index = "__tco_" <> show (args.nextId + index)
+    saveArgs = Array.mapWithIndex (\index expr -> PhpAssign (tempName index) expr) args.exprs
+    assignParams = Array.mapWithIndex
+      (\index _ -> PhpAssign (loop.varPrefix <> fromMaybe "" (Array.index loop.params index)) (PhpVar (tempName index)))
+      args.exprs
+  in
+    { stmts: args.stmts <> saveArgs <> assignParams <> [ PhpGoto loop.labelName ]
+    , expr: PhpRaw "null"
+    , nextId: args.nextId + Array.length args.exprs
+    }
+
+-- | Local closures and native functions use the same loop-entry protocol.
+-- | The label follows initialization so a tail jump keeps the updated slots.
+wrapLoopBody :: LoopContext -> TranslationResult -> Array PhpExpr
+wrapLoopBody loop result =
+  let
+    initVars = map (\param -> PhpAssign (loop.varPrefix <> param) (PhpVar param)) loop.params
+    bindParams = map (\param -> PhpAssign param (PhpVar (loop.varPrefix <> param))) loop.params
+  in
+    initVars <> [ PhpLabel loop.labelName ] <> bindParams <> result.stmts <> [ PhpReturn result.expr ]
+
 translateExpr :: TranslationContext -> Int -> TcoExpr -> TranslationResult
 translateExpr ctx nextId tcoExpr
   | isEffectNode tcoExpr && not ctx.inEffectBlock =
@@ -135,18 +177,8 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
       LitChar c -> { stmts: [], expr: PhpString (String.singleton (String.codePointFromChar c)), nextId }
       LitBoolean b -> { stmts: [], expr: PhpBoolean b, nextId }
       LitArray arr ->
-        let
-          acc = foldl
-            ( \a expr@(TcoExpr _ _) ->
-                let
-                  res = translateValue ctx a.nextId expr
-                in
-                  { stmts: a.stmts <> res.stmts, exprs: Array.snoc a.exprs res.expr, nextId: res.nextId }
-            )
-            { stmts: [], exprs: [], nextId }
-            arr
-        in
-          { stmts: acc.stmts, expr: PhpArray acc.exprs, nextId: acc.nextId }
+        let result = translateValues ctx nextId arr
+        in { stmts: result.stmts, expr: PhpArray result.exprs, nextId: result.nextId }
       LitRecord rec ->
         let
           acc = foldl
@@ -168,108 +200,49 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
     }
 
   Local ident level ->
-    let
-      v = localId ident level
-    in
-      { stmts: [], expr: PhpVar (fromMaybe v (Map.lookup v bound)), nextId }
+    { stmts: [], expr: PhpVar (renameLocal ctx (localId ident level)), nextId }
 
   App fn args ->
     let
-      resFn = translateValue ctx nextId fn
-      argsArr = toArray args
-      
       Tuple flatFn flatArgs = flattenApp tcoExpr
-      
-      tailTarget = if isTail then case flatFn of
-        TcoExpr _ (Local mbIdent (Level l)) ->
-          let v = fromMaybe (localId mbIdent (Level l)) (Map.lookup (localId mbIdent (Level l)) bound)
-          in Array.find (\loop -> loop.ident == v) loopCtx
+      tailTarget = case flatFn of
+        TcoExpr _ (Local ident level) ->
+          findTailTarget ctx (renameLocal ctx (localId ident level))
         TcoExpr _ (Var (Qualified mbMod (Ident name))) ->
           let fullName = fromMaybe "" (map (\(ModuleName m) -> String.joinWith "_" (String.split (Pattern ".") m) <> "_") mbMod) <> name
-          in Array.find (\loop -> loop.ident == fullName) loopCtx
+          in findTailTarget ctx fullName
         _ -> Nothing
-      else Nothing
-
-      accFinal = foldl
-        ( \acc arg@(TcoExpr _ _) ->
-            let
-              argRes = translateValue ctx acc.nextId arg
-            in
-              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
-        )
-        { stmts: resFn.stmts, exprs: [], nextId: resFn.nextId }
-        argsArr
-
     in case tailTarget of
-      Just targetCtx ->
+      Just loop -> translateTailJump loop (translateValues ctx nextId flatArgs)
+      Nothing ->
         let
-          flatAccFinal = foldl
-            ( \acc arg@(TcoExpr _ _) ->
-                let
-                  argRes = translateValue ctx acc.nextId arg
-                in
-                  { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
-            )
-            { stmts: [], exprs: [], nextId: nextId }
-            flatArgs
-            
-          tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (flatAccFinal.nextId + i)) e) flatAccFinal.exprs
-          assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (targetCtx.varPrefix <> (fromMaybe "" (Array.index targetCtx.params i))) (PhpVar ("__tco_" <> show (flatAccFinal.nextId + i)))) flatAccFinal.exprs
-          
-          finalStmts = flatAccFinal.stmts <> tcoStmts <> assignStmts <> [ PhpGoto targetCtx.labelName ]
-        in { stmts: finalStmts, expr: PhpRaw "null", nextId: flatAccFinal.nextId + Array.length flatArgs }
-      Nothing -> 
-        let curriedCall = foldl (\acc e -> PhpCall acc [e]) resFn.expr accFinal.exprs
-        in { stmts: accFinal.stmts, expr: curriedCall, nextId: accFinal.nextId }
+          resFn = translateValue ctx nextId fn
+          resArgs = translateValues ctx resFn.nextId (toArray args)
+          curriedCall = foldl (\acc expr -> PhpCall acc [ expr ]) resFn.expr resArgs.exprs
+        in
+          { stmts: resFn.stmts <> resArgs.stmts, expr: curriedCall, nextId: resArgs.nextId }
 
   UncurriedApp fn args ->
     let
       resFn = translateValue ctx nextId fn
-      
-      tailTarget = if isTail then case resFn.expr of
+      resArgs = translateValues ctx resFn.nextId args
+      tailTarget = case resFn.expr of
         PhpGlobalVar mbMod name ->
           let fullName = fromMaybe "" (map (\m -> String.joinWith "_" m <> "_") mbMod) <> name
-          in Array.find (\loop -> loop.ident == fullName) loopCtx
-        PhpVar v ->
-          Array.find (\loop -> loop.ident == v) loopCtx
+          in findTailTarget ctx fullName
+        PhpVar name -> findTailTarget ctx name
         _ -> Nothing
-      else Nothing
-
-      accArgs = foldl
-        ( \acc arg@(TcoExpr _ _) ->
-            let
-              argRes = translateValue ctx acc.nextId arg
-            in
-              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
-        )
-        { stmts: [], exprs: [], nextId: resFn.nextId }
-        args
-        
     in case tailTarget of
-      Just targetCtx ->
-        let
-          tcoStmts = Array.mapWithIndex (\i e -> PhpAssign ("__tco_" <> show (accArgs.nextId + i)) e) accArgs.exprs
-          assignStmts = Array.mapWithIndex (\i _ -> PhpAssign (targetCtx.varPrefix <> (fromMaybe "" (Array.index targetCtx.params i))) (PhpVar ("__tco_" <> show (accArgs.nextId + i)))) accArgs.exprs
-          
-          finalStmts = accArgs.stmts <> tcoStmts <> assignStmts <> [ PhpGoto targetCtx.labelName ]
-        in { stmts: finalStmts, expr: PhpRaw "null", nextId: accArgs.nextId + Array.length args }
+      Just loop -> translateTailJump loop resArgs
       Nothing ->
-        { stmts: resFn.stmts <> accArgs.stmts, expr: PhpCall resFn.expr accArgs.exprs, nextId: accArgs.nextId }
+        { stmts: resFn.stmts <> resArgs.stmts, expr: PhpCall resFn.expr resArgs.exprs, nextId: resArgs.nextId }
 
   UncurriedEffectApp fn args ->
     let
       resFn = translateValue ctx nextId fn
-      accArgs = foldl
-        ( \acc arg@(TcoExpr _ _) ->
-            let
-              argRes = translateValue ctx acc.nextId arg
-            in
-              { stmts: acc.stmts <> argRes.stmts, exprs: Array.snoc acc.exprs argRes.expr, nextId: argRes.nextId }
-        )
-        { stmts: [], exprs: [], nextId: resFn.nextId }
-        args
+      resArgs = translateValues ctx resFn.nextId args
     in
-      { stmts: resFn.stmts <> accArgs.stmts, expr: PhpCall resFn.expr accArgs.exprs, nextId: accArgs.nextId }
+      { stmts: resFn.stmts <> resArgs.stmts, expr: PhpCall resFn.expr resArgs.exprs, nextId: resArgs.nextId }
 
   Abs args body ->
     let
@@ -340,6 +313,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
 
   LetRec lvl binds body ->
     let
+      bindings = toArray binds
       oldNewPairs = map
         ( \(Tuple ident _) ->
             let
@@ -347,79 +321,50 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
             in
               { oldName, newName: oldName <> "_" <> show nextId }
         )
-        (toArray binds)
+        bindings
       newBound = foldl (\acc pair -> Map.insert pair.oldName pair.newName acc) bound oldNewPairs
-      newRecVars = map _.newName oldNewPairs
-      combinedRecVars = recVars <> newRecVars
-      
-      isLoop = (unwrap (tcoAnalysisOf tcoExpr)).role.isLoop
-      mutRecBinds = if isLoop && Array.length (toArray binds) == 1 then
-        traverse (\(Tuple ident val) -> case extractUncurriedAbs val of
-            Just abs -> Just { ident: localId (Just ident) lvl, args: abs.args, body: abs.body, fvs: abs.fvs, originalVal: val }
-            Nothing -> Nothing
-        ) (toArray binds)
-      else Nothing
-    in case mutRecBinds of
-      Just fns ->
+      recCtx = ctx { recursiveVars = recVars <> map _.newName oldNewPairs, boundVars = newBound }
+      initStmts = map (\pair -> PhpAssign pair.newName (PhpRaw "null")) oldNewPairs
+      -- Loop lowering handles a single recursive function. Match that shape
+      -- directly rather than constructing and searching a singleton loop table.
+      loopBinding = case bindings of
+        [ Tuple ident value ] | (unwrap (tcoAnalysisOf tcoExpr)).role.isLoop ->
+          map (\fn -> { name: renameLocal recCtx (localId (Just ident) lvl), value, fn }) (extractUncurriedAbs value)
+        _ -> Nothing
+    in case loopBinding of
+      Just { name, value, fn } ->
         let
-          initStmts = map (\pair -> PhpAssign pair.newName (PhpRaw "null")) oldNewPairs
-          
-          loopCtxs = map (\fn ->
-            let newName = fromMaybe fn.ident (Map.lookup fn.ident newBound)
-            in { ident: newName, params: fn.args, varPrefix: "__tco_var_" <> newName <> "_" <> show nextId <> "_", labelName: "tco_loop_" <> newName <> "_" <> show nextId }
-          ) fns
-          
-          fnWrapperStmts = map
-            ( \fn ->
-                let
-                  newName = fromMaybe fn.ident (Map.lookup fn.ident newBound)
-                  loop = fromMaybe { ident: "", params: [], varPrefix: "", labelName: "" } (Array.find (\c -> c.ident == newName) loopCtxs)
-                  
-                  loopVars = map (\p -> loop.varPrefix <> p) fn.args
-                  
-                  initVarStmts = Array.mapWithIndex (\i p -> PhpAssign (fromMaybe "" (Array.index loopVars i)) (PhpVar p)) fn.args
-                  
-                  resBodyMut = translateExpr
-                    (ctx { recursiveVars = combinedRecVars, boundVars = newBound, loops = loopCtxs, isTail = true, inEffectBlock = false })
-                    nextId fn.body
-                  
-                  mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (\v -> fromMaybe v (Map.lookup v newBound)) fn.fvs)
-                  useVarsLoop = Array.nub (map (\mapped -> if Array.elem mapped combinedRecVars then "&" <> mapped else mapped) mappedFvs)
-                  
-                  mutVarsToCaptureOuter = foldMap (\c -> map (\p -> "&" <> c.varPrefix <> p) c.params) loopCtx
-                  useVarsOuter = mutVarsToCaptureOuter <> useVarsLoop
-                  
-                  innerLoopInit = Array.mapWithIndex (\i p -> PhpAssign p (PhpVar (fromMaybe "" (Array.index loopVars i)))) fn.args
-                  innerFuncBody = [ PhpLabel loop.labelName ] <> innerLoopInit <> resBodyMut.stmts <> [ PhpReturn resBodyMut.expr ]
-                  
-                in
-                  let
-                    types = extractFuncType fn.originalVal
-                    argsWithTypes = zipArgsWithTypes fn.args types
-                    retType = getRetType (Array.length fn.args) types
-                  in PhpAssign newName (PhpFunction useVarsOuter argsWithTypes retType (initVarStmts <> innerFuncBody))
-            )
-            fns
-            
-          resBodyOuter = translateExpr (ctx { recursiveVars = combinedRecVars, boundVars = newBound }) (nextId + 1) body
+          loop =
+            { ident: name
+            , params: fn.args
+            , varPrefix: "__tco_var_" <> name <> "_" <> show nextId <> "_"
+            , labelName: "tco_loop_" <> name <> "_" <> show nextId
+            }
+          resFnBody = translateExpr (recCtx { loops = [ loop ], isTail = true, inEffectBlock = false }) nextId fn.body
+          mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (renameLocal recCtx) fn.fvs)
+          captures = Array.nub (map (captureVariable recCtx) mappedFvs)
+          outerLoopCaptures = foldMap (\outer -> map (\param -> "&" <> outer.varPrefix <> param) outer.params) loopCtx
+          types = extractFuncType value
+          params = zipArgsWithTypes fn.args types
+          returnType = getRetType (Array.length fn.args) types
+          wrapper = PhpAssign name (PhpFunction (outerLoopCaptures <> captures) params returnType (wrapLoopBody loop resFnBody))
+          resBody = translateExpr recCtx (nextId + 1) body
         in
-          { stmts: initStmts <> fnWrapperStmts <> resBodyOuter.stmts, expr: resBodyOuter.expr, nextId: resBodyOuter.nextId }
-          
+          { stmts: initStmts <> [ wrapper ] <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
+
       Nothing ->
         let
-          initStmts = map (\pair -> PhpAssign pair.newName (PhpRaw "null")) oldNewPairs
           accBinds = foldl
-            ( \acc (Tuple (Ident ident) val@(TcoExpr _ _)) ->
+            ( \acc (Tuple ident val) ->
                 let
-                  oldName = localId (Just (Ident ident)) lvl
-                  newName = fromMaybe oldName (Map.lookup oldName newBound)
-                  res = translateValue (ctx { recursiveVars = combinedRecVars, boundVars = newBound }) acc.nextId val
+                  newName = renameLocal recCtx (localId (Just ident) lvl)
+                  res = translateValue recCtx acc.nextId val
                 in
                   { stmts: acc.stmts <> res.stmts <> [ PhpAssign newName res.expr ], nextId: res.nextId }
             )
             { stmts: initStmts, nextId: nextId + 1 }
-            (toArray binds)
-          resBody = translateExpr (ctx { recursiveVars = combinedRecVars, boundVars = newBound }) accBinds.nextId body
+            bindings
+          resBody = translateExpr recCtx accBinds.nextId body
         in
           { stmts: accBinds.stmts <> resBody.stmts, expr: resBody.expr, nextId: resBody.nextId }
 
@@ -454,7 +399,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
             let
               resCond = translateValue ctx acc.nextId condExpr
               resBody = translateExpr ctx resCond.nextId bodyExpr
-              condWrapped = wrapInStmts (map (\v -> fromMaybe v (Map.lookup v bound)) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
+              condWrapped = wrapInStmts (map (renameLocal ctx) (Array.fromFoldable (freeVars condExpr))) resCond.stmts resCond.expr
               ifNode = PhpIf condWrapped (resBody.stmts <> [ PhpAssign tmpVar resBody.expr, PhpGoto labelName ]) []
             in
               { stmts: acc.stmts <> [ifNode], nextId: resBody.nextId }
@@ -511,15 +456,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
       absClass = case mbMod of
         Just (ModuleName m) -> "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") m <> "\\" <> String.replaceAll (Pattern ".") (Replacement "_") m <> "_" <> safeCtorName
         Nothing -> "\\" <> String.replaceAll (Pattern "_") (Replacement "\\") modNameStr <> "\\" <> modNameStr <> "_" <> safeCtorName
-      accArgs = foldl
-        ( \acc (Tuple _ val@(TcoExpr _ _)) ->
-            let
-              resVal = translateValue ctx acc.nextId val
-            in
-              { stmts: acc.stmts <> resVal.stmts, exprs: Array.snoc acc.exprs resVal.expr, nextId: resVal.nextId }
-        )
-        { stmts: [], exprs: [], nextId }
-        args
+      accArgs = translateValues ctx nextId (map (\(Tuple _ val) -> val) args)
       body = PhpNew absClass accArgs.exprs
     in
       { stmts: accArgs.stmts, expr: body, nextId: accArgs.nextId }
@@ -730,15 +667,12 @@ translateBindingGroup moduleName group = case group.bindings of
         Just fn ->
           let
             loop = { ident: identifier, params: fn.args, varPrefix: "__tco_var_" <> identifier <> "_", labelName: "tco_loop_" <> identifier }
-            initVars = map (\param -> PhpAssign (loop.varPrefix <> param) (PhpVar param)) fn.args
-            bindParams = map (\param -> PhpAssign param (PhpVar (loop.varPrefix <> param))) fn.args
             result = translateExpr (ctx { loops = [ loop ], isTail = true }) 0 fn.body
-            body = initVars <> [ PhpLabel loop.labelName ] <> bindParams <> result.stmts <> [ PhpReturn result.expr ]
             types = extractFuncType expr
             params = zipArgsWithTypes fn.args types
             returnType = getRetType (Array.length fn.args) types
           in
-            [ { identifier, expression: CompactLoops.optimize loop.labelName types (PhpNativeFunction identifier params returnType body) } ]
+            [ { identifier, expression: CompactLoops.optimize loop.labelName types (PhpNativeFunction identifier params returnType (wrapLoopBody loop result)) } ]
         Nothing -> translateBinding ctx identifier expr
   _ -> Array.concatMap
     (\(Tuple (Ident name) expr) -> translateBinding (initialContext moduleName) (moduleName <> "_" <> name) expr)

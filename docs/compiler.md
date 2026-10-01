@@ -34,6 +34,7 @@ the [README](../README.md#build-the-backend).
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
+| Module-cache identity | [`CacheKey.purs`](../src/Phpurs/CacheKey.purs) | Plan versioned input keys, dependency keys and conservative preceding-module state identity. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
@@ -195,6 +196,13 @@ all write errors propagate to the phase and total failure reporting.
 This comparison happens after optimization, translation and printing on every
 invocation. `onSkipModule` still returns `Nothing`; reusable optimizer/codegen state
 and its invalidation belong to the subsequent build-cache work.
+
+`Phpurs.CacheKey` now supplies the pure v1 key planner for that work. Its
+[cache-key contract](cache.md) specifies byte capture, toolchain/options/directives,
+FFI selection and dependency fingerprints. A prefix chain covers the directives,
+private globals and PHP arities accumulated from preceding modules. The planner
+is exercised independently of the active build driver; state restoration is the
+next B1 step.
 
 ## Printing contracts
 

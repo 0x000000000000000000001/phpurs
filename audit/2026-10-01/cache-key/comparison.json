@@ -1,0 +1,36 @@
+{
+  "backendSHA256": "9d0f3b08f089e5d07565ac357ca7764c0b2a453a9e3373cf3db1ee3637af13ca",
+  "inputModules": 2684,
+  "context": "e56ff65a12e184883835649c1a98f6e6dbaad4eb6765880f89637bf55030db78",
+  "foreign": {
+    "none": 2385,
+    "missing": 165,
+    "source": 134
+  },
+  "cases": {
+    "unchanged": {
+      "firstChangedIndex": null,
+      "changedKeys": 0,
+      "identicalKeys": 2684,
+      "changedPHPModules": 0,
+      "changedPHPFiles": 0,
+      "allChangedPHPCovered": true
+    },
+    "leaf": {
+      "firstChangedIndex": 1851,
+      "changedKeys": 833,
+      "identicalKeys": 1851,
+      "changedPHPModules": 1,
+      "changedPHPFiles": 2,
+      "allChangedPHPCovered": true
+    },
+    "dependency": {
+      "firstChangedIndex": 834,
+      "changedKeys": 1850,
+      "identicalKeys": 834,
+      "changedPHPModules": 30,
+      "changedPHPFiles": 31,
+      "allChangedPHPCovered": true
+    }
+  }
+}

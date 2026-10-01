@@ -24,6 +24,7 @@ import Node.Process as Process
 import Phpurs.CodeGen (translate)
 import Phpurs.ComposerMerge (mergeComposers)
 import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
+import Phpurs.FileEmission (writeTextFileIfChanged)
 import Phpurs.GenNativeForeign (genForeignModule)
 import Phpurs.Metrics as Metrics
 import Phpurs.PackagePaths (findForeignFile, resolvePackagePaths)
@@ -126,7 +127,7 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
 
           when emitModules do
             let phpCode = printPhpFile false foreignModule.code allArities phpFile
-            FS.writeTextFile UTF8 (outputDir <> "/" <> modNameStr <> "/index.php") phpCode
+            writeTextFileIfChanged (outputDir <> "/" <> modNameStr <> "/index.php") phpCode
       }
       finalModules
 
@@ -144,7 +145,7 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
 
           if emitBundle then do
             bundleContent <- liftEffect $ Ref.read bundleContentRef
-            FS.writeTextFile UTF8 (outputDir <> "/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
+            writeTextFileIfChanged (outputDir <> "/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
           else pure unit
 
           when emitModules do
@@ -152,8 +153,8 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
               reachableSet = moduleReachability [ModuleName mainMod] backendModules
               reachable = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
               modEntryPoint = printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachable)
-            liftEffect $ Console.log $ "Writing main.mod.php for " <> mainMod
-            FS.writeTextFile UTF8 (outputDir <> "/" <> mainMod <> "/main.mod.php") modEntryPoint
+            liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
+            writeTextFileIfChanged (outputDir <> "/" <> mainMod <> "/main.mod.php") modEntryPoint
       )
       targetMainModules
 
@@ -162,7 +163,7 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
         Just _ -> pure unit
         Nothing -> do
           bundleContent <- liftEffect $ Ref.read bundleContentRef
-          FS.writeTextFile UTF8 (outputDir <> "/bundle.php") bundleContent
+          writeTextFileIfChanged (outputDir <> "/bundle.php") bundleContent
     else pure unit
 
     liftEffect $ mergeComposers { outputDir, packageRoots: packagePaths.composerRoots }

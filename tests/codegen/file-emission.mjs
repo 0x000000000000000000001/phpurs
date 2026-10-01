@@ -10,9 +10,12 @@ import test from 'node:test';
 const mainURL = new URL('../../output/Main/index.js', import.meta.url).href;
 const runMain = `
   import fs from 'node:fs';
+  import { syncBuiltinESMExports } from 'node:module';
   import { main } from ${JSON.stringify(mainURL)};
   const probes = [];
   const scans = [];
+  const writes = [];
+  const failure = JSON.parse(process.env.PHPURS_TEST_IO_ERROR || 'null');
   const existsSync = fs.existsSync;
   const readdirSync = fs.readdirSync;
   fs.existsSync = file => {
@@ -23,7 +26,20 @@ const runMain = `
     scans.push(String(directory));
     return readdirSync(directory, ...args);
   };
-  process.on('exit', () => fs.writeFileSync('ffi-probes.json', JSON.stringify({ probes, scans })));
+  for (const operation of ['readFile', 'writeFile', 'writeFileSync']) {
+    const original = fs[operation];
+    fs[operation] = (file, ...args) => {
+      if (operation.startsWith('writeFile') && String(file).endsWith('.php')) writes.push(String(file));
+      if (failure?.operation === operation && String(file) === 'output/Empty/index.php') {
+        const error = Object.assign(new Error('fixture I/O failure: ' + failure.code), { code: failure.code });
+        queueMicrotask(() => args.at(-1)(error));
+        return;
+      }
+      return original(file, ...args);
+    };
+  }
+  syncBuiltinESMExports();
+  process.on('exit', () => fs.writeFileSync('ffi-probes.json', JSON.stringify({ probes, scans, writes })));
   main();
 `;
 
@@ -62,12 +78,52 @@ function snapshot(directory) {
   return files;
 }
 
-function build(root, args) {
-  const result = spawnSync(process.execPath, [
+function invokeBuild(root, args, failure = null) {
+  return spawnSync(process.execPath, [
     '--input-type=module', '--eval', runMain, '--', ...args,
-  ], { cwd: root, encoding: 'utf8', timeout: 30_000 });
+  ], {
+    cwd: root, encoding: 'utf8', timeout: 30_000,
+    env: { ...process.env, PHPURS_TEST_IO_ERROR: JSON.stringify(failure) },
+  });
+}
+
+function build(root, args) {
+  const result = invokeBuild(root, args);
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.doesNotMatch(result.stderr, /Failed to decode/);
+}
+
+function writtenPhp(root, output) {
+  const { writes } = JSON.parse(fs.readFileSync(path.join(root, 'ffi-probes.json'), 'utf8'));
+  return writes.map(file => path.relative(path.join(root, output), path.resolve(root, file))).sort();
+}
+
+function rememberPhp(directory) {
+  const previous = {};
+  // A fixed old timestamp avoids sleeps and filesystem clock-resolution races.
+  const time = new Date('2001-01-01T00:00:00Z');
+  for (const [file, contents] of Object.entries(snapshot(directory))) {
+    if (!file.endsWith('.php')) continue;
+    const target = path.join(directory, file);
+    fs.utimesSync(target, time, time);
+    previous[file] = { contents: Buffer.from(contents), mtime: fs.statSync(target, { bigint: true }).mtimeNs };
+  }
+  return previous;
+}
+
+function checkRebuild(root, output, args, previous, changed = []) {
+  build(root, args);
+  assert.deepEqual(writtenPhp(root, output), [...changed].sort(), 'only changed or missing PHP must be written');
+  for (const [file, before] of Object.entries(previous)) {
+    const target = path.join(root, output, file);
+    const mtime = fs.statSync(target, { bigint: true }).mtimeNs;
+    if (changed.includes(file)) {
+      assert.notEqual(mtime, before.mtime, `updated mtime: ${file}`);
+    } else {
+      assert.deepEqual(fs.readFileSync(target), before.contents, `unchanged bytes: ${file}`);
+      assert.equal(mtime, before.mtime, `unchanged mtime: ${file}`);
+    }
+  }
 }
 
 const cases = [
@@ -98,7 +154,7 @@ for (const { mode, emission } of cases) {
       write(root, custom ? 'ffi/src/A/Main.php' : 'packages/a/src/A/Main.php',
         '<?php\n$exports["main"] = function() { echo ($GLOBALS["Z_Library_value"] + $GLOBALS["Solo_value"]) . "\\n"; };\n');
       write(root, custom ? 'ffi/src/B/Main.php' : 'packages/a/src/B/Main.php',
-        '<?php\n$exports["main"] = function() { echo "second\\n"; };\n');
+        '<?php\n// Unicode: café \uFFFD\n$exports["main"] = function() { echo "second\\n"; };\n');
       write(root, 'packages/z/src/Z/Library.php', '<?php\n$exports["value"] = 41;\n');
       // For an unqualified name, src/Solo.php is both the adjacent candidate
       // and two fallback spellings. Each path should be probed only once.
@@ -170,6 +226,7 @@ for (const { mode, emission } of cases) {
         ...(emitBundle && !custom ? ['bundle.php'] : []),
       ];
       assert.deepEqual(Object.keys(emitted).filter(file => file.endsWith('.php')).sort(), expectedFiles.sort());
+      assert.deepEqual(writtenPhp(root, output), expectedFiles, 'a fresh build must write every selected PHP file');
       for (const main of mains) {
         for (const entry of entries) {
           const run = spawnSync('php', ['-d', 'opcache.enable_cli=0', path.join(output, main, entry)],
@@ -196,6 +253,48 @@ for (const { mode, emission } of cases) {
         'require-dev': { 'fixture/dev': '^2' },
       });
       if (custom) assert.deepEqual(snapshot(path.join(root, 'output')), oldOutput);
+      checkRebuild(root, output, args, rememberPhp(path.join(root, output)));
+      if (emission === 'both' && !custom) {
+        let previous = rememberPhp(path.join(root, output));
+        const ffi = path.join(root, 'packages/z/src/Z/Library.php');
+        const ffiStat = fs.statSync(ffi);
+        write(root, 'packages/z/src/Z/Library.php', '<?php\n$exports["value"] = 42;\n');
+        fs.utimesSync(ffi, ffiStat.atime, ffiStat.mtime);
+        checkRebuild(root, output, args, previous, [
+          'Z.Library/index.php', 'A.Main/main.bundle.php', 'B.Main/main.bundle.php', 'bundle.php',
+        ]);
+        for (const entry of entries) {
+          const run = spawnSync('php', ['-d', 'opcache.enable_cli=0', path.join(output, 'A.Main', entry)],
+            { cwd: root, encoding: 'utf8', timeout: 10_000 });
+          assert.equal(run.status, 0, run.stdout + run.stderr);
+          assert.equal(run.stderr, '');
+          assert.equal(run.stdout, '43\n');
+        }
+
+        previous = rememberPhp(path.join(root, output));
+        args = [...args, '--autoload-path', 'vendor/other-autoload.php'];
+        checkRebuild(root, output, args, previous,
+          mains.flatMap(main => entries.map(entry => `${main}/${entry}`)));
+
+        previous = rememberPhp(path.join(root, output));
+        const unicodeFile = 'B.Main/index.php';
+        const original = previous[unicodeFile].contents;
+        const replacement = original.indexOf(Buffer.from('\uFFFD'));
+        assert.ok(replacement >= 0);
+        const damaged = Buffer.concat([original.subarray(0, replacement), Buffer.from([0xff]), original.subarray(replacement + 3)]);
+        assert.equal(damaged.toString('utf8'), original.toString('utf8'), 'decoding would conceal this byte change');
+        write(root, `${output}/${unicodeFile}`, damaged);
+        // Same-size damage must also be repaired; neither size nor mtime is a key.
+        const entry = 'A.Main/main.mod.php';
+        write(root, `${output}/${entry}`, previous[entry].contents.toString('utf8').replace('<?php', '<?Php'));
+        fs.unlinkSync(path.join(root, output, 'A.Main/main.bundle.php'));
+        fs.unlinkSync(path.join(root, output, 'bundle.php'));
+        checkRebuild(root, output, args, previous, [unicodeFile, entry, 'A.Main/main.bundle.php', 'bundle.php']);
+        for (const [file, before] of Object.entries(previous)) {
+          assert.deepEqual(fs.readFileSync(path.join(root, output, file)), before.contents, `restored bytes: ${file}`);
+        }
+        checkRebuild(root, output, args, rememberPhp(path.join(root, output)));
+      }
       if (bundleOnly && !custom) {
         // Emission mode must neither overwrite nor remove pre-existing modules.
         const previous = {
@@ -214,3 +313,27 @@ for (const { mode, emission } of cases) {
     }
   });
 }
+
+test('file emission: read and write errors fail the build without masking the cause', () => {
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'phpurs-emission-errors-')));
+  try {
+    writeJSON(root, 'output/Empty/corefn.json', inputModule('Empty', 'src/Empty.purs', []));
+    const sentinel = '<?php // previous output\n';
+    write(root, 'output/Empty/index.php', sentinel);
+    for (const failure of [
+      { operation: 'readFile', code: 'EACCES' },
+      { operation: 'readFile', code: 'EIO' },
+      { operation: 'writeFile', code: 'ENOSPC' },
+    ]) {
+      const result = invokeBuild(root, [], failure);
+      assert.equal(result.status, 1, result.stdout + result.stderr);
+      assert.match(result.stderr, new RegExp('fixture I/O failure: ' + failure.code));
+      assert.match(result.stderr, /optimize \+ emit: .*\(failed\)/);
+      assert.match(result.stderr, /backend total: .*\(failed\)/);
+      assert.deepEqual(writtenPhp(root, 'output'), failure.operation === 'writeFile' ? ['Empty/index.php'] : []);
+      assert.equal(fs.readFileSync(path.join(root, 'output/Empty/index.php'), 'utf8'), sentinel);
+    }
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});

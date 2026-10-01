@@ -338,10 +338,10 @@ Validation : quatorze résultats dans les deux variantes, aucun accès `tag` gé
 
 ## B1 — P1 build — Réutiliser une compilation PHP inchangée
 
-Constat : Main.purs, lignes 96–98, renvoie toujours Nothing dans onSkipModule ; le cache importé n'est pas utilisé. Le helper PBO actuel fondé sur version et mtime CoreFn ne couvre pas à lui seul FFI, directives et dépendances.
+Constat actuel : `Main.onSkipModule` renvoie toujours `Nothing` ; optimisation, traduction et impression sont refaites à chaque invocation. `Phpurs.FileEmission` compare désormais les octets UTF-8 avant les écritures PHP et préserve les fichiers identiques. Le helper de cache PBO fondé sur version et mtime CoreFn ne couvre pas à lui seul FFI, directives et dépendances.
 
 - [ ] Relever les modules retraités dans les trois scénarios M0 : aucun changement, feuille modifiée, dépendance modifiée.
-- [ ] Commencer par ne pas réécrire un index.php dont le contenu est identique.
+- [x] Commencer par ne pas réécrire un index.php dont le contenu est identique. Comparaison octet par octet partagée avec les entrées modulaires et les bundles ; seules les sorties absentes ou différentes sont écrites. Rebuild identique, FFI modifiée à mtime constant, option d'autoloader, sorties supprimées/altérées et propagation des erreurs d'E/S couverts. Build et 24 contrôles réussis. Sur b8x, 5 371 fichiers identiques à la référence ; les rebuilds `--bundle` et `--bundle-only` préservent les 2 686 mtime PHP et n'écrivent aucun PHP. Le rebuild normal relit 135 282 480 octets pour comparaison et retraite encore les 2 684 modules. Voir le [bilan des écritures conditionnelles](audit/2026-10-01/write-if-changed/report.md).
 - [ ] Définir une clé couvrant CoreFn, versions PHPurs/PBO, options/directives, FFI et empreintes des dépendances.
 - [ ] Sauvegarder/restaurer imports, implementations, arités et contribution au bundle, en plus du PHP ; restaurer les refs Main nécessaires même sur cache hit.
 - [ ] Activer le cache pour un scénario sans changement de graphe, puis étendre après régressions d'invalidation de chaque entrée.

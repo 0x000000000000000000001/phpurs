@@ -33,6 +33,7 @@ the [README](../README.md#build-the-backend).
 | Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes, curry fallback, effect execution and reference helpers. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
+| PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
@@ -182,6 +183,19 @@ does not invoke main. Composer collection runs in every mode. The mode selects
 the current writes and preserves existing files; use fresh input/output trees
 when comparing artifact sets.
 
+All four PHP write sites use `FileEmission.writeTextFileIfChanged`: module
+`index.php`, `main.mod.php`, `main.bundle.php` and the global `bundle.php`.
+The helper encodes the generated string as UTF-8 and compares it with the existing
+file's raw bytes. Decoding the old file would conceal some invalid UTF-8 sequences
+behind replacement characters. An equal file keeps its contents and modification
+time; a different or missing file is written asynchronously, and the build waits
+for completion. Only `ENOENT` is treated as missing output. Other read errors and
+all write errors propagate to the phase and total failure reporting.
+
+This comparison happens after optimization, translation and printing on every
+invocation. `onSkipModule` still returns `Nothing`; reusable optimizer/codegen state
+and its invalidation belong to the subsequent build-cache work.
+
 ## Printing contracts
 
 `printExpr arities expr` uses the arity table to select saturated native calls.
@@ -229,6 +243,12 @@ and the absolute-output case also uses an absolute FFI directory.
 The emission cases cover default modular output, `--bundle`, standalone and
 combined `--bundle-only`, grouped CLI arguments, multiple discovered mains and
 preservation of pre-existing modular files in a bundle-only rebuild.
+Each mode also repeats the build and checks zero PHP writes, identical bytes and
+preserved modification times. Further cases change FFI while preserving its mtime,
+change the autoloader option, remove outputs, and damage same-size or UTF-8 contents.
+Only the affected files are rewritten; the changed executable fixture produces its
+new result in both modular and bundled form. Injected read/write failures verify
+error propagation and preservation of the previous output on those failures.
 `package-paths.mjs` verifies competing-file precedence, bounded lookup and successive
 preparations with different working directories and FFI options in one process.
 

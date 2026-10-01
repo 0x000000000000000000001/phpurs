@@ -39,6 +39,37 @@ Les lignes `Generating PHP code for …` recensent les appels à `onCodegenModul
 
 La lecture des modules est fixée à `GOPURS_JOBS=1`. Les options Node héritées sont consignées dans les résultats. Les médianes, minimums et maximums portent sur trois processus par état ; ils décrivent cette campagne sur machine partagée.
 
+## Résultats des neuf rebuilds
+
+Les douze générations, témoins compris, terminent avec code 0. Chaque rebuild reproduit **les 5 371 fichiers de son témoin frais**, liste et octets compris. Les PHP de contenu identique conservent leur mtime. La génération fraîche non modifiée reproduit également les 5 371 fichiers de la référence B1 précédente.
+
+| Compteur par rebuild | Aucun changement | Feuille modifiée | Dépendance modifiée |
+| --- | ---: | ---: | ---: |
+| CoreFn modifiés | 0 | 1 | 1 |
+| Modules lus et retraités | **2 684** | **2 684** | **2 684** |
+| Modules évités | 0 | 0 | 0 |
+| Écritures PHP | **0** | **2** | **31** |
+| Octets PHP écrits | 0 | 66 581 110 | 67 343 160 |
+| mtime PHP préservés | 2 686 | 2 684 | 2 655 |
+| Écritures `.purmeta` | 2 684 | 2 684 | 2 684 |
+| Octets `.purmeta` écrits | 179 596 288 | 179 596 298 | 179 596 288 |
+| Sorties PHP relues | 2 686 | 2 686 | 2 686 |
+| Octets PHP relus | 135 282 480 | 135 282 480 | 135 282 480 |
+
+Ces compteurs sont identiques dans les trois répétitions de chaque état. Chaque invocation réécrit aussi un manifeste Composer de 191 octets. La liste ordonnée des modules retraités est la même dans les douze processus, avec SHA-256 `a70f580e789716eeb9721e84d3724b431d91f861b0f632264da17bc22f5d56bb`.
+
+| Mesure | Aucun changement | Feuille modifiée | Dépendance modifiée |
+| --- | ---: | ---: | ---: |
+| Backend, médiane en secondes | **50,681** | **52,952** | **63,584** |
+| Backend, min–max en secondes | 49,278–52,561 | 46,149–79,152 | 50,121–67,742 |
+| Processus, médiane en secondes | 51,160 | 53,397 | 64,105 |
+| Pic RSS, médiane en MiB | 3 556,3 | 3 569,9 | 3 562,6 |
+| Pic RSS, min–max en MiB | 3 297,4–3 574,4 | 3 169,8–3 598,5 | 3 502,4–3 614,7 |
+
+La dispersion est importante : par exemple, la lecture TAST du premier essai « dépendance » prend 13 741 ms, contre 4 493–4 629 ms dans les deux autres. Les écarts de durée entre états ne permettent pas d'isoler un surcoût causal de la mutation. Le constat reproductible est le retraitement intégral des modules et des `.purmeta`, malgré les écritures PHP limitées aux sorties différentes.
+
+Les [mesures conservées dans le dépôt](measurements.json) contiennent chaque échantillon, les phases, les compteurs et les statistiques. Les témoins frais ont duré respectivement 72 510, 59 007 et 47 962 ms ; ils servent au contrôle des sorties. Les validations de cette campagne portent sur la génération et la comparaison différentielle du PHP.
+
 ## Propagation observée dans les témoins frais
 
 La mutation de la feuille change exactement `Inter.Api.Main/index.php` et son `main.bundle.php`.
@@ -53,6 +84,13 @@ Par exemple, le CoreFn de `Core.Feat.Membership.Message.Command.ChangeUserEmail.
 ```
 
 La valeur de la dépendance a donc été incorporée au PHP du consommateur pendant l'optimisation. Ce cas fournit un témoin concret pour la prochaine étape B1 : la clé du consommateur devra couvrir les dépendances de son résultat optimisé, en plus de son propre CoreFn. Les listes d'importeurs et les listes de PHP différents sont conservées séparément pour guider cette définition.
+
+## Validation du lot
+
+- `python3 audit/2026-10-01/build-scenarios/measure.py --help` et `node --check audit/2026-10-01/build-scenarios/count-io.mjs` réussissent.
+- La campagne complète réussit : trois témoins frais, neuf rebuilds comparés, contrôle des écritures et mtime, snapshot d'origine préservé.
+- Les valeurs de `measurements.json` sont vérifiées contre les résultats bruts de la campagne.
+- `git diff --check` réussit.
 
 ## Reproduction
 

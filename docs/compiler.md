@@ -270,6 +270,15 @@ For routine refactors, use b8x's generated PHP as the main differential check:
 Behavior changes also need the relevant executable regression or fixture. Run
 the complete fixture/library suites at broader milestones.
 
+The [B1 rebuild measurement](../audit/2026-10-01/build-scenarios/report.md) runs
+three controlled states on the frozen b8x corpus: unchanged input, a changed
+application leaf and a changed shared dependency. Its driver records codegen
+module lists, PHP and purmeta writes, phase timings and peak RSS. Each state is
+checked against fresh generation, and unchanged PHP must retain its mtime.
+The mutations replace one typed CoreFn literal, so these measurements cover the
+backend after the upstream PureScript compilation. Use this protocol when
+evaluating future build-cache hits and dependency invalidation.
+
 The benchmark checkout provides the usual `./bin/php/run -c` workflow (`runp`);
 it rebuilds the host backend and then uses the TAST compiler for the workloads.
 Published reference measurements live in `altbak.pub/README.md`.

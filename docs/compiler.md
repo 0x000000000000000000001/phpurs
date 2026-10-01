@@ -33,6 +33,7 @@ the [README](../README.md#build-the-backend).
 | Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes, curry fallback, effect execution and reference helpers. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
+| Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
 ## Pass order
@@ -126,8 +127,11 @@ and review each optimization's admissible forms and scope assumptions.
 
 ## File emission contracts
 
-`Main` discovers and reads foreign files, selects reachable modules and writes
-the generated files. Pure rendering is delegated through two interfaces:
+`Main` discovers and reads foreign files only when `backendMod.foreign` is
+nonempty, selects reachable modules and writes the generated files. Modules with
+no foreign bindings pass an empty source to FFI assembly, even if an adjacent or
+fallback PHP file exists. All loaded modules still contribute their package roots
+to Composer discovery. Pure rendering is delegated through two interfaces:
 
 - `genForeignModule { moduleName, bindings, source }` accepts the original FFI
   source and returns `{ code, arities }`. Each foreign signature is flattened
@@ -144,17 +148,39 @@ Foreign arities take precedence over current-module arities, which take preceden
 over previously emitted modules. Keep that merge before printing either form of
 the module so direct calls and public wrappers agree.
 
-`mergeComposers { outputDir, ffiDir, modulePaths }` receives the selected output
-directory, optional FFI root and source paths from the modules already loaded by
-`Main`. It infers package roots from those paths instead of rereading CoreFn or
-consulting the obsolete `.phpurs-cache.json` file. All generated files, including
-per-entrypoint bundles and `composer.json`, use `outputDir`.
+During preparation, `Main` calls `resolvePackagePaths { ffiDir, modulePaths }`
+once. `PackagePaths` returns separate `ffiRoots` and `composerRoots` arrays from
+one discovery of the Spago package directories. These arrays belong to that build;
+subsequent preparations observe their own working directory and FFI option.
 
-Composer scans the Spago roots first, then the optional FFI root, then the module
-roots. `Main` sorts module paths by **module name**, matching the old output
-directory scan rather than the dependency order used for PHP emission. Roots are
-deduplicated at their first occurrence; later manifests overwrite earlier entries
-in both `require` and `require-dev`. Preserve this ordering when changing discovery.
+`findForeignFile` tries the adjacent PHP source first, then the supplied FFI roots:
+Spago packages, the optional FFI directory, and the project directory. Within each
+root it tries `src/Foo/Bar.php`, `src/Foo.Bar.php`, then `Foo.Bar.php`. Candidate
+paths are normalized lexically and deduplicated per lookup, retaining the first
+occurrence. Lookup does not enumerate directories or recursively search other roots.
+
+Composer roots use the same Spago and optional FFI roots, followed by roots inferred
+from the already loaded module paths. `Main` sorts those paths by **module name**,
+matching the old output directory scan rather than the PHP dependency order. Roots
+are deduplicated at their first occurrence; later manifests overwrite earlier entries
+in both `require` and `require-dev`. Module roots contribute Composer requirements;
+their direct FFI paths are already handled by the adjacent-file lookup.
+
+`mergeComposers { outputDir, packageRoots }` receives the resulting Composer roots
+and only reads their manifests. All generated files, including per-entrypoint
+bundles and `composer.json`, use `outputDir`.
+
+`Main` handles the PHP-specific `--bundle-only` flag alongside the shared CLI
+options, including grouped Spago arguments. It enables `emitBundle` and disables
+`emitModules`. Modular emission owns the reachability graph, `printPhpFile false`,
+the `index.php` writes and `main.mod.php` entrypoints. Bundle emission uses
+`printPhpFile true` and the same ordered module stream and arity table.
+
+With an explicit main, bundle-only emits its `main.bundle.php`. Without one, it
+emits a bundle entrypoint for every exported main plus a global `bundle.php` that
+does not invoke main. Composer collection runs in every mode. The mode selects
+the current writes and preserves existing files; use fresh input/output trees
+when comparing artifact sets.
 
 ## Printing contracts
 
@@ -196,6 +222,15 @@ would otherwise erase the shape under test.
 fresh directories. It checks default, relative and absolute output paths, executes
 modular and bundled entrypoints, and verifies FFI dependency discovery, Composer
 merge precedence and independence from stale output/cache files.
+It also tracks PHP file probes: modules without foreign declarations must avoid
+both adjacent and fallback FFI lookup, while their Composer requirements are kept.
+Equivalent candidates are probed once, package discovery is shared with Composer,
+and the absolute-output case also uses an absolute FFI directory.
+The emission cases cover default modular output, `--bundle`, standalone and
+combined `--bundle-only`, grouped CLI arguments, multiple discovered mains and
+preservation of pre-existing modular files in a bundle-only rebuild.
+`package-paths.mjs` verifies competing-file precedence, bounded lookup and successive
+preparations with different working directories and FFI options in one process.
 
 `bin/test` accepts fixture names for targeted work. Its `tests/runner/src` and
 output directories are scratch space. `bin/modtest` exercises executable sibling

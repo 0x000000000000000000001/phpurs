@@ -1,69 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 
-function getScanDirs(rootDir, ffiDir) {
-    const scanDirs = [];
-    
-    const spagoDirs = [
-        path.join(rootDir, '.spago'),
-        path.join(rootDir, 'spago.d'),
-        path.join(rootDir, 'bak/spago.d/php/p')
-    ];
-    
-    for (const spagoDir of spagoDirs) {
-        if (fs.existsSync(spagoDir) && fs.statSync(spagoDir).isDirectory()) {
-            const packages = fs.readdirSync(spagoDir);
-            for (const pkg of packages) {
-                const pkgDir = path.join(spagoDir, pkg);
-                if (fs.statSync(pkgDir).isDirectory()) {
-                    let hasVersion = false;
-                    const subdirs = fs.readdirSync(pkgDir);
-                    for (const subdir of subdirs) {
-                        const versionDir = path.join(pkgDir, subdir);
-                        if (subdir.startsWith('v') && fs.statSync(versionDir).isDirectory()) {
-                            scanDirs.push(versionDir);
-                            hasVersion = true;
-                        }
-                    }
-                    if (!hasVersion) {
-                        scanDirs.push(pkgDir);
-                    }
-                }
-            }
-        }
-    }
-    
-    if (ffiDir) {
-        scanDirs.push(path.resolve(rootDir, ffiDir));
-    }
-    
-    return scanDirs;
-}
-
-export const mergeComposersImpl = function({ outputDir, ffiDir, modulePaths }) {
+export const mergeComposersImpl = function({ outputDir, packageRoots }) {
     return function() {
         const rootDir = process.cwd();
         
         let requireDeps = {};
         let requireDevDeps = {};
         
-        const scanDirsSet = new Set(getScanDirs(rootDir, ffiDir));
         const outDir = path.resolve(rootDir, outputDir);
 
-        // Main supplies paths in module-name order, matching the old directory
-        // scan. Keep the first occurrence of each root and the last requirement
-        // encountered for each package, including require-dev.
-        for (const modulePath of modulePaths) {
-            if (!modulePath) continue;
-            const match = modulePath.match(/^(.*?)\/(?:src|test)\//);
-            if (match) {
-                scanDirsSet.add(path.resolve(rootDir, match[1]));
-            } else {
-                scanDirsSet.add(path.resolve(rootDir, path.dirname(modulePath)));
-            }
-        }
-        
-        for (const dir of scanDirsSet) {
+        // Roots are resolved and deduplicated before emission. Later manifests
+        // still overwrite earlier requirements, including require-dev.
+        for (const dir of packageRoots) {
             const compPath = path.join(dir, 'composer.json');
             if (fs.existsSync(compPath)) {
                 try {

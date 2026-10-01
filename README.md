@@ -145,9 +145,11 @@ The backend writes:
 |---|---|
 | `output/<Module>/index.php` | Generated module and its PHP FFI. Module directory names retain dots, e.g. `App.Main`. |
 | `output/<Module>/main.mod.php` | Runnable entrypoint loading the modules reachable from that entrypoint. |
-| `output/<Module>/main.bundle.php` | Additional entrypoint when `--bundle` is enabled. |
-| `output/bundle.php` | Bundle of generated modules when `--bundle` is used without `--main`; it does not invoke an application entrypoint. |
+| `output/<Module>/main.bundle.php` | Bundled entrypoint with `--bundle` or `--bundle-only`. |
+| `output/bundle.php` | Bundle of generated modules when either bundle flag is used without `--main`; it does not invoke an application entrypoint. |
 | `output/composer.json` | Generated `phpurs/lib-deps` package collecting discovered PHP requirements. |
+
+The default mode emits `index.php` and `main.mod.php`. `--bundle` adds bundled outputs; `--bundle-only` emits the bundles and Composer manifest, skipping modular files and entrypoints. Changing emission mode preserves pre-existing files; a fresh output tree gives an exact artifact set for the selected mode.
 
 Without `--main`, an entrypoint is written for every module exporting `main`. To target `App.Main`, set `args: ["--main", "App.Main"]` and run `php output/App.Main/main.mod.php`.
 
@@ -156,7 +158,7 @@ Without `--main`, an entrypoint is written for every module exporting `main`. To
 Set the executable in `workspace.backend.cmd`. Arguments can be stored in `workspace.backend.args` or replaced for one build with `--backend-args`:
 
 ```bash
-spago build --backend-args "--main App.Main --bundle --autoload-path vendor/autoload.php"
+spago build --backend-args "--main App.Main --bundle-only --autoload-path vendor/autoload.php"
 php output/App.Main/main.bundle.php
 ```
 
@@ -164,8 +166,9 @@ php output/App.Main/main.bundle.php
 |---|---|
 | `--main <Module>` | Select the generated application entrypoint. With no flag, discover all exported `main` bindings. This does not prevent the compiler from generating other input modules. |
 | `--output <Directory>` | Input directory containing the typed `corefn.json` files and destination for modules, entrypoints, bundles and the generated Composer package. Default: `output`. |
-| `--ffi <Directory>` | Add a directory to FFI discovery and collect its `composer.json` requirements. An adjacent `.php` file at the original `.purs` source path takes precedence. |
+| `--ffi <Directory>` | Add a relative or absolute directory to FFI discovery and collect its `composer.json` requirements. An adjacent `.php` file at the original `.purs` source path takes precedence. |
 | `--bundle` | Also concatenate generated PHP modules into bundle files. Composer dependencies remain external. |
+| `--bundle-only` | Emit bundles and the Composer manifest without writing `index.php` or `main.mod.php`. Enables bundling by itself and takes precedence over `--bundle` when both are present. |
 | `--autoload-path <Path>` | Composer autoloader path, normally relative to the application root. Default: `vendor/autoload.php`. |
 
 The paths above use the default `output` directory. With `--output`, place the typed input files in the selected directory; all generated files are written there as well. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
@@ -173,6 +176,10 @@ The paths above use the default `output` directory. With `--output`, place the t
 ## Foreign function interface
 
 Place `Example.php` beside `Example.purs`. Populate `$exports` with keys matching the `foreign import` names. The compiler embeds that file inside a module-local closure and generates the calling wrappers from the TAST types.
+
+FFI discovery runs only for modules declaring foreign bindings. An adjacent or fallback PHP file for a module without any foreign declarations is ignored.
+
+If the adjacent file is absent, lookup tries the discovered Spago package roots, the `--ffi` directory, then the project directory. For `Foo.Bar`, each root is checked for `src/Foo/Bar.php`, `src/Foo.Bar.php`, then `Foo.Bar.php`, in that order. Package roots are prepared once per build and shared with Composer discovery.
 
 ```purescript
 module Example where
@@ -298,7 +305,7 @@ It currently selects upstream PureScript `0.15.15`. That can serve as a host com
 2. **Optimization:** `buildModules` applies the shared optimizer's analysis, directives and rewrites to produce `BackendModule` values.
 3. **PHP lowering:** [Phpurs.CodeGen](src/Phpurs/CodeGen.purs) applies PHP-specific transformations and TCO analysis, then constructs [PhpAst](src/Phpurs/PhpAst.purs). Specialized representations are used where proven; unsupported shapes retain the general representation.
 4. **FFI and printing:** [GenNativeForeign](src/GenNativeForeign.purs) prepares foreign export tables, typed calling wrappers and arities together; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source using the shared [runtime preamble](src/Phpurs/Printer/Runtime.purs).
-5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [Phpurs.EntryPoint](src/Phpurs/EntryPoint.purs) renders their shared startup and Revolt execution. [ComposerMerge](src/ComposerMerge.js) collects PHP package requirements.
+5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [Phpurs.EntryPoint](src/Phpurs/EntryPoint.purs) renders their shared startup and Revolt execution. [Phpurs.PackagePaths](src/Phpurs/PackagePaths.purs) prepares the package roots shared by FFI lookup and [ComposerMerge](src/ComposerMerge.js), which collects PHP package requirements.
 
 Spago provides incremental compilation of the backend itself. The current `Main` does not call the optimizer cache helpers, so generated PHP is rebuilt on each backend invocation. Rebuild the compiler bundle after changing its source.
 

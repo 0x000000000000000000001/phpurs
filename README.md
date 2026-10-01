@@ -163,12 +163,12 @@ php output/App.Main/main.bundle.php
 | Option | Description |
 |---|---|
 | `--main <Module>` | Select the generated application entrypoint. With no flag, discover all exported `main` bindings. This does not prevent the compiler from generating other input modules. |
-| `--output <Directory>` | Input directory containing the typed `corefn.json` files and destination for generated module files. Default: `output`. |
-| `--ffi <Directory>` | Add a directory to FFI discovery. An adjacent `.php` file at the original `.purs` source path takes precedence. |
+| `--output <Directory>` | Input directory containing the typed `corefn.json` files and destination for modules, entrypoints, bundles and the generated Composer package. Default: `output`. |
+| `--ffi <Directory>` | Add a directory to FFI discovery and collect its `composer.json` requirements. An adjacent `.php` file at the original `.purs` source path takes precedence. |
 | `--bundle` | Also concatenate generated PHP modules into bundle files. Composer dependencies remain external. |
 | `--autoload-path <Path>` | Composer autoloader path, normally relative to the application root. Default: `vendor/autoload.php`. |
 
-Use the default `output` layout for bundling and Composer integration: per-entrypoint bundle paths and Composer discovery/output currently still refer to `output`, even when `--output` changes the module directory. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
+The paths above use the default `output` directory. With `--output`, place the typed input files in the selected directory; all generated files are written there as well. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
 
 ## Foreign function interface
 
@@ -207,7 +207,7 @@ Check every imported symbol: the current compiler can generate placeholder calla
 
 Manage application dependencies in your root `composer.json`. FFI packages may have their own Composer requirements; for example, `phpurs-aff` requires `revolt/event-loop`.
 
-After code generation, inspect `output/composer.json`. The collector scans Spago package directories and package roots inferred from module paths, then writes a package named `phpurs/lib-deps`. Add that generated package as a Composer path repository in your application's configuration:
+After code generation, inspect `output/composer.json` (or `<Directory>/composer.json` with `--output`). The collector reads manifests from Spago package directories, the directory passed via `--ffi`, and package roots inferred from the already loaded module paths. It writes a package named `phpurs/lib-deps`. Add that generated package as a Composer path repository in your application's configuration:
 
 ```json
 {
@@ -235,7 +235,7 @@ Commit the application's Composer lockfile. Deployment can install its locked re
 composer install --no-dev --optimize-autoloader
 ```
 
-If the root Composer project is in a subdirectory, adjust the path repository's `url` relative to that `composer.json`, and set `--autoload-path` accordingly. Dependency discovery does not install Composer packages or guarantee that every custom FFI directory is scanned; declare missing requirements in the application explicitly.
+Set the path repository's `url` to the selected output directory, relative to the application's `composer.json`. For nested output directories or a Composer project in a subdirectory, set `--autoload-path` accordingly. Dependency discovery reads `composer.json` at the discovered roots; it does not install Composer packages. Declare additional application requirements explicitly.
 
 ### Asynchronous I/O and concurrency (Aff)
 

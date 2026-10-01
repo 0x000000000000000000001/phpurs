@@ -1,12 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-let cachedScanDirs = null;
-
-function getScanDirs(mbFfiDir) {
-    if (cachedScanDirs !== null) return cachedScanDirs;
-    
-    const rootDir = process.cwd();
+function getScanDirs(rootDir, ffiDir) {
     const scanDirs = [];
     
     const spagoDirs = [
@@ -38,57 +33,33 @@ function getScanDirs(mbFfiDir) {
         }
     }
     
-    if (mbFfiDir) {
-        scanDirs.push(path.join(rootDir, mbFfiDir));
+    if (ffiDir) {
+        scanDirs.push(path.resolve(rootDir, ffiDir));
     }
     
-    cachedScanDirs = scanDirs;
     return scanDirs;
 }
 
-export const mergeComposersImpl = function(mbFfiDir) {
+export const mergeComposersImpl = function({ outputDir, ffiDir, modulePaths }) {
     return function() {
         const rootDir = process.cwd();
         
         let requireDeps = {};
         let requireDevDeps = {};
         
-        const scanDirsSet = new Set(getScanDirs(mbFfiDir));
-        const outDir = path.join(rootDir, 'output');
-        
-        let cache = null;
-        try {
-            if (fs.existsSync(path.join(outDir, '.phpurs-cache.json'))) {
-                cache = JSON.parse(fs.readFileSync(path.join(outDir, '.phpurs-cache.json'), 'utf8'));
-            }
-        } catch (e) {}
+        const scanDirsSet = new Set(getScanDirs(rootDir, ffiDir));
+        const outDir = path.resolve(rootDir, outputDir);
 
-        if (fs.existsSync(outDir)) {
-            const mods = fs.readdirSync(outDir);
-            for (const m of mods) {
-                if (m.startsWith('.')) continue; // ignore hidden files like .phpurs-cache.json
-                
-                let modulePath = null;
-                if (cache && cache.modules && cache.modules[m] && cache.modules[m].modulePath) {
-                    modulePath = cache.modules[m].modulePath;
-                } else {
-                    const corefnPath = path.join(outDir, m, 'corefn.json');
-                    if (fs.existsSync(corefnPath)) {
-                        try {
-                            const corefn = JSON.parse(fs.readFileSync(corefnPath, 'utf8'));
-                            modulePath = corefn.modulePath;
-                        } catch (e) {}
-                    }
-                }
-                
-                if (modulePath) {
-                    const match = modulePath.match(/^(.*?)\/(?:src|test)\//);
-                    if (match) {
-                        scanDirsSet.add(path.resolve(rootDir, match[1]));
-                    } else {
-                        scanDirsSet.add(path.resolve(rootDir, path.dirname(modulePath)));
-                    }
-                }
+        // Main supplies paths in module-name order, matching the old directory
+        // scan. Keep the first occurrence of each root and the last requirement
+        // encountered for each package, including require-dev.
+        for (const modulePath of modulePaths) {
+            if (!modulePath) continue;
+            const match = modulePath.match(/^(.*?)\/(?:src|test)\//);
+            if (match) {
+                scanDirsSet.add(path.resolve(rootDir, match[1]));
+            } else {
+                scanDirsSet.add(path.resolve(rootDir, path.dirname(modulePath)));
             }
         }
         
@@ -129,4 +100,3 @@ export const mergeComposersImpl = function(mbFfiDir) {
 };
 
 // End of ComposerMerge
-

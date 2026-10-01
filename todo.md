@@ -362,11 +362,11 @@ Mesure : compilation uniquement, PHP et résultats inchangés. Travailler dans p
 
 ## B3 — P2 build — Éviter les scans et sorties inutiles
 
-Constat : Main.purs, ligne 109, cherche une FFI même pour un module sans foreign. Le fallback FfiSupport.js de PBO peut indexer récursivement le cwd. ComposerMerge.js, lignes 57–80, relit les CoreFn déjà chargés et impose output ; le mode bundle émet aussi tous les index.php.
+Constat actuel : `Main.purs` cherche encore une FFI même pour un module sans foreign ; le résolveur `FfiSupport.js` de PBO sonde plusieurs racines de packages. Le mode bundle émet aussi tous les `index.php`. Le cleanup du 1er octobre a supprimé la relecture des CoreFn par Composer et rendu les destinations cohérentes avec `--output`.
 
 - [ ] Court-circuiter la recherche FFI quand backendMod.foreign est vide.
 - [ ] Fournir les racines de sources/packages déjà résolues ; borner le fallback au lieu de parcourir output, node_modules et les autres dossiers inutiles.
-- [ ] Transmettre à Composer la liste des sources déjà chargées et respecter --output.
+- [x] Transmettre à Composer la liste des sources déjà chargées et respecter `--output`. `ComposerOptions` porte `outputDir`, `ffiDir` et `modulePaths` ; `Main` conserve l'ordre alphabétique des modules pour la priorité de fusion. Les bundles par entrée et le manifeste Composer utilisent le répertoire sélectionné. Ancien cache et relecture des CoreFn supprimés. Build et 17 contrôles réussis, dont trois cas d'émission exécutables ; 2 686 fichiers PHP b8x et le manifeste Composer identiques à la référence sur un TAST figé. Voir le [bilan B3 du 1er octobre](audit/2026-10-01/composer-emission/report.md).
 - [ ] Ajouter un mode explicite bundle seul, sans émission modulaire inutile.
 - [ ] Pour les benchmarks, sortir Composer update du chemin d'exécution courant ; utiliser une préparation reproductible depuis le lock quand les dépendances ne changent pas.
 

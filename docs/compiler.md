@@ -144,6 +144,18 @@ Foreign arities take precedence over current-module arities, which take preceden
 over previously emitted modules. Keep that merge before printing either form of
 the module so direct calls and public wrappers agree.
 
+`mergeComposers { outputDir, ffiDir, modulePaths }` receives the selected output
+directory, optional FFI root and source paths from the modules already loaded by
+`Main`. It infers package roots from those paths instead of rereading CoreFn or
+consulting the obsolete `.phpurs-cache.json` file. All generated files, including
+per-entrypoint bundles and `composer.json`, use `outputDir`.
+
+Composer scans the Spago roots first, then the optional FFI root, then the module
+roots. `Main` sorts module paths by **module name**, matching the old output
+directory scan rather than the dependency order used for PHP emission. Roots are
+deduplicated at their first occurrence; later manifests overwrite earlier entries
+in both `require` and `require-dev`. Preserve this ordering when changing discovery.
+
 ## Printing contracts
 
 `printExpr arities expr` uses the arity table to select saturated native calls.
@@ -180,6 +192,10 @@ runner. They import freshly compiled modules from `output`; several also run
 the generated PHP and check captures, effects, persistent values and boundaries.
 `branch-slots.mjs` uses `initialContext` and `translateExpr` directly when PBO
 would otherwise erase the shape under test.
+`file-emission.mjs` runs the compiled `Main` on small typed module fixtures in
+fresh directories. It checks default, relative and absolute output paths, executes
+modular and bundled entrypoints, and verifies FFI dependency discovery, Composer
+merge precedence and independence from stale output/cache files.
 
 `bin/test` accepts fixture names for targeted work. Its `tests/runner/src` and
 output directories are scratch space. `bin/modtest` exercises executable sibling

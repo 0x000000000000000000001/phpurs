@@ -1,14 +1,26 @@
+-- | Collect Composer requirements from package roots and already loaded modules.
 module Phpurs.ComposerMerge
-  ( mergeComposers
+  ( ComposerOptions
+  , mergeComposers
   ) where
 
-import Prelude
+import Prelude (Unit)
 
-import Effect (Effect)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
+import Effect (Effect)
 
-foreign import mergeComposersImpl :: Nullable String -> Effect Unit
+-- | Module paths arrive in module-name order to preserve dependency precedence.
+type ComposerOptions =
+  { outputDir :: String
+  , ffiDir :: Maybe String
+  , modulePaths :: Array String
+  }
 
-mergeComposers :: String -> Effect Unit
-mergeComposers dir = mergeComposersImpl (toNullable (if dir == "" then Nothing else Just dir))
+foreign import mergeComposersImpl
+  :: { outputDir :: String, ffiDir :: Nullable String, modulePaths :: Array String }
+  -> Effect Unit
+
+mergeComposers :: ComposerOptions -> Effect Unit
+mergeComposers { outputDir, ffiDir, modulePaths } =
+  mergeComposersImpl { outputDir, ffiDir: toNullable ffiDir, modulePaths }

@@ -133,7 +133,7 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
 
           if args.bundle then do
             bundleContent <- liftEffect $ Ref.read bundleContentRef
-            FS.writeTextFile UTF8 ("output/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
+            FS.writeTextFile UTF8 (outputDir <> "/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
           else pure unit
 
           let
@@ -153,4 +153,7 @@ main = launchAff_ $ Metrics.measure "backend total" \_ -> do
           FS.writeTextFile UTF8 (outputDir <> "/bundle.php") bundleContent
     else pure unit
 
-    liftEffect $ mergeComposers ""
+    -- Composer previously scanned output directories by module name, not in
+    -- dependency order. Preserve that merge priority using the loaded modules.
+    let modulePaths = map (\(Module m) -> m.path) $ Array.sortWith (\(Module m) -> m.name) (Array.fromFoldable finalModules)
+    liftEffect $ mergeComposers { outputDir, ffiDir: args.mbFfiDir, modulePaths }

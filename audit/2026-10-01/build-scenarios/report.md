@@ -6,6 +6,8 @@ Référence PHPurs : checkout propre au commit `3471ae4c13de854018a7ff8a0819a84d
 
 Le corpus est le snapshot b8x figé utilisé par les lots B3 et B1 précédents : 2 684 CoreFn typés, avec les fichiers PHP FFI et les manifestes Composer à leurs chemins relatifs. La campagne appelle directement le backend avec `--main Inter.Api.Main --bundle`, dans des copies isolées. Les durées couvrent la lecture TAST, l'optimisation, la traduction, l'impression et les E/S du backend. Elles excluent la compilation du compilateur hôte, la compilation PureScript du programme, l'installation Composer et l'exécution de l'application.
 
+Le manifeste des 2 827 fichiers d'entrée porte l'empreinte `610a324f397510d9e13529ffdc309dece84b40b961bb0714e65d471a104ae5df`. Les CoreFn non modifiés représentent 213 935 062 octets. Environnement : Node `24.8.0`, macOS `26.1`, arm64, sans `NODE_OPTIONS` hérité.
+
 Le script [`measure.py`](measure.py) définit trois états :
 
 | État | Entrée modifiée |
@@ -36,6 +38,21 @@ Trois tours reprennent chacun les trois états, dans l'ordre tournant `unchanged
 Les lignes `Generating PHP code for …` recensent les appels à `onCodegenModule`, après passage par la branche d'optimisation de PBO. Le nombre de modules retraités est donc distinct du nombre de fichiers réécrits. Chaque liste ordonnée complète est conservée dans un fichier `.modules.json` ; sa SHA-256 permet de comparer les essais. Les compteurs détaillés sont dans les `.io.json`, les durées par phase dans les journaux et `results.json`. Le temps `backend total` contient les phases ; le temps de processus inclut aussi le démarrage de Node.
 
 La lecture des modules est fixée à `GOPURS_JOBS=1`. Les options Node héritées sont consignées dans les résultats. Les médianes, minimums et maximums portent sur trois processus par état ; ils décrivent cette campagne sur machine partagée.
+
+## Propagation observée dans les témoins frais
+
+La mutation de la feuille change exactement `Inter.Api.Main/index.php` et son `main.bundle.php`.
+
+Le module de dépendance compte **68 importeurs directs** et **179 importeurs transitifs** dans le graphe CoreFn. Parmi eux, **29 modules** contiennent une référence qualifiée à la constante modifiée. Leurs 29 `index.php`, celui de la dépendance et le bundle changent : **31 fichiers PHP**. Ces ensembles sont conservés dans `graph.json` et `results.json`.
+
+Par exemple, le CoreFn de `Core.Feat.Membership.Message.Command.ChangeUserEmail.Command` est strictement identique avant/après ; son dictionnaire PHP contient pourtant cette différence :
+
+```diff
+- "maxRetries" => 50
++ "maxRetries" => 51
+```
+
+La valeur de la dépendance a donc été incorporée au PHP du consommateur pendant l'optimisation. Ce cas fournit un témoin concret pour la prochaine étape B1 : la clé du consommateur devra couvrir les dépendances de son résultat optimisé, en plus de son propre CoreFn. Les listes d'importeurs et les listes de PHP différents sont conservées séparément pour guider cette définition.
 
 ## Reproduction
 

@@ -33,6 +33,7 @@ import Phpurs.ModuleCache (CacheHooks)
 import Phpurs.ModuleState (newBuildRefs, publishModuleState, renderModuleState, supportsEmission)
 import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
 import Phpurs.PackagePaths (resolvePackagePaths)
+import Phpurs.PurmetaProfile (withProfile)
 import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), Module(..), ModuleName(..), importName)
@@ -131,6 +132,7 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
     pure { refs, directives, packagePaths, foreignSources, cache, targetMainModules }
 
   Metrics.measure "optimize + emit" \_ ->
+    withProfile (Array.elem "--profile-purmeta" cliArgs) $
     buildModules
       { directives
       , rewriteLimit: 10000

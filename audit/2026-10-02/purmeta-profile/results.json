@@ -1,0 +1,198 @@
+{
+  "backendSHA256": "5a177451d97eef432fb87ef87503fb7aa768ba1a37368f0f9e50263f2c3498ec",
+  "inputFiles": 2839,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "node": "v24.8.0",
+  "nodeOptions": null,
+  "repetitions": 3,
+  "trials": {
+    "prepare-output": {
+      "generated": 2684, "cache": null,
+      "phasesMs": { "load TAST + sort": 3952, "prepare": 26, "optimize + emit": 41555, "finalize": 309, "backend total": 45843 },
+      "processMs": 46138, "processPeakRSSKiB": 3491856,
+      "purmetaIO": {
+        "reads": { "attempts": 717, "files": 717, "bytes": 84025923 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288 }
+      },
+      "profile": null, "phpWrites": 2686
+    },
+    "unprofiled": {
+      "generated": 2684, "cache": null,
+      "phasesMs": { "load TAST + sort": 4099, "prepare": 33, "optimize + emit": 42074, "finalize": 344, "backend total": 46552 },
+      "processMs": 46838, "processPeakRSSKiB": 3450384,
+      "purmetaIO": {
+        "reads": { "attempts": 717, "files": 717, "bytes": 84025923 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288 }
+      },
+      "profile": null, "phpWrites": 0, "identicalFiles": 5372, "preservedPHPMtimes": 2686
+    },
+    "profile-1": {
+      "generated": 2684, "cache": null,
+      "phasesMs": { "load TAST + sort": 3939, "prepare": 31, "optimize + emit": 43579, "finalize": 346, "backend total": 47895 },
+      "processMs": 48190, "processPeakRSSKiB": 3348224,
+      "purmetaIO": {
+        "reads": { "attempts": 717, "files": 717, "bytes": 84025923 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288 }
+      },
+      "profile": {
+        "schema": 1, "policy": { "kind": "lru-module-boundary", "maxSerializedBytes": 67108864 },
+        "reads": {
+          "requests": 55506, "blocked": 1622, "ramHits": 53167, "ramMisses": 717,
+          "diskHits": 717, "diskMissing": 0, "errors": 0,
+          "ioAttempts": 717, "files": 717, "bytes": 84025923, "ioMs": 64.31049499996152,
+          "deserializations": 717, "deserializeMs": 700.7844810000133
+        },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288, "errors": 0, "ioMs": 578.2784579997824, "serializations": 2684, "serializeMs": 1615.4588079998211 },
+        "ram": {
+          "peakEntries": 1342, "peakSerializedBytes": 88156228, "boundaryPeakEntries": 1341, "boundaryPeakSerializedBytes": 67108740,
+          "trimCalls": 2684, "evictions": 2443, "evictedBytes": 197381282, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0,
+          "entries": 958, "serializedBytes": 66240929
+        },
+        "memory": { "rssBytesAtStart": 899874816, "rssBytesAtSnapshot": 3077013504, "processPeakRSSKiB": 3004912 }
+      },
+      "phpWrites": 0, "identicalFiles": 5372, "preservedPHPMtimes": 2686
+    },
+    "profile-2": {
+      "generated": 2684, "cache": null,
+      "phasesMs": { "load TAST + sort": 4210, "prepare": 33, "optimize + emit": 44214, "finalize": 343, "backend total": 48800 },
+      "processMs": 49146, "processPeakRSSKiB": 3359520,
+      "purmetaIO": {
+        "reads": { "attempts": 717, "files": 717, "bytes": 84025923 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288 }
+      },
+      "profile": {
+        "schema": 1, "policy": { "kind": "lru-module-boundary", "maxSerializedBytes": 67108864 },
+        "reads": {
+          "requests": 55506, "blocked": 1622, "ramHits": 53167, "ramMisses": 717,
+          "diskHits": 717, "diskMissing": 0, "errors": 0,
+          "ioAttempts": 717, "files": 717, "bytes": 84025923, "ioMs": 65.34834699992643,
+          "deserializations": 717, "deserializeMs": 710.0852879999147
+        },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288, "errors": 0, "ioMs": 644.4289829999962, "serializations": 2684, "serializeMs": 1634.5988419998284 },
+        "ram": {
+          "peakEntries": 1342, "peakSerializedBytes": 88156228, "boundaryPeakEntries": 1341, "boundaryPeakSerializedBytes": 67108740,
+          "trimCalls": 2684, "evictions": 2443, "evictedBytes": 197381282, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0,
+          "entries": 958, "serializedBytes": 66240929
+        },
+        "memory": { "rssBytesAtStart": 900808704, "rssBytesAtSnapshot": 3086237696, "processPeakRSSKiB": 3013920 }
+      },
+      "phpWrites": 0, "identicalFiles": 5372, "preservedPHPMtimes": 2686
+    },
+    "profile-3": {
+      "generated": 2684, "cache": null,
+      "phasesMs": { "load TAST + sort": 4291, "prepare": 34, "optimize + emit": 43301, "finalize": 358, "backend total": 47985 },
+      "processMs": 48280, "processPeakRSSKiB": 3436704,
+      "purmetaIO": {
+        "reads": { "attempts": 717, "files": 717, "bytes": 84025923 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288 }
+      },
+      "profile": {
+        "schema": 1, "policy": { "kind": "lru-module-boundary", "maxSerializedBytes": 67108864 },
+        "reads": {
+          "requests": 55506, "blocked": 1622, "ramHits": 53167, "ramMisses": 717,
+          "diskHits": 717, "diskMissing": 0, "errors": 0,
+          "ioAttempts": 717, "files": 717, "bytes": 84025923, "ioMs": 61.62317499996061,
+          "deserializations": 717, "deserializeMs": 743.8308459999898
+        },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288, "errors": 0, "ioMs": 611.9665810000834, "serializations": 2684, "serializeMs": 1584.4920680002388 },
+        "ram": {
+          "peakEntries": 1342, "peakSerializedBytes": 88156228, "boundaryPeakEntries": 1341, "boundaryPeakSerializedBytes": 67108740,
+          "trimCalls": 2684, "evictions": 2443, "evictedBytes": 197381282, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0,
+          "entries": 958, "serializedBytes": 66240929
+        },
+        "memory": { "rssBytesAtStart": 812728320, "rssBytesAtSnapshot": 3186376704, "processPeakRSSKiB": 3161456 }
+      },
+      "phpWrites": 0, "identicalFiles": 5372, "preservedPHPMtimes": 2686
+    },
+    "cache-fill": {
+      "generated": 2684, "cache": [0, 2684, 2684],
+      "phasesMs": { "load TAST + sort": 4015, "prepare": 61, "optimize + emit": 48234, "finalize": 343, "backend total": 52654 },
+      "processMs": 53017, "processPeakRSSKiB": 3840784,
+      "purmetaIO": {
+        "reads": { "attempts": 717, "files": 717, "bytes": 84025923 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288 }
+      },
+      "profile": {
+        "schema": 1, "policy": { "kind": "lru-module-boundary", "maxSerializedBytes": 67108864 },
+        "reads": {
+          "requests": 55506, "blocked": 1622, "ramHits": 53167, "ramMisses": 717,
+          "diskHits": 717, "diskMissing": 0, "errors": 0,
+          "ioAttempts": 717, "files": 717, "bytes": 84025923, "ioMs": 52.08749500002159,
+          "deserializations": 717, "deserializeMs": 701.8601709999493
+        },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596288, "errors": 0, "ioMs": 492.55592799987426, "serializations": 2684, "serializeMs": 1596.0208850000945 },
+        "ram": {
+          "peakEntries": 1342, "peakSerializedBytes": 88156228, "boundaryPeakEntries": 1341, "boundaryPeakSerializedBytes": 67108740,
+          "trimCalls": 2684, "evictions": 2443, "evictedBytes": 197381282, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0,
+          "entries": 958, "serializedBytes": 66240929
+        },
+        "memory": { "rssBytesAtStart": 910671872, "rssBytesAtSnapshot": 3600384000, "processPeakRSSKiB": 3570064 }
+      },
+      "phpWrites": 0, "identicalFiles": 5372, "preservedPHPMtimes": 2686
+    },
+    "cache-hit": {
+      "generated": 0, "cache": [2684, 0, 0],
+      "phasesMs": { "load TAST + sort": 3964, "prepare": 56, "optimize + emit": 8381, "finalize": 464, "backend total": 12866 },
+      "processMs": 13161, "processPeakRSSKiB": 3260240,
+      "purmetaIO": {
+        "reads": { "attempts": 0, "files": 0, "bytes": 0 },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596165 }
+      },
+      "profile": {
+        "schema": 1, "policy": { "kind": "lru-module-boundary", "maxSerializedBytes": 67108864 },
+        "reads": {
+          "requests": 0, "blocked": 0, "ramHits": 0, "ramMisses": 0,
+          "diskHits": 0, "diskMissing": 0, "errors": 0,
+          "ioAttempts": 0, "files": 0, "bytes": 0, "ioMs": 0,
+          "deserializations": 0, "deserializeMs": 0
+        },
+        "writes": { "attempts": 2684, "files": 2684, "bytes": 179596165, "errors": 0, "ioMs": 442.82438999998976, "serializations": 2684, "serializeMs": 1347.369537999959 },
+        "ram": {
+          "peakEntries": 1342, "peakSerializedBytes": 73958919, "boundaryPeakEntries": 1341, "boundaryPeakSerializedBytes": 67108813,
+          "trimCalls": 2684, "evictions": 1800, "evictedBytes": 112626084, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0,
+          "entries": 884, "serializedBytes": 66970081
+        },
+        "memory": { "rssBytesAtStart": 909443072, "rssBytesAtSnapshot": 3077455872, "processPeakRSSKiB": 3021904 }
+      },
+      "phpWrites": 0, "identicalFiles": 5372, "preservedPHPMtimes": 2686
+    }
+  },
+  "previousReferenceIdenticalFiles": 5372,
+  "purmetaComparison": {
+    "files": 2684,
+    "byteIdenticalFiles": 2669,
+    "equivalentDecodedGraphs": 15,
+    "differentBytes": [
+      { "file": "Core.Feat.Review.Message.Query.ListNewsRelatedArticles.Query.purmeta", "freshBytes": 497834, "restoredBytes": 497828 },
+      { "file": "Core.Mod.Article.Author.Inter.Cli.purmeta", "freshBytes": 192986, "restoredBytes": 192978 },
+      { "file": "Core.Mod.Article.Inter.Cli.purmeta", "freshBytes": 163955, "restoredBytes": 163949 },
+      { "file": "Core.Mod.Book.Inter.Cli.purmeta", "freshBytes": 162795, "restoredBytes": 162789 },
+      { "file": "Core.Mod.Editor.Inter.Cli.purmeta", "freshBytes": 162835, "restoredBytes": 162829 },
+      { "file": "Data.Argonaut.Core.purmeta", "freshBytes": 69871, "restoredBytes": 69864 },
+      { "file": "Data.Argonaut.Gen.purmeta", "freshBytes": 32311, "restoredBytes": 32301 },
+      { "file": "Data.CodePoint.Unicode.Internal.purmeta", "freshBytes": 3913461, "restoredBytes": 3913454 },
+      { "file": "Data.DivisionRing.purmeta", "freshBytes": 9834, "restoredBytes": 9827 },
+      { "file": "Data.EuclideanRing.purmeta", "freshBytes": 24119, "restoredBytes": 24112 },
+      { "file": "Data.Formatter.DateTime.purmeta", "freshBytes": 1296325, "restoredBytes": 1296313 },
+      { "file": "Data.Formatter.Parser.Number.purmeta", "freshBytes": 110665, "restoredBytes": 110658 },
+      { "file": "Data.Interval.Duration.Iso.purmeta", "freshBytes": 183091, "restoredBytes": 183077 },
+      { "file": "Data.Interval.Duration.purmeta", "freshBytes": 75766, "restoredBytes": 75760 },
+      { "file": "Data.Semiring.purmeta", "freshBytes": 63565, "restoredBytes": 63551 }
+    ]
+  },
+  "restoredPurmetaByteDelta": -123,
+  "medians": {
+    "backendMs": 47985,
+    "processPeakRSSKiB": 3359520,
+    "serializeMs": 1615.4588079998211,
+    "deserializeMs": 710.0852879999147,
+    "readIOMs": 64.31049499996152,
+    "writeIOMs": 611.9665810000834
+  },
+  "verification": {
+    "additionalFreshCompile": "verify-fresh-complete.log",
+    "identicalFiles": 5372,
+    "logicalCountersIdentical": true,
+    "sourceSnapshotUnchanged": true
+  }
+}

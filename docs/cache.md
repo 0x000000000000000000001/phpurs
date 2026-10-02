@@ -174,6 +174,11 @@ cached directives and derives private globals from the current decoded CoreFn.
 CoreFn loading and entrypoint/Composer finalization therefore still run. The
 cached state does not replace PBO's current-build purmeta lifecycle.
 
+For that underlying PBO cache, `--profile-purmeta` reports RAM outcomes, `.purmeta`
+I/O, serialization timings and RSS independently of the PHPurs state-cache
+counters. Combine it with `--no-cache` to observe full optimization. See the
+[PBO profiling contract](purmeta-profile.md).
+
 ## Storage protocol v1
 
 The caller supplies the cache directory and a `Fingerprint` from its key plan:

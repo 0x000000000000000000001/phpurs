@@ -178,6 +178,7 @@ php output/App.Main/main.bundle.php
 | `--bundle-only` | Emit bundles and the Composer manifest without writing `index.php` or `main.mod.php`. Enables bundling by itself and takes precedence over `--bundle` when both are present. |
 | `--autoload-path <Path>` | Composer autoloader path, normally relative to the application root. Default: `vendor/autoload.php`. |
 | `--no-cache` | Optimize and generate every module, bypassing module-cache reads and writes. Conditional PHP writes still preserve identical files. |
+| `--profile-purmeta` | Report PBO RAM hits/misses, `.purmeta` I/O, serialization timings and RSS as JSON on stderr. Combine with `--no-cache` to profile full optimization; see [the profiling contract](docs/purmeta-profile.md). |
 
 The paths above use the default `output` directory. With `--output`, place the typed input files in the selected directory; all generated files are written there as well. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
 

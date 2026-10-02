@@ -40,6 +40,7 @@ the [README](../README.md#build-the-backend).
 | Active build cache | [`BuildCache.purs`](../src/Phpurs/BuildCache.purs) | Connect a complete key plan to optional state I/O and report hits/misses/stores. |
 | Module-state publication | [`ModuleState.purs`](../src/Phpurs/ModuleState.purs) | Render selected PHP forms and publish fresh/restored arities, reachability and ordered bundle contributions. |
 | Module-state persistence | [`ModuleCache.purs`](../src/Phpurs/ModuleCache.purs) | Store and load versioned, checksummed state with restored PBO constructor prototypes. |
+| PBO cache diagnostics | [`PurmetaProfile.purs`](../src/Phpurs/PurmetaProfile.purs) | Scope opt-in RAM, I/O, serialization and RSS diagnostics to optimization/emission. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
@@ -229,6 +230,14 @@ then `BuildCache` plans keys in the actual PBO order. Incomplete/duplicate input
 or an unsupported plan disables the whole cache session and uses normal codegen.
 The store lives under `<outputDir>/.phpurs-cache/v1`; entrypoints and Composer
 are rebuilt from current inputs and restored/fresh module contributions.
+
+`--profile-purmeta` brackets optimization/emission with PBO's optional JavaScript
+cache counters and prints one JSON report to stderr, including on failure. Use
+`--no-cache` for full-optimization measurements: complete PHPurs state-cache hits
+still publish `.purmeta` but perform no PBO implementation lookups. The current
+PBO policy retains decoded implementations with a 64 MiB serialized-size LRU
+budget, trimmed at module boundaries. See the [profiling contract](purmeta-profile.md)
+for counter scopes, memory units and the independent I/O validation.
 
 ## Printing contracts
 

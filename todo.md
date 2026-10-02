@@ -351,10 +351,10 @@ Mesure : temps de build, nombre de modules retraités et RSS. Aucun gain runtime
 
 ## B2 — P2 build — Borner un cache mémoire PBO utile au frontend PHP
 
-Constat : PBO Builder.purs, autour de la ligne 103, écrit les purmeta puis vide le cache RAM entre modules. Cache.js relit/désérialise les dépendances et clearPurmetaCacheImpl vide tout le cache. Ces choix peuvent aussi protéger la mémoire : ne pas simplement enlever tous les clear.
+Constat actualisé : le builder PBO appelle déjà `trimPurmetaCache` après chaque publication. `Cache.js` conserve une LRU de modules décodés avec un budget de 64 Mio calculé sur leurs tailles sérialisées, élagué entre modules ; ce budget ne borne pas directement le heap/RSS et peut être dépassé pendant un module. `beginPurmetaBuild` réinitialise RAM et appartenance au build courant. Le clear explicite reste disponible. La première étape B2 instrumente cette politique existante via `--profile-purmeta` ; `--no-cache` permet d'observer l'optimisation complète plutôt que les seuls états restaurés par PHPurs.
 
-- [ ] Compter hits/misses, octets lus/écrits, durée de sérialisation et RSS sur une compilation PHP.
-- [ ] Ajouter une politique opt-in au frontend PHP, bornée par taille ou nombre de modules, sans changer le défaut des autres backends.
+- [x] Compter hits/misses, octets lus/écrits, durée de sérialisation et RSS sur une compilation PHP. Profil PBO opt-in via `--profile-purmeta`, JSON versionné et contrôle E/S indépendant. Build sans avertissement, 56 contrôles PHPurs et 16 contrôles PBO réussis. Sur trois compilations complètes b8x : 53 167 hits RAM, 717 misses/relectures (80,13 Mio), 1 622 requêtes hors appartenance au build, 2 684 écritures (171,28 Mio) ; taux de hit RAM 98,67 %. Médianes sérialisation/désérialisation : 1,615 / 0,710 s ; backend : 47,985 s ; RSS maximal : 3 280,8 Mio. Pic de taille sérialisée retenue : 84,07 Mio pendant un module, moins de 64 Mio après trim. Les 5 372 fichiers de sortie et 2 686 mtime PHP restent identiques au témoin. Sur hits B1 complets : zéro requête PBO, mais 2 684 sérialisations/écritures. Les 123 octets d'écart du format V8 restauré concernent 15 graphes décodés équivalents, partage et valeurs numériques compris. Voir le [contrat](docs/purmeta-profile.md) et le [bilan B2](audit/2026-10-02/purmeta-profile/report.md).
+- [ ] Rendre le budget de la politique LRU configurable opt-in dans le frontend PHP, en conservant le défaut des autres backends.
 - [ ] Comparer un petit budget et un budget moyen ; conserver la variante qui réduit les relectures avec une mémoire acceptable.
 - [ ] Expliciter répertoire, format/version et invalidation avant toute réutilisation de .purmeta entre builds.
 

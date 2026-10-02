@@ -1,4 +1,4 @@
--- | Content keys for a future module-state cache, in the builder's module order.
+-- | Content keys for module-state reuse, in the builder's module order.
 module Phpurs.CacheKey
   ( Fingerprint
   , fingerprintBytes
@@ -108,7 +108,7 @@ foreign import planKeysImpl
   -> Either String KeyPlan
 
 -- | Require unique modules in dependency order. An unsupported plan is a Left,
--- | so a future caller can use the ordinary build rather than a partial key set.
+-- | so the caller can use the ordinary build rather than a partial key set.
 planKeys :: BuildContext -> Array ModuleInput -> Either String KeyPlan
 planKeys context modules = planKeysImpl Left Right
   (context { options = context.options

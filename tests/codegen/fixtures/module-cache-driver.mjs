@@ -1,5 +1,5 @@
 // Explicit test/audit hooks: callers provide a key plan for frozen inputs.
-// The production CLI still calls Main.main with caching disabled.
+// The packaged CLI uses Main.mainWithToolchain; this driver tests explicit hooks.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { syncBuiltinESMExports } from 'node:module';

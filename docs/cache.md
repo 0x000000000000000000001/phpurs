@@ -3,10 +3,16 @@
 [`Phpurs.CacheKey`](../src/Phpurs/CacheKey.purs) defines content-based eligibility.
 [`Phpurs.ModuleCache`](../src/Phpurs/ModuleCache.purs) persists versioned module
 states, and [`Phpurs.ModuleState`](../src/Phpurs/ModuleState.purs) publishes both
-fresh and restored states. `Main.mainWithCache` supplies explicit load/store hooks
-for exercising PBO's cached-module branch. The ordinary CLI calls `Main.main`
-with disabled hooks; automatic key capture and cache activation are the next B1
-step.
+fresh and restored states. The packaged CLI calls `Main.mainWithToolchain` and
+enables caching by default. `Phpurs.BuildInputs` captures input bytes and
+`Phpurs.BuildCache` connects the key plan to the store. `--no-cache` bypasses
+both cache reads and writes, while retaining the same compilation/emission path.
+
+Entries live in `<outputDir>/.phpurs-cache/v1`. An invocation reports
+`[phpurs] cache: N hits, M misses, S stores` on stderr after successful
+finalization. These count restored modules, normal compilations and successful
+state writes, respectively. The directory is disposable and can be removed to
+start cold; content-addressed entries from older inputs/options remain available.
 
 ## API and input capture
 
@@ -28,21 +34,37 @@ opaque SHA-256 value; `fingerprintBytes` hashes immutable buffers and
 | `ModuleInput.dependencies` | Imported module names; self imports are ignored and other edges form a sorted set. |
 | Module array order | Complete loaded graph membership and actual builder order. |
 
-For the bundled backend, `toolchain.backend` identifies an immutable copy of
-`bin/phpurs.js`. A development invocation through separate compiled modules must
-fingerprint its entire loaded code/dependency manifest instead. Package versions
-or Git revisions alone do not distinguish local source/FFI edits. A fingerprint
-must identify the code actually loaded, rather than a file subsequently replaced
-by another build.
+[`tools/bundle.mjs`](../tools/bundle.mjs) uses esbuild to package all compiler and
+host-library JavaScript in a CommonJS source string inside the single executable
+`bin/phpurs.js`. Only Node built-ins may remain external; the build rejects other
+external imports. The startup function hashes an explicitly framed tuple of this
+**in-memory source**, the PHPurs/PBO build identities and its own source, then
+evaluates exactly that compiler source with `Function`. It passes the digest and
+Node/V8/platform/architecture to `mainWithToolchain`. The on-disk executable is
+never reread for its identity: replacing it during a build cannot relabel the
+code already loaded. The PBO build label also includes a digest of its compiled
+module inputs. Package versions or Git revisions alone would miss local edits.
 
-The future caller must hash and decode the **same captured CoreFn bytes**. Reading
-the file again after decoding could associate one version's key with another
-version's module. The same rule applies to FFI: resolve with `PackagePaths` before
-each lookup, capture the winning file once, and derive both the fingerprint and
-the source passed to `genForeignModule` from those bytes. Existing misses must be
-resolved again so a newly created higher-priority file can invalidate the entry.
-`NoForeign` follows the existing empty-foreign shortcut and requires no lookup.
-PBO currently preserves the CoreFn foreign map in its backend module.
+The development `Main.main` entrypoint retains disabled hooks because separate
+module imports do not supply an immutable executable identity. Explicit
+`mainWithCache` hooks remain available for state-layer tests. Custom callers of
+`mainWithToolchain` must provide an identity for the code actually loaded.
+
+`BuildInputs.loadInputs` reads each CoreFn once and derives both its fingerprint
+and decoded module from the **same captured bytes**. It keeps PBO's bounded
+`GOPURS_JOBS` loading policy and uses PBO's sorter, preserving the module order.
+It detects duplicate names before that sorter's module index could collapse them.
+Incomplete/ambiguous input and unsupported key plans disable cache reuse for the
+whole invocation, with a diagnostic and ordinary compilation.
+
+Before lookup, `captureForeign` resolves every module with foreign declarations
+using `PackagePaths`. The selected file is read once; both the raw fingerprint
+and the UTF-8 source passed to `genForeignModule` derive from that buffer. This
+also runs on hits and previous misses, so newly created higher-priority files
+are considered. `NoForeign` retains the empty-foreign shortcut with no lookup.
+PBO currently preserves the CoreFn foreign map in its backend module. Replacing
+an input after its read affects the following invocation; it cannot associate a
+new key with the previous bytes' compilation.
 
 Effective options come from the driver's interpretation of the CLI. Today,
 `rewriteLimit` is 10,000, `emitBundle` combines the bundle flags, and `emitModules`
@@ -111,8 +133,8 @@ and every successor. Earlier keys stay equal. Adding/removing/reordering modules
 changes the graph context and invalidates all module keys.
 
 Duplicate/empty module names and dependencies on later loaded modules return
-`Left` before any plan is returned. This includes cycles. A future cache caller
-must use the ordinary build for an unsupported plan. The current b8x corpus is
+`Left` before any plan is returned. This includes cycles. `BuildCache` uses the
+ordinary build for an unsupported plan. The current b8x corpus is
 accepted in PBO's actual order, including its self imports and absent built-ins.
 
 The [b8x assay](../audit/2026-10-01/cache-key/report.md) finds 2,684 equal keys
@@ -191,8 +213,8 @@ up the temporary file and retain any previously published complete entry.
 for correct input capture/key planning; supplying hooks is not an automatic
 invalidation policy. The state checks also reject the wrong module or an
 incomplete emission before publishing. Fresh states are stored after successful
-publication. The CLI's hooks remain `load = Nothing` and a no-op store until the
-next integration step satisfies the capture contract above.
+publication. These explicit hooks are separate from the CLI's automatically
+planned `BuildCache` session.
 
 ## Validation
 
@@ -208,7 +230,21 @@ outputs and verify that output errors still fail the build.
 The [b8x state assay](../audit/2026-10-01/module-state/report.md) round-trips all
 2,684 modules, then verifies full restoration, a mixed cached/fresh build and
 repair of missing/damaged outputs against 5,371 uncached files. It uses explicit
-hooks on frozen inputs; automatic CLI activation is still pending.
+hooks on frozen inputs.
+
+`tests/codegen/cache-cli.mjs` additionally exercises the packaged executable with
+default caching and `--no-cache`: all emission modes, grouped arguments, bounded
+parallel reads, exact-byte/dependency/directive/FFI invalidation, effective
+options, compiler and host identities, missing/corrupt entries, unavailable
+storage and unsupported graphs. It replaces CoreFn, FFI and the executable on
+disk during a read callback to verify the capture contract. Differential builds
+check file sets and bytes; executable fixtures verify the changed PHP results.
+
+The [CLI activation assay](../audit/2026-10-02/cache-activation/report.md) verifies
+2,684 actual hits on unchanged b8x input and the predicted 833/1,850 misses for
+the M0 leaf/dependency changes. Every state matches its uncached control's 5,371
+files. It retains single-run timing, memory and I/O samples alongside the exact
+module lists; those samples are not a repeated performance benchmark.
 
 Composer manifests are collected independently during finalization. This key
 identifies module/compiler state; it does not authorize reuse of a generated

@@ -69,7 +69,7 @@ npm install
 npm run build
 ```
 
-The build runs `spago build` and bundles `Main` into `bin/phpurs.js`. The `bin/phpurs` shell launcher executes it with Node.js. Add this repository's `bin` directory to `PATH`, or configure Spago with its explicit path.
+The build runs `spago build`, then `tools/bundle.mjs` packages `Main` and its JavaScript dependencies into the standalone `bin/phpurs.js`. Its startup hashes and evaluates the same embedded compiler source, providing a stable cache identity for the code actually loaded. The `bin/phpurs` shell launcher executes it with Node.js. Add this repository's `bin` directory to `PATH`, or configure Spago with its explicit path.
 
 The npm package declares a `phpurs` executable and a build-on-install hook. With the current local optimizer dependency, installing directly from GitHub is not a self-contained setup: the optimizer path must also resolve in the installation directory. The source layout above makes that dependency explicit.
 
@@ -153,6 +153,8 @@ The default mode emits `index.php` and `main.mod.php`. `--bundle` adds bundled o
 
 Generated PHP is written only when its UTF-8 bytes differ from the existing file or the file is missing. An identical rebuild preserves the PHP files' modification times. This applies to modules, modular entrypoints and both kinds of bundle.
 
+The packaged CLI also caches complete module states under `<output>/.phpurs-cache/v1`. A matching entry skips optimization, translation and printing while still restoring missing or changed generated PHP. Keys cover exact CoreFn/FFI bytes, compiler/host identity, effective options, directives and the ordered module graph. The initial conservative policy invalidates a changed module and its successors. Use `--no-cache` for a full compilation without cache reads or writes, or remove `.phpurs-cache` to start cold. A successful cached invocation reports hits, misses and successful stores on stderr. See the [cache contract](docs/cache.md).
+
 Without `--main`, an entrypoint is written for every module exporting `main`. To target `App.Main`, set `args: ["--main", "App.Main"]` and run `php output/App.Main/main.mod.php`.
 
 ### Compiler options
@@ -172,6 +174,7 @@ php output/App.Main/main.bundle.php
 | `--bundle` | Also concatenate generated PHP modules into bundle files. Composer dependencies remain external. |
 | `--bundle-only` | Emit bundles and the Composer manifest without writing `index.php` or `main.mod.php`. Enables bundling by itself and takes precedence over `--bundle` when both are present. |
 | `--autoload-path <Path>` | Composer autoloader path, normally relative to the application root. Default: `vendor/autoload.php`. |
+| `--no-cache` | Optimize and generate every module, bypassing module-cache reads and writes. Conditional PHP writes still preserve identical files. |
 
 The paths above use the default `output` directory. With `--output`, place the typed input files in the selected directory; all generated files are written there as well. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
 

@@ -7,7 +7,7 @@ The programs it translates are compiled to enriched CoreFn by the TAST fork.
 
 - **Build phpurs:** `npm run build` uses the upstream `purescript@0.15.16` and
   Spago development dependencies in this checkout. It compiles `src` into
-  `output` and bundles `Main` into `bin/phpurs.js`.
+  `output`; `tools/bundle.mjs` packages `Main` into the standalone `bin/phpurs.js`.
 - **Build a PHP program:** put the TAST-capable `purs` on `PATH`, then run the
   application's Spago build. Its `corefn.json` must include `dataDecls`,
   `classDecls` and `typeTable`.
@@ -35,6 +35,8 @@ the [README](../README.md#build-the-backend).
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
 | Module-cache identity | [`CacheKey.purs`](../src/Phpurs/CacheKey.purs) | Plan versioned input keys, dependency keys and conservative preceding-module state identity. |
+| Captured build inputs | [`BuildInputs.purs`](../src/Phpurs/BuildInputs.purs) | Decode/hash each CoreFn from one captured buffer and capture selected FFI bytes before lookup. |
+| Active build cache | [`BuildCache.purs`](../src/Phpurs/BuildCache.purs) | Connect a complete key plan to optional state I/O and report hits/misses/stores. |
 | Module-state publication | [`ModuleState.purs`](../src/Phpurs/ModuleState.purs) | Render selected PHP forms and publish fresh/restored arities, reachability and ordered bundle contributions. |
 | Module-state persistence | [`ModuleCache.purs`](../src/Phpurs/ModuleCache.purs) | Store and load versioned, checksummed state with restored PBO constructor prototypes. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
@@ -195,9 +197,12 @@ time; a different or missing file is written asynchronously, and the build waits
 for completion. Only `ENOENT` is treated as missing output. Other read errors and
 all write errors propagate to the phase and total failure reporting.
 
-The ordinary CLI still optimizes, translates and prints every module, using
-disabled cache hooks. `Main.mainWithCache` accepts explicit hooks to exercise
-PBO's cached-module branch. Both branches use `ModuleState.publishModuleState`
+The packaged CLI enables cache reuse by default; `--no-cache` compiles every
+module without reading or storing cached states. `tools/bundle.mjs` embeds all
+compiler JavaScript and hashes the same in-memory source that it evaluates,
+passing its identity to `Main.mainWithToolchain`. Direct development imports
+through `Main.main` use disabled hooks; `Main.mainWithCache` accepts explicit
+hooks for state-layer tests. Both branches use `ModuleState.publishModuleState`
 to update arities, reachability and bundle content in the same order and perform
 conditional PHP writes. Entry points and Composer are finalized normally.
 
@@ -206,8 +211,11 @@ specifies byte capture, toolchain/options/directives, FFI selection and dependen
 fingerprints. A prefix chain covers the directives, private globals and PHP
 arities accumulated from preceding modules. `ModuleCache` now persists the full
 typed backend module and its local arities/printed PHP in a versioned, checksummed
-entry with atomic replacement. Automatic capture of the inputs and cache
-activation are the next B1 step.
+entry with atomic replacement. `BuildInputs` captures CoreFn and FFI bytes once,
+then `BuildCache` plans keys in the actual PBO order. Incomplete/duplicate input
+or an unsupported plan disables the whole cache session and uses normal codegen.
+The store lives under `<outputDir>/.phpurs-cache/v1`; entrypoints and Composer
+are rebuilt from current inputs and restored/fresh module contributions.
 
 ## Printing contracts
 
@@ -270,7 +278,9 @@ explicit cache hooks. Cold, full-hit and mixed builds must match the uncached
 output and PHP execution in modular, bundle and bundle-only modes. It also checks
 constructor identity/sharing, deep expressions, arity precedence, corrupt entries,
 atomic replacement failure, current-build purmeta republication, output repair
-and output-error propagation. CLI activation is a separate integration step.
+and output-error propagation. `cache-cli.mjs` runs the packaged executable with
+automatic reuse and `--no-cache`, checks invalidation and identical outputs, and
+replaces CoreFn, FFI and executable files after reads to check input capture.
 
 `bin/test` accepts fixture names for targeted work. Its `tests/runner/src` and
 output directories are scratch space. `bin/modtest` exercises executable sibling

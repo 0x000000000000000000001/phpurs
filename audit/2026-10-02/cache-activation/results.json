@@ -1,0 +1,171 @@
+{
+  "backendSHA256": "64f7207f64900580743da73315576718ee22197094ae9dc39036ab2c1c7d0306",
+  "inputFiles": 2839,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "node": "v24.8.0",
+  "nodeOptions": null,
+  "trials": {
+    "control-unchanged": {
+      "generated": 2684,
+      "cache": null,
+      "phasesMs": {
+        "load TAST + sort": 4444,
+        "prepare": 44,
+        "optimize + emit": 45181,
+        "finalize": 273,
+        "backend total": 49942
+      },
+      "processMs": 50263,
+      "peakRSSKiB": 3433872,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935062 },
+        "php": { "attempts": 2686, "files": 0, "bytes": 0 }
+      },
+      "phpWrites": 2686,
+      "purmetaWrites": 2684
+    },
+    "fill": {
+      "generated": 2684,
+      "cache": [0, 2684, 2684],
+      "phasesMs": {
+        "load TAST + sort": 4370,
+        "prepare": 55,
+        "optimize + emit": 53002,
+        "finalize": 255,
+        "backend total": 57683
+      },
+      "processMs": 58191,
+      "peakRSSKiB": 3757792,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935062 },
+        "php": { "attempts": 2686, "files": 2686, "bytes": 135282480 }
+      },
+      "phpWrites": 0,
+      "purmetaWrites": 2684,
+      "identicalFiles": 5371
+    },
+    "unchanged": {
+      "generated": 0,
+      "cache": [2684, 0, 0],
+      "phasesMs": {
+        "load TAST + sort": 4358,
+        "prepare": 59,
+        "optimize + emit": 9083,
+        "finalize": 407,
+        "backend total": 13909
+      },
+      "processMs": 14202,
+      "peakRSSKiB": 3202112,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935062 },
+        "php": { "attempts": 2686, "files": 2686, "bytes": 135282480 }
+      },
+      "phpWrites": 0,
+      "purmetaWrites": 2684,
+      "identicalFiles": 5371,
+      "preservedPHPMtimes": 2686
+    },
+    "leaf": {
+      "generated": 833,
+      "cache": [1851, 833, 833],
+      "phasesMs": {
+        "load TAST + sort": 4105,
+        "prepare": 53,
+        "optimize + emit": 26087,
+        "finalize": 300,
+        "backend total": 30545
+      },
+      "processMs": 30964,
+      "peakRSSKiB": 4064576,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935072 },
+        "php": { "attempts": 2686, "files": 2686, "bytes": 135282480 }
+      },
+      "phpWrites": 2,
+      "purmetaWrites": 2684,
+      "mutation": {
+        "module": "Inter.Api.Main",
+        "binding": "handle",
+        "literalType": "StringLiteral",
+        "before": "Not found.",
+        "after": "Not found (M0 leaf).",
+        "pointer": "/decls/5/expression/body/body/body/binds/0/expression/body/expression/caseAlternatives/1/expression/abstraction/argument/value/value",
+        "beforeSHA256": "142c84ed63b9290c3d0037242f81f3d294e1c7af4edafb8141f9066bd085e179",
+        "afterSHA256": "03417c3ba5e9d14f5d06038499815f032559dbf279e5a9964fba76278af49373"
+      },
+      "changedPHPFiles": 2,
+      "identicalFiles": 5371
+    },
+    "control-leaf": {
+      "generated": 2684,
+      "cache": null,
+      "phasesMs": {
+        "load TAST + sort": 4081,
+        "prepare": 23,
+        "optimize + emit": 45297,
+        "finalize": 251,
+        "backend total": 49653
+      },
+      "processMs": 50026,
+      "peakRSSKiB": 3468208,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935072 },
+        "php": { "attempts": 2686, "files": 0, "bytes": 0 }
+      },
+      "phpWrites": 2686,
+      "purmetaWrites": 2684
+    },
+    "dependency": {
+      "generated": 1850,
+      "cache": [834, 1850, 1850],
+      "phasesMs": {
+        "load TAST + sort": 4229,
+        "prepare": 57,
+        "optimize + emit": 74880,
+        "finalize": 547,
+        "backend total": 79715
+      },
+      "processMs": 80188,
+      "peakRSSKiB": 3652944,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935062 },
+        "php": { "attempts": 2686, "files": 2686, "bytes": 135282480 }
+      },
+      "phpWrites": 31,
+      "purmetaWrites": 2684,
+      "mutation": {
+        "module": "Core.Message.Command.Command",
+        "binding": "defaultMaxConcurrencyRetries",
+        "literalType": "IntLiteral",
+        "before": 50,
+        "after": 51,
+        "pointer": "/decls/14/expression/value/value",
+        "beforeSHA256": "335035c34435355e2ff67da4a6c8e036d3e5dc7d590bab0312628f1f14bb5b40",
+        "afterSHA256": "31e9ec150d0b88f38194db801953adca9f255a6e9ce90f61a18b16181a76e473"
+      },
+      "changedPHPFiles": 31,
+      "identicalFiles": 5371
+    },
+    "control-dependency": {
+      "generated": 2684,
+      "cache": null,
+      "phasesMs": {
+        "load TAST + sort": 9120,
+        "prepare": 26,
+        "optimize + emit": 63404,
+        "finalize": 245,
+        "backend total": 72797
+      },
+      "processMs": 73325,
+      "peakRSSKiB": 3475024,
+      "reads": {
+        "corefn": { "attempts": 2684, "files": 2684, "bytes": 213935062 },
+        "php": { "attempts": 2686, "files": 0, "bytes": 0 }
+      },
+      "phpWrites": 2686,
+      "purmetaWrites": 2684
+    }
+  },
+  "previousReferenceIdenticalFiles": 5371,
+  "initialCacheBytes": 570659606
+}

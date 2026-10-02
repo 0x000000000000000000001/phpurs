@@ -1,5 +1,5 @@
 // Cache eligibility depends on every input to the module state, not on mtimes
-// or just the module's own CoreFn. The production skip callback is still off.
+// or just the module's own CoreFn. CLI wiring is covered in cache-cli.mjs.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';

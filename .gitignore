@@ -9,6 +9,18 @@ output.php
 purs_files.txt
 .DS_Store
 .phpurs-cache.json
+.phpurs-cache/
+.purmeta/
+__pycache__/
+*.pyc
+*.orig
+*.rej
 bin/phpurs.js
 bin/phpurs.js.tmp
 /result
+
+# Reproducible audit products and the passing-test scratch workspace.
+/audit/**/raw/
+/tests/runner/*
+!/tests/runner/spago.yaml
+!/tests/runner/spago.lock

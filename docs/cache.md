@@ -1,10 +1,12 @@
-# Module-cache keys (B1)
+# Module-cache keys and state (B1)
 
-[`Phpurs.CacheKey`](../src/Phpurs/CacheKey.purs) defines content-based eligibility
-for a future cached module state. `planKeys` is a pure calculator used by the
-invalidation checks and the frozen-input audit. `Main.onSkipModule` currently
-returns `Nothing`; state persistence, restoration and activation are subsequent
-B1 steps.
+[`Phpurs.CacheKey`](../src/Phpurs/CacheKey.purs) defines content-based eligibility.
+[`Phpurs.ModuleCache`](../src/Phpurs/ModuleCache.purs) persists versioned module
+states, and [`Phpurs.ModuleState`](../src/Phpurs/ModuleState.purs) publishes both
+fresh and restored states. `Main.mainWithCache` supplies explicit load/store hooks
+for exercising PBO's cached-module branch. The ordinary CLI calls `Main.main`
+with disabled hooks; automatic key capture and cache activation are the next B1
+step.
 
 ## API and input capture
 
@@ -119,13 +121,94 @@ its shared-dependency edit changes 1,850 keys for 30 changed module PHP files.
 All observed changed outputs are covered. These counts describe conservative
 key invalidation, not cache hits or avoided compilation work.
 
-## Cache-entry responsibilities
+## Persisted state
 
-A matching key will only be usable together with a valid, versioned payload.
-The next B1 step must restore optimizer implementations/directives and the
-imports, arities and bundle contribution consumed by `Main`, preserving the
-builder order on hits as well as misses. Generated PHP must still be emitted
-through content comparison so missing or damaged outputs are restored.
+`ModuleState` stores the complete `BackendModule`, a per-module arity map, and
+optional modular/bundle PHP strings. Its responsibilities are:
+
+| Field | Used after restoration |
+| --- | --- |
+| `backend.name`, `imports`, `implementations` | Rebuild `Main`'s module map for reachability and modular entrypoints. PBO republishes the implementations as current-build `.purmeta` for newly optimized consumers. |
+| `backend.directives` | PBO folds them into the directive environment before the next module, including exported never-inline/arity directives. |
+| Other `BackendModule` fields | Preserve the full typed PBO contract: comments, bindings, data/class declarations, data types, exports/re-exports and foreign signatures. |
+| `arities` | Restore this module's contribution to `globalAritiesRef`. Foreign arities take precedence over generated ones; the current module takes precedence over earlier modules. |
+| `modularPhp :: Maybe String` | Emit the already printed module through byte-exact content comparison, repairing absent or damaged output. |
+| `bundlePhp :: Maybe String` | Append the already printed contribution, with the same separator and order as a fresh build. |
+
+`renderModuleState` translates and prints only the selected emission forms. The
+arity map stored in the entry contains the **local contribution**, not the whole
+preceding environment. The v1 key identifies that preceding environment, which
+was used when printing the cached strings.
+
+`publishModuleState` is shared by `onCodegenModule` and `onSkipModule`. Call it
+**once per module, in builder order**. It checks the requested emission forms
+before touching refs or output, then restores `globalAritiesRef`, the reachability
+map when emitting modules, and `bundleContentRef` when emitting a bundle. The
+initial bundle header comes from `newBuildRefs`, not from each cached contribution.
+Output read/write errors propagate normally and must not become cache misses.
+
+On a hit, PBO skips `onCodegenModule` but still writes `.purmeta`, accumulates the
+cached directives and derives private globals from the current decoded CoreFn.
+CoreFn loading and entrypoint/Composer finalization therefore still run. The
+cached state does not replace PBO's current-build purmeta lifecycle.
+
+## Storage protocol v1
+
+The caller supplies the cache directory and a `Fingerprint` from its key plan:
+
+```purescript
+loadModuleState :: CacheRequest -> Effect (Maybe ModuleState)
+saveModuleState :: String -> Fingerprint -> ModuleState -> Effect Boolean
+```
+
+`CacheRequest` contains `directory`, `key`, `moduleName` and `emission`. Files are
+stored as `<directory>/v1/<64-lowercase-hex-key>.bin`; module names are never used
+as storage paths. Each entry contains:
+
+1. The ASCII magic/version line `PHPURS-MODULE-STATE 1\n`.
+2. One JSON header line containing the key, module name and payload SHA-256.
+3. A V8-serialized, flat graph table for the module state.
+
+The graph codec restores PureScript constructor prototypes via an explicit
+registry of PBO and collection modules. JSON alone, or plain `v8.serialize` on
+the original objects, loses the prototypes required by pattern matches. The
+codec preserves shared objects and numeric values, traverses deep expressions
+iteratively, and never annotates/mutates the live optimizer nodes. Function and
+symbol values, and unregistered object prototypes, cannot be silently persisted.
+The private PBO `.purmeta` codec is a different format and is not imported or
+modified by this layer. Node/V8/platform/architecture and the compiler code
+identity are already part of the key's compatibility contract. The payload
+encoding itself need not be byte-canonical; only the key protocol is canonical.
+
+Loading checks magic/version, key and module identity, payload checksum, graph
+references/tags, top-level state shape and requested emission forms. Missing,
+unreadable, incompatible, truncated or corrupt optional data returns `Nothing`.
+Saving writes a uniquely named sibling temporary file and renames it over the
+entry only after the full write and close. Failed writes return `false`, clean
+up the temporary file and retain any previously published complete entry.
+
+`Main.mainWithCache` accepts `{ load, store }` hooks. Its caller is responsible
+for correct input capture/key planning; supplying hooks is not an automatic
+invalidation policy. The state checks also reject the wrong module or an
+incomplete emission before publishing. Fresh states are stored after successful
+publication. The CLI's hooks remain `load = Nothing` and a no-op store until the
+next integration step satisfies the capture contract above.
+
+## Validation
+
+`tests/codegen/module-cache.mjs` checks constructor/sharing round trips, a
+20,000-level expression, arity precedence, emission completeness, damaged entries
+and atomic publication failure. Fresh Node processes run the actual driver with
+disabled, cold, full-hit and mixed hooks in all three emission modes. A cached
+dependency supplies implementations, exported directives and PHP/FFI arities to
+fresh consumers; the modular and bundled programs both print `43`. The checks
+also remove `.purmeta`, preserve identical PHP mtimes, repair missing/damaged
+outputs and verify that output errors still fail the build.
+
+The [b8x state assay](../audit/2026-10-01/module-state/report.md) round-trips all
+2,684 modules, then verifies full restoration, a mixed cached/fresh build and
+repair of missing/damaged outputs against 5,371 uncached files. It uses explicit
+hooks on frozen inputs; automatic CLI activation is still pending.
 
 Composer manifests are collected independently during finalization. This key
 identifies module/compiler state; it does not authorize reuse of a generated

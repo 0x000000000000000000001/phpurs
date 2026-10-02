@@ -35,6 +35,8 @@ the [README](../README.md#build-the-backend).
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
 | Module-cache identity | [`CacheKey.purs`](../src/Phpurs/CacheKey.purs) | Plan versioned input keys, dependency keys and conservative preceding-module state identity. |
+| Module-state publication | [`ModuleState.purs`](../src/Phpurs/ModuleState.purs) | Render selected PHP forms and publish fresh/restored arities, reachability and ordered bundle contributions. |
+| Module-state persistence | [`ModuleCache.purs`](../src/Phpurs/ModuleCache.purs) | Store and load versioned, checksummed state with restored PBO constructor prototypes. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
@@ -193,16 +195,19 @@ time; a different or missing file is written asynchronously, and the build waits
 for completion. Only `ENOENT` is treated as missing output. Other read errors and
 all write errors propagate to the phase and total failure reporting.
 
-This comparison happens after optimization, translation and printing on every
-invocation. `onSkipModule` still returns `Nothing`; reusable optimizer/codegen state
-and its invalidation belong to the subsequent build-cache work.
+The ordinary CLI still optimizes, translates and prints every module, using
+disabled cache hooks. `Main.mainWithCache` accepts explicit hooks to exercise
+PBO's cached-module branch. Both branches use `ModuleState.publishModuleState`
+to update arities, reachability and bundle content in the same order and perform
+conditional PHP writes. Entry points and Composer are finalized normally.
 
-`Phpurs.CacheKey` now supplies the pure v1 key planner for that work. Its
-[cache-key contract](cache.md) specifies byte capture, toolchain/options/directives,
-FFI selection and dependency fingerprints. A prefix chain covers the directives,
-private globals and PHP arities accumulated from preceding modules. The planner
-is exercised independently of the active build driver; state restoration is the
-next B1 step.
+`Phpurs.CacheKey` supplies the pure v1 key planner. Its [cache contract](cache.md)
+specifies byte capture, toolchain/options/directives, FFI selection and dependency
+fingerprints. A prefix chain covers the directives, private globals and PHP
+arities accumulated from preceding modules. `ModuleCache` now persists the full
+typed backend module and its local arities/printed PHP in a versioned, checksummed
+entry with atomic replacement. Automatic capture of the inputs and cache
+activation are the next B1 step.
 
 ## Printing contracts
 
@@ -259,6 +264,13 @@ new result in both modular and bundled form. Injected read/write failures verify
 error propagation and preservation of the previous output on those failures.
 `package-paths.mjs` verifies competing-file precedence, bounded lookup and successive
 preparations with different working directories and FFI options in one process.
+
+`module-cache.mjs` exercises the versioned state store and the real driver's
+explicit cache hooks. Cold, full-hit and mixed builds must match the uncached
+output and PHP execution in modular, bundle and bundle-only modes. It also checks
+constructor identity/sharing, deep expressions, arity precedence, corrupt entries,
+atomic replacement failure, current-build purmeta republication, output repair
+and output-error propagation. CLI activation is a separate integration step.
 
 `bin/test` accepts fixture names for targeted work. Its `tests/runner/src` and
 output directories are scratch space. `bin/modtest` exercises executable sibling

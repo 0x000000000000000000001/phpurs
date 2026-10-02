@@ -1,9 +1,10 @@
 -- | Load typed modules, invoke the optimizer and coordinate PHP file emission.
-module Main (main, mainWithCache) where
+module Main (main, mainWithCache, mainWithToolchain) where
 
 import Prelude
 
 import Data.Array as Array
+import Data.Either (Either(..), note)
 import Data.Foldable (foldl)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe, isJust)
@@ -14,34 +15,31 @@ import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Aff (Aff, launchAff_)
+import Effect.Aff (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Ref as Ref
+import Node.Buffer.Immutable as Bytes
 import Node.Encoding (Encoding(..))
-import Node.FS.Aff as FS
 import Node.Process as Process
+import Phpurs.BuildCache as BuildCache
+import Phpurs.BuildInputs (captureForeign, loadInputs)
+import Phpurs.CacheKey (Toolchain, fingerprintBytes)
 import Phpurs.ComposerMerge (mergeComposers)
 import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
 import Phpurs.FileEmission (writeTextFileIfChanged)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
 import Phpurs.ModuleState (newBuildRefs, publishModuleState, renderModuleState, supportsEmission)
-import Phpurs.PackagePaths (findForeignFile, resolvePackagePaths)
-import PureScript.Backend.Optimizer.App (coreFnModulesFromOutput, loadDirectives, parseCLIArgs)
+import Phpurs.PackagePaths (resolvePackagePaths)
+import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), Module(..), ModuleName(..), importName)
+import PureScript.Backend.Optimizer.Directives.Defaults (defaultDirectives)
 import PureScript.Backend.Optimizer.Reachability (moduleReachability)
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..))
-
-readForeignSource :: { roots :: Array String, moduleName :: String, modulePath :: String } -> Aff String
-readForeignSource { roots, moduleName, modulePath } = do
-  path <- liftEffect $ findForeignFile roots moduleName modulePath
-  case path of
-    Nothing -> pure ""
-    Just ffiPath -> FS.readTextFile UTF8 ffiPath
 
 countNodes :: NeutralExpr -> Int
 countNodes (NeutralExpr expr) = 1 + case expr of
@@ -68,12 +66,18 @@ countNodes (NeutralExpr expr) = 1 + case expr of
   _ -> 0
 
 main :: Effect Unit
-main = mainWithCache { load: \_ -> pure Nothing, store: \_ -> pure unit }
+main = run Nothing Nothing
 
--- | Explicit hooks let the state layer exercise PBO's hit path. CLI activation
--- | will supply keys from the same captured input bytes used by the loader.
+-- | A development import has no immutable executable identity. Explicit hooks
+-- | remain available for state-layer tests; the packaged CLI supplies Toolchain.
 mainWithCache :: CacheHooks -> Effect Unit
-mainWithCache cache = launchAff_ $ Metrics.measure "backend total" \_ -> do
+mainWithCache cache = run Nothing (Just cache)
+
+mainWithToolchain :: Toolchain -> Effect Unit
+mainWithToolchain toolchain = run (Just toolchain) Nothing
+
+run :: Maybe Toolchain -> Maybe CacheHooks -> Effect Unit
+run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
   argsRaw <- liftEffect Process.argv
   let 
     -- Match the shared parser's handling of grouped Spago backend arguments.
@@ -85,16 +89,36 @@ mainWithCache cache = launchAff_ $ Metrics.measure "backend total" \_ -> do
     emission = { emitModules, emitBundle }
     outputDir = fromMaybe "output" args.mbOutputDir
 
-  finalModules <- Metrics.measure "load TAST + sort" \_ -> coreFnModulesFromOutput outputDir
+  loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputs outputDir
+  let finalModules = loaded.modules
 
-  { refs, directives, packagePaths } <- Metrics.measure "prepare" \_ -> do
+  { refs, directives, packagePaths, foreignSources, cache } <- Metrics.measure "prepare" \_ -> do
     refs <- liftEffect newBuildRefs
 
     -- Composer precedence follows module-name order, not dependency order.
     let modulePaths = map (\(Module m) -> m.path) $ Array.sortWith (\(Module m) -> m.name) (Array.fromFoldable finalModules)
     packagePaths <- liftEffect $ resolvePackagePaths { ffiDir: args.mbFfiDir, modulePaths }
     directives <- loadDirectives
-    pure { refs, directives, packagePaths }
+    captures <- traverse (\m@(Module core) -> do
+      ffi <- captureForeign packagePaths.ffiRoots m
+      pure { core, ffi }) (Array.fromFoldable finalModules)
+    cwd <- liftEffect Process.cwd
+    let
+      foreignSources = Map.fromFoldable $ map (\c -> Tuple c.core.name c.ffi.source) captures
+      inputs = if not loaded.cacheable then Left "Incomplete or duplicate module input" else
+        note "Missing captured CoreFn fingerprint" $ traverse (\c -> do
+          let name = unwrap c.core.name
+          coreFn <- Map.lookup name loaded.fingerprints
+          pure { name, coreFn, foreignInput: c.ffi.input, dependencies: map (unwrap <<< importName) c.core.imports }) captures
+    cache <- case override, toolchain of
+      Just hooks, _ -> pure { hooks, report: pure unit }
+      _, Just identity | not (Array.elem "--no-cache" cliArgs) -> liftEffect $ BuildCache.prepareCache
+        { toolchain: identity
+        , options: { cwd, outputDir, ffiRoots: packagePaths.ffiRoots, emitModules, emitBundle, mainModule: args.mbMainModule, autoloadPath: args.mbAutoloadPath, rewriteLimit: 10000 }
+        , directives: fingerprintBytes (Bytes.fromString defaultDirectives UTF8)
+        } inputs
+      _, _ -> pure BuildCache.disabled
+    pure { refs, directives, packagePaths, foreignSources, cache }
 
   Metrics.measure "optimize + emit" \_ ->
     buildModules
@@ -105,7 +129,7 @@ mainWithCache cache = launchAff_ $ Metrics.measure "backend total" \_ -> do
       , traceIdents: Set.empty
       , onPrepareModule: \_ m -> pure m
       , onSkipModule: \_ (Module coreFnMod) -> do
-          restored <- cache.load coreFnMod.name
+          restored <- cache.hooks.load coreFnMod.name
           case restored of
             Just state | state.backend.name == coreFnMod.name && supportsEmission emission state -> do
               publishModuleState emission outputDir refs state
@@ -116,12 +140,11 @@ mainWithCache cache = launchAff_ $ Metrics.measure "backend total" \_ -> do
           let totalNodes = foldl (+) 0 (map (\bg -> foldl (+) 0 (map (\(Tuple _ expr) -> countNodes expr) bg.bindings)) backendMod.bindings)
           liftEffect $ Console.log $ "Generating PHP code for " <> modNameStr <> " (Total AST Nodes: " <> show totalNodes <> ")"
           let importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
-          foreignSource <- if Map.isEmpty backendMod.foreign then pure ""
-            else readForeignSource { roots: packagePaths.ffiRoots, moduleName: modNameStr, modulePath: coreFnMod.path }
+          let foreignSource = fromMaybe "" (Map.lookup backendMod.name foreignSources)
           currentArities <- liftEffect $ Ref.read refs.globalAritiesRef
           let state = renderModuleState emission importsArray foreignSource currentArities backendMod
           publishModuleState emission outputDir refs state
-          cache.store state
+          cache.hooks.store state
       }
       finalModules
 
@@ -161,3 +184,4 @@ mainWithCache cache = launchAff_ $ Metrics.measure "backend total" \_ -> do
     else pure unit
 
     liftEffect $ mergeComposers { outputDir, packageRoots: packagePaths.composerRoots }
+  liftEffect cache.report

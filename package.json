@@ -7,7 +7,7 @@
     "phpurs": "bin/phpurs.js"
   },
   "scripts": {
-    "build": "spago build && spago bundle --module Main --platform node --outfile bin/phpurs.js --bundle-type app",
+    "build": "spago build && node tools/bundle.mjs",
     "test:codegen": "node --test --test-concurrency=1 tests/codegen/*.mjs",
     "prepare": "npm run build"
   },

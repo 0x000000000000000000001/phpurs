@@ -1,0 +1,243 @@
+{
+  "backendSHA256": "185ebc9926d25ca7bc89e71d0e14955d2284da7a66dda13a6eac497b8a86c2a6",
+  "inputFiles": 2839,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "node": "v24.8.0",
+  "nodeOptions": null,
+  "trials": {
+    "default": {
+      "budgetMiB": null,
+      "generated": 2684,
+      "phasesMs": {
+        "load TAST + sort": 4281,
+        "prepare": 25,
+        "optimize + emit": 45130,
+        "finalize": 341,
+        "backend total": 49778
+      },
+      "processMs": 50147,
+      "processPeakRSSKiB": 3542288,
+      "purmetaIO": {
+        "reads": {
+          "attempts": 717,
+          "files": 717,
+          "bytes": 84025923
+        },
+        "writes": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 179596288
+        }
+      },
+      "profile": {
+        "schema": 1,
+        "policy": {
+          "kind": "lru-module-boundary",
+          "maxSerializedBytes": 67108864
+        },
+        "reads": {
+          "requests": 55506,
+          "blocked": 1622,
+          "ramHits": 53167,
+          "ramMisses": 717,
+          "diskHits": 717,
+          "diskMissing": 0,
+          "errors": 0,
+          "ioAttempts": 717,
+          "files": 717,
+          "bytes": 84025923,
+          "ioMs": 48.87304500002574,
+          "deserializations": 717,
+          "deserializeMs": 730.3537659999383
+        },
+        "writes": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 179596288,
+          "errors": 0,
+          "ioMs": 500.5481749999799,
+          "serializations": 2684,
+          "serializeMs": 1678.4436440000873
+        },
+        "ram": {
+          "peakEntries": 1342,
+          "peakSerializedBytes": 88156228,
+          "boundaryPeakEntries": 1341,
+          "boundaryPeakSerializedBytes": 67108740,
+          "trimCalls": 2684,
+          "evictions": 2443,
+          "evictedBytes": 197381282,
+          "clearCalls": 0,
+          "clearedEntries": 0,
+          "clearedBytes": 0,
+          "entries": 958,
+          "serializedBytes": 66240929
+        },
+        "memory": {
+          "rssBytesAtStart": 902742016,
+          "rssBytesAtSnapshot": 3358523392,
+          "processPeakRSSKiB": 3330080
+        }
+      },
+      "phpWrites": 2686
+    },
+    "zero": {
+      "budgetMiB": 0,
+      "generated": 2684,
+      "phasesMs": {
+        "load TAST + sort": 4315,
+        "prepare": 26,
+        "optimize + emit": 66268,
+        "finalize": 428,
+        "backend total": 71038
+      },
+      "processMs": 71460,
+      "processPeakRSSKiB": 3785184,
+      "purmetaIO": {
+        "reads": {
+          "attempts": 24509,
+          "files": 24509,
+          "bytes": 2266787775
+        },
+        "writes": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 182141712
+        }
+      },
+      "profile": {
+        "schema": 1,
+        "policy": {
+          "kind": "lru-module-boundary",
+          "maxSerializedBytes": 0
+        },
+        "reads": {
+          "requests": 55506,
+          "blocked": 1622,
+          "ramHits": 29375,
+          "ramMisses": 24509,
+          "diskHits": 24509,
+          "diskMissing": 0,
+          "errors": 0,
+          "ioAttempts": 24509,
+          "files": 24509,
+          "bytes": 2266787775,
+          "ioMs": 942.2587459997767,
+          "deserializations": 24509,
+          "deserializeMs": 19189.988330000524
+        },
+        "writes": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 182141712,
+          "errors": 0,
+          "ioMs": 808.991500000041,
+          "serializations": 2684,
+          "serializeMs": 1700.1582850002624
+        },
+        "ram": {
+          "peakEntries": 263,
+          "peakSerializedBytes": 35963244,
+          "boundaryPeakEntries": 0,
+          "boundaryPeakSerializedBytes": 0,
+          "trimCalls": 2684,
+          "evictions": 27193,
+          "evictedBytes": 2448929487,
+          "clearCalls": 0,
+          "clearedEntries": 0,
+          "clearedBytes": 0,
+          "entries": 0,
+          "serializedBytes": 0
+        },
+        "memory": {
+          "rssBytesAtStart": 900317184,
+          "rssBytesAtSnapshot": 3538337792,
+          "processPeakRSSKiB": 3478640
+        }
+      },
+      "phpWrites": 0,
+      "identicalFiles": 5372,
+      "preservedPHPMtimes": 2686
+    },
+    "explicit-64": {
+      "budgetMiB": 64,
+      "generated": 2684,
+      "phasesMs": {
+        "load TAST + sort": 4276,
+        "prepare": 36,
+        "optimize + emit": 46197,
+        "finalize": 353,
+        "backend total": 50863
+      },
+      "processMs": 51252,
+      "processPeakRSSKiB": 3596752,
+      "purmetaIO": {
+        "reads": {
+          "attempts": 717,
+          "files": 717,
+          "bytes": 84025923
+        },
+        "writes": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 179596288
+        }
+      },
+      "profile": {
+        "schema": 1,
+        "policy": {
+          "kind": "lru-module-boundary",
+          "maxSerializedBytes": 67108864
+        },
+        "reads": {
+          "requests": 55506,
+          "blocked": 1622,
+          "ramHits": 53167,
+          "ramMisses": 717,
+          "diskHits": 717,
+          "diskMissing": 0,
+          "errors": 0,
+          "ioAttempts": 717,
+          "files": 717,
+          "bytes": 84025923,
+          "ioMs": 94.51540300001943,
+          "deserializations": 717,
+          "deserializeMs": 728.212805000032
+        },
+        "writes": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 179596288,
+          "errors": 0,
+          "ioMs": 690.9323009999252,
+          "serializations": 2684,
+          "serializeMs": 1716.2686050000048
+        },
+        "ram": {
+          "peakEntries": 1342,
+          "peakSerializedBytes": 88156228,
+          "boundaryPeakEntries": 1341,
+          "boundaryPeakSerializedBytes": 67108740,
+          "trimCalls": 2684,
+          "evictions": 2443,
+          "evictedBytes": 197381282,
+          "clearCalls": 0,
+          "clearedEntries": 0,
+          "clearedBytes": 0,
+          "entries": 958,
+          "serializedBytes": 66240929
+        },
+        "memory": {
+          "rssBytesAtStart": 897564672,
+          "rssBytesAtSnapshot": 3349446656,
+          "processPeakRSSKiB": 3322208
+        }
+      },
+      "phpWrites": 0,
+      "identicalFiles": 5372,
+      "preservedPHPMtimes": 2686
+    }
+  },
+  "previousReferenceIdenticalFiles": 5372,
+  "verified": true
+}

@@ -174,10 +174,22 @@ cached directives and derives private globals from the current decoded CoreFn.
 CoreFn loading and entrypoint/Composer finalization therefore still run. The
 cached state does not replace PBO's current-build purmeta lifecycle.
 
+The underlying `.purmeta` files have no PBO file-protocol version, input key or
+integrity envelope. Process startup and every builder invocation begin with
+empty publication membership; residual files stay unreadable until rewritten
+in that scope. See the [storage and invalidation contract](purmeta-storage.md)
+for the exact path, codec and boundaries of this scratch storage.
+
 For that underlying PBO cache, `--profile-purmeta` reports RAM outcomes, `.purmeta`
 I/O, serialization timings and RSS independently of the PHPurs state-cache
 counters. Combine it with `--no-cache` to observe full optimization. See the
 [PBO profiling contract](purmeta-profile.md).
+
+`--purmeta-cache-mib N` independently configures PBO's decoded-module LRU, using
+serialized sizes in integer MiB (default 64; `0` trims all entries at module
+boundaries). It does not partition the persistent module-state keys: restored
+implementations are republished into the current PBO build and remain readable
+from disk after a RAM eviction. See the [budget contract](purmeta-profile.md#configuring-the-budget).
 
 ## Storage protocol v1
 

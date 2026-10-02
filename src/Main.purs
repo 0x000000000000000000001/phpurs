@@ -33,6 +33,7 @@ import Phpurs.ModuleCache (CacheHooks)
 import Phpurs.ModuleState (newBuildRefs, publishModuleState, renderModuleState, supportsEmission)
 import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
 import Phpurs.PackagePaths (resolvePackagePaths)
+import Phpurs.PurmetaBudget as PurmetaBudget
 import Phpurs.PurmetaProfile (withProfile)
 import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
@@ -91,6 +92,10 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
     emission = { emitModules, emitBundle }
     outputDir = fromMaybe "output" args.mbOutputDir
 
+  purmetaBudget <- case PurmetaBudget.parseBudget cliArgs of
+    Left message -> throwError $ error message
+    Right budget -> pure budget
+
   loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputs outputDir
   let finalModules = loaded.modules
 
@@ -132,6 +137,7 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
     pure { refs, directives, packagePaths, foreignSources, cache, targetMainModules }
 
   Metrics.measure "optimize + emit" \_ ->
+    PurmetaBudget.withBudget purmetaBudget $
     withProfile (Array.elem "--profile-purmeta" cliArgs) $
     buildModules
       { directives

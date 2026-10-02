@@ -1,0 +1,82 @@
+{
+  "backendSHA256": "185ebc9926d25ca7bc89e71d0e14955d2284da7a66dda13a6eac497b8a86c2a6",
+  "inputFiles": 2839,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "node": "v24.8.0",
+  "nodeOptions": null,
+  "platform": "macOS-26.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "budgetsMiB": [16, 64, 128], "repetitions": 3,
+  "verified": true, "optimizedModulesPerRun": 2684, "identicalFilesPerRun": 5372, "preservedPHPMtimesPerRun": 2686, "phpWritesPerMeasuredRun": 0,
+  "selectedOptInMiB": 128, "referenceMiB": 64, "minimumMedianBackendGain": 0.03, "maximumMedianRSSIncrease": 0.10,
+  "samples": [
+    {"label": "mib-16-run-1", "budgetMiB": 16, "round": 1, "phasesMs": {"load TAST + sort": 4176, "prepare": 34, "optimize + emit": 55419, "finalize": 368, "backend total": 59998}, "processPeakRSSKiB": 3458624, "loadAverageBefore": [7.30908203125, 9.81494140625, 10.01318359375], "loadAverageAfter": [11.4091796875, 10.52001953125, 10.259765625], "deserializeMs": 3007.6163070000694, "serializeMs": 1922.6424200000347, "readIOMs": 249.77343600007043, "writeIOMs": 1817.6828410001326},
+    {"label": "mib-64-run-1", "budgetMiB": 64, "round": 1, "phasesMs": {"load TAST + sort": 5722, "prepare": 41, "optimize + emit": 51225, "finalize": 341, "backend total": 57331}, "processPeakRSSKiB": 3216416, "loadAverageBefore": [11.4091796875, 10.52001953125, 10.259765625], "loadAverageAfter": [12.333984375, 11.36865234375, 10.62158203125], "deserializeMs": 715.0468759999821, "serializeMs": 2041.4643149999683, "readIOMs": 81.95177799998419, "writeIOMs": 998.3116449999425},
+    {"label": "mib-128-run-1", "budgetMiB": 128, "round": 1, "phasesMs": {"load TAST + sort": 3948, "prepare": 34, "optimize + emit": 42450, "finalize": 336, "backend total": 46769}, "processPeakRSSKiB": 3110464, "loadAverageBefore": [12.333984375, 11.36865234375, 10.62158203125], "loadAverageAfter": [8.1669921875, 10.3720703125, 10.29248046875], "deserializeMs": 96.59979299995393, "serializeMs": 1598.346485999918, "readIOMs": 10.453922000007879, "writeIOMs": 870.1763839998011},
+    {"label": "mib-64-run-2", "budgetMiB": 64, "round": 2, "phasesMs": {"load TAST + sort": 4169, "prepare": 27, "optimize + emit": 45109, "finalize": 344, "backend total": 49650}, "processPeakRSSKiB": 3442480, "loadAverageBefore": [8.1669921875, 10.3720703125, 10.29248046875], "loadAverageAfter": [6.50146484375, 9.59765625, 10.01025390625], "deserializeMs": 714.8803250001474, "serializeMs": 1599.0241430001024, "readIOMs": 63.02254800002629, "writeIOMs": 2011.7233389999483},
+    {"label": "mib-128-run-2", "budgetMiB": 128, "round": 2, "phasesMs": {"load TAST + sort": 4483, "prepare": 36, "optimize + emit": 43355, "finalize": 351, "backend total": 48225}, "processPeakRSSKiB": 3593920, "loadAverageBefore": [6.140625, 9.47119140625, 9.962890625], "loadAverageAfter": [5.39453125, 8.82373046875, 9.69873046875], "deserializeMs": 104.08758499998657, "serializeMs": 1626.4538240001457, "readIOMs": 23.004876999999397, "writeIOMs": 917.7418179998049},
+    {"label": "mib-16-run-2", "budgetMiB": 16, "round": 2, "phasesMs": {"load TAST + sort": 3959, "prepare": 33, "optimize + emit": 44664, "finalize": 336, "backend total": 48993}, "processPeakRSSKiB": 3474416, "loadAverageBefore": [5.28271484375, 8.7431640625, 9.6650390625], "loadAverageAfter": [4.98583984375, 8.0947265625, 9.36962890625], "deserializeMs": 2765.2183659999673, "serializeMs": 1550.4651470000872, "readIOMs": 166.6561819998733, "writeIOMs": 785.4791680000394},
+    {"label": "mib-128-run-3", "budgetMiB": 128, "round": 3, "phasesMs": {"load TAST + sort": 4097, "prepare": 37, "optimize + emit": 42560, "finalize": 345, "backend total": 47040}, "processPeakRSSKiB": 3579360, "loadAverageBefore": [4.98583984375, 8.0947265625, 9.36962890625], "loadAverageAfter": [5.41748046875, 7.712890625, 9.15283203125], "deserializeMs": 98.3887069999655, "serializeMs": 1585.1829389999048, "readIOMs": 25.514753000032215, "writeIOMs": 736.0343379999313},
+    {"label": "mib-16-run-3", "budgetMiB": 16, "round": 3, "phasesMs": {"load TAST + sort": 4057, "prepare": 33, "optimize + emit": 46782, "finalize": 343, "backend total": 51216}, "processPeakRSSKiB": 3425200, "loadAverageBefore": [5.41748046875, 7.712890625, 9.15283203125], "loadAverageAfter": [5.41455078125, 7.330078125, 8.92529296875], "deserializeMs": 2825.881611, "serializeMs": 1630.74249100026, "readIOMs": 187.9563379999381, "writeIOMs": 755.3492729999116},
+    {"label": "mib-64-run-3", "budgetMiB": 64, "round": 3, "phasesMs": {"load TAST + sort": 4265, "prepare": 35, "optimize + emit": 47380, "finalize": 509, "backend total": 52191}, "processPeakRSSKiB": 3549344, "loadAverageBefore": [5.22119140625, 7.2578125, 8.89013671875], "loadAverageAfter": [6.02880859375, 7.19384765625, 8.7734375], "deserializeMs": 754.0104019999817, "serializeMs": 1700.6000559999775, "readIOMs": 121.21488900005352, "writeIOMs": 810.1905050000769}
+  ],
+  "summaries": {
+    "16": {
+      "samples": 3, "ramHitRate": 0.9456053745082028,
+      "logicalProfile": {
+        "schema": 1,
+        "policy": {"kind": "lru-module-boundary", "maxSerializedBytes": 16777216},
+        "reads": {"requests": 55506, "blocked": 1622, "ramHits": 50953, "ramMisses": 2931, "diskHits": 2931, "diskMissing": 0, "errors": 0, "ioAttempts": 2931, "files": 2931, "bytes": 330278330, "deserializations": 2931},
+        "writes": {"attempts": 2684, "files": 2684, "bytes": 180314147, "errors": 0, "serializations": 2684},
+        "ram": {"peakEntries": 457, "peakSerializedBytes": 48631279, "boundaryPeakEntries": 450, "boundaryPeakSerializedBytes": 16777178, "trimCalls": 2684, "evictions": 5231, "evictedBytes": 493851314, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0, "entries": 384, "serializedBytes": 16741163}
+      },
+      "measurements": {
+        "backendMs": {"min": 48993, "median": 51216, "max": 59998},
+        "optimizeEmitMs": {"min": 44664, "median": 46782, "max": 55419},
+        "processPeakRSSKiB": {"min": 3425200, "median": 3458624, "max": 3474416},
+        "deserializeMs": {"min": 2765.2183659999673, "median": 2825.881611, "max": 3007.6163070000694},
+        "serializeMs": {"min": 1550.4651470000872, "median": 1630.74249100026, "max": 1922.6424200000347},
+        "readIOMs": {"min": 166.6561819998733, "median": 187.9563379999381, "max": 249.77343600007043},
+        "writeIOMs": {"min": 755.3492729999116, "median": 785.4791680000394, "max": 1817.6828410001326}
+      }
+    },
+    "64": {
+      "samples": 3, "ramHitRate": 0.9866936381857323,
+      "logicalProfile": {
+        "schema": 1,
+        "policy": {"kind": "lru-module-boundary", "maxSerializedBytes": 67108864},
+        "reads": {"requests": 55506, "blocked": 1622, "ramHits": 53167, "ramMisses": 717, "diskHits": 717, "diskMissing": 0, "errors": 0, "ioAttempts": 717, "files": 717, "bytes": 84025923, "deserializations": 717},
+        "writes": {"attempts": 2684, "files": 2684, "bytes": 179596288, "errors": 0, "serializations": 2684},
+        "ram": {"peakEntries": 1342, "peakSerializedBytes": 88156228, "boundaryPeakEntries": 1341, "boundaryPeakSerializedBytes": 67108740, "trimCalls": 2684, "evictions": 2443, "evictedBytes": 197381282, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0, "entries": 958, "serializedBytes": 66240929}
+      },
+      "measurements": {
+        "backendMs": {"min": 49650, "median": 52191, "max": 57331},
+        "optimizeEmitMs": {"min": 45109, "median": 47380, "max": 51225},
+        "processPeakRSSKiB": {"min": 3216416, "median": 3442480, "max": 3549344},
+        "deserializeMs": {"min": 714.8803250001474, "median": 715.0468759999821, "max": 754.0104019999817},
+        "serializeMs": {"min": 1599.0241430001024, "median": 1700.6000559999775, "max": 2041.4643149999683},
+        "readIOMs": {"min": 63.02254800002629, "median": 81.95177799998419, "max": 121.21488900005352},
+        "writeIOMs": {"min": 810.1905050000769, "median": 998.3116449999425, "max": 2011.7233389999483}
+      }
+    },
+    "128": {
+      "samples": 3, "ramHitRate": 0.9981627199168585,
+      "logicalProfile": {
+        "schema": 1,
+        "policy": {"kind": "lru-module-boundary", "maxSerializedBytes": 134217728},
+        "reads": {"requests": 55506, "blocked": 1622, "ramHits": 53785, "ramMisses": 99, "diskHits": 99, "diskMissing": 0, "errors": 0, "ioAttempts": 99, "files": 99, "bytes": 10839906, "deserializations": 99},
+        "writes": {"attempts": 2684, "files": 2684, "bytes": 178947038, "errors": 0, "serializations": 2684},
+        "ram": {"peakEntries": 1884, "peakSerializedBytes": 138541823, "boundaryPeakEntries": 1883, "boundaryPeakSerializedBytes": 134217726, "trimCalls": 2684, "evictions": 1291, "evictedBytes": 56149598, "clearCalls": 0, "clearedEntries": 0, "clearedBytes": 0, "entries": 1492, "serializedBytes": 133637346}
+      },
+      "measurements": {
+        "backendMs": {"min": 46769, "median": 47040, "max": 48225},
+        "optimizeEmitMs": {"min": 42450, "median": 42560, "max": 43355},
+        "processPeakRSSKiB": {"min": 3110464, "median": 3579360, "max": 3593920},
+        "deserializeMs": {"min": 96.59979299995393, "median": 98.3887069999655, "max": 104.08758499998657},
+        "serializeMs": {"min": 1585.1829389999048, "median": 1598.346485999918, "max": 1626.4538240001457},
+        "readIOMs": {"min": 10.453922000007879, "median": 23.004876999999397, "max": 25.514753000032215},
+        "writeIOMs": {"min": 736.0343379999313, "median": 870.1763839998011, "max": 917.7418179998049}
+      }
+    }
+  }
+}

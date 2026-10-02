@@ -234,10 +234,20 @@ are rebuilt from current inputs and restored/fresh module contributions.
 `--profile-purmeta` brackets optimization/emission with PBO's optional JavaScript
 cache counters and prints one JSON report to stderr, including on failure. Use
 `--no-cache` for full-optimization measurements: complete PHPurs state-cache hits
-still publish `.purmeta` but perform no PBO implementation lookups. The current
-PBO policy retains decoded implementations with a 64 MiB serialized-size LRU
-budget, trimmed at module boundaries. See the [profiling contract](purmeta-profile.md)
-for counter scopes, memory units and the independent I/O validation.
+still publish `.purmeta` but perform no PBO implementation lookups. PBO retains
+decoded implementations with a default 64 MiB serialized-size LRU budget, trimmed
+at module boundaries. `--purmeta-cache-mib N` overrides that budget for the PHPurs
+builder scope; `0` empties RAM at each boundary while allowing within-module reuse.
+`Phpurs.PurmetaBudget` restores the previous budget on success, failure or
+cancellation, then trims to it. The profile is captured before this restoration.
+The budget does not partition module-state cache keys. See the
+[profiling and budget contract](purmeta-profile.md) for units, scope and validation.
+
+PBO's `.purmeta` data lives under the working directory and uses an unversioned
+tagged-V8 scratch format. Reads require publication in the current scope,
+including before the first builder call; every builder invocation resets that
+membership. See the [storage/invalidation contract](purmeta-storage.md) for its
+relationship to PHPurs's versioned module-state store.
 
 ## Printing contracts
 

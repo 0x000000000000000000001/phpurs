@@ -295,6 +295,8 @@ node tests/codegen/enum-regions.mjs
 
 `bin/test` accepts fixture names or paths, several fixtures, and `--skip-before=<Name>`. `-c` / `--clean` rebuilds the compiler and clears runner caches. The runner replaces files under `tests/runner/src` and generates output there; it is a scratch project, not a place to keep application sources.
 
+Only `tests/runner/spago.yaml` and `spago.lock` are retained in that scratch project. Sources copied from `tests/passing`, compiled output and caches are recreated by `bin/test` and ignored by Git. Historical audit reports, scripts and compact results are retained; their generated `audit/**/raw` workspaces are disposable and ignored.
+
 The [tests/codegen](tests/codegen) scripts exercise individual optimization passes and representation boundaries. They import the compiler modules from `output`, and some execute PHP, so rebuild those modules after changing compiler code. To run the whole group:
 
 ```bash

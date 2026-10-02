@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-02",
+  "benchmark_head": "25950a31bb0c76aeab549c843479cded92a29b1b",
+  "artifacts_directory": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-b3-composer-k16e_zbp",
+  "sha256": {
+    "phpurs.js": "6f4d128fbc2cb59b9ad820c6bf1c4fa4d5ffb84191b076ef9ddb09b1f61a9d51",
+    "driver_before_with_fixed_root.py": "ca60731a6c9284819f0db4a142e3cf2536c1050199b93a04f21be2748dd60579",
+    "driver.py": "0b4de658ac0da2754e7fd7737099dedac5c79398e8b37aa96710cef392a25d18",
+    "composer-state.php": "1f3dd5f4a462cb175f4bf7bc392b55d1a42561df6971eae5ed4dd6b89fd3ac91",
+    "composer.phar": "5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027",
+    "composer.lock": "5cc8040c09a17b72158aedc33f68cf84e012b804e4ed81a83849108d2c6c7b88"
+  },
+  "identical_artifacts": 350,
+  "generated_php_files": 307,
+  "vendor_files": 40,
+  "validated_values": ["7", "55", "202950", "100000", "20000", "125", "100000", "21536", "22", "10000000", "1200", "1000000", "202950", "5"],
+  "phases": [
+    {"name": "installed", "process_seconds": 26.213729125, "install_commands": 1, "vendor_mtimes_preserved": false},
+    {"name": "reused", "process_seconds": 20.899008125, "install_commands": 0, "vendor_mtimes_preserved": true},
+    {"name": "run-only", "process_seconds": 4.999905458999997, "install_commands": 0, "vendor_mtimes_preserved": true}
+  ],
+  "run_only_rejects_replaced_link": true,
+  "checks": {"phpurs_codegen": 61, "passing_fixtures": 2, "composer_regressions": 6, "benchmark_validator": 8},
+  "cleanup": {
+    "entries": 80077,
+    "logical_bytes": 2002783682,
+    "tracked_runner_files_removed": 1800,
+    "manifest": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-cleanup-uvfa_i7v/removed.json"
+  }
+}

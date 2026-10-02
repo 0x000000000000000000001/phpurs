@@ -1,0 +1,296 @@
+{
+  "backendSHA256": "940845b08dafb804d24f4456cfb78f4654c3be355b692d1d07ccf3ffef045a6b",
+  "inputFiles": 2839,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "node": "v24.8.0",
+  "nodeOptions": null,
+  "trials": {
+    "fill": {
+      "main": "Inter.Api.Main",
+      "modules": 2684,
+      "generated": 2684,
+      "cache": [
+        0,
+        2684,
+        2684
+      ],
+      "phasesMs": {
+        "load TAST + sort": 4402,
+        "prepare": 59,
+        "optimize + emit": 53606,
+        "finalize": 394,
+        "backend total": 58462
+      },
+      "processMs": 58788,
+      "peakRSSKiB": 3846688,
+      "reads": {
+        "corefn": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 213935062
+        },
+        "php": {
+          "attempts": 2686,
+          "files": 0,
+          "bytes": 0
+        }
+      },
+      "phpWrites": 2686,
+      "removedPHP": [],
+      "purmetaWrites": 2684,
+      "identicalFreshFiles": 5372
+    },
+    "control-fill": {
+      "main": "Inter.Api.Main",
+      "modules": 2684,
+      "generated": 2684,
+      "cache": null,
+      "phasesMs": {
+        "load TAST + sort": 4080,
+        "prepare": 24,
+        "optimize + emit": 52657,
+        "finalize": 451,
+        "backend total": 57213
+      },
+      "processMs": 57572,
+      "peakRSSKiB": 3446000,
+      "reads": {
+        "corefn": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 213935062
+        },
+        "php": {
+          "attempts": 2686,
+          "files": 0,
+          "bytes": 0
+        }
+      },
+      "phpWrites": 2686,
+      "removedPHP": [],
+      "purmetaWrites": 2684
+    },
+    "unchanged": {
+      "main": "Inter.Api.Main",
+      "modules": 2684,
+      "generated": 0,
+      "cache": [
+        2684,
+        0,
+        0
+      ],
+      "phasesMs": {
+        "load TAST + sort": 6885,
+        "prepare": 196,
+        "optimize + emit": 11493,
+        "finalize": 544,
+        "backend total": 19122
+      },
+      "processMs": 19424,
+      "peakRSSKiB": 3325440,
+      "reads": {
+        "corefn": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 213935062
+        },
+        "php": {
+          "attempts": 2686,
+          "files": 2686,
+          "bytes": 135282480
+        }
+      },
+      "phpWrites": 0,
+      "removedPHP": [],
+      "purmetaWrites": 2684,
+      "changedPHP": [],
+      "preservedPHPMtimes": 2686
+    },
+    "switch-main": {
+      "main": "Inter.Cli.Ping.Main",
+      "modules": 2684,
+      "generated": 2684,
+      "cache": [
+        0,
+        2684,
+        2684
+      ],
+      "phasesMs": {
+        "load TAST + sort": 5225,
+        "prepare": 55,
+        "optimize + emit": 53738,
+        "finalize": 454,
+        "backend total": 59473
+      },
+      "processMs": 60090,
+      "peakRSSKiB": 3904544,
+      "reads": {
+        "corefn": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 213935062
+        },
+        "php": {
+          "attempts": 2686,
+          "files": 2684,
+          "bytes": 68664186
+        }
+      },
+      "phpWrites": 2,
+      "removedPHP": [
+        "Inter.Api.Main/main.bundle.php",
+        "Inter.Api.Main/main.mod.php"
+      ],
+      "purmetaWrites": 2684,
+      "changedPHP": [
+        "Inter.Cli.Ping.Main/main.bundle.php",
+        "Inter.Cli.Ping.Main/main.mod.php"
+      ],
+      "identicalFreshFiles": 5372
+    },
+    "control-switch-main": {
+      "main": "Inter.Cli.Ping.Main",
+      "modules": 2684,
+      "generated": 2684,
+      "cache": null,
+      "phasesMs": {
+        "load TAST + sort": 4253,
+        "prepare": 25,
+        "optimize + emit": 45052,
+        "finalize": 286,
+        "backend total": 49617
+      },
+      "processMs": 50216,
+      "peakRSSKiB": 3298096,
+      "reads": {
+        "corefn": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 213935062
+        },
+        "php": {
+          "attempts": 2686,
+          "files": 0,
+          "bytes": 0
+        }
+      },
+      "phpWrites": 2686,
+      "removedPHP": [],
+      "purmetaWrites": 2684
+    },
+    "delete-module": {
+      "main": "Inter.Cli.Ping.Main",
+      "modules": 2683,
+      "generated": 2683,
+      "cache": [
+        0,
+        2683,
+        2683
+      ],
+      "phasesMs": {
+        "load TAST + sort": 4181,
+        "prepare": 54,
+        "optimize + emit": 51746,
+        "finalize": 423,
+        "backend total": 56405
+      },
+      "processMs": 56759,
+      "peakRSSKiB": 3784608,
+      "reads": {
+        "corefn": {
+          "attempts": 2683,
+          "files": 2683,
+          "bytes": 213697904
+        },
+        "php": {
+          "attempts": 2685,
+          "files": 2685,
+          "bytes": 135185989
+        }
+      },
+      "phpWrites": 1,
+      "removedPHP": [
+        "Inter.Api.Main/index.php"
+      ],
+      "purmetaWrites": 2683,
+      "changedPHP": [
+        "Inter.Cli.Ping.Main/main.bundle.php"
+      ],
+      "identicalFreshFiles": 5370
+    },
+    "control-delete-module": {
+      "main": "Inter.Cli.Ping.Main",
+      "modules": 2683,
+      "generated": 2683,
+      "cache": null,
+      "phasesMs": {
+        "load TAST + sort": 4097,
+        "prepare": 25,
+        "optimize + emit": 41315,
+        "finalize": 309,
+        "backend total": 45746
+      },
+      "processMs": 46082,
+      "peakRSSKiB": 3547120,
+      "reads": {
+        "corefn": {
+          "attempts": 2683,
+          "files": 2683,
+          "bytes": 213697904
+        },
+        "php": {
+          "attempts": 2685,
+          "files": 0,
+          "bytes": 0
+        }
+      },
+      "phpWrites": 2685,
+      "removedPHP": [],
+      "purmetaWrites": 2683
+    },
+    "restore-original": {
+      "main": "Inter.Api.Main",
+      "modules": 2684,
+      "generated": 0,
+      "cache": [
+        2684,
+        0,
+        0
+      ],
+      "phasesMs": {
+        "load TAST + sort": 4251,
+        "prepare": 57,
+        "optimize + emit": 8740,
+        "finalize": 395,
+        "backend total": 13444
+      },
+      "processMs": 13961,
+      "peakRSSKiB": 3373744,
+      "reads": {
+        "corefn": {
+          "attempts": 2684,
+          "files": 2684,
+          "bytes": 213935062
+        },
+        "php": {
+          "attempts": 2686,
+          "files": 2683,
+          "bytes": 68631159
+        }
+      },
+      "phpWrites": 3,
+      "removedPHP": [
+        "Inter.Cli.Ping.Main/main.bundle.php",
+        "Inter.Cli.Ping.Main/main.mod.php"
+      ],
+      "purmetaWrites": 2684,
+      "changedPHP": [
+        "Inter.Api.Main/index.php",
+        "Inter.Api.Main/main.bundle.php",
+        "Inter.Api.Main/main.mod.php"
+      ],
+      "identicalOriginalFiles": 5372
+    }
+  },
+  "initialCacheBytes": 570659606
+}

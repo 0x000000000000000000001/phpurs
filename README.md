@@ -148,14 +148,17 @@ The backend writes:
 | `output/<Module>/main.bundle.php` | Bundled entrypoint with `--bundle` or `--bundle-only`. |
 | `output/bundle.php` | Bundle of generated modules when either bundle flag is used without `--main`; it does not invoke an application entrypoint. |
 | `output/composer.json` | Generated `phpurs/lib-deps` package collecting discovered PHP requirements. |
+| `output/.phpurs-outputs.json` | Ownership and byte fingerprints of generated PHP, used to retire obsolete outputs. |
 
-The default mode emits `index.php` and `main.mod.php`. `--bundle` adds bundled outputs; `--bundle-only` emits the bundles and Composer manifest, skipping modular files and entrypoints. Changing emission mode preserves pre-existing files; a fresh output tree gives an exact artifact set for the selected mode.
+The default mode emits `index.php` and `main.mod.php`. `--bundle` adds bundled outputs; `--bundle-only` emits the bundles and Composer manifest, skipping modular files and entrypoints. Output families disabled by the selected mode retain their existing files: for example, `--bundle-only` preserves modular outputs.
 
 Generated PHP is written only when its UTF-8 bytes differ from the existing file or the file is missing. An identical rebuild preserves the PHP files' modification times. This applies to modules, modular entrypoints and both kinds of bundle.
 
+After a successful build from complete inputs, PHPurs removes its recorded, byte-identical outputs that became obsolete through module deletion or main selection. Obsolete user-modified and untracked files are preserved. Ownership is recorded separately from the module cache, so cleanup also runs with `--no-cache`. Module membership comes from the loaded CoreFn files; removing a source module requires refreshing those inputs. See the [output lifecycle contract](docs/cache.md#output-lifecycle-and-main-selection).
+
 The packaged CLI also caches complete module states under `<output>/.phpurs-cache/v1`. A matching entry skips optimization, translation and printing while still restoring missing or changed generated PHP. Keys cover exact CoreFn/FFI bytes, compiler/host identity, effective options, directives and the ordered module graph. The initial conservative policy invalidates a changed module and its successors. Use `--no-cache` for a full compilation without cache reads or writes, or remove `.phpurs-cache` to start cold. A successful cached invocation reports hits, misses and successful stores on stderr. See the [cache contract](docs/cache.md).
 
-Without `--main`, an entrypoint is written for every module exporting `main`. To target `App.Main`, set `args: ["--main", "App.Main"]` and run `php output/App.Main/main.mod.php`.
+Without `--main`, an entrypoint is written for every module exporting `main`. To target `App.Main`, set `args: ["--main", "App.Main"]` and run `php output/App.Main/main.mod.php`. An explicit main module must be loaded and export `main`; otherwise the build fails before emission.
 
 ### Compiler options
 

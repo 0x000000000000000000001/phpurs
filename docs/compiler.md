@@ -34,6 +34,7 @@ the [README](../README.md#build-the-backend).
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
+| Output lifecycle | [`OutputManifest.purs`](../src/Phpurs/OutputManifest.purs) | Record generated PHP ownership and retire unchanged obsolete outputs after successful finalization. |
 | Module-cache identity | [`CacheKey.purs`](../src/Phpurs/CacheKey.purs) | Plan versioned input keys, dependency keys and conservative preceding-module state identity. |
 | Captured build inputs | [`BuildInputs.purs`](../src/Phpurs/BuildInputs.purs) | Decode/hash each CoreFn from one captured buffer and capture selected FFI bytes before lookup. |
 | Active build cache | [`BuildCache.purs`](../src/Phpurs/BuildCache.purs) | Connect a complete key plan to optional state I/O and report hits/misses/stores. |
@@ -184,18 +185,30 @@ the `index.php` writes and `main.mod.php` entrypoints. Bundle emission uses
 
 With an explicit main, bundle-only emits its `main.bundle.php`. Without one, it
 emits a bundle entrypoint for every exported main plus a global `bundle.php` that
-does not invoke main. Composer collection runs in every mode. The mode selects
-the current writes and preserves existing files; use fresh input/output trees
-when comparing artifact sets.
+does not invoke main. An explicit main must be loaded and export `main`; `Main`
+checks this during preparation, before module emission. Composer collection runs
+in every mode. The mode selects the current writes and preserves the existing
+files of disabled output families.
 
-All four PHP write sites use `FileEmission.writeTextFileIfChanged`: module
+All four PHP write sites use `OutputManifest.writeOutput`: module
 `index.php`, `main.mod.php`, `main.bundle.php` and the global `bundle.php`.
-The helper encodes the generated string as UTF-8 and compares it with the existing
+It awaits `FileEmission.writeTextFileIfChanged` before recording ownership.
+That helper encodes the generated string as UTF-8 and compares it with the existing
 file's raw bytes. Decoding the old file would conceal some invalid UTF-8 sequences
 behind replacement characters. An equal file keeps its contents and modification
 time; a different or missing file is written asynchronously, and the build waits
 for completion. Only `ENOENT` is treated as missing output. Other read errors and
 all write errors propagate to the phase and total failure reporting.
+
+After entrypoint/Composer finalization, `OutputManifest.finalizeOutputs` compares
+this build's recorded PHP paths with `<outputDir>/.phpurs-outputs.json`. With
+complete, unambiguous inputs, it removes obsolete files in active output families
+only when their raw SHA-256 still matches the previous record. Modified/untracked
+files and replaced symlinks are preserved; disabled families retain their records
+for a later build. Missing or damaged ownership data authorizes no deletion.
+The new manifest is sorted, conditionally written and atomically replaced. Output
+and manifest I/O errors propagate. This lifecycle runs on hits, misses and builds
+with `--no-cache`; see the [detailed contract](cache.md#output-lifecycle-and-main-selection).
 
 The packaged CLI enables cache reuse by default; `--no-cache` compiles every
 module without reading or storing cached states. `tools/bundle.mjs` embeds all

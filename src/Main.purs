@@ -7,7 +7,7 @@ import Data.Array as Array
 import Data.Either (Either(..), note)
 import Data.Foldable (foldl)
 import Data.Map as Map
-import Data.Maybe (Maybe(..), fromMaybe, isJust)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (unwrap)
 import Data.Set as Set
 import Data.String as String
@@ -15,9 +15,10 @@ import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Aff (launchAff_)
+import Effect.Aff (launchAff_, throwError)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
+import Effect.Exception (error)
 import Effect.Ref as Ref
 import Node.Buffer.Immutable as Bytes
 import Node.Encoding (Encoding(..))
@@ -27,10 +28,10 @@ import Phpurs.BuildInputs (captureForeign, loadInputs)
 import Phpurs.CacheKey (Toolchain, fingerprintBytes)
 import Phpurs.ComposerMerge (mergeComposers)
 import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
-import Phpurs.FileEmission (writeTextFileIfChanged)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
 import Phpurs.ModuleState (newBuildRefs, publishModuleState, renderModuleState, supportsEmission)
+import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
 import Phpurs.PackagePaths (resolvePackagePaths)
 import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
@@ -92,7 +93,16 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
   loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputs outputDir
   let finalModules = loaded.modules
 
-  { refs, directives, packagePaths, foreignSources, cache } <- Metrics.measure "prepare" \_ -> do
+  { refs, directives, packagePaths, foreignSources, cache, targetMainModules } <- Metrics.measure "prepare" \_ -> do
+    let
+      modules = Array.fromFoldable finalModules
+      exportsMain (Module m) = Array.elem (Ident "main") m.exports
+    targetMainModules <- case args.mbMainModule of
+      Nothing -> pure $ map (\(Module m) -> unwrap m.name) $ Array.filter exportsMain modules
+      Just mainMod -> case Array.find (\(Module m) -> unwrap m.name == mainMod) modules of
+        Nothing -> throwError $ error $ "Main module " <> mainMod <> " was not loaded"
+        Just m | not (exportsMain m) -> throwError $ error $ "Module " <> mainMod <> " does not export main"
+        Just _ -> pure [ mainMod ]
     refs <- liftEffect newBuildRefs
 
     -- Composer precedence follows module-name order, not dependency order.
@@ -118,7 +128,7 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
         , directives: fingerprintBytes (Bytes.fromString defaultDirectives UTF8)
         } inputs
       _, _ -> pure BuildCache.disabled
-    pure { refs, directives, packagePaths, foreignSources, cache }
+    pure { refs, directives, packagePaths, foreignSources, cache, targetMainModules }
 
   Metrics.measure "optimize + emit" \_ ->
     buildModules
@@ -151,18 +161,13 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
   Metrics.measure "finalize" \_ -> do
     backendModules <- liftEffect $ Ref.read refs.backendModulesRef
 
-    let
-      targetMainModules = case args.mbMainModule of
-        Just mainMod -> [ mainMod ]
-        Nothing -> Array.mapMaybe (\(Module m) -> if isJust (Array.elemIndex (Ident "main") m.exports) then Just (unwrap m.name) else Nothing) (Array.fromFoldable finalModules)
-
     _ <- traverse
       ( \mainMod -> do
           let entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath }
 
           if emitBundle then do
             bundleContent <- liftEffect $ Ref.read refs.bundleContentRef
-            writeTextFileIfChanged (outputDir <> "/" <> mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
+            writeOutput refs.outputs outputDir BundleOutput (mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
           else pure unit
 
           when emitModules do
@@ -171,7 +176,7 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
               reachable = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
               modEntryPoint = printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachable)
             liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
-            writeTextFileIfChanged (outputDir <> "/" <> mainMod <> "/main.mod.php") modEntryPoint
+            writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php") modEntryPoint
       )
       targetMainModules
 
@@ -180,8 +185,9 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
         Just _ -> pure unit
         Nothing -> do
           bundleContent <- liftEffect $ Ref.read refs.bundleContentRef
-          writeTextFileIfChanged (outputDir <> "/bundle.php") bundleContent
+          writeOutput refs.outputs outputDir BundleOutput "bundle.php" bundleContent
     else pure unit
 
     liftEffect $ mergeComposers { outputDir, packageRoots: packagePaths.composerRoots }
+    liftEffect $ finalizeOutputs refs.outputs outputDir emission loaded.cacheable
   liftEffect cache.report

@@ -24,6 +24,16 @@ fs.writeFile = (file, ...args) => {
   writes.push(String(file));
   return writeFile(file, ...args);
 };
+for (const operation of ['readFileSync', 'unlinkSync', 'renameSync']) {
+  const original = fs[operation];
+  fs[operation] = (file, ...args) => {
+    const target = operation === 'renameSync' ? args[0] : file;
+    if (config.failure?.operation === operation && String(target) === config.failure.file) {
+      throw Object.assign(new Error('fixture I/O failure: ' + config.failure.code), { code: config.failure.code });
+    }
+    return original(file, ...args);
+  };
+}
 if (config.host) {
   for (const [field, value] of Object.entries(config.host)) Object.defineProperty(process, field, { value });
 }

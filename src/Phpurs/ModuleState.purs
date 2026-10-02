@@ -24,8 +24,8 @@ import Effect.Ref (Ref)
 import Effect.Ref as Ref
 import Node.FS.Aff as FS
 import Phpurs.CodeGen (translate)
-import Phpurs.FileEmission (writeTextFileIfChanged)
 import Phpurs.GenNativeForeign (genForeignModule)
+import Phpurs.OutputManifest (OutputKind(..), OutputTracker, newOutputTracker, writeOutput)
 import Phpurs.Printer (printPhpFile)
 import PureScript.Backend.Optimizer.Convert (BackendImplementations, BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ModuleName)
@@ -41,16 +41,18 @@ type ModuleState =
 
 type BuildRefs =
   { bundleContentRef :: Ref String
+  , outputs :: OutputTracker
   , globalAritiesRef :: Ref (Map String Int)
   , backendModulesRef :: Ref (Map ModuleName { imports :: Set ModuleName, implementations :: BackendImplementations })
   }
 
 newBuildRefs :: Effect BuildRefs
 newBuildRefs = do
+  outputs <- newOutputTracker
   bundleContentRef <- Ref.new "<?php\n\n"
   globalAritiesRef <- Ref.new Map.empty
   backendModulesRef <- Ref.new Map.empty
-  pure { bundleContentRef, globalAritiesRef, backendModulesRef }
+  pure { bundleContentRef, globalAritiesRef, backendModulesRef, outputs }
 
 renderModuleState :: Emission -> Array (Array String) -> String -> Map String Int -> BackendModule -> ModuleState
 renderModuleState modes imports foreignSource currentArities backend =
@@ -85,5 +87,5 @@ publishModuleState modes outputDir refs state = do
     Just code -> liftEffect $ Ref.modify_ (\previous -> previous <> code <> "\n") refs.bundleContentRef
     Nothing -> pure unit
   when modes.emitModules case state.modularPhp of
-    Just code -> writeTextFileIfChanged (outputDir <> "/" <> unwrap name <> "/index.php") code
+    Just code -> writeOutput refs.outputs outputDir ModularOutput (unwrap name <> "/index.php") code
     Nothing -> pure unit

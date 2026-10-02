@@ -216,6 +216,52 @@ incomplete emission before publishing. Fresh states are stored after successful
 publication. These explicit hooks are separate from the CLI's automatically
 planned `BuildCache` session.
 
+## Output lifecycle and main selection
+
+[`Phpurs.OutputManifest`](../src/Phpurs/OutputManifest.purs) maintains
+`<outputDir>/.phpurs-outputs.json` independently of the optional module-state
+cache. It runs for fresh modules, restored modules, development entrypoints and
+`--no-cache`. `writeOutput` waits for byte-exact conditional emission, then records
+the relative PHP path, output family (`modules` or `bundles`) and raw-byte SHA-256.
+An unchanged file is recorded as well, so a full-hit build has complete ownership.
+
+After entrypoints and Composer have finalized, the tracker compares the current
+paths with the previous **version 1** manifest:
+
+- For an active family, a previously recorded path absent from the current build
+  is obsolete. It is removed only if it is still a regular file with identical
+  bytes. Replaced file/directory symlinks and user-edited files are preserved and
+  relinquished from ownership. Untracked files are preserved too.
+- Disabled families retain both their files and their ownership records. Thus a
+  `--bundle-only` build preserves modular outputs, and a modular-only build
+  preserves bundles. Re-enabling a family allows its obsolete files to be retired.
+- Incomplete or duplicate CoreFn inputs defer deletion and retain previous records
+  alongside successfully emitted outputs. A failed optimization/emission never
+  reaches cleanup. An empty, complete graph can retire all previous module and
+  executable-entrypoint files; bundle mode still emits the empty global bundle.
+- Missing, malformed, incompatible or structurally invalid ownership data supplies
+  no deletion candidates. Only fixed compiler PHP path shapes are accepted;
+  arbitrary paths, CoreFn and foreign sources cannot be cleanup targets. Current
+  outputs establish new records, while unknown historical files stay untracked.
+- Sorted records make unchanged manifests byte-stable. Publication uses a unique
+  sibling temporary file and atomic rename. Other manifest/cleanup I/O errors
+  fail the build and retain the previous manifest for retry. This atomicity covers
+  the manifest, not the entire output tree: finalization may already have emitted
+  or retired individual files before an error.
+
+Module membership is defined by loaded CoreFn inputs. Removing only a `.purs`
+source while leaving its CoreFn cannot signal deletion to this backend. Module
+directories and their other files are retained. Content-addressed cache entries
+remain reusable when returning to a previous graph/options; PBO's existing
+current-build membership prevents reading stale `.purmeta` implementations.
+
+`Main` validates an explicit `--main` during preparation: the module must be
+loaded and export `main`. Invalid selections fail before module emission. Without
+the flag, all current exported mains are selected. Changing that set retires old
+entrypoints in active families; selecting an explicit main also retires a tracked
+global `bundle.php`. Finalization rebuilds reachability and Composer requirements
+from the current graph, including on full cache hits.
+
 ## Validation
 
 `tests/codegen/module-cache.mjs` checks constructor/sharing round trips, a
@@ -240,11 +286,24 @@ storage and unsupported graphs. It replaces CoreFn, FFI and the executable on
 disk during a read callback to verify the capture contract. Differential builds
 check file sets and bytes; executable fixtures verify the changed PHP results.
 
+Its lifecycle cases delete CoreFn while retaining old generated files, switch
+between explicit and automatically discovered mains, remove a main export and
+reach an empty graph. Fresh `--no-cache` controls start with only current CoreFn
+at the same paths; file sets, PHP, Composer and ownership bytes agree, and modular
+and bundled entrypoints execute with the expected results. Further cases cover
+disabled-family preservation/resumption, custom output paths/grouped arguments,
+invalid main selection, incomplete/duplicate input, user edits, symlinks, damaged
+metadata, cleanup errors and atomic publication failure.
+
 The [CLI activation assay](../audit/2026-10-02/cache-activation/report.md) verifies
 2,684 actual hits on unchanged b8x input and the predicted 833/1,850 misses for
 the M0 leaf/dependency changes. Every state matches its uncached control's 5,371
 files. It retains single-run timing, memory and I/O samples alongside the exact
 module lists; those samples are not a repeated performance benchmark.
+
+The [lifecycle assay](../audit/2026-10-02/cache-lifecycle/report.md) extends this to
+b8x main selection and module deletion, with fresh uncached controls and a return
+to the original cached graph/options.
 
 Composer manifests are collected independently during finalization. This key
 identifies module/compiler state; it does not authorize reuse of a generated

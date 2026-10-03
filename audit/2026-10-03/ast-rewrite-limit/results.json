@@ -1,0 +1,572 @@
+{
+  "inputFiles": 2839,
+  "modules": 2684,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "beforeSHA256": "b324346395e449a70a93ba2a94e671dedb6963c39624d3ed40f10f859f22ca95",
+  "afterSHA256": "6d3c9172d475bcc3f943ec3b779eb64f3bef840947ba5cc86634b71858c056a7",
+  "node": "v24.8.0",
+  "trials": {
+    "before-default": {
+      "processMs": 50185.522832999995,
+      "flags": [],
+      "peakRSSKiB": 3663072,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 2686,
+      "astNodes": 24356,
+      "profile": {
+        "version": 1,
+        "status": "completed",
+        "totalMs": 49799.223625,
+        "phases": {
+          "corefn.read": {
+            "calls": 8053,
+            "completed": 8053,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 468.7993469999867,
+            "maxMs": 2.521957999999927
+          },
+          "corefn.decode": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 3678.3935240000155,
+            "maxMs": 75.8097499999999
+          },
+          "corefn.sort": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 21.69666700000016,
+            "maxMs": 21.69666700000016
+          },
+          "ffi": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 13.814917999997306,
+            "maxMs": 0.37879199999952107
+          },
+          "cache.plan": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 0.051292000000103144,
+            "maxMs": 0.051292000000103144
+          },
+          "cache.load": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1.9515670000710088,
+            "maxMs": 0.010083999999551452
+          },
+          "optimize": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 30397.34178500011,
+            "maxMs": 648.5302499999998
+          },
+          "translate": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 6782.118988000187,
+            "maxMs": 184.1707920000008
+          },
+          "print": {
+            "calls": 2686,
+            "completed": 2686,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 3517.493253999962,
+            "maxMs": 396.26812499999505
+          },
+          "php.mkdir": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 974.0618970000687,
+            "maxMs": 13.532749999998487
+          },
+          "php.write": {
+            "calls": 2686,
+            "completed": 2686,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1340.5967000000664,
+            "maxMs": 252.69387500000448
+          },
+          "cache.store": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1.9335300000375355,
+            "maxMs": 0.010457999999744061
+          },
+          "entrypoint": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 61.199791999999434,
+            "maxMs": 61.199791999999434
+          },
+          "composer": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 4.656500000004598,
+            "maxMs": 4.656500000004598
+          },
+          "cleanup": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 4.769000000000233,
+            "maxMs": 4.769000000000233
+          },
+          "diagnostics": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 168.64946800016241,
+            "maxMs": 5.857624999996915
+          }
+        }
+      },
+      "largestModules": [
+        [
+          "Core.Feat.Review.Message.Query.GetArticle.Projection.Projection",
+          297
+        ],
+        [
+          "Data.CodePoint.Unicode.Internal",
+          297
+        ],
+        [
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+          294
+        ],
+        [
+          "Util.Style.Anchor",
+          244
+        ],
+        [
+          "Core.Feat.Review.Message.Query.ListNewsRelatedArticles.Projection.Projection",
+          208
+        ],
+        [
+          "Halogen.HTML.Elements",
+          207
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetFrontPage.Projection.Projection",
+          200
+        ],
+        [
+          "Core.Feat.Review.Message.Query.ListNewsletterArticles.Projection.Projection",
+          171
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetArticleQuote.Projection.Projection",
+          166
+        ],
+        [
+          "Core.Feat.Review.Message.Query.ListMostReadArticles.Projection.Projection",
+          161
+        ]
+      ]
+    },
+    "after-default": {
+      "processMs": 48857.865042,
+      "flags": [],
+      "peakRSSKiB": 3719616,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 0,
+      "astNodes": 1514089,
+      "profile": {
+        "version": 1,
+        "status": "completed",
+        "totalMs": 48492.209458,
+        "phases": {
+          "corefn.read": {
+            "calls": 8055,
+            "completed": 8055,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 495.2451609999963,
+            "maxMs": 2.700416999999902
+          },
+          "corefn.decode": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 3747.8452639999905,
+            "maxMs": 74.84020899999996
+          },
+          "corefn.sort": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 19.963666999999987,
+            "maxMs": 19.963666999999987
+          },
+          "ffi": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 15.4444550000062,
+            "maxMs": 1.6352919999999358
+          },
+          "cache.plan": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 0.04929100000026665,
+            "maxMs": 0.04929100000026665
+          },
+          "cache.load": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1.8444040000695168,
+            "maxMs": 0.021333000004233327
+          },
+          "optimize": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 29258.451866000145,
+            "maxMs": 613.796792000001
+          },
+          "translate": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 6687.563377999918,
+            "maxMs": 176.75
+          },
+          "print": {
+            "calls": 2686,
+            "completed": 2686,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 3453.3774249999306,
+            "maxMs": 381.2965409999997
+          },
+          "php.mkdir": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 974.274084000047,
+            "maxMs": 7.053166999998211
+          },
+          "php.write": {
+            "calls": 2686,
+            "completed": 2686,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 800.5305719999833,
+            "maxMs": 237.36729200000264
+          },
+          "cache.store": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1.655435999862675,
+            "maxMs": 0.011083999999755179
+          },
+          "entrypoint": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 93.8969999999972,
+            "maxMs": 93.8969999999972
+          },
+          "composer": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 5.872875000000931,
+            "maxMs": 5.872875000000931
+          },
+          "cleanup": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 7.738333000001148,
+            "maxMs": 7.738333000001148
+          },
+          "diagnostics": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 422.81347300014477,
+            "maxMs": 15.445249999997031
+          }
+        }
+      },
+      "largestModules": [
+        [
+          "Inter.Cli.Logic.Registry",
+          88430
+        ],
+        [
+          "Inter.Api.Registry",
+          60649
+        ],
+        [
+          "Data.CodePoint.Unicode.Internal",
+          47492
+        ],
+        [
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+          29904
+        ],
+        [
+          "Data.CodePoint.Unicode.Internal.Casing",
+          28193
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetArticle.Projection.Projection",
+          25704
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetFrontPage.Field.Needs",
+          20613
+        ],
+        [
+          "Core.Feat.Review.Message.Query.ListNewsRelatedArticles.Projection.Projection",
+          20359
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetFrontPage.Query",
+          20356
+        ],
+        [
+          "Parsing.Token",
+          20234
+        ]
+      ]
+    },
+    "after-10001": {
+      "processMs": 49162.22920800001,
+      "flags": [
+        "--rewrite-limit=10001"
+      ],
+      "peakRSSKiB": 3708544,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 0,
+      "astNodes": 1514089,
+      "profile": {
+        "version": 1,
+        "status": "completed",
+        "totalMs": 48781.184708,
+        "phases": {
+          "corefn.read": {
+            "calls": 8055,
+            "completed": 8055,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 547.4235730000273,
+            "maxMs": 11.69787499999984
+          },
+          "corefn.decode": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 3710.0831709999998,
+            "maxMs": 75.1478330000001
+          },
+          "corefn.sort": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 19.730333000000428,
+            "maxMs": 19.730333000000428
+          },
+          "ffi": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 22.65024200001244,
+            "maxMs": 1.5988330000000133
+          },
+          "cache.plan": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 0.036833999999544176,
+            "maxMs": 0.036833999999544176
+          },
+          "cache.load": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 2.1272600000220336,
+            "maxMs": 0.016959000000497326
+          },
+          "optimize": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 29081.456733999956,
+            "maxMs": 628.5002499999973
+          },
+          "translate": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 6728.4350920000215,
+            "maxMs": 181.33650000000125
+          },
+          "print": {
+            "calls": 2686,
+            "completed": 2686,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 3508.919820000003,
+            "maxMs": 401.4545419999995
+          },
+          "php.mkdir": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 954.6080749999537,
+            "maxMs": 8.934583999998722
+          },
+          "php.write": {
+            "calls": 2686,
+            "completed": 2686,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1196.6259259999297,
+            "maxMs": 244.50312499999563
+          },
+          "cache.store": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 1.7020709998441816,
+            "maxMs": 0.00891700000011042
+          },
+          "entrypoint": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 82.3448339999959,
+            "maxMs": 82.3448339999959
+          },
+          "composer": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 5.926041999999143,
+            "maxMs": 5.926041999999143
+          },
+          "cleanup": {
+            "calls": 1,
+            "completed": 1,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 7.22179199999664,
+            "maxMs": 7.22179199999664
+          },
+          "diagnostics": {
+            "calls": 2684,
+            "completed": 2684,
+            "failed": 0,
+            "cancelled": 0,
+            "ms": 443.39819700004955,
+            "maxMs": 19.49920800000109
+          }
+        }
+      },
+      "largestModules": [
+        [
+          "Inter.Cli.Logic.Registry",
+          88430
+        ],
+        [
+          "Inter.Api.Registry",
+          60649
+        ],
+        [
+          "Data.CodePoint.Unicode.Internal",
+          47492
+        ],
+        [
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+          29904
+        ],
+        [
+          "Data.CodePoint.Unicode.Internal.Casing",
+          28193
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetArticle.Projection.Projection",
+          25704
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetFrontPage.Field.Needs",
+          20613
+        ],
+        [
+          "Core.Feat.Review.Message.Query.ListNewsRelatedArticles.Projection.Projection",
+          20359
+        ],
+        [
+          "Core.Feat.Review.Message.Query.GetFrontPage.Query",
+          20356
+        ],
+        [
+          "Parsing.Token",
+          20234
+        ]
+      ]
+    }
+  },
+  "increasedModules": 2316,
+  "inputsUnchanged": true
+}

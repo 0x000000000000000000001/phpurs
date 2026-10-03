@@ -11,8 +11,11 @@ module Phpurs.CodeGen
 
 import Prelude
 
+import Control.Monad.ST as ST
+import Control.Monad.ST.Ref as STRef
 import Data.Array as Array
 import Data.Array.NonEmpty (fromArray, toArray)
+import Data.Array.ST as STArray
 import Data.Foldable (all, foldMap, foldl)
 import Data.Map (Map)
 import Data.Map as Map
@@ -28,6 +31,7 @@ import Phpurs.CodeGen.Types (exprTypeToPhpType, extractFuncType, getRetType, rem
 import Phpurs.CompactLoops as CompactLoops
 import Phpurs.CopyCleanup as CopyCleanup
 import Phpurs.EnumRegions as EnumRegions
+import Phpurs.FreeVars (freeVars)
 import Phpurs.NullableConstructors as Nullable
 import Phpurs.PartialBindings as PartialBindings
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
@@ -37,7 +41,7 @@ import PureScript.Backend.Optimizer.Codegen.Tco (TcoAnalysis(..), TcoExpr(..), T
 import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Literal(..), ModuleName(..), Prop(..), Qualified(..))
-import PureScript.Backend.Optimizer.FreeVars (freeVars, localId)
+import PureScript.Backend.Optimizer.FreeVars (localId)
 import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendEffect(..), BackendOperator(..), BackendSyntax(..), Pair(..))
 import PureScript.Backend.Optimizer.Syntax as Syn
 
@@ -79,11 +83,23 @@ translateValue ctx = translateExpr (valueContext ctx)
 
 -- | Lower sibling operands in order, sharing a single temporary counter.
 translateValues :: TranslationContext -> Int -> Array TcoExpr -> TranslatedValues
-translateValues ctx nextId = foldl step { stmts: [], exprs: [], nextId }
-  where
-  step acc expr =
-    let result = translateValue ctx acc.nextId expr
-    in { stmts: acc.stmts <> result.stmts, exprs: Array.snoc acc.exprs result.expr, nextId: result.nextId }
+translateValues ctx nextId values = ST.run do
+  stmts <- STArray.new
+  exprs <- STArray.new
+  counter <- STRef.new nextId
+  ST.foreach values \expr -> do
+    current <- STRef.read counter
+    let result = translateValue ctx current expr
+    -- Append only the new statements, without recopying the accumulated prefix
+    -- or spreading a potentially large statement array into call arguments.
+    ST.foreach result.stmts \stmt -> void $ STArray.push stmt stmts
+    void $ STArray.push result.expr exprs
+    void $ STRef.write result.nextId counter
+  -- Both arrays are fresh and remain private until construction has finished.
+  finalStmts <- STArray.unsafeFreeze stmts
+  finalExprs <- STArray.unsafeFreeze exprs
+  finalId <- STRef.read counter
+  pure { stmts: finalStmts, exprs: finalExprs, nextId: finalId }
 
 renameLocal :: TranslationContext -> String -> String
 renameLocal ctx name = fromMaybe name (Map.lookup name ctx.boundVars)

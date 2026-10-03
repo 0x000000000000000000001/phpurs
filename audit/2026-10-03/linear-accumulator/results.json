@@ -1,0 +1,429 @@
+{
+  "date": "2026-10-03",
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-b4-accumulator-kyls4vxg",
+  "codegenChecks": 78,
+  "inputFiles": 2839,
+  "modules": 2684,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "inputCorpusUnchanged": true,
+  "node": "v24.8.0",
+  "jobs": 1,
+  "beforeSHA256": "6d3c9172d475bcc3f943ec3b779eb64f3bef840947ba5cc86634b71858c056a7",
+  "afterSHA256": "358bd327a0ea245be51c137e7914af4707e321d2f16dedb741ec8ef44bcfaaa9",
+  "librarySHA256": {
+    "before": "9fac67092a12dc3d8f951a94e8de4eee87bd1df0fbd7fabbe6e9c2e105c42ae6",
+    "after": "5a311abf50a3bffa4f77c1f23f9c2ebd669a661916e6b56816512361de06393c"
+  },
+  "copyCounts": {
+    "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection": {
+      "record.exprs": {
+        "calls": 592,
+        "copiedPrefixItems": 1059,
+        "maxPrefix": 17
+      },
+      "values.stmts": {
+        "calls": 14669,
+        "copiedPrefixItems": 0,
+        "maxPrefix": 0
+      },
+      "values.exprs": {
+        "calls": 14669,
+        "copiedPrefixItems": 27526,
+        "maxPrefix": 11
+      }
+    },
+    "Data.CodePoint.Unicode.Internal": {
+      "record.exprs": {
+        "calls": 15447,
+        "copiedPrefixItems": 17298,
+        "maxPrefix": 5
+      },
+      "values.stmts": {
+        "calls": 4843,
+        "copiedPrefixItems": 0,
+        "maxPrefix": 0
+      },
+      "values.exprs": {
+        "calls": 4843,
+        "copiedPrefixItems": 6651530,
+        "maxPrefix": 3395
+      }
+    },
+    "Inter.Api.Registry": {
+      "record.exprs": {
+        "calls": 213,
+        "copiedPrefixItems": 28,
+        "maxPrefix": 3
+      },
+      "values.stmts": {
+        "calls": 43993,
+        "copiedPrefixItems": 0,
+        "maxPrefix": 0
+      },
+      "values.exprs": {
+        "calls": 43993,
+        "copiedPrefixItems": 73096,
+        "maxPrefix": 9
+      }
+    },
+    "Inter.Cli.Logic.Registry": {
+      "record.exprs": {
+        "calls": 554,
+        "copiedPrefixItems": 20,
+        "maxPrefix": 3
+      },
+      "values.stmts": {
+        "calls": 63418,
+        "copiedPrefixItems": 16,
+        "maxPrefix": 4
+      },
+      "values.exprs": {
+        "calls": 63418,
+        "copiedPrefixItems": 105347,
+        "maxPrefix": 10
+      }
+    }
+  },
+  "isolatedModules": [
+    {
+      "name": "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+      "stateSHA256": "1fd91dad778c62f6ecb773c29f2ce1fa747222aa94de24854e75f39fa2fb9daf",
+      "phpAstSHA256": "1983ead42dbc5ab2f59031631a810ef8bfd89013d5cd81636cb69b9953b84486",
+      "processMediansMs": {
+        "before": [
+          89.63233300000002,
+          94.777333,
+          88.9766669999999
+        ],
+        "after": [
+          90.99129199999993,
+          91.98337500000002,
+          91.87429100000008
+        ]
+      },
+      "medianMs": {
+        "before": 89.63233300000002,
+        "after": 91.87429100000008
+      },
+      "changePct": 2.5012826565610657
+    },
+    {
+      "name": "Data.CodePoint.Unicode.Internal",
+      "stateSHA256": "40c6a0ab4e76efde1a9acec1be1fd15ddf185b7285783dd610c4d83d7298e870",
+      "phpAstSHA256": "53d2c0234f6e4f3a05dd6d1b8d60c25fd5dab538b8f548793f09062c31a153cf",
+      "processMediansMs": {
+        "before": [
+          35.83829100000003,
+          38.85183400000005,
+          36.945582999999715
+        ],
+        "after": [
+          31.96241599999985,
+          32.31837499999983,
+          31.669124999999894
+        ]
+      },
+      "medianMs": {
+        "before": 36.945582999999715,
+        "after": 31.96241599999985
+      },
+      "changePct": -13.487855909595215
+    },
+    {
+      "name": "Inter.Api.Registry",
+      "stateSHA256": "bc14990e7a33a0daadfa4c12cf16d50b77f40898e068b3fea8f5df06b4b7de93",
+      "phpAstSHA256": "92ea2a35858bf417b53634768f90091e0f044df06487299f4921e248cc52c92a",
+      "processMediansMs": {
+        "before": [
+          86.01283299999977,
+          87.93154200000026,
+          85.99137500000006
+        ],
+        "after": [
+          81.37866699999995,
+          83.96737500000017,
+          86.27125000000024
+        ]
+      },
+      "medianMs": {
+        "before": 86.01283299999977,
+        "after": 83.96737500000017
+      },
+      "changePct": -2.378084674875902
+    },
+    {
+      "name": "Inter.Cli.Logic.Registry",
+      "stateSHA256": "4dced670557d9f6e8801b77ad259d6442f5f735c9bc335722cd4e1f1646e0728",
+      "phpAstSHA256": "db0aec93b7bd00ddaedf048abd8957a6c12df763a61e34c16671b311f610f81c",
+      "processMediansMs": {
+        "before": [
+          150.05925000000025,
+          152.3207080000002,
+          150.9634590000005
+        ],
+        "after": [
+          149.29700000000048,
+          145.85799999999927,
+          148.89599999999973
+        ]
+      },
+      "medianMs": {
+        "before": 150.9634590000005,
+        "after": 148.89599999999973
+      },
+      "changePct": -1.3695095579392969
+    }
+  ],
+  "syntheticScaling": [
+    {
+      "kind": "values",
+      "width": 512,
+      "beforeMedianMs": 0.25800000000000267,
+      "afterMedianMs": 0.12633299999999537
+    },
+    {
+      "kind": "values",
+      "width": 1024,
+      "beforeMedianMs": 0.5784170000000017,
+      "afterMedianMs": 0.2158330000000035
+    },
+    {
+      "kind": "values",
+      "width": 2048,
+      "beforeMedianMs": 1.9026250000000005,
+      "afterMedianMs": 0.35191700000000026
+    },
+    {
+      "kind": "values",
+      "width": 4096,
+      "beforeMedianMs": 6.784333999999987,
+      "afterMedianMs": 0.464500000000001
+    },
+    {
+      "kind": "values",
+      "width": 8192,
+      "beforeMedianMs": 23.320290999999997,
+      "afterMedianMs": 0.9317089999999979
+    },
+    {
+      "kind": "statements",
+      "width": 512,
+      "beforeMedianMs": 4.249833000000081,
+      "afterMedianMs": 4.451625000000007
+    },
+    {
+      "kind": "statements",
+      "width": 1024,
+      "beforeMedianMs": 9.063959000000068,
+      "afterMedianMs": 8.286000000000001
+    },
+    {
+      "kind": "statements",
+      "width": 2048,
+      "beforeMedianMs": 19.790958000000046,
+      "afterMedianMs": 16.59687500000001
+    },
+    {
+      "kind": "statements",
+      "width": 4096,
+      "beforeMedianMs": 44.798458999999866,
+      "afterMedianMs": 33.47554100000002
+    },
+    {
+      "kind": "statements",
+      "width": 8192,
+      "beforeMedianMs": 108.14674999999988,
+      "afterMedianMs": 66.57445800000005
+    }
+  ],
+  "allocationRegression": {
+    "before": [
+      {
+        "kind": "values",
+        "width": 4096,
+        "copiedPrefixItems": 8386560
+      },
+      {
+        "kind": "statements",
+        "width": 4096,
+        "copiedPrefixItems": 16773120
+      }
+    ],
+    "after": [
+      {
+        "kind": "values",
+        "width": 4096,
+        "copiedPrefixItems": 0
+      },
+      {
+        "kind": "statements",
+        "width": 4096,
+        "copiedPrefixItems": 0
+      }
+    ]
+  },
+  "fullBuilds": {
+    "1-before": {
+      "processMs": 48317.603167,
+      "peakRSSKiB": 3779440,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 0,
+      "totalMs": 47904.916708,
+      "translateMs": 6671.950188000138,
+      "targetTranslateMs": 42.634625000002416
+    },
+    "2-after": {
+      "processMs": 49534.617667000006,
+      "peakRSSKiB": 3742432,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 0,
+      "totalMs": 49148.557209000006,
+      "translateMs": 6824.204554000024,
+      "targetTranslateMs": 34.47687500000029
+    },
+    "3-after": {
+      "processMs": 52859.745125,
+      "peakRSSKiB": 3723536,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 0,
+      "totalMs": 52465.687291999995,
+      "translateMs": 7137.016275000003,
+      "targetTranslateMs": 34.824750000003405
+    },
+    "4-before": {
+      "processMs": 51791.872667,
+      "peakRSSKiB": 3800688,
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpWrites": 0,
+      "totalMs": 51380.630083000004,
+      "translateMs": 7086.9374530000105,
+      "targetTranslateMs": 43.96150000000125
+    }
+  },
+  "benchmarks": {
+    "before": {
+      "artifacts": 350,
+      "generatedPhpFiles": 307,
+      "results": {
+        "mode": "pure",
+        "labels": [
+          "AST Evaluation:",
+          "Fibonacci:",
+          "List Processing (900 elements):",
+          "Tail Call Optimization (100k calls):",
+          "Deep Record Updates (10k iterations):",
+          "Ackermann (3, 4):",
+          "Church Numerals (100k Closure Applications):",
+          "Prime Sieve (sum primes up to 500):",
+          "Red-Black Tree (100k Worst-Case Insertions):",
+          "Polymorphism (10M Type Class Dict Lookups):",
+          "State Monad (1.2k Binds, 60 Stack Depth):",
+          "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "Array Processing (900 elements):",
+          "RowToList (Keys Count):"
+        ],
+        "values": [
+          "7",
+          "55",
+          "202950",
+          "100000",
+          "20000",
+          "125",
+          "100000",
+          "21536",
+          "22",
+          "10000000",
+          "1200",
+          "1000000",
+          "202950",
+          "5"
+        ],
+        "times_us": [
+          2.33994,
+          1.215281,
+          152.619797,
+          76.635578,
+          1579.229125,
+          50.54134,
+          2113.234375,
+          789.489563,
+          58700.541,
+          6575.0625,
+          491.546875,
+          853.458375,
+          99.820313,
+          0.900762
+        ],
+        "total_ms": 71.486635,
+        "sum_displayed_lines_ms": 71.486634824,
+        "values_validated": true,
+        "oracle": "core",
+        "timer_unit": "microseconds"
+      }
+    },
+    "after": {
+      "artifacts": 350,
+      "generatedPhpFiles": 307,
+      "results": {
+        "mode": "pure",
+        "labels": [
+          "AST Evaluation:",
+          "Fibonacci:",
+          "List Processing (900 elements):",
+          "Tail Call Optimization (100k calls):",
+          "Deep Record Updates (10k iterations):",
+          "Ackermann (3, 4):",
+          "Church Numerals (100k Closure Applications):",
+          "Prime Sieve (sum primes up to 500):",
+          "Red-Black Tree (100k Worst-Case Insertions):",
+          "Polymorphism (10M Type Class Dict Lookups):",
+          "State Monad (1.2k Binds, 60 Stack Depth):",
+          "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "Array Processing (900 elements):",
+          "RowToList (Keys Count):"
+        ],
+        "values": [
+          "7",
+          "55",
+          "202950",
+          "100000",
+          "20000",
+          "125",
+          "100000",
+          "21536",
+          "22",
+          "10000000",
+          "1200",
+          "1000000",
+          "202950",
+          "5"
+        ],
+        "times_us": [
+          2.338633,
+          1.198474,
+          152.6875,
+          76.741863,
+          1566.182375,
+          50.952148,
+          2105.541625,
+          803.989563,
+          59079.042,
+          6705.583,
+          502.625,
+          809.60675,
+          100.271156,
+          0.942291
+        ],
+        "total_ms": 71.957702,
+        "sum_displayed_lines_ms": 71.95770237800002,
+        "values_validated": true,
+        "oracle": "core",
+        "timer_unit": "microseconds"
+      }
+    }
+  }
+}

@@ -25,6 +25,7 @@ the [README](../README.md#build-the-backend).
 | --- | --- | --- |
 | Build orchestration | [`Main.purs`](../src/Main.purs) | Load input, invoke PBO, discover FFI, write modules and entrypoints. |
 | Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO, lower bindings and expressions to PHP AST. |
+| Free-variable reuse | [`FreeVars.purs`](../src/Phpurs/FreeVars.purs) | Memoize PBO's scope-aware free-variable sets by immutable TCO-node identity. |
 | Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
@@ -88,6 +89,44 @@ and constructor representations are still generated at their boundaries.
 their lexical scope. Binding bodies inherit the surrounding position; a new
 function body starts its own tail-call scope. `translateValues` shares operand
 lowering and temporary allocation across arrays, constructors and calls.
+
+`translateValues` builds its statement and expression arrays inside one local
+`ST` region. Each operand is translated left-to-right with the preceding
+operand's `nextId`; only its new statements and result expression are appended.
+Both arrays are freshly allocated and frozen after the last operand. No mutable
+array escapes during construction, and previously returned arrays are never
+reused. Accumulation is linear in the number of operands plus emitted statements,
+in addition to the cost of translating the operands themselves. Statements are
+appended individually, so a large result does not become a spread-argument call.
+`operand-accumulator.mjs` checks copied-prefix bounds, wide arrays, IDs, statement
+order and escaping captures. The [B4 measurement](../audit/2026-10-03/linear-accumulator/report.md)
+records the observed effect on a real Unicode-data module and the full corpus.
+
+`Phpurs.FreeVars.freeVars` shares PBO's `freeVarsWith` analysis step and memoizes
+each recursively visited `TcoExpr`. The step retains PBO's binding rules: lambda
+parameters are removed from their body, a `Let`/`EffectBind` binder only scopes
+over its body, and a recursive group scopes over all its bindings and its body.
+`Typed` and `TypeApp` delegate to their expression child. TCO usage metadata
+includes bound locals too, so it cannot directly supply these free-variable sets.
+
+The memo key is the immutable node object; the value is an immutable set of
+**original local-ID strings**. Renaming through `boundVars` and reference capture
+through `recursiveVars` happen on every use in the current context. A shared node
+can therefore be translated in different lexical and effect contexts safely.
+Any TCO rewrite must construct new nodes rather than mutate an analyzed object.
+
+The JavaScript memo table uses weak keys. Its values contain no references to the
+TCO graph, allowing the graph and its cached sets to be collected when translation
+releases them. `translate` constructs fresh TCO nodes for each invocation. The
+table is process-local and independent of serialized module state and the PBO
+implementation-cache budget. V8 can retain the weak table's allocated capacity
+after collecting its keys. A node's syntax is analyzed once while it remains
+live; set operations still cost according to their cardinalities, and live cached
+sets can require more than linear space in pathological trees.
+`free-vars.mjs` checks lexical scopes, shared subtrees, context-specific captures,
+recursive PHP closures, lazy effects and garbage collection. The
+[B4 free-variable measurement](../audit/2026-10-03/free-vars/report.md) records
+recomputation counts, module timings, live-cache heap cost and full-build RSS.
 
 Tail-loop construction has two shared helpers:
 

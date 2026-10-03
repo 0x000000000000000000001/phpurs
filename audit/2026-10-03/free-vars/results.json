@@ -1,0 +1,660 @@
+{
+  "date": "2026-10-03",
+  "topic": "B4 free-variable reuse",
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-b4-free-vars-8w0ihqyv",
+  "phpursBase": "8d8295456101a5eea908161bd8d02112275ff703",
+  "pboBase": "c9386b4d572503bb7b6d1ce9547ec30dcded2920",
+  "baselineIncludesLinearAccumulator": true,
+  "validation": {
+    "buildWarnings": 0,
+    "buildErrors": 0,
+    "codegenChecksPassed": 83
+  },
+  "cpuDiagnostic": {
+    "samplingIntervalMicroseconds": 250,
+    "totalSampleMs": 2560.583,
+    "inclusiveFreeVarsMs": 476.875,
+    "profileSHA256": "c1f0c3bca6aa38a69d3340c7159aac5263e4c6793e7ef8baab362f1fc99ab2d2"
+  },
+  "recomputation": {
+    "before": {
+      "nodes": 193,
+      "reads": 148996,
+      "linearBound": 6176,
+      "passes": false
+    },
+    "after": {
+      "nodes": 193,
+      "reads": 1540,
+      "linearBound": 6176,
+      "passes": true
+    }
+  },
+  "moduleProtocol": {
+    "warmups": 4,
+    "samplesPerProcess": 15,
+    "pairedOrder": [
+      "before-after",
+      "after-before",
+      "before-after"
+    ],
+    "loadingAndHashingTimed": false,
+    "translationCreatesFreshTcoNodes": true
+  },
+  "modules": [
+    {
+      "name": "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+      "stateSHA256": "1fd91dad778c62f6ecb773c29f2ce1fa747222aa94de24854e75f39fa2fb9daf",
+      "phpAstSHA256": "1983ead42dbc5ab2f59031631a810ef8bfd89013d5cd81636cb69b9953b84486",
+      "visitsBefore": 56855,
+      "visitsAfter": 26701,
+      "processMediansMs": {
+        "before": [
+          91.95249999999987,
+          91.04579200000012,
+          92.17808300000002
+        ],
+        "after": [
+          83.72091599999999,
+          81.55849999999987,
+          86.99629200000004
+        ]
+      },
+      "medianOfMediansMs": {
+        "before": 91.95249999999987,
+        "after": 83.72091599999999
+      },
+      "reductionPercent": 8.951995867431439
+    },
+    {
+      "name": "Data.CodePoint.Unicode.Internal",
+      "stateSHA256": "40c6a0ab4e76efde1a9acec1be1fd15ddf185b7285783dd610c4d83d7298e870",
+      "phpAstSHA256": "53d2c0234f6e4f3a05dd6d1b8d60c25fd5dab538b8f548793f09062c31a153cf",
+      "visitsBefore": 2114,
+      "visitsAfter": 757,
+      "processMediansMs": {
+        "before": [
+          32.93550000000005,
+          32.199708999999984,
+          32.0920000000001
+        ],
+        "after": [
+          30.689708000000337,
+          32.04258299999992,
+          37.08566699999983
+        ]
+      },
+      "medianOfMediansMs": {
+        "before": 32.199708999999984,
+        "after": 32.04258299999992
+      },
+      "reductionPercent": 0.48797335404510145
+    },
+    {
+      "name": "Inter.Api.Registry",
+      "stateSHA256": "bc14990e7a33a0daadfa4c12cf16d50b77f40898e068b3fea8f5df06b4b7de93",
+      "phpAstSHA256": "92ea2a35858bf417b53634768f90091e0f044df06487299f4921e248cc52c92a",
+      "visitsBefore": 26902,
+      "visitsAfter": 2861,
+      "processMediansMs": {
+        "before": [
+          84.84241600000041,
+          84.37179100000048,
+          88.2616250000001
+        ],
+        "after": [
+          72.65216599999985,
+          71.69137499999988,
+          78.35829100000001
+        ]
+      },
+      "medianOfMediansMs": {
+        "before": 84.84241600000041,
+        "after": 72.65216599999985
+      },
+      "reductionPercent": 14.368108046334394
+    },
+    {
+      "name": "Inter.Cli.Logic.Registry",
+      "stateSHA256": "4dced670557d9f6e8801b77ad259d6442f5f735c9bc335722cd4e1f1646e0728",
+      "phpAstSHA256": "db0aec93b7bd00ddaedf048abd8957a6c12df763a61e34c16671b311f610f81c",
+      "visitsBefore": 46114,
+      "visitsAfter": 6450,
+      "processMediansMs": {
+        "before": [
+          148.38191600000027,
+          160.45275000000038,
+          155.37979199999972
+        ],
+        "after": [
+          124.34895799999958,
+          123.44329199999993,
+          134.78549999999996
+        ]
+      },
+      "medianOfMediansMs": {
+        "before": 155.37979199999972,
+        "after": 124.34895799999958
+      },
+      "reductionPercent": 19.97095864306485
+    }
+  ],
+  "memoryDiagnostic": {
+    "before": {
+      "diagnostic": true,
+      "memoized": false,
+      "librarySHA256": "e6031873e60dad156e24bcc2b0c5b1a8d62800da7ff290363bd0fed9f74b9849",
+      "rows": [
+        {
+          "name": "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+          "phpAstSHA256": "1983ead42dbc5ab2f59031631a810ef8bfd89013d5cd81636cb69b9953b84486",
+          "withCacheBytes": 31765456,
+          "withoutCacheBytes": 31765488,
+          "retainedCacheBytes": -32,
+          "releasedBeforeBytes": 20443912,
+          "releasedAfterBytes": 20472600,
+          "cachedNodes": 0,
+          "distinctNonemptySets": 0,
+          "summedSetCardinalities": 0,
+          "largestSet": 0,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 20481024,
+          "cacheEmptyBytes": 20480872,
+          "emptyTableBytes": 152
+        },
+        {
+          "name": "Data.CodePoint.Unicode.Internal",
+          "phpAstSHA256": "53d2c0234f6e4f3a05dd6d1b8d60c25fd5dab538b8f548793f09062c31a153cf",
+          "withCacheBytes": 29168144,
+          "withoutCacheBytes": 29167944,
+          "retainedCacheBytes": 200,
+          "releasedBeforeBytes": 20250024,
+          "releasedAfterBytes": 20089224,
+          "cachedNodes": 0,
+          "distinctNonemptySets": 0,
+          "summedSetCardinalities": 0,
+          "largestSet": 0,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 20088920,
+          "cacheEmptyBytes": 20088920,
+          "emptyTableBytes": 0
+        },
+        {
+          "name": "Inter.Api.Registry",
+          "phpAstSHA256": "92ea2a35858bf417b53634768f90091e0f044df06487299f4921e248cc52c92a",
+          "withCacheBytes": 55699112,
+          "withoutCacheBytes": 55698960,
+          "retainedCacheBytes": 152,
+          "releasedBeforeBytes": 25456784,
+          "releasedAfterBytes": 25464488,
+          "cachedNodes": 0,
+          "distinctNonemptySets": 0,
+          "summedSetCardinalities": 0,
+          "largestSet": 0,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 25464200,
+          "cacheEmptyBytes": 25464200,
+          "emptyTableBytes": 0
+        },
+        {
+          "name": "Inter.Cli.Logic.Registry",
+          "phpAstSHA256": "db0aec93b7bd00ddaedf048abd8957a6c12df763a61e34c16671b311f610f81c",
+          "withCacheBytes": 79455312,
+          "withoutCacheBytes": 79455160,
+          "retainedCacheBytes": 152,
+          "releasedBeforeBytes": 35926600,
+          "releasedAfterBytes": 35929224,
+          "cachedNodes": 0,
+          "distinctNonemptySets": 0,
+          "summedSetCardinalities": 0,
+          "largestSet": 0,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 35928936,
+          "cacheEmptyBytes": 35928936,
+          "emptyTableBytes": 0
+        }
+      ],
+      "peakRSSKiB": 683344
+    },
+    "after": {
+      "diagnostic": true,
+      "memoized": true,
+      "librarySHA256": "2d158c315c59df3efecdac3556461d9f9e2cb35c8f5ea301bbeb8e31a1a37c6e",
+      "rows": [
+        {
+          "name": "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+          "phpAstSHA256": "1983ead42dbc5ab2f59031631a810ef8bfd89013d5cd81636cb69b9953b84486",
+          "withCacheBytes": 33035328,
+          "withoutCacheBytes": 31757936,
+          "retainedCacheBytes": 1277392,
+          "releasedBeforeBytes": 20462712,
+          "releasedAfterBytes": 22828296,
+          "cachedNodes": 26701,
+          "distinctNonemptySets": 1963,
+          "summedSetCardinalities": 11917,
+          "largestSet": 20,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 21551432,
+          "cacheEmptyBytes": 20502872,
+          "emptyTableBytes": 1048560
+        },
+        {
+          "name": "Data.CodePoint.Unicode.Internal",
+          "phpAstSHA256": "53d2c0234f6e4f3a05dd6d1b8d60c25fd5dab538b8f548793f09062c31a153cf",
+          "withCacheBytes": 29245472,
+          "withoutCacheBytes": 29192032,
+          "retainedCacheBytes": 53440,
+          "releasedBeforeBytes": 20273824,
+          "releasedAfterBytes": 20188184,
+          "cachedNodes": 757,
+          "distinctNonemptySets": 180,
+          "summedSetCardinalities": 772,
+          "largestSet": 7,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 20141104,
+          "cacheEmptyBytes": 20108400,
+          "emptyTableBytes": 32704
+        },
+        {
+          "name": "Inter.Api.Registry",
+          "phpAstSHA256": "92ea2a35858bf417b53634768f90091e0f044df06487299f4921e248cc52c92a",
+          "withCacheBytes": 55883792,
+          "withoutCacheBytes": 55684160,
+          "retainedCacheBytes": 199632,
+          "releasedBeforeBytes": 25484400,
+          "releasedAfterBytes": 25764656,
+          "cachedNodes": 2861,
+          "distinctNonemptySets": 486,
+          "summedSetCardinalities": 3473,
+          "largestSet": 14,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 25612928,
+          "cacheEmptyBytes": 25482000,
+          "emptyTableBytes": 130928
+        },
+        {
+          "name": "Inter.Cli.Logic.Registry",
+          "phpAstSHA256": "db0aec93b7bd00ddaedf048abd8957a6c12df763a61e34c16671b311f610f81c",
+          "withCacheBytes": 79815000,
+          "withoutCacheBytes": 79446664,
+          "retainedCacheBytes": 368336,
+          "releasedBeforeBytes": 35952464,
+          "releasedAfterBytes": 36541632,
+          "cachedNodes": 6450,
+          "distinctNonemptySets": 825,
+          "summedSetCardinalities": 4669,
+          "largestSet": 8,
+          "liveKeys": 0,
+          "liveValues": 0,
+          "cacheAfterReleaseBytes": 36215744,
+          "cacheEmptyBytes": 35953608,
+          "emptyTableBytes": 262136
+        }
+      ],
+      "peakRSSKiB": 683200
+    }
+  },
+  "fullBuilds": {
+    "inputFiles": 2839,
+    "modules": 2684,
+    "jobs": 1,
+    "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+    "beforeSHA256": "358bd327a0ea245be51c137e7914af4707e321d2f16dedb741ec8ef44bcfaaa9",
+    "afterSHA256": "42e83167759c9f70838330670994eb3825283c64063d07d68b2b45758a229c40",
+    "node": "v24.8.0",
+    "trials": {
+      "1-before": {
+        "processMs": 50662.270334,
+        "peakRSSKiB": 3716400,
+        "identicalFiles": 5372,
+        "phpFiles": 2686,
+        "phpWrites": 0,
+        "totalMs": 50261.04475,
+        "phaseMs": {
+          "corefn.read": 741.4254609999635,
+          "corefn.decode": 4020.6793620000008,
+          "corefn.sort": 19.718458000000282,
+          "ffi": 15.45428200000697,
+          "cache.plan": 0.04883400000016991,
+          "cache.load": 2.27833999989889,
+          "optimize": 30634.244051999976,
+          "translate": 6823.631442000041,
+          "print": 3542.147866000093,
+          "php.mkdir": 980.4717329999039,
+          "php.write": 881.8892030001425,
+          "cache.store": 1.9270390000383486,
+          "entrypoint": 99.18424999999843,
+          "composer": 5.640958999996656,
+          "cleanup": 7.713792000002286,
+          "diagnostics": 0
+        },
+        "moduleTranslateMs": {
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection": 98.96091700000034,
+          "Data.CodePoint.Unicode.Internal": 34.22112500000003,
+          "Inter.Api.Registry": 110.56508300000132,
+          "Inter.Cli.Logic.Registry": 181.6686250000057
+        }
+      },
+      "2-after": {
+        "processMs": 47073.16787500001,
+        "peakRSSKiB": 3497584,
+        "identicalFiles": 5372,
+        "phpFiles": 2686,
+        "phpWrites": 0,
+        "totalMs": 46738.075334,
+        "phaseMs": {
+          "corefn.read": 500.3618620000079,
+          "corefn.decode": 3717.414205999982,
+          "corefn.sort": 19.896459000000505,
+          "ffi": 16.287858999982745,
+          "cache.plan": 0.04162499999983993,
+          "cache.load": 2.0819609999898603,
+          "optimize": 29157.500164999936,
+          "translate": 5570.907209000022,
+          "print": 3387.7755260000495,
+          "php.mkdir": 987.6983260000352,
+          "php.write": 794.8986960000466,
+          "cache.store": 1.7933519999742202,
+          "entrypoint": 86.52920799999993,
+          "composer": 5.5995420000035665,
+          "cleanup": 6.603708000002371,
+          "diagnostics": 0
+        },
+        "moduleTranslateMs": {
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection": 91.40108399999917,
+          "Data.CodePoint.Unicode.Internal": 34.4419999999991,
+          "Inter.Api.Registry": 97.2723330000008,
+          "Inter.Cli.Logic.Registry": 164.36695899999904
+        }
+      },
+      "3-after": {
+        "processMs": 47202.694333999985,
+        "peakRSSKiB": 3787776,
+        "identicalFiles": 5372,
+        "phpFiles": 2686,
+        "phpWrites": 0,
+        "totalMs": 46834.914,
+        "phaseMs": {
+          "corefn.read": 471.3932980000077,
+          "corefn.decode": 3563.4170229999895,
+          "corefn.sort": 19.443499999999403,
+          "ffi": 22.211342000015065,
+          "cache.plan": 0.041666999999506515,
+          "cache.load": 1.7538650000433336,
+          "optimize": 28999.839836999996,
+          "translate": 5469.895782000071,
+          "print": 3406.136818000102,
+          "php.mkdir": 991.5137029999923,
+          "php.write": 1436.1073009999327,
+          "cache.store": 1.6059340000138036,
+          "entrypoint": 61.17975000000297,
+          "composer": 5.563792000000831,
+          "cleanup": 5.987874999998894,
+          "diagnostics": 0
+        },
+        "moduleTranslateMs": {
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection": 85.81087499999921,
+          "Data.CodePoint.Unicode.Internal": 34.41441599999962,
+          "Inter.Api.Registry": 97.82645799999955,
+          "Inter.Cli.Logic.Registry": 152.88020799999867
+        }
+      },
+      "4-before": {
+        "processMs": 48068.42237499998,
+        "peakRSSKiB": 3698112,
+        "identicalFiles": 5372,
+        "phpFiles": 2686,
+        "phpWrites": 0,
+        "totalMs": 47692.288792,
+        "phaseMs": {
+          "corefn.read": 771.5089649999975,
+          "corefn.decode": 3593.077491000003,
+          "corefn.sort": 18.812791999999718,
+          "ffi": 20.322000999987722,
+          "cache.plan": 0.04183400000056281,
+          "cache.load": 1.8226430000886467,
+          "optimize": 28888.296513999845,
+          "translate": 6578.3499470000825,
+          "print": 3393.9689900000812,
+          "php.mkdir": 911.8851999999742,
+          "php.write": 1014.9996759998958,
+          "cache.store": 1.6673520001522775,
+          "entrypoint": 60.443749999998545,
+          "composer": 5.305333000003884,
+          "cleanup": 5.825959000001603,
+          "diagnostics": 0
+        },
+        "moduleTranslateMs": {
+          "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection": 98.73783300000105,
+          "Data.CodePoint.Unicode.Internal": 33.557042000000365,
+          "Inter.Api.Registry": 107.14383299999827,
+          "Inter.Cli.Logic.Registry": 180.78854199999842
+        }
+      }
+    },
+    "inputsUnchanged": true,
+    "options": [
+      "--main",
+      "Inter.Api.Main",
+      "--bundle",
+      "--no-cache",
+      "--profile-build"
+    ],
+    "purmetaCacheMiB": 64,
+    "medianTranslateMs": {
+      "before": 6700.990694500062,
+      "after": 5520.401495500047
+    },
+    "translateReductionPercent": 17.618129211386634
+  },
+  "benchmarks": {
+    "php": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+    "phpFlags": [
+      "-d",
+      "xdebug.mode=off",
+      "-d",
+      "opcache.enable_cli=1",
+      "-d",
+      "opcache.file_update_protection=0",
+      "-d",
+      "opcache.jit_buffer_size=128M",
+      "-d",
+      "opcache.jit=1255"
+    ],
+    "trials": {
+      "before": {
+        "compilerSHA256": "358bd327a0ea245be51c137e7914af4707e321d2f16dedb741ec8ef44bcfaaa9",
+        "artifacts": 350,
+        "generatedPhpFiles": 307,
+        "results": {
+          "mode": "pure",
+          "labels": [
+            "AST Evaluation:",
+            "Fibonacci:",
+            "List Processing (900 elements):",
+            "Tail Call Optimization (100k calls):",
+            "Deep Record Updates (10k iterations):",
+            "Ackermann (3, 4):",
+            "Church Numerals (100k Closure Applications):",
+            "Prime Sieve (sum primes up to 500):",
+            "Red-Black Tree (100k Worst-Case Insertions):",
+            "Polymorphism (10M Type Class Dict Lookups):",
+            "State Monad (1.2k Binds, 60 Stack Depth):",
+            "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+            "Array Processing (900 elements):",
+            "RowToList (Keys Count):"
+          ],
+          "values": [
+            "7",
+            "55",
+            "202950",
+            "100000",
+            "20000",
+            "125",
+            "100000",
+            "21536",
+            "22",
+            "10000000",
+            "1200",
+            "1000000",
+            "202950",
+            "5"
+          ],
+          "times_us": [
+            2.348658,
+            1.210775,
+            149.531891,
+            76.86068,
+            1625.015625,
+            50.088867,
+            2090.599,
+            784.109375,
+            59180.292,
+            6700.4375,
+            501.451813,
+            807.91925,
+            99.646484,
+            0.940915
+          ],
+          "total_ms": 72.070453,
+          "sum_displayed_lines_ms": 72.07045283300002,
+          "values_validated": true,
+          "oracle": "core",
+          "timer_unit": "microseconds"
+        }
+      },
+      "after": {
+        "compilerSHA256": "42e83167759c9f70838330670994eb3825283c64063d07d68b2b45758a229c40",
+        "artifacts": 350,
+        "generatedPhpFiles": 307,
+        "results": {
+          "mode": "pure",
+          "labels": [
+            "AST Evaluation:",
+            "Fibonacci:",
+            "List Processing (900 elements):",
+            "Tail Call Optimization (100k calls):",
+            "Deep Record Updates (10k iterations):",
+            "Ackermann (3, 4):",
+            "Church Numerals (100k Closure Applications):",
+            "Prime Sieve (sum primes up to 500):",
+            "Red-Black Tree (100k Worst-Case Insertions):",
+            "Polymorphism (10M Type Class Dict Lookups):",
+            "State Monad (1.2k Binds, 60 Stack Depth):",
+            "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+            "Array Processing (900 elements):",
+            "RowToList (Keys Count):"
+          ],
+          "values": [
+            "7",
+            "55",
+            "202950",
+            "100000",
+            "20000",
+            "125",
+            "100000",
+            "21536",
+            "22",
+            "10000000",
+            "1200",
+            "1000000",
+            "202950",
+            "5"
+          ],
+          "times_us": [
+            2.35201,
+            1.230428,
+            153.224609,
+            77.0485,
+            1502.359375,
+            48.666504,
+            2043.448,
+            770.5625,
+            57907.209,
+            6759.7085,
+            512.783844,
+            827.695313,
+            101.34375,
+            0.921277
+          ],
+          "total_ms": 70.708554,
+          "sum_displayed_lines_ms": 70.70855361,
+          "values_validated": true,
+          "oracle": "core",
+          "timer_unit": "microseconds"
+        }
+      }
+    },
+    "inputsUnchanged": true
+  },
+  "cleanup": {
+    "removedArtifactDirectoryEntries": 31831,
+    "removedArtifactDirectoryBytes": 2205388781,
+    "removedArtifactDirectoryAllocatedBytes": 2272268288,
+    "changes": {
+      "phpurs-js-bigints": {
+        "cacheDeletions": 268,
+        "metadataDeletions": 1,
+        "gitignoreUpdated": true
+      },
+      "phpurs-node-event-emitter": {
+        "cacheDeletions": 315,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-numbers": {
+        "cacheDeletions": 161,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-quickcheck": {
+        "cacheDeletions": 233,
+        "metadataDeletions": 1,
+        "gitignoreUpdated": true
+      },
+      "phpurs-run": {
+        "cacheDeletions": 266,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-simple-json": {
+        "cacheDeletions": 255,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-spec": {
+        "cacheDeletions": 390,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-uuid": {
+        "cacheDeletions": 183,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-variant": {
+        "cacheDeletions": 186,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      },
+      "phpurs-yoga-json": {
+        "cacheDeletions": 403,
+        "metadataDeletions": 0,
+        "gitignoreUpdated": true
+      }
+    },
+    "freeBytesAfter": 4856524800,
+    "note": "Directory totals from pre-clean inventory; Finder metadata removed separately. All remaining tracked changes outside the compiler are cache/metadata deletions and .gitignore updates."
+  },
+  "excludedAttempt": {
+    "directory": "validation-enospc",
+    "reason": "ENOSPC during second trial; restarted full ABBA after cleanup"
+  }
+}

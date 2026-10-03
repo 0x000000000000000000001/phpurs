@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-03",
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-b4-profile-s_nfukck/validation",
+  "inputFiles": 2839,
+  "moduleCount": 2684,
+  "inputManifestSHA256": "9e159394a364c95af49aa1d66cdcc7d3c66ec410acbaf70b19f96bfda98e7372",
+  "beforeSHA256": "2ad2c77295d04dbe99ddd8b541f1d29131127cb9634b2465e5aacf4a94f5fd2c",
+  "afterSHA256": "b324346395e449a70a93ba2a94e671dedb6963c39624d3ed40f10f859f22ca95",
+  "node": "v24.8.0",
+  "jobs": 1,
+  "options": ["--main", "Inter.Api.Main", "--bundle"],
+  "identicalFiles": 5372,
+  "preservedPHPMtimesAfterControl": 2686,
+  "inputCorpusUnchanged": true,
+  "codegenChecks": 68,
+  "trials": {
+    "before": {"backendMs": 56710, "peakRSSKiB": 3385056, "phpWrites": 2686, "cache": null},
+    "full-profile": {"backendMs": 46671, "peakRSSKiB": 3739968, "phpWrites": 0, "cache": null},
+    "cache-seed": {"backendMs": 55587, "peakRSSKiB": 3772288, "phpWrites": 0, "cache": [0, 2684, 2684]},
+    "cache-profile": {"backendMs": 13078, "peakRSSKiB": 3522576, "phpWrites": 0, "cache": [2684, 0, 0]}
+  },
+  "profiles": {
+    "full-profile": {
+      "status": "completed",
+      "totalMs": 46660.599667,
+      "phases": {
+        "corefn.read": {"calls": 8055, "ms": 454.660},
+        "corefn.decode": {"calls": 2684, "ms": 3666.953},
+        "corefn.sort": {"calls": 1, "ms": 20.438},
+        "ffi": {"calls": 2684, "ms": 27.817},
+        "cache.plan": {"calls": 1, "ms": 0.050},
+        "cache.load": {"calls": 2684, "ms": 1.776},
+        "optimize": {"calls": 2684, "ms": 27982.737},
+        "translate": {"calls": 2684, "ms": 6492.732},
+        "print": {"calls": 2686, "ms": 3358.775},
+        "php.mkdir": {"calls": 2684, "ms": 912.468},
+        "php.write": {"calls": 2686, "ms": 1098.394},
+        "cache.store": {"calls": 2684, "ms": 1.665},
+        "entrypoint": {"calls": 1, "ms": 59.750},
+        "composer": {"calls": 1, "ms": 2.308},
+        "cleanup": {"calls": 1, "ms": 6.103},
+        "diagnostics": {"calls": 0, "ms": 0}
+      }
+    },
+    "cache-profile": {
+      "status": "completed",
+      "totalMs": 13072.674208,
+      "phases": {
+        "corefn.read": {"calls": 8057, "ms": 465.544},
+        "corefn.decode": {"calls": 2684, "ms": 3678.667},
+        "corefn.sort": {"calls": 1, "ms": 19.881},
+        "ffi": {"calls": 2684, "ms": 14.551},
+        "cache.plan": {"calls": 1, "ms": 29.046},
+        "cache.load": {"calls": 2684, "ms": 4850.066},
+        "optimize": {"calls": 0, "ms": 0},
+        "translate": {"calls": 0, "ms": 0},
+        "print": {"calls": 2, "ms": 0.240},
+        "php.mkdir": {"calls": 2684, "ms": 1102.578},
+        "php.write": {"calls": 2686, "ms": 901.097},
+        "cache.store": {"calls": 0, "ms": 0},
+        "entrypoint": {"calls": 1, "ms": 54.411},
+        "composer": {"calls": 1, "ms": 2.052},
+        "cleanup": {"calls": 1, "ms": 4.997},
+        "diagnostics": {"calls": 0, "ms": 0}
+      }
+    }
+  },
+  "slowModules": [
+    {"name": "Inter.Cli.Logic.Registry", "optimizeMs": 577.252, "translateMs": 172.072, "printMs": 368.700},
+    {"name": "Inter.Api.Registry", "optimizeMs": 570.023, "translateMs": 110.593, "printMs": 260.097},
+    {"name": "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection", "optimizeMs": 343.096, "translateMs": 101.466, "printMs": 91.745}
+  ]
+}

@@ -1,5 +1,5 @@
 -- | Capture each input once: the key and decoder/codegen consume the same bytes.
-module Phpurs.BuildInputs (LoadedInputs, ForeignCapture, loadInputs, captureForeign) where
+module Phpurs.BuildInputs (LoadedInputs, ForeignCapture, loadInputs, loadInputsWithProfile, captureForeign) where
 
 import Prelude
 
@@ -25,6 +25,7 @@ import Node.Buffer.Immutable as Bytes
 import Node.Encoding (Encoding(..))
 import Node.FS.Aff as FS
 import Node.FS.Stats as Stats
+import Phpurs.BuildProfile as Profile
 import Phpurs.CacheKey (Fingerprint, ForeignInput(..), fingerprintBytes)
 import Phpurs.PackagePaths (findForeignFile)
 import PureScript.Backend.Optimizer.CoreFn (Ann, Module(..))
@@ -45,29 +46,35 @@ foreign import isMissingFile :: Error -> Boolean
 -- | Match PBO's bounded loader and sorter, but retain fingerprints and detect
 -- | ambiguous names before the sorter collapses them into its module index.
 loadInputs :: String -> Aff LoadedInputs
-loadInputs outputDir = do
+loadInputs = loadInputsWithProfile Profile.disabled
+
+loadInputsWithProfile :: Profile.Profile -> String -> Aff LoadedInputs
+loadInputsWithProfile profile outputDir = do
   jobs <- liftEffect moduleReadConcurrency
-  files <- FS.readdir outputDir
+  files <- Profile.measureAff profile "corefn.read" "" \_ -> FS.readdir outputDir
   let
     absent = { captured: Nothing, valid: true }
     readModule file = do
-      statResult <- attempt (FS.stat file)
+      statResult <- Profile.measureAff profile "corefn.read" "" \_ -> attempt (FS.stat file)
       case statResult of
         Right stat | Stats.isFile stat -> do
-          buffer <- FS.readFile file
+          buffer <- Profile.measureAff profile "corefn.read" "" \_ -> FS.readFile file
           bytes <- liftEffect (Buffer.unsafeFreeze buffer)
-          case parseModule (Bytes.toString UTF8 bytes) of
+          decoded <- liftEffect $ Profile.measurePure profile "corefn.decode" "" \_ -> do
+            mod <- parseModule (Bytes.toString UTF8 bytes)
+            pure { mod, fingerprint: fingerprintBytes bytes }
+          case decoded of
             Left err -> do
               liftEffect $ Console.error $ "Failed to decode " <> file <> ": " <> err
               pure { captured: Nothing, valid: false }
-            Right mod -> pure { captured: Just { mod, fingerprint: fingerprintBytes bytes }, valid: true }
+            Right captured -> pure { captured: Just captured, valid: true }
         Right _ -> pure absent
         Left err | isMissingFile err -> pure absent
         Left err -> do
           liftEffect $ Console.error $ "Failed to stat " <> file <> ": " <> show err
           pure { captured: Nothing, valid: false }
     readDirectory dir = do
-      stat <- FS.stat (outputDir <> "/" <> dir)
+      stat <- Profile.measureAff profile "corefn.read" "" \_ -> FS.stat (outputDir <> "/" <> dir)
       if Stats.isDirectory stat then readModule (outputDir <> "/" <> dir <> "/corefn.json")
       else pure absent
     loadBatches remaining
@@ -82,8 +89,10 @@ loadInputs outputDir = do
   let
     captured = Array.mapMaybe _.captured results
     fingerprints = Map.fromFoldable $ map (\{ mod: Module m, fingerprint } -> Tuple (unwrap m.name) fingerprint) captured
+  modules <- liftEffect $ Profile.measurePure profile "corefn.sort" "" \_ ->
+    sortModules (List.fromFoldable (map _.mod captured))
   pure
-    { modules: sortModules (List.fromFoldable (map _.mod captured))
+    { modules
     , fingerprints
     , cacheable: all _.valid results && Map.size fingerprints == Array.length captured
     }

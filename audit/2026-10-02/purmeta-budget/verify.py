@@ -89,7 +89,7 @@ def main():
 
     def build(label, budget=None):
         command = ['node', '--import', str(artifacts / 'count-io.mjs'), '--import', str(artifacts / 'purmeta-probe.mjs'),
-                   str(artifacts / 'backend.mjs'), '--main', 'Inter.Api.Main', '--bundle', '--no-cache', '--profile-purmeta']
+                   str(artifacts / 'backend.mjs'), '--main', 'Inter.Api.Main', '--bundle', '--no-cache', '--profile-purmeta', '--verbose']
         if budget is not None:
             command += ['--purmeta-cache-mib', str(budget)]
         started = time.monotonic()

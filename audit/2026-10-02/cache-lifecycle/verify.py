@@ -50,7 +50,7 @@ def main():
         php_before = hashes(True)
         module_count = len(list(output.glob('*/corefn.json')))
         command = ['node', '--import', str(artifacts / 'count-io.mjs'), str(artifacts / 'backend.mjs'),
-                   '--main', main_module, '--bundle'] + (['--no-cache'] if uncached else [])
+                   '--main', main_module, '--bundle', '--verbose'] + (['--no-cache'] if uncached else [])
         started = time.monotonic()
         with (artifacts / f'{label}.log').open('wb') as log:
             process = subprocess.run(command, cwd=work, stdout=log, stderr=subprocess.STDOUT, timeout=300,

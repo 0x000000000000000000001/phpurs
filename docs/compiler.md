@@ -41,6 +41,8 @@ the [README](../README.md#build-the-backend).
 | Module-state publication | [`ModuleState.purs`](../src/Phpurs/ModuleState.purs) | Render selected PHP forms and publish fresh/restored arities, reachability and ordered bundle contributions. |
 | Module-state persistence | [`ModuleCache.purs`](../src/Phpurs/ModuleCache.purs) | Store and load versioned, checksummed state with restored PBO constructor prototypes. |
 | PBO cache diagnostics | [`PurmetaProfile.purs`](../src/Phpurs/PurmetaProfile.purs) | Scope opt-in RAM, I/O, serialization and RSS diagnostics to optimization/emission. |
+| Optimized AST metrics | [`AstMetrics.purs`](../src/Phpurs/AstMetrics.purs) | Count every expression occurrence via PBO's syntax traversal and a stack-safe worklist. |
+| Rewrite-limit option | [`RewriteLimit.purs`](../src/Phpurs/RewriteLimit.purs) | Validate the positive iteration guard before loading inputs; share it between PBO and cache keys. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
 | Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
 
@@ -313,6 +315,13 @@ atomic replacement failure, current-build purmeta republication, output repair
 and output-error propagation. `cache-cli.mjs` runs the packaged executable with
 automatic reuse and `--no-cache`, checks invalidation and identical outputs, and
 replaces CoreFn, FFI and executable files after reads to check input capture.
+
+`build-profile.mjs` validates the optional detailed phase collector, strict pure
+timing boundaries, asynchronous completion/cancellation, failure propagation,
+independent nested scopes, and the `--verbose` diagnostic gate. It compares PHP
+bytes and execution across flags, emission modes and fresh/restored module paths.
+The [profiling contract](build-profile.md) specifies the sequential optimizer
+hook boundary and the distinction between output comparisons and actual writes.
 
 `bin/test` accepts fixture names for targeted work. Its `tests/runner/src` and
 output directories are scratch space. `bin/modtest` exercises executable sibling

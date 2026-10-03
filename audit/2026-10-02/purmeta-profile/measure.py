@@ -86,7 +86,7 @@ def main():
 
     def build(label, profile=True, cached=False):
         command = ['node', '--import', str(artifacts / 'count-io.mjs'), '--import', str(artifacts / 'purmeta-probe.mjs'),
-                   str(artifacts / 'backend.mjs'), '--main', 'Inter.Api.Main', '--bundle']
+                   str(artifacts / 'backend.mjs'), '--main', 'Inter.Api.Main', '--bundle', '--verbose']
         if not cached:
             command.append('--no-cache')
         if profile:

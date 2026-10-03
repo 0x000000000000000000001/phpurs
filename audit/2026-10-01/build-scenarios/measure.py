@@ -119,7 +119,7 @@ def mutate(root, mutation):
 def run_build(artifacts, project, label, graph):
     counts_path = artifacts / f'{label}.io.json'
     command = ['node', '--import', str(artifacts / 'count-io.mjs'), str(artifacts / 'backend.mjs'),
-               '--main', 'Inter.Api.Main', '--bundle']
+               '--main', 'Inter.Api.Main', '--bundle', '--verbose']
     environment = {**os.environ, 'GOPURS_JOBS': '1', 'PHPURS_AUDIT_COUNTS': str(counts_path)}
     started = time.monotonic()
     with (artifacts / f'{label}.log').open('wb') as log:
@@ -182,7 +182,7 @@ def main():
         'node': subprocess.check_output(['node', '--version'], text=True).strip(),
         'platform': platform.platform(), 'machine': platform.machine(),
         'nodeOptions': os.environ.get('NODE_OPTIONS'), 'moduleReadConcurrency': 1,
-        'options': ['--main', 'Inter.Api.Main', '--bundle'], 'repetitions': args.repetitions,
+        'options': ['--main', 'Inter.Api.Main', '--bundle', '--verbose'], 'repetitions': args.repetitions,
         'mutations': {}, 'fresh': {}, 'trials': {name: [] for name in SCENARIOS},
         'importers': {name: {kind: len(modules) for kind, modules in detail.items()}
                       for name, detail in graph_details.items()},

@@ -5,7 +5,6 @@ import Prelude
 
 import Data.Array as Array
 import Data.Either (Either(..), note)
-import Data.Foldable (foldl)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (unwrap)
@@ -15,7 +14,7 @@ import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Aff (launchAff_, throwError)
+import Effect.Aff (Aff, launchAff_, throwError)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Exception (error)
@@ -23,50 +22,27 @@ import Effect.Ref as Ref
 import Node.Buffer.Immutable as Bytes
 import Node.Encoding (Encoding(..))
 import Node.Process as Process
+import Phpurs.AstMetrics (countModuleNodes)
 import Phpurs.BuildCache as BuildCache
-import Phpurs.BuildInputs (captureForeign, loadInputs)
+import Phpurs.BuildInputs (captureForeign, loadInputsWithProfile)
+import Phpurs.BuildProfile as Profile
 import Phpurs.CacheKey (Toolchain, fingerprintBytes)
 import Phpurs.ComposerMerge (mergeComposers)
 import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
-import Phpurs.ModuleState (newBuildRefs, publishModuleState, renderModuleState, supportsEmission)
+import Phpurs.ModuleState (newBuildRefs, publishModuleStateWithProfile, printModuleState, translateModuleState, supportsEmission)
 import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
 import Phpurs.PackagePaths (resolvePackagePaths)
 import Phpurs.PurmetaBudget as PurmetaBudget
 import Phpurs.PurmetaProfile (withProfile)
+import Phpurs.RewriteLimit as RewriteLimit
 import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), Module(..), ModuleName(..), importName)
 import PureScript.Backend.Optimizer.Directives.Defaults (defaultDirectives)
 import PureScript.Backend.Optimizer.Reachability (moduleReachability)
-import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
-import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..))
-
-countNodes :: NeutralExpr -> Int
-countNodes (NeutralExpr expr) = 1 + case expr of
-  Var _ -> 0
-  Local _ _ -> 0
-  Lit _ -> 0
-  App f args -> countNodes f + foldl (+) 0 (map countNodes args)
-  Abs _ body -> countNodes body
-  UncurriedApp f args -> countNodes f + foldl (+) 0 (map countNodes args)
-  UncurriedAbs _ body -> countNodes body
-  UncurriedEffectApp f args -> countNodes f + foldl (+) 0 (map countNodes args)
-  UncurriedEffectAbs _ body -> countNodes body
-  Accessor obj _ -> countNodes obj
-  Update obj _ -> countNodes obj
-  CtorSaturated _ _ _ _ args -> foldl (+) 0 (map (\(Tuple _ a) -> countNodes a) args)
-  CtorDef _ _ _ _ -> 0
-  LetRec _ binds body -> foldl (+) 0 (map (\(Tuple _ a) -> countNodes a) binds) + countNodes body
-  Let _ _ val body -> countNodes val + countNodes body
-  EffectBind _ _ val body -> countNodes val + countNodes body
-  EffectPure val -> countNodes val
-  EffectDefer val -> countNodes val
-  Branch _ _ -> 0
-  PrimOp _ -> 0
-  _ -> 0
 
 main :: Effect Unit
 main = run Nothing Nothing
@@ -80,12 +56,19 @@ mainWithToolchain :: Toolchain -> Effect Unit
 mainWithToolchain toolchain = run (Just toolchain) Nothing
 
 run :: Maybe Toolchain -> Maybe CacheHooks -> Effect Unit
-run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
+run toolchain override = launchAff_ do
   argsRaw <- liftEffect Process.argv
-  let 
-    -- Match the shared parser's handling of grouped Spago backend arguments.
-    cliArgs = Array.concatMap (String.split (Pattern " ")) argsRaw
+  -- Match the shared parser's handling of grouped Spago backend arguments.
+  let cliArgs = Array.concatMap (String.split (Pattern " ")) argsRaw
+  Metrics.measure "backend total" \_ ->
+    Profile.withProfile (Array.elem "--profile-build" cliArgs) \profile ->
+      compile toolchain override cliArgs profile
+
+compile :: Maybe Toolchain -> Maybe CacheHooks -> Array String -> Profile.Profile -> Aff Unit
+compile toolchain override cliArgs profile = do
+  let
     args = parseCLIArgs cliArgs
+    verbose = Array.elem "--verbose" cliArgs
     bundleOnly = Array.elem "--bundle-only" cliArgs
     emitBundle = args.bundle || bundleOnly
     emitModules = not bundleOnly
@@ -95,8 +78,11 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
   purmetaBudget <- case PurmetaBudget.parseBudget cliArgs of
     Left message -> throwError $ error message
     Right budget -> pure budget
+  rewriteLimit <- case RewriteLimit.parseLimit cliArgs of
+    Left message -> throwError $ error message
+    Right limit -> pure limit
 
-  loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputs outputDir
+  loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputsWithProfile profile outputDir
   let finalModules = loaded.modules
 
   { refs, directives, packagePaths, foreignSources, cache, targetMainModules } <- Metrics.measure "prepare" \_ -> do
@@ -116,7 +102,7 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
     packagePaths <- liftEffect $ resolvePackagePaths { ffiDir: args.mbFfiDir, modulePaths }
     directives <- loadDirectives
     captures <- traverse (\m@(Module core) -> do
-      ffi <- captureForeign packagePaths.ffiRoots m
+      ffi <- Profile.measureAff profile "ffi" (unwrap core.name) \_ -> captureForeign packagePaths.ffiRoots m
       pure { core, ffi }) (Array.fromFoldable finalModules)
     cwd <- liftEffect Process.cwd
     let
@@ -126,11 +112,11 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
           let name = unwrap c.core.name
           coreFn <- Map.lookup name loaded.fingerprints
           pure { name, coreFn, foreignInput: c.ffi.input, dependencies: map (unwrap <<< importName) c.core.imports }) captures
-    cache <- case override, toolchain of
+    cache <- Profile.measureAff profile "cache.plan" "" \_ -> case override, toolchain of
       Just hooks, _ -> pure { hooks, report: pure unit }
       _, Just identity | not (Array.elem "--no-cache" cliArgs) -> liftEffect $ BuildCache.prepareCache
         { toolchain: identity
-        , options: { cwd, outputDir, ffiRoots: packagePaths.ffiRoots, emitModules, emitBundle, mainModule: args.mbMainModule, autoloadPath: args.mbAutoloadPath, rewriteLimit: 10000 }
+        , options: { cwd, outputDir, ffiRoots: packagePaths.ffiRoots, emitModules, emitBundle, mainModule: args.mbMainModule, autoloadPath: args.mbAutoloadPath, rewriteLimit }
         , directives: fingerprintBytes (Bytes.fromString defaultDirectives UTF8)
         } inputs
       _, _ -> pure BuildCache.disabled
@@ -141,28 +127,36 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
     withProfile (Array.elem "--profile-purmeta" cliArgs) $
     buildModules
       { directives
-      , rewriteLimit: 10000
+      , rewriteLimit
       , analyzeCustom: \_ _ -> Nothing
       , foreignSemantics: coreForeignSemantics
       , traceIdents: Set.empty
       , onPrepareModule: \_ m -> pure m
       , onSkipModule: \_ (Module coreFnMod) -> do
-          restored <- cache.hooks.load coreFnMod.name
+          let name = unwrap coreFnMod.name
+          restored <- Profile.measureAff profile "cache.load" name \_ -> cache.hooks.load coreFnMod.name
           case restored of
             Just state | state.backend.name == coreFnMod.name && supportsEmission emission state -> do
-              publishModuleState emission outputDir refs state
+              liftEffect $ Profile.restoredModule profile name
+              publishModuleStateWithProfile profile emission outputDir refs state
               pure (Just state.backend)
-            _ -> pure Nothing
+            _ -> do
+              liftEffect $ Profile.beginOptimization profile name
+              pure Nothing
       , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
+          liftEffect $ Profile.endOptimization profile
           let modNameStr = unwrap backendMod.name
-          let totalNodes = foldl (+) 0 (map (\bg -> foldl (+) 0 (map (\(Tuple _ expr) -> countNodes expr) bg.bindings)) backendMod.bindings)
-          liftEffect $ Console.log $ "Generating PHP code for " <> modNameStr <> " (Total AST Nodes: " <> show totalNodes <> ")"
+          when verbose $ Profile.measureAff profile "diagnostics" modNameStr \_ -> do
+            let totalNodes = countModuleNodes backendMod
+            liftEffect $ Console.log $ "Generating PHP code for " <> modNameStr <> " (Total AST Nodes: " <> show totalNodes <> ")"
           let importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
           let foreignSource = fromMaybe "" (Map.lookup backendMod.name foreignSources)
           currentArities <- liftEffect $ Ref.read refs.globalAritiesRef
-          let state = renderModuleState emission importsArray foreignSource currentArities backendMod
-          publishModuleState emission outputDir refs state
-          cache.hooks.store state
+          translated <- liftEffect $ Profile.measurePure profile "translate" modNameStr \_ ->
+            translateModuleState importsArray foreignSource currentArities backendMod
+          state <- liftEffect $ Profile.measurePure profile "print" modNameStr \_ -> printModuleState emission translated
+          publishModuleStateWithProfile profile emission outputDir refs state
+          Profile.measureAff profile "cache.store" modNameStr \_ -> cache.hooks.store state
       }
       finalModules
 
@@ -175,16 +169,21 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
 
           if emitBundle then do
             bundleContent <- liftEffect $ Ref.read refs.bundleContentRef
-            writeOutput refs.outputs outputDir BundleOutput (mainMod <> "/main.bundle.php") (bundleContent <> "\n" <> printBundleEntryPoint entryPoint)
+            code <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
+              bundleContent <> "\n" <> printBundleEntryPoint entryPoint
+            Profile.measureAff profile "php.write" mainMod \_ ->
+              writeOutput refs.outputs outputDir BundleOutput (mainMod <> "/main.bundle.php") code
           else pure unit
 
           when emitModules do
-            let
-              reachableSet = moduleReachability [ModuleName mainMod] backendModules
-              reachable = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
-              modEntryPoint = printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachable)
-            liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
-            writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php") modEntryPoint
+            reachable <- liftEffect $ Profile.measurePure profile "entrypoint" mainMod \_ ->
+              let reachableSet = moduleReachability [ModuleName mainMod] backendModules
+              in Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
+            modEntryPoint <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
+              printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachable)
+            when verbose $ liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
+            Profile.measureAff profile "php.write" mainMod \_ ->
+              writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php") modEntryPoint
       )
       targetMainModules
 
@@ -193,9 +192,12 @@ run toolchain override = launchAff_ $ Metrics.measure "backend total" \_ -> do
         Just _ -> pure unit
         Nothing -> do
           bundleContent <- liftEffect $ Ref.read refs.bundleContentRef
-          writeOutput refs.outputs outputDir BundleOutput "bundle.php" bundleContent
+          Profile.measureAff profile "php.write" "" \_ ->
+            writeOutput refs.outputs outputDir BundleOutput "bundle.php" bundleContent
     else pure unit
 
-    liftEffect $ mergeComposers { outputDir, packageRoots: packagePaths.composerRoots }
-    liftEffect $ finalizeOutputs refs.outputs outputDir emission loaded.cacheable
+    Profile.measureAff profile "composer" "" \_ ->
+      liftEffect $ mergeComposers { outputDir, packageRoots: packagePaths.composerRoots }
+    Profile.measureAff profile "cleanup" "" \_ ->
+      liftEffect $ finalizeOutputs refs.outputs outputDir emission loaded.cacheable
   liftEffect cache.report

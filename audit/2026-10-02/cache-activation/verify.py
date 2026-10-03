@@ -62,7 +62,7 @@ def main():
 
     def build(label, uncached=False):
         command = ['node', '--import', str(artifacts / 'count-io.mjs'), str(artifacts / 'backend.mjs'),
-                   '--main', 'Inter.Api.Main', '--bundle'] + (['--no-cache'] if uncached else [])
+                   '--main', 'Inter.Api.Main', '--bundle', '--verbose'] + (['--no-cache'] if uncached else [])
         started = time.monotonic()
         with (artifacts / f'{label}.log').open('wb') as log:
             process = subprocess.run(command, cwd=work, stdout=log, stderr=subprocess.STDOUT, timeout=300,

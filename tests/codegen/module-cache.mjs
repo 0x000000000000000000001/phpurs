@@ -150,7 +150,7 @@ function fixture(root, emission) {
 function invoke(root, config, extra = {}) {
   write(root, 'config.json', JSON.stringify({ ...config, ...extra }));
   const flags = config.emission.emitBundle ? [config.emission.emitModules ? '--bundle' : '--bundle-only'] : [];
-  const result = spawnSync(process.execPath, [driver, ...flags], {
+  const result = spawnSync(process.execPath, [driver, '--verbose', ...flags], {
     cwd: root, encoding: 'utf8', timeout: 30000,
     env: { ...process.env, PHPURS_TEST_CACHE_CONFIG: path.join(root, 'config.json') },
   });

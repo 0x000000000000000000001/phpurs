@@ -66,10 +66,14 @@ PBO currently preserves the CoreFn foreign map in its backend module. Replacing
 an input after its read affects the following invocation; it cannot associate a
 new key with the previous bytes' compilation.
 
-Effective options come from the driver's interpretation of the CLI. Today,
-`rewriteLimit` is 10,000, `emitBundle` combines the bundle flags, and `emitModules`
-is disabled by `--bundle-only`. Equivalent spellings of raw flags need not be
-included when they produce the same effective values. In contrast, paths are
+Effective options come from the driver's interpretation of the CLI.
+`rewriteLimit` is the validated `--rewrite-limit` value, defaulting to 10,000;
+the same value is passed to PBO. Changing it partitions the whole key plan.
+An omitted flag, `--rewrite-limit 10000` and `--rewrite-limit=010000` share the
+same effective value. See the [option contract](optimizer-diagnostics.md#rewrite-limit).
+`emitBundle` combines the bundle flags, and `emitModules` is disabled by
+`--bundle-only`. Equivalent spellings of raw flags need not be included when
+they produce the same effective values. In contrast, paths are
 retained as supplied by the driver/resolver: their spelling can affect lookup or
 emitted PHP. The working directory must be absolute; the planner performs no
 implicit filesystem or working-directory discovery.

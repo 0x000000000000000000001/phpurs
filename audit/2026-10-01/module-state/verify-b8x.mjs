@@ -83,7 +83,7 @@ function build(label, overrides) {
   const log = fs.openSync(path.join(artifacts, label + '.log'), 'w');
   let processResult;
   try {
-    processResult = spawnSync(process.execPath, [driver, '--main', 'Inter.Api.Main', '--bundle'], {
+    processResult = spawnSync(process.execPath, [driver, '--main', 'Inter.Api.Main', '--bundle', '--verbose'], {
       cwd: work, stdio: ['ignore', log, log], timeout: 300000,
       env: { ...process.env, GOPURS_JOBS: '1', PHPURS_TEST_CACHE_CONFIG: path.join(artifacts, label + '.config.json') },
     });

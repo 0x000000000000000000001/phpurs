@@ -19,7 +19,7 @@ function fixture(t) {
 }
 function build(root, args = ['--bundle'], options = {}) {
   write(root, 'probe-config.json', JSON.stringify({ stats: path.join(root, 'probe.json'), ...options }));
-  const result = spawnSync(process.execPath, ['--import', probe, options.cli || cli, ...args], {
+  const result = spawnSync(process.execPath, ['--import', probe, options.cli || cli, '--verbose', ...args], {
     cwd: root, encoding: 'utf8', timeout: 30000, maxBuffer: 2000000,
     env: { ...process.env, GOPURS_JOBS: options.jobs || '1', PHPURS_CLI_PROBE: path.join(root, 'probe-config.json') },
   });

@@ -376,7 +376,7 @@ Mesure : nombre de stat/read/write, temps FFI/Composer/printing et octets écrit
 
 Constat : Main.purs impose rewriteLimit = 10000 malgré une option CLI existante ; le compteur « Total AST Nodes » omet plusieurs formes. CodeGen accumule des tableaux par concat/snoc et recalcule freeVars ; flattenApp et flattenPhpCalls concatènent récursivement.
 
-- [ ] Chronométrer lecture CoreFn, optimisation, traduction, impression et écriture ; rendre les logs détaillés optionnels.
+- [x] Chronométrer lecture CoreFn, optimisation, traduction, impression et écriture ; rendre les logs détaillés optionnels. `--profile-build` émet un JSON v1 local à l'invocation, avec phases et modules ; `--verbose` active les lignes de génération et le parcours de comptage AST. Mesures pures différées, attente des effets Aff, erreurs/annulation et profils imbriqués couverts ; options indépendantes des clés B1. Build sans avertissement et 68 contrôles réussis. Sur b8x : 5 372 fichiers identiques au témoin et 2 686 mtime PHP conservées ; profil complet à 27,983 s d'optimisation, 6,493 s de traduction et 3,359 s d'impression. Sur 2 684 hits : zéro optimisation/traduction, deux impressions d'entrées et zéro écriture PHP réelle. Voir le [contrat](docs/build-profile.md) et le [bilan B4](audit/2026-10-03/build-profile/report.md).
 - [ ] Corriger le comptage AST par un parcours complet et honorer --rewrite-limit avec le défaut actuel inchangé.
 - [ ] Sur un module réellement coûteux, remplacer un seul accumulateur par une construction linéaire ; mesurer avant de généraliser.
 - [ ] Réutiliser l'analyse des variables libres si disponible, ou la calculer une fois par nœud, en contrôlant le coût mémoire.

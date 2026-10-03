@@ -75,6 +75,8 @@ The npm package declares a `phpurs` executable and a build-on-install hook. With
 
 Each backend invocation reports monotonic elapsed times to stderr, in milliseconds, for `load TAST + sort`, `prepare`, `optimize + emit`, `finalize`, and `backend total`. The total includes these phases; it excludes the earlier `purs` compilation and target-language compilation or execution. Each phase waits for its asynchronous callbacks and file writes to finish. Failed phases and the total are marked `(failed)`, and the original error is rethrown.
 
+Use `--profile-build` for separate CoreFn, optimization, PHP translation, printing and output timings, including a per-module JSON breakdown. Module progress lines and AST counting require `--verbose`. See [the build profiling contract](docs/build-profile.md) for scope boundaries and how persistent hits change the workload.
+
 ### Compile and run an application
 
 The [starter's library overrides](https://github.com/0x000000000000000000001/phpurs-starter/blob/master/spago.yaml) provide a larger dependency example. Use the compiler setup and entrypoint commands in this README: the starter's npm scripts still refer to the older `output/main.php` layout. Existing projects can retain their registry package set and replace libraries that contain JavaScript FFI with their PHP equivalents, including transitive dependencies.
@@ -178,14 +180,17 @@ php output/App.Main/main.bundle.php
 | `--bundle-only` | Emit bundles and the Composer manifest without writing `index.php` or `main.mod.php`. Enables bundling by itself and takes precedence over `--bundle` when both are present. |
 | `--autoload-path <Path>` | Composer autoloader path, normally relative to the application root. Default: `vendor/autoload.php`. |
 | `--no-cache` | Optimize and generate every module, bypassing module-cache reads and writes. Conditional PHP writes still preserve identical files. |
+| `--rewrite-limit N` | Set PBO's per-binding iteration guard (positive decimal integer; default 10,000). Also accepts `--rewrite-limit=N`. The effective value participates in cache keys; see [optimizer diagnostics](docs/optimizer-diagnostics.md). |
 | `--purmeta-cache-mib N` | Set PBO's serialized-size RAM-cache budget for this invocation (integer MiB; default 64). `0` empties RAM at each module boundary. See [the budget contract](docs/purmeta-profile.md#configuring-the-budget). |
 | `--profile-purmeta` | Report PBO RAM hits/misses, `.purmeta` I/O, serialization timings and RSS as JSON on stderr. Combine with `--no-cache` to profile full optimization; see [the profiling contract](docs/purmeta-profile.md). |
+| `--profile-build` | Report detailed phase and per-module elapsed times as JSON on stderr. Combine with `--no-cache` for full optimization; see [the build profile](docs/build-profile.md). |
+| `--verbose` | Print per-module generation messages and complete optimized AST-node counts, plus entrypoint progress. Coarse timing summaries and errors are always reported. |
 
 For full compilation of the measured b8x corpus, `--purmeta-cache-mib 128` is the selected opt-in setting: the [three-budget comparison](audit/2026-10-02/purmeta-budget-comparison/report.md) records fewer PBO rereads with a modest increase in process RSS. The default budget is 64 MiB.
 
 PBO also writes current-build scratch data under `<cwd>/.purmeta`, independently of `--output`. Its tagged-V8 format is unversioned at the PBO level; files become readable only after publication in the current build. See the [storage and invalidation contract](docs/purmeta-storage.md).
 
-The paths above use the default `output` directory. With `--output`, place the typed input files in the selected directory; all generated files are written there as well. The shared argument parser recognizes `--rewrite-limit`, but this backend currently uses a fixed limit of 10,000. Paths containing spaces are not supported by the current argument splitting.
+The paths above use the default `output` directory. With `--output`, place the typed input files in the selected directory; all generated files are written there as well. Paths containing spaces are not supported by the current argument splitting.
 
 ## Foreign function interface
 
@@ -323,7 +328,7 @@ It currently selects upstream PureScript `0.15.15`. That can serve as a host com
 4. **FFI and printing:** [GenNativeForeign](src/GenNativeForeign.purs) prepares foreign export tables, typed calling wrappers and arities together; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source using the shared [runtime preamble](src/Phpurs/Printer/Runtime.purs).
 5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [Phpurs.EntryPoint](src/Phpurs/EntryPoint.purs) renders their shared startup and Revolt execution. [Phpurs.PackagePaths](src/Phpurs/PackagePaths.purs) prepares the package roots shared by FFI lookup and [ComposerMerge](src/ComposerMerge.js), which collects PHP package requirements.
 
-Spago provides incremental compilation of the backend itself. Each backend invocation still optimizes, translates and prints every input module; the emission step compares the generated bytes to avoid rewriting identical PHP. Rebuild the compiler bundle after changing its source.
+Spago provides incremental compilation of the backend itself. PHPurs's persistent module cache skips optimization, translation and module printing on validated hits; `--no-cache` exercises the full path. Emission compares generated bytes to avoid rewriting identical PHP. Rebuild the compiler bundle after changing its source.
 
 ## Current status and limitations
 

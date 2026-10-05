@@ -24,6 +24,7 @@ const abs = (ns,body) => new S.Abs(ns.map(n=>new Tuple(new Just('x'+n),n)),body)
 const op = (o,l,r) => typed(int,new S.PrimOp(new S.Op2(new S.OpIntNum(o),l,r)));
 const eq = (l,r) => new S.PrimOp(new S.Op2(new S.OpIntOrd(S.OpEq.value),l,r));
 const seed = n => typed(thunk,abs([2],lit(n)));
+const capturedSeed = (body=loc(1)) => typed(thunk,abs([2],body));
 const branch = (c,a,b) => new S.Branch([new S.Pair(c,a)],b);
 
 function builder({name='build', operation=S.OpAdd.value, amount=1, decrement=1,
@@ -64,6 +65,30 @@ assert.equal(size(optimize(dynamicModule(dynamicEntry(typed(int,new S.TypeApp(lo
 const shared=optimize(dynamicModule(dynamicEntry(),[entry(consume()),dynamicEntry(loc(0),seed(7),'second')]));
 assert.equal(size(shared.privateNames),2,'literal and dynamic consumers share the scalar worker and guard');
 
+const captureEntry = (count=loc(0),initial=capturedSeed(),name='capture') =>
+  new Tuple(name,typed(new T.Func([int,int],int),abs([0,1],typed(int,call('build',[count,initial,u()])))));
+const captures=dynamicModule(captureEntry(),[captureEntry(lit(17),capturedSeed(),'staticcapture')]);
+const fusedCaptures=optimize(captures);
+assert.equal(size(fusedCaptures.privateNames),2,'static and dynamic Int captures share workers');
+assert.deepEqual(fusedCaptures.module_.bindings[0],captures.bindings[0],'captured public builder unchanged');
+let rescanned=fusedCaptures.module_;
+for(let pass=0;pass<3;pass++) {
+  const result=optimize(rescanned);
+  assert.deepEqual(result.module_,rescanned,'captured fallback stays idempotent');
+  assert.equal(size(result.privateNames),0,'no additional guards on rescan');
+  rescanned=result.module_;
+}
+assert.equal(size(optimize(dynamicModule(captureEntry(lit(17)))).privateNames),1,'static captured seed');
+const wrappedCapture=capturedSeed(typed(int,new S.TypeApp(loc(1),int)));
+assert.equal(size(optimize(dynamicModule(captureEntry(loc(0),wrappedCapture))).privateNames),2,'wrapped capture');
+const letCapture=(body=consume(17,capturedSeed(loc(4))),value=lit(7)) => new S.Let(new Just('x4'),4,value,body);
+assert.equal(size(optimize(mod(letCapture())).privateNames),1,'eager let capture');
+assert.equal(size(optimize(mod(new S.EffectBind(new Just('x4'),4,new S.EffectPure(lit(7)),new S.EffectPure(consume(17,capturedSeed(loc(4))))))).privateNames),1,'effect result already bound');
+for(const ctor of [S.UncurriedAbs,S.UncurriedEffectAbs]) {
+  const binding=new Tuple('uncurried',typed(new T.Func([int,int],int),new ctor([new Tuple(new Just('x0'),0),new Tuple(new Just('x1'),1)],typed(int,call('build',[loc(0),capturedSeed(),u()])))));
+  assert.equal(size(optimize(dynamicModule(binding)).privateNames),2,'explicit uncurried parameters');
+}
+
 const refuse = (reason,m) => {
   const result=optimize(m);
   assert.equal(size(result.privateNames),0,reason);
@@ -77,7 +102,19 @@ refuse('foreign depth expression',dynamicModule(dynamicEntry(typed(int,app(new S
 refuse('dynamic unknown seed',dynamicModule(dynamicEntry(loc(0),loc(4,thunk))));
 refuse('unknown callback',mod(consume(17,loc(4,thunk))));
 refuse('foreign seed body',mod(consume(17,typed(thunk,abs([2],typed(int,app(new S.Var(q('inspect','FFI')),[u()])))))));
-refuse('seed captures a scalar',mod(consume(17,typed(thunk,abs([2],loc(4))))));
+refuse('seed capture out of scope',mod(consume(17,capturedSeed(loc(4)))));
+refuse('seed capture name is not bound',dynamicModule(captureEntry(loc(0),capturedSeed(typed(int,new S.Local(new Just('other'),1))))));
+refuse('untyped seed capture',dynamicModule(captureEntry(loc(0),capturedSeed(new S.Local(new Just('x1'),1)))));
+refuse('non-Int seed capture',dynamicModule(captureEntry(loc(0),capturedSeed(loc(1,T.Number.value)))));
+refuse('computed seed capture',dynamicModule(captureEntry(loc(0),capturedSeed(op(S.OpAdd.value,loc(1),lit(1))))));
+refuse('mutable field seed',dynamicModule(captureEntry(loc(0),capturedSeed(typed(int,new S.Accessor(loc(1),new S.GetProp('value')))))));
+refuse('let binding not yet evaluated',mod(letCapture(lit(0),consume(17,capturedSeed(loc(4))))));
+const recursiveCapture=new S.LetRec(4,[new Tuple('x4',consume(17,capturedSeed(loc(4))))],loc(4));
+refuse('recursive seed is not eager',mod(recursiveCapture));
+refuse('recursive binding shadows eager local',mod(letCapture(recursiveCapture)));
+refuse('recursive local remains excluded in continuation',mod(new S.LetRec(4,[new Tuple('x4',lit(7))],consume(17,capturedSeed(loc(4))))));
+refuse('sibling branch binding is not in scope',mod(branch(eq(lit(0),lit(0)),letCapture(lit(0)),consume(17,capturedSeed(loc(4))))));
+refuse('thunk argument shadows caller local',dynamicModule(captureEntry(loc(0),typed(thunk,abs([1],loc(1))))));
 refuse('seed consumes its argument',mod(consume(17,typed(thunk,abs([2],loc(2))))));
 refuse('missing seed annotation',mod(consume(17,abs([2],lit(0)))));
 refuse('unknown seed result',mod(consume(17,typed(new T.Func([unit],T.Any.value),abs([2],lit(0))))));
@@ -132,6 +169,7 @@ function rename(x) {
 }
 assert.equal(size(optimize(rename(original)).privateNames),1,'no benchmark names');
 assert.equal(size(optimize(rename(dynamic)).privateNames),2,'dynamic fusion has no benchmark names');
+assert.equal(size(optimize(rename(captures)).privateNames),2,'captured fusion has no benchmark names');
 
 function render(m) {
   const file=translate([])(m);
@@ -178,6 +216,61 @@ echo "Done\\n";
 `,encoding:'utf8'});
 assert.equal(negativeRun.status,0,negativeRun.stdout+negativeRun.stderr);
 assert.equal(negativeRun.stdout,'Done\n');
+
+const capturedPhp=render(captures);
+assert.ok(!/\$GLOBALS\['[^']*__phpurs_(?:fuse|force)_/.test(capturedPhp),'captured workers stay private');
+assert.match(capturedPhp,/fuse[^\n]*\(17, \$x1_1\)/,'static consumer passes its capture directly');
+const capturedGuardStart=capturedPhp.indexOf('function majDemo___phpurs_force_0_build(');
+assert.ok(capturedGuardStart>=0);
+const capturedInstrumented=capturedPhp.slice(0,capturedGuardStart)+capturedPhp.slice(capturedGuardStart).replaceAll('\\Demo\\majDemo_build(', '\\Demo\\probe_capture(');
+const capturedRun=spawnSync('php',[],{input:capturedInstrumented+`
+$GLOBALS['Data_Unit_unit']=null;
+$GLOBALS['fallbacks']=0;
+function probe_capture($depth,$seed,$input) {
+  ++$GLOBALS['fallbacks'];
+  if($depth!==-7 || !$seed instanceof \\Closure || $seed($input)!==$GLOBALS['expectedSeed'] || $seed($input)!==$GLOBALS['expectedSeed'] || $input!==null) throw new \\Exception('captured fallback arguments');
+  throw $GLOBALS['sentinel'];
+}
+$GLOBALS['sentinel']=new \\RuntimeException('captured negative route');
+foreach ([-31,0,11,2147483647] as $value) {
+  foreach ([0,1,2,17,127,1000] as $depth) {
+    $actual=\\Demo\\majDemo_capture($depth,$value);
+    $expected=\\Demo\\majDemo_build($depth,fn($u)=>$value,null);
+    if(serialize($actual)!==serialize($expected)) throw new \\Exception('captured parity');
+  }
+  if(\\Demo\\majDemo_staticcapture(0,$value)!==$value+17) throw new \\Exception('static captured parity');
+  $GLOBALS['expectedSeed']=$value;
+  $caught=false;
+  try { \\Demo\\majDemo_capture(-7,$value); }
+  catch (\\RuntimeException $e) { $caught=true; if($e!==$GLOBALS['sentinel']) throw new \\Exception('captured exception identity'); }
+  if(!$caught) throw new \\Exception('missing captured fallback');
+}
+if($GLOBALS['fallbacks']!==4) throw new \\Exception('captured route selection');
+echo "Done\\n";
+`,encoding:'utf8'});
+assert.equal(capturedRun.status,0,capturedRun.stdout+capturedRun.stderr);
+assert.equal(capturedRun.stdout,'Done\n');
+
+const foreignValue = name => typed(int,app(new S.Var(q(name,'FFI')),[u()]));
+const orderedCapture = new S.Let(new Just('x3'),3,foreignValue('depth'),
+  new S.Let(new Just('x4'),4,foreignValue('seed'),call('build',[loc(3),capturedSeed(loc(4)),u()])));
+assert.equal(size(optimize(mod(orderedCapture)).privateNames),2,'opaque values are fused only after binding');
+const orderedRun=spawnSync('php',[],{input:render(mod(orderedCapture))+`
+$GLOBALS['Data_Unit_unit']=null;
+$events=[];
+$GLOBALS['FFI_depth']=function($u) use (&$events) { $events[]='depth'; return 17; };
+$GLOBALS['FFI_seed']=function($u) use (&$events) { $events[]='seed'; return 11; };
+if(\\Demo\\majDemo_entry(null)!==28 || $events!==['depth','seed']) throw new \\Exception('capture evaluation order/count');
+$same=new \\RuntimeException('seed failure');
+$GLOBALS['FFI_seed']=function($u) use (&$events,$same) { $events[]='throw'; throw $same; };
+$caught=false;
+try { \\Demo\\majDemo_entry(null); }
+catch (\\RuntimeException $e) { $caught=true; if($e!==$same) throw new \\Exception('seed exception identity'); }
+if(!$caught || $events!==['depth','seed','depth','throw']) throw new \\Exception('seed exception order');
+echo "Done\\n";
+`,encoding:'utf8'});
+assert.equal(orderedRun.status,0,orderedRun.stdout+orderedRun.stderr);
+assert.equal(orderedRun.stdout,'Done\n');
 const callbackEntry = new Tuple('observe',typed(new T.Func([thunk],int),abs([0],typed(int,consume(17,loc(0,thunk))))));
 const php=render(mod(consume(),builder(),[{recursive:false,bindings:[callbackEntry]}]));
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_fuse_/.test(php),'no private globals');
@@ -233,4 +326,4 @@ for (const [operation,amount,seeds,depths] of [
   assert.equal(result.status,0,result.stdout+result.stderr);
   assert.equal(result.stdout,'Done\n');
 }
-console.log('thunk-fusion: static/dynamic proofs, negative fallback, refusal boundaries, budgets, retained closures and 48 PHP arithmetic comparisons passed');
+console.log('thunk-fusion: literal/captured seeds, lexical scope, idempotence, evaluation order, negative fallbacks, refusals, budgets, retained closures and arithmetic parity passed');

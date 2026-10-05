@@ -1,0 +1,545 @@
+{
+  "compilers": {
+    "integrated": {
+      "sha256": "c381c4b077c7f8c63c544f55253a37cf56c6498939a3ded3c873973ea7ff9d22",
+      "bytes": 1419457,
+      "thunkFusionSHA256": "357740d1c7d76b377138c95669f2cbc5a345c71452b522f421cdb115941712f7"
+    },
+    "baseline": {
+      "sha256": "7495ee2b0cdef431531b4e99cb8bb0a303850056fe836fbd858e1dea58f8b390",
+      "bytes": 1416277,
+      "thunkFusionSHA256": "ad134082c24efd37cd42ad9b6799e6200b0b22a95f9bd5bf132872a215dc00f2"
+    },
+    "sharedInputs": 322,
+    "onlyChangedInput": "output/Phpurs.ThunkFusion/index.js"
+  },
+  "phpFlags": [
+    "-d",
+    "xdebug.mode=off",
+    "-d",
+    "opcache.enable_cli=1",
+    "-d",
+    "opcache.file_cache=",
+    "-d",
+    "opcache.file_update_protection=0",
+    "-d",
+    "opcache.jit_buffer_size=128M",
+    "-d",
+    "opcache.jit=1255"
+  ],
+  "builds": {
+    "kernel-baseline": {
+      "processMs": 2422.9190000000003,
+      "modules": 244,
+      "phpFiles": 245,
+      "phpBytes": 5712992
+    },
+    "kernel-integrated": {
+      "processMs": 2402.7992499999996,
+      "modules": 244,
+      "phpFiles": 245,
+      "phpBytes": 5714683
+    },
+    "suite-baseline": {
+      "processMs": 3243.648,
+      "modules": 306,
+      "phpFiles": 307,
+      "phpBytes": 7373140
+    },
+    "suite-integrated": {
+      "processMs": 3305.359707999999,
+      "modules": 306,
+      "phpFiles": 307,
+      "phpBytes": 7373140
+    }
+  },
+  "comparisons": {
+    "kernel": {
+      "files": 246,
+      "changed": [
+        "Main/index.php"
+      ]
+    },
+    "suite": {
+      "files": 307,
+      "changed": []
+    }
+  },
+  "kernel": [
+    {
+      "variant": "baseline",
+      "depth": 1000,
+      "repeats": 1000,
+      "seed": 11,
+      "output": 1011000,
+      "best_ms": 46.463334,
+      "median_ms": 46.737708,
+      "samples_ms": [
+        46.515583,
+        46.503625,
+        46.520584,
+        46.96175,
+        46.904875,
+        46.83925,
+        46.854542,
+        46.787375,
+        46.688041,
+        46.463334
+      ],
+      "peak_bytes": 4194304,
+      "php": "8.5.4",
+      "jit": {
+        "enabled": true,
+        "on": true,
+        "kind": 5,
+        "opt_level": 5,
+        "opt_flags": 6,
+        "buffer_size": 134217712,
+        "buffer_free": 134202380
+      },
+      "opcache_enabled": true,
+      "opcache_file_cache": "",
+      "xdebug_mode": false
+    },
+    {
+      "variant": "integrated",
+      "depth": 1000,
+      "repeats": 1000,
+      "seed": 11,
+      "output": 1011000,
+      "best_ms": 0.816625,
+      "median_ms": 0.8373335,
+      "samples_ms": [
+        0.816625,
+        0.820084,
+        0.825334,
+        0.835292,
+        0.852416,
+        0.842917,
+        0.831,
+        0.839375,
+        0.860459,
+        0.8865
+      ],
+      "peak_bytes": 4194304,
+      "php": "8.5.4",
+      "jit": {
+        "enabled": true,
+        "on": true,
+        "kind": 5,
+        "opt_level": 5,
+        "opt_flags": 6,
+        "buffer_size": 134217712,
+        "buffer_free": 134208812
+      },
+      "opcache_enabled": true,
+      "opcache_file_cache": "",
+      "xdebug_mode": false
+    },
+    {
+      "variant": "integrated",
+      "depth": 1000,
+      "repeats": 1000,
+      "seed": 11,
+      "output": 1011000,
+      "best_ms": 0.944458,
+      "median_ms": 0.950375,
+      "samples_ms": [
+        0.971042,
+        0.947292,
+        0.952958,
+        0.947792,
+        0.962209,
+        0.953208,
+        0.944458,
+        0.953917,
+        0.947667,
+        0.946542
+      ],
+      "peak_bytes": 4194304,
+      "php": "8.5.4",
+      "jit": {
+        "enabled": true,
+        "on": true,
+        "kind": 5,
+        "opt_level": 5,
+        "opt_flags": 6,
+        "buffer_size": 134217712,
+        "buffer_free": 134208812
+      },
+      "opcache_enabled": true,
+      "opcache_file_cache": "",
+      "xdebug_mode": false
+    },
+    {
+      "variant": "baseline",
+      "depth": 1000,
+      "repeats": 1000,
+      "seed": 11,
+      "output": 1011000,
+      "best_ms": 47.695334,
+      "median_ms": 47.858020499999995,
+      "samples_ms": [
+        47.776416,
+        47.695334,
+        48.048042,
+        49.138541,
+        47.864666,
+        47.809166,
+        47.851375,
+        47.787958,
+        47.895792,
+        48.110208
+      ],
+      "peak_bytes": 4194304,
+      "php": "8.5.4",
+      "jit": {
+        "enabled": true,
+        "on": true,
+        "kind": 5,
+        "opt_level": 5,
+        "opt_flags": 6,
+        "buffer_size": 134217712,
+        "buffer_free": 134202380
+      },
+      "opcache_enabled": true,
+      "opcache_file_cache": "",
+      "xdebug_mode": false
+    }
+  ],
+  "suite": [
+    {
+      "variant": "baseline",
+      "mode": "pure",
+      "labels": [
+        "AST Evaluation:",
+        "Fibonacci:",
+        "List Processing (900 elements):",
+        "Tail Call Optimization (100k calls):",
+        "Deep Record Updates (10k iterations):",
+        "Ackermann (3, 4):",
+        "Church Numerals (100k Closure Applications):",
+        "Prime Sieve (sum primes up to 500):",
+        "Red-Black Tree (100k Worst-Case Insertions):",
+        "Polymorphism (10M Type Class Dict Lookups):",
+        "State Monad (1.2k Binds, 60 Stack Depth):",
+        "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+        "Array Processing (900 elements):",
+        "RowToList (Keys Count):"
+      ],
+      "values": [
+        "7",
+        "55",
+        "202950",
+        "100000",
+        "20000",
+        "125",
+        "100000",
+        "21536",
+        "22",
+        "10000000",
+        "1200",
+        "1000000",
+        "202950",
+        "5"
+      ],
+      "times_us": [
+        2.298899,
+        1.182007,
+        147.546219,
+        74.832195,
+        1548.260375,
+        49.085121,
+        2005.75525,
+        752.916688,
+        56119.667,
+        7221.1665,
+        490.971344,
+        795.612,
+        96.354492,
+        0.899297
+      ],
+      "total_ms": 69.306547,
+      "sum_displayed_lines_ms": 69.306547387,
+      "values_validated": true,
+      "oracle": "core",
+      "timer_unit": "microseconds"
+    },
+    {
+      "variant": "integrated",
+      "mode": "pure",
+      "labels": [
+        "AST Evaluation:",
+        "Fibonacci:",
+        "List Processing (900 elements):",
+        "Tail Call Optimization (100k calls):",
+        "Deep Record Updates (10k iterations):",
+        "Ackermann (3, 4):",
+        "Church Numerals (100k Closure Applications):",
+        "Prime Sieve (sum primes up to 500):",
+        "Red-Black Tree (100k Worst-Case Insertions):",
+        "Polymorphism (10M Type Class Dict Lookups):",
+        "State Monad (1.2k Binds, 60 Stack Depth):",
+        "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+        "Array Processing (900 elements):",
+        "RowToList (Keys Count):"
+      ],
+      "values": [
+        "7",
+        "55",
+        "202950",
+        "100000",
+        "20000",
+        "125",
+        "100000",
+        "21536",
+        "22",
+        "10000000",
+        "1200",
+        "1000000",
+        "202950",
+        "5"
+      ],
+      "times_us": [
+        2.312042,
+        1.18084,
+        146.341141,
+        74.760742,
+        1518.619875,
+        48.45866,
+        2025.1875,
+        744.765625,
+        56074.458,
+        6463.3125,
+        490.652344,
+        797.505188,
+        97.476883,
+        0.903646
+      ],
+      "total_ms": 68.485935,
+      "sum_displayed_lines_ms": 68.485934986,
+      "values_validated": true,
+      "oracle": "core",
+      "timer_unit": "microseconds"
+    },
+    {
+      "variant": "integrated",
+      "mode": "pure",
+      "labels": [
+        "AST Evaluation:",
+        "Fibonacci:",
+        "List Processing (900 elements):",
+        "Tail Call Optimization (100k calls):",
+        "Deep Record Updates (10k iterations):",
+        "Ackermann (3, 4):",
+        "Church Numerals (100k Closure Applications):",
+        "Prime Sieve (sum primes up to 500):",
+        "Red-Black Tree (100k Worst-Case Insertions):",
+        "Polymorphism (10M Type Class Dict Lookups):",
+        "State Monad (1.2k Binds, 60 Stack Depth):",
+        "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+        "Array Processing (900 elements):",
+        "RowToList (Keys Count):"
+      ],
+      "values": [
+        "7",
+        "55",
+        "202950",
+        "100000",
+        "20000",
+        "125",
+        "100000",
+        "21536",
+        "22",
+        "10000000",
+        "1200",
+        "1000000",
+        "202950",
+        "5"
+      ],
+      "times_us": [
+        2.300878,
+        1.178307,
+        148.410797,
+        74.763672,
+        1543.901,
+        48.774574,
+        2041.5625,
+        755.875,
+        56939.209,
+        6466.1665,
+        495.3815,
+        836.515625,
+        97.851234,
+        0.905741
+      ],
+      "total_ms": 69.452796,
+      "sum_displayed_lines_ms": 69.452796328,
+      "values_validated": true,
+      "oracle": "core",
+      "timer_unit": "microseconds"
+    },
+    {
+      "variant": "baseline",
+      "mode": "pure",
+      "labels": [
+        "AST Evaluation:",
+        "Fibonacci:",
+        "List Processing (900 elements):",
+        "Tail Call Optimization (100k calls):",
+        "Deep Record Updates (10k iterations):",
+        "Ackermann (3, 4):",
+        "Church Numerals (100k Closure Applications):",
+        "Prime Sieve (sum primes up to 500):",
+        "Red-Black Tree (100k Worst-Case Insertions):",
+        "Polymorphism (10M Type Class Dict Lookups):",
+        "State Monad (1.2k Binds, 60 Stack Depth):",
+        "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+        "Array Processing (900 elements):",
+        "RowToList (Keys Count):"
+      ],
+      "values": [
+        "7",
+        "55",
+        "202950",
+        "100000",
+        "20000",
+        "125",
+        "100000",
+        "21536",
+        "22",
+        "10000000",
+        "1200",
+        "1000000",
+        "202950",
+        "5"
+      ],
+      "times_us": [
+        2.301839,
+        1.17185,
+        148.259766,
+        74.808918,
+        1554.630125,
+        48.490563,
+        2012.88025,
+        748.375,
+        56321.834,
+        6472.7915,
+        487.026031,
+        829.71875,
+        96.953773,
+        0.907527
+      ],
+      "total_ms": 68.80015,
+      "sum_displayed_lines_ms": 68.80014989200002,
+      "values_validated": true,
+      "oracle": "core",
+      "timer_unit": "microseconds"
+    }
+  ],
+  "kernelJavaScript": "1011000",
+  "inputsUnchanged": true,
+  "inputFiles": 647,
+  "inputManifestSHA256": "ea2d1ba2dbd0c943761c4011fa906fc0049f3cfe80f8db0fba22ac17457e08fd",
+  "kernelMediansMs": {
+    "baseline": 47.297864249999996,
+    "integrated": 0.89385425
+  },
+  "baselineState": {
+    "files": {
+      "baseline.mjs": "8beca903b67d8594516ab9ffdf7114406c26a0dcfbe4de610f99e5d96bf59fee",
+      "baseline-thunk-fusion.js": "ad134082c24efd37cd42ad9b6799e6200b0b22a95f9bd5bf132872a215dc00f2",
+      "baseline-thunk-fusion.purs": "f621a44283c4255f6b69286da0c96d0c508076f368addc0a08daada7ce2f1cd6"
+    },
+    "heads": {
+      "phpurs": "195cd881af39e9a20702f4c8c677ebe96d1c2eb7",
+      "pbo": "157a544f0a469c7b0137a3fca66e626d717db493",
+      "bench": "be2b32d564a72fbafc429373697872b0a66e3c4c"
+    },
+    "freeBytes": 6711853056
+  },
+  "fixtures": [
+    {
+      "fixture": "ImmediateThunkFusion",
+      "php": "passed",
+      "javascript": "passed"
+    },
+    {
+      "fixture": "RecursiveDictionaryInitialization",
+      "php": "passed",
+      "javascript": "passed"
+    },
+    {
+      "fixture": "CompactClosureLoops",
+      "php": "passed",
+      "javascript": "passed"
+    },
+    {
+      "fixture": "FunctionFFIBoundary",
+      "php": "passed",
+      "javascript": "passed"
+    },
+    {
+      "fixture": "PartialBindings",
+      "php": "passed",
+      "javascript": "passed"
+    },
+    {
+      "fixture": "UnaryCallableCaptures",
+      "php": "passed",
+      "javascript": "passed"
+    }
+  ],
+  "workCounts": {
+    "publicBuilderUnchanged": true,
+    "publicBuilderSHA256": "1186c07e4cc97f76d78f46ec1e2b665c856a287433d79b52ff48f6b644ce95ee",
+    "counts": [
+      {
+        "variant": "baseline",
+        "output": 1011000,
+        "nodes": 1000000,
+        "thunk_calls": 1000000,
+        "seed_closures": 1000,
+        "seed_calls": 1000,
+        "additions": 1000000,
+        "guards": 0,
+        "workers": 0
+      },
+      {
+        "variant": "integrated",
+        "output": 1011000,
+        "nodes": 0,
+        "thunk_calls": 0,
+        "seed_closures": 0,
+        "seed_calls": 0,
+        "additions": 1000000,
+        "guards": 1000,
+        "workers": 1000
+      }
+    ]
+  },
+  "codegen": {
+    "passed": 83,
+    "failed": 0,
+    "logSHA256": "e8fc1d100b54b9a63c17987f404fbd2cbf37df230f569409e39d7bd7fd18df50"
+  },
+  "runtimeImprovementPercent": 98.11015938209091,
+  "sourceSHA256": {
+    "src/Phpurs/ThunkFusion.purs": "43c6266b6952dc5a1a8483b4069708609f693a78769ed02f8abc51b115ca1e60",
+    "tests/codegen/thunk-fusion.mjs": "1e4d6a02048b54cf511a3286c69ee21e7ddfb64eff341c1fbb6bc4257012933a",
+    "tests/passing/ImmediateThunkFusion.purs": "a659a94dc9f14b3be4ecc6e1ba3bfbf0fe4f903d755e35c3f5d573f67857c4cc",
+    "tests/passing/ImmediateThunkFusion.js": "91a7812ca46074a9cdbf604d3311f8b32085998e7066ff3f1cae40d6c8e3cbc4",
+    "tests/passing/ImmediateThunkFusion.php": "9d7b0be68cbc87f9cb6ccc1245ebc93f049f0882f9190db367467624e4e2327c"
+  },
+  "standaloneCLI": {
+    "bytes": 1471666,
+    "sha256": "4fdd45951292b13207170002ca1b5014ec23aff4896a53ee52606d8f558534b0"
+  },
+  "versions": {
+    "node": "v24.8.0",
+    "purs": "0.15.16 [development build; commit: 3c8fcfd7a3d440bba487fe9fe059284cffc6e908 DIRTY]",
+    "spago": "1.0.3",
+    "php": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies"
+  },
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r14-scalar-seed-20261005"
+}

@@ -6,3 +6,6 @@ export const invoke = f => f(undefined);
 let depthCalls = 0;
 export const countedDepth = n => { ++depthCalls; return n; };
 export const readDepthCalls = () => depthCalls;
+let valueCalls = 0;
+export const countedValue = n => { ++valueCalls; return n; };
+export const readValueCalls = () => valueCalls;

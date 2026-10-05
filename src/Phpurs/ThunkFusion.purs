@@ -130,14 +130,22 @@ proveBuilder name expr = do
         _ -> Nothing
     _, _ -> Nothing
 
--- A literal-returning seed has no captures, calls, exceptions or stack
--- observations. Merely knowing the seed's function type is insufficient.
-seedValue :: NeutralExpr -> Maybe Int
-seedValue expr = do
+-- Only eager lexical bindings can be read before constructing the chain.
+-- Recursive locals may still be uninitialized, even with an Int annotation.
+type Locals = Set (Tuple (Maybe Ident) Level)
+
+-- A literal or an already evaluated Int capture has no calls, exceptions or
+-- stack observations. The thunk's own Unit parameter is never a scalar seed.
+seedValue :: Locals -> NeutralExpr -> Maybe NeutralExpr
+seedValue available expr = do
   require (hasType thunkType expr)
   let fn = paramsAndBody expr
   require (A.length fn.params == 1 && hasType Int fn.body)
-  integer fn.body
+  case peel fn.body of
+    Lit (LitInt _) -> Just fn.body
+    Local ident level -> fn.body <$ require
+      (not (A.elem level fn.params) && Set.member (Tuple ident level) available)
+    _ -> Nothing
 
 typed :: ExprType -> NeutralExpr -> NeutralExpr
 typed ty = NeutralExpr <<< Typed ty
@@ -165,8 +173,9 @@ makeWorker name step = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
 
 -- Guard once at the consumer boundary, leaving the arithmetic worker intact.
 -- The fallback still constructs the original lazy chain. Its seed only reads
--- the literal scalar passed by the selected consumer; unknown seeds never enter
--- this path. A captured seed also keeps this wrapper out of subsequent scans.
+-- the scalar passed by the selected consumer; unknown seeds never enter here.
+-- Keep construction and force as nested applications: the scanner only fuses
+-- flattened consumers, so rescanning cannot fuse the guard's own fallback.
 makeGuard :: Qualified Ident -> Qualified Ident -> NeutralExpr
 makeGuard builder worker = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
   (NEA.cons' (Tuple (Just (Ident "depth")) (Level 0)) [ Tuple (Just (Ident "seed")) (Level 1) ])
@@ -174,7 +183,7 @@ makeGuard builder worker = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
   where
   body = typed Int $ NeutralExpr $ Branch
     (NEA.singleton (Pair nonNegative (typed Int (call worker depth seed))))
-    (typed Int (NeutralExpr (App (NeutralExpr (Var builder)) (NEA.cons' depth [ initial, unitInput ]))))
+    (typed Int (NeutralExpr (App (typed thunkType (call builder depth initial)) (NEA.singleton unitInput))))
   depth = typed Int (NeutralExpr (Local (Just (Ident "depth")) (Level 0)))
   seed = typed Int (NeutralExpr (Local (Just (Ident "seed")) (Level 1)))
   nonNegative = typed Boolean (NeutralExpr (PrimOp (Op2 (OpIntOrd OpGte) depth (int 0))))
@@ -183,8 +192,8 @@ makeGuard builder worker = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
 
 type ScanState = { fuel :: Int, workers :: Set Ident, guards :: Set Ident }
 
-scan :: ModuleName -> String -> String -> Map Ident Step -> NeutralExpr -> State ScanState NeutralExpr
-scan moduleName prefix guardPrefix builders expr@(NeutralExpr syntax) = do
+scan :: ModuleName -> String -> String -> Map Ident Step -> Locals -> NeutralExpr -> State ScanState NeutralExpr
+scan moduleName prefix guardPrefix builders available expr@(NeutralExpr syntax) = do
   state <- get
   if state.fuel <= 0 then pure expr
   else do
@@ -196,9 +205,20 @@ scan moduleName prefix guardPrefix builders expr@(NeutralExpr syntax) = do
           , guards = if dynamic then Set.insert ident s.guards else s.guards
           })
         let selectedPrefix = if dynamic then guardPrefix else prefix
-        pure (typed Int (call (Qualified (Just moduleName) (Ident (selectedPrefix <> unwrap ident))) count (int seed)))
-      _ -> NeutralExpr <$> traverse (scan moduleName prefix guardPrefix builders) syntax
+        pure (typed Int (call (Qualified (Just moduleName) (Ident (selectedPrefix <> unwrap ident))) count seed))
+      _ -> NeutralExpr <$> case syntax of
+        Abs args body -> Abs args <$> recur (Set.union available (Set.fromFoldable args)) body
+        UncurriedAbs args body -> UncurriedAbs args <$> recur (Set.union available (Set.fromFoldable args)) body
+        UncurriedEffectAbs args body -> UncurriedEffectAbs args <$> recur (Set.union available (Set.fromFoldable args)) body
+        Let ident level value body -> Let ident level <$> recur available value <*> recur (Set.insert (Tuple ident level) available) body
+        EffectBind ident level value body -> EffectBind ident level <$> recur available value <*> recur (Set.insert (Tuple ident level) available) body
+        LetRec level bindings body ->
+          let outside = foldl (\s (Tuple ident _) -> Set.delete (Tuple (Just ident) level) s) available bindings
+          in LetRec level <$> traverse (traverse (recur outside)) bindings <*> recur outside body
+        _ -> traverse (recur available) syntax
   where
+  recur = scan moduleName prefix guardPrefix builders
+
   candidate = case syntax of
     App fn args -> case peel fn, NEA.toArray args of
       Var (Qualified (Just mn) ident), [ count, initial, input ] | mn == moduleName -> do
@@ -211,7 +231,7 @@ scan moduleName prefix guardPrefix builders expr@(NeutralExpr syntax) = do
           Nothing -> case peel count of
             Local _ _ -> Just true
             _ -> Nothing
-        seed <- seedValue initial
+        seed <- seedValue available initial
         pure { ident, count, seed, dynamic }
       _, _ -> Nothing
     _ -> Nothing
@@ -247,7 +267,7 @@ fuseModule mod builders =
     guardPrefix = freshPrefixFor "__phpurs_force_" mod
     Tuple bindings selected = runState
       (traverse (\g -> do
-        bs <- traverse (\(Tuple k e) -> Tuple k <$> if bounded 8192 e then scan mod.name prefix guardPrefix builders e else pure e) g.bindings
+        bs <- traverse (\(Tuple k e) -> Tuple k <$> if bounded 8192 e then scan mod.name prefix guardPrefix builders Set.empty e else pure e) g.bindings
         pure (g { bindings = bs })) mod.bindings)
       { fuel: 32768, workers: Set.empty, guards: Set.empty }
     renamed ident = Ident (prefix <> unwrap ident)

@@ -13,6 +13,8 @@ foreign import readCalls :: Effect Int
 foreign import invoke :: (Unit -> Int) -> Int
 foreign import countedDepth :: Int -> Int
 foreign import readDepthCalls :: Effect Int
+foreign import countedValue :: Int -> Int
+foreign import readValueCalls :: Effect Int
 
 newtype Deferred a = Deferred (Unit -> a)
 
@@ -28,6 +30,17 @@ consume _ = force (grow 17 (Deferred (\_ -> 11)))
 
 consumeDepth :: Int -> Int
 consumeDepth depth = force (grow depth (Deferred (\_ -> 11)))
+
+consumeCaptured :: Int -> Int -> Int
+consumeCaptured depth value = force (grow depth (Deferred (\_ -> value)))
+
+consumeStaticCaptured :: Int -> Int
+consumeStaticCaptured value = force (grow 17 (Deferred (\_ -> value)))
+
+sumCaptures :: Int -> Int -> Int -> Int -> Int
+sumCaptures 0 _ _ acc = acc
+sumCaptures repeats depth value acc =
+  sumCaptures (repeats - 1) depth (value + 1) (acc + force (grow depth (Deferred (\_ -> value))))
 
 main :: Effect Unit
 main = do
@@ -45,6 +58,23 @@ main = do
   assert' "evaluated depth" (checkDepth (countedDepth 17) == 28)
   depthCalls <- readDepthCalls
   assert' "depth evaluated once" (depthCalls == 1)
+  let
+    checkCaptured = opaque consumeCaptured
+    checkStaticCaptured = opaque consumeStaticCaptured
+  assert' "captured zero depth" (checkCaptured (opaque 0) (opaque (-31)) == -31)
+  assert' "captured one step" (checkCaptured (opaque 1) (opaque 7) == 8)
+  assert' "captured long chain" (checkCaptured (opaque 1000) (opaque 11) == 1011)
+  assert' "captured static depth" (checkStaticCaptured (opaque 11) == 28)
+  assert' "evaluated scalar capture" (checkCaptured (countedDepth 17) (countedValue 11) == 28)
+  valueCalls <- readValueCalls
+  allDepthCalls <- readDepthCalls
+  assert' "capture and depth each evaluated once" (valueCalls == 1 && allDepthCalls == 2)
+  assert' "capture follows current loop parameter" (sumCaptures (opaque 7) (opaque 17) (opaque 11) 0 == 217)
+  let
+    capturedValue = opaque 31
+    retainedCapture = opaque (grow (opaque 17) (Deferred (\_ -> capturedValue)))
+  assert' "retained scalar closure first force" (force retainedCapture == 48)
+  assert' "retained scalar closure second force" (force retainedCapture == 48)
   let retained = opaque (grow 17 (Deferred countedSeed))
   before <- readCalls
   assert' "construction stays lazy" (before == 0)
@@ -55,4 +85,7 @@ main = do
   let Deferred root = retained
   assert' "public closure crosses FFI" (invoke root == 21)
   assert' "public closure representation" (typeOf (unsafeToForeign root) == "function" && tagOf (unsafeToForeign root) == "Function")
+  let Deferred capturedRoot = retainedCapture
+  assert' "retained scalar closure crosses FFI" (invoke capturedRoot == 48)
+  assert' "retained scalar closure representation" (typeOf (unsafeToForeign capturedRoot) == "function" && tagOf (unsafeToForeign capturedRoot) == "Function")
   log "Done"

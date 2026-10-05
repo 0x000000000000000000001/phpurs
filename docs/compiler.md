@@ -70,6 +70,18 @@ The private scalar signatures are cleared before terminal inlining, where the
 typed-region proof already establishes the argument types. Public signatures
 and constructor representations are still generated at their boundaries.
 
+`ThunkFusion` accepts a `Unit -> Int` seed whose body is either an integer
+literal or a typed read of an already evaluated local. The scanner tracks
+parameters and strict `Let`/`EffectBind` results by name and level; recursive
+locals and the seed's own parameter are excluded. A dynamic depth uses a private
+guard with the original builder as its negative fallback. That fallback keeps
+construction and force as **nested applications**: the fusion scanner recognizes
+only flattened consumers, so repeated scans cannot fuse their own fallback.
+The PHP emitter may flatten these calls after this pass. Any extension of the
+candidate application shapes must preserve that idempotence contract. See the
+[captured-seed audit](../audit/2026-10-05/scalar-seeds/report.md) and
+[`thunk-fusion.mjs`](../tests/codegen/thunk-fusion.mjs).
+
 ## Expression translation contracts
 
 `translateExpr context nextId expr` returns a `TranslationResult`:

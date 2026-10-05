@@ -58,7 +58,15 @@ def main():
         spec = importlib.util.spec_from_file_location('php_driver', WORKSPACE / 'altbak.pub-phpurs/bin/php/driver.py')
         driver = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(driver)
-        assert driver.vendor_artifacts(cwd) is not None
+        expected_vendor = driver.vendor_artifacts(cwd)
+        assert expected_vendor is not None
+        driver_inputs = driver.inputs()
+        for filename, value in [('bench-vendor.json', expected_vendor), ('bench-driver-inputs.json', driver_inputs)]:
+            file = artifacts / filename
+            if file.exists():
+                assert json.loads(file.read_text()) == value
+            else:
+                save(file, value)
     result_path = artifacts / (args.label + '-' + args.project + '.json')
     assert not result_path.exists()
     rows = []
@@ -129,7 +137,8 @@ def main():
                     os.utime(output / file, ns=(946684800000000000, 946684800000000000))
                 if args.runtime:
                     php = shutil.which('php')
-                    vendor = driver.vendor_artifacts(cwd)
+                    assert driver.vendor_artifacts(cwd) == expected_vendor
+                    assert driver.inputs() == driver_inputs
                     driver.composer_inputs(cwd, php, env)
                     opcache = cwd / 'opcache'
                     if opcache.exists():
@@ -139,7 +148,8 @@ def main():
                         driver.execute(php, 'App', cwd, env, SimpleNamespace(mode='pure', test=None, expected=None))
                     row['runtime'] = json.loads((cwd / 'results.json').read_text())
                     assert row['runtime']['values_validated'] and len(row['runtime']['values']) == 14
-                    assert driver.vendor_artifacts(cwd) == vendor
+                    assert driver.vendor_artifacts(cwd) == expected_vendor
+                    assert driver.inputs() == driver_inputs
                     row['phpVersion'] = subprocess.check_output([php, '--version'], text=True).strip()
                     row['phpFlags'] = driver.PHP_FLAGS
             assert not (output / '.phpurs-cache').exists()

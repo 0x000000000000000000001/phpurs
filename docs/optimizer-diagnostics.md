@@ -53,7 +53,8 @@ return a partially optimized binding as a successful result.
 
 This option retains PBO's current semantics, including its separate chunked path
 for large expressions. It is not an AST-node budget, total rewrite counter or
-wall-clock timeout. No lower production default has been selected by this step.
+wall-clock timeout. The measured production choice remains 10,000, as explained
+below.
 
 The validated effective value is shared by the builder and the persistent
 cache-key context. Changing it prevents reuse under another limit across the
@@ -61,6 +62,23 @@ loaded graph, even if the generated PHP would be identical. Equivalent numeric
 spellings, including the explicit default, share keys. Previously stored keys
 can be reused when returning to their limit. `--no-cache` uses the same guard
 without reading or storing persistent states. See [cache keys](cache.md).
+
+## Measured default
+
+The [5 October 2026 comparison](../audit/2026-10-05/rewrite-tradeoff/report.md)
+retains **10,000**. The frozen b8x graph (2,684 modules) needs at most **11 passes
+per binding**, including the final pass that requests no further rewrite. The
+benchmark graph (306 modules) needs at most **8**. Guards 10 and 7 respectively
+reject terminating bindings in those graphs.
+
+At sufficient guards, the optimizer performs the same work: normalized pass and
+chunk traces match at 10,000 versus each observed minimum. Nine builds per corpus
+compare 11, 100 and 10,000 in rotating order. All successful builds preserve PHP
+bytes and sizes, and the fourteen benchmark values pass at every compared guard.
+Timing ranges overlap and do not improve monotonically as the guard is lowered.
+The guard therefore supplies convergence headroom, with no measured code-quality
+or size tradeoff supporting a smaller default. The observed minima apply to those
+specific loaded graphs; they are not a general upper bound for other programs.
 
 ## Validation
 

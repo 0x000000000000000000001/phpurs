@@ -1,0 +1,1955 @@
+{
+  "date": "2026-10-05",
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-b4-rewrite-20261005",
+  "provenance": {
+    "inputFiles": 3166,
+    "inputManifestSHA256": "f598d1981697777c10499d6b709b3d1d77c668233f892567e2d929feea155cd6",
+    "compilerSHA256": "42e83167759c9f70838330670994eb3825283c64063d07d68b2b45758a229c40",
+    "phpursHead": "dfe6a6618d7a82aa8149760761c9b36c5b49f805",
+    "pboHead": "3af24d7f3909ba326ac46f3325cfd208139af286",
+    "node": "v24.8.0"
+  },
+  "protocol": {
+    "limits": [
+      10000,
+      11,
+      100
+    ],
+    "repetitions": 3,
+    "order": [
+      [
+        10000,
+        11,
+        100
+      ],
+      [
+        11,
+        100,
+        10000
+      ],
+      [
+        100,
+        10000,
+        11
+      ]
+    ],
+    "persistentCache": false,
+    "purmetaCacheMiB": 64,
+    "GOPURS_JOBS": 1,
+    "buildProfile": true,
+    "verboseInTimedRuns": false,
+    "outputsPreexistingAndByteIdentical": true,
+    "phpMtimeNanoseconds": 946684800000000000,
+    "diagnosticInstrumentationInTimedRuns": false
+  },
+  "checks": {
+    "buildWarnings": 0,
+    "buildErrors": 0,
+    "rewriteLimitTestsPassed": 4
+  },
+  "decision": {
+    "default": 10000,
+    "reason": "A sufficient guard preserves the optimization schedule and PHP; retain the existing convergence headroom."
+  },
+  "projects": {
+    "b8x": {
+      "modules": 2684,
+      "astNodes": 1514089,
+      "minimumObservedGuard": 11,
+      "diagnostic": {
+        "bindings": 31859,
+        "totalPasses": 45109,
+        "passHistogram": {
+          "1": 24397,
+          "2": 4144,
+          "3": 1375,
+          "4": 1573,
+          "5": 256,
+          "6": 88,
+          "7": 13,
+          "8": 11,
+          "9": 1,
+          "11": 1
+        },
+        "maximumPasses": 11,
+        "chunkBindings": 41,
+        "chunkNodes": 7699,
+        "chunkLeaves": 7219,
+        "maximumBindings": [
+          "Core.Feat.Review.Message.Query.GetArticleQuote.Projection.Projection.ordQuote"
+        ],
+        "scheduleSHA256": "0829b311ced1ccab4e381b4ae4594d9ff6b56c6c53ba57f782f34e1739201f9e"
+      },
+      "identicalFiles": 5372,
+      "phpFiles": 2686,
+      "phpBytes": 135282480,
+      "outputManifestSHA256": "7d02c2a972c6e677054dc1ab2eb69822dd7e95cbbc68893ec34ddedc5d11e7d1",
+      "statistics": {
+        "11": {
+          "processMs": {
+            "samples": [
+              47640.190584,
+              46290.937874999996,
+              50928.428
+            ],
+            "min": 46290.937874999996,
+            "median": 47640.190584,
+            "max": 50928.428
+          },
+          "optimizeMs": {
+            "samples": [
+              29116.8178570001,
+              28066.660199999907,
+              30816.42127100001
+            ],
+            "min": 28066.660199999907,
+            "median": 29116.8178570001,
+            "max": 30816.42127100001
+          },
+          "translateMs": {
+            "samples": [
+              5471.019429999844,
+              5389.683836999934,
+              5690.236807999889
+            ],
+            "min": 5389.683836999934,
+            "median": 5471.019429999844,
+            "max": 5690.236807999889
+          },
+          "peakRSSKiB": {
+            "samples": [
+              3755616,
+              3690176,
+              3531504
+            ],
+            "min": 3531504,
+            "median": 3690176,
+            "max": 3755616
+          }
+        },
+        "100": {
+          "processMs": {
+            "samples": [
+              45759.68020799999,
+              47328.90733399998,
+              45422.76504099999
+            ],
+            "min": 45422.76504099999,
+            "median": 45759.68020799999,
+            "max": 47328.90733399998
+          },
+          "optimizeMs": {
+            "samples": [
+              27902.827835999986,
+              29059.547391999902,
+              27211.445896999805
+            ],
+            "min": 27211.445896999805,
+            "median": 27902.827835999986,
+            "max": 29059.547391999902
+          },
+          "translateMs": {
+            "samples": [
+              5271.786597999993,
+              5386.518128999981,
+              5288.937458999895
+            ],
+            "min": 5271.786597999993,
+            "median": 5288.937458999895,
+            "max": 5386.518128999981
+          },
+          "peakRSSKiB": {
+            "samples": [
+              3775344,
+              3751680,
+              3756336
+            ],
+            "min": 3751680,
+            "median": 3756336,
+            "max": 3775344
+          }
+        },
+        "10000": {
+          "processMs": {
+            "samples": [
+              46838.589208000005,
+              47268.09233299997,
+              48754.14587500001
+            ],
+            "min": 46838.589208000005,
+            "median": 47268.09233299997,
+            "max": 48754.14587500001
+          },
+          "optimizeMs": {
+            "samples": [
+              28161.52237400018,
+              28758.571026999845,
+              30034.282309999984
+            ],
+            "min": 28161.52237400018,
+            "median": 28758.571026999845,
+            "max": 30034.282309999984
+          },
+          "translateMs": {
+            "samples": [
+              5407.37112399987,
+              5468.47203299998,
+              5546.588402000034
+            ],
+            "min": 5407.37112399987,
+            "median": 5468.47203299998,
+            "max": 5546.588402000034
+          },
+          "peakRSSKiB": {
+            "samples": [
+              3495648,
+              3786000,
+              3730912
+            ],
+            "min": 3495648,
+            "median": 3730912,
+            "max": 3786000
+          }
+        }
+      },
+      "selectedModules": [
+        {
+          "name": "Inter.Cli.Logic.Registry",
+          "analysis": {
+            "bindings": 635,
+            "passes": 670,
+            "maxPasses": 6,
+            "chunkBindings": 3,
+            "chunkNodes": 607,
+            "chunkLeaves": 470
+          },
+          "phpBytes": 2746128,
+          "optimizedAstNodes": 88430,
+          "optimizeMedianMs": {
+            "11": 606.4459999999999,
+            "100": 603.9494999999988,
+            "10000": 614.3965000000026
+          }
+        },
+        {
+          "name": "Inter.Api.Registry",
+          "analysis": {
+            "bindings": 443,
+            "passes": 459,
+            "maxPasses": 4,
+            "chunkBindings": 1,
+            "chunkNodes": 102,
+            "chunkLeaves": 84
+          },
+          "phpBytes": 1762416,
+          "optimizedAstNodes": 60649,
+          "optimizeMedianMs": {
+            "11": 596.8201670000017,
+            "100": 595.8686659999985,
+            "10000": 584.2224170000009
+          }
+        },
+        {
+          "name": "Core.Feat.Review.Message.Query.SearchArticles.Projection.Projection",
+          "analysis": {
+            "bindings": 514,
+            "passes": 637,
+            "maxPasses": 5,
+            "chunkBindings": 2,
+            "chunkNodes": 78,
+            "chunkLeaves": 62
+          },
+          "phpBytes": 947482,
+          "optimizedAstNodes": 29904,
+          "optimizeMedianMs": {
+            "11": 351.43991599999936,
+            "100": 317.7686250000006,
+            "10000": 333.8329169999997
+          }
+        },
+        {
+          "name": "Core.Feat.Review.Message.Query.GetArticle.Projection.Projection",
+          "analysis": {
+            "bindings": 530,
+            "passes": 656,
+            "maxPasses": 5,
+            "chunkBindings": 1,
+            "chunkNodes": 8,
+            "chunkLeaves": 1
+          },
+          "phpBytes": 789670,
+          "optimizedAstNodes": 25704,
+          "optimizeMedianMs": {
+            "11": 330.83749999999964,
+            "100": 304.45550000000003,
+            "10000": 300.5185419999998
+          }
+        },
+        {
+          "name": "Core.Feat.Review.Message.Query.ListNewsRelatedArticles.Projection.Projection",
+          "analysis": {
+            "bindings": 342,
+            "passes": 448,
+            "maxPasses": 5,
+            "chunkBindings": 0,
+            "chunkNodes": 0,
+            "chunkLeaves": 0
+          },
+          "phpBytes": 650292,
+          "optimizedAstNodes": 20359,
+          "optimizeMedianMs": {
+            "11": 223.96437499999956,
+            "100": 219.65841700000055,
+            "10000": 218.53654199999983
+          }
+        },
+        {
+          "name": "Core.Feat.Review.Message.Query.GetArticleQuote.Projection.Projection",
+          "analysis": {
+            "bindings": 265,
+            "passes": 373,
+            "maxPasses": 11,
+            "chunkBindings": 1,
+            "chunkNodes": 6,
+            "chunkLeaves": 0
+          },
+          "phpBytes": 541485,
+          "optimizedAstNodes": 18637,
+          "optimizeMedianMs": {
+            "11": 184.119917,
+            "100": 169.584667000001,
+            "10000": 176.30916699999943
+          }
+        },
+        {
+          "name": "Data.CodePoint.Unicode.Internal",
+          "analysis": {
+            "bindings": 297,
+            "passes": 619,
+            "maxPasses": 4,
+            "chunkBindings": 2,
+            "chunkNodes": 4732,
+            "chunkLeaves": 4728
+          },
+          "phpBytes": 619549,
+          "optimizedAstNodes": 47492,
+          "optimizeMedianMs": {
+            "11": 122.53504199999952,
+            "100": 121.07779200000004,
+            "10000": 120.26433299999917
+          }
+        }
+      ],
+      "boundaries": [
+        {
+          "label": "boundary-b8x-1-1",
+          "limit": 1,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 1,
+          "processMs": 4878.669042,
+          "peakRSSKiB": 852256,
+          "completedModules": 5,
+          "phpWrites": 0,
+          "failedBinding": "Data.Void.absurd"
+        },
+        {
+          "label": "boundary-b8x-1-10",
+          "limit": 10,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 1,
+          "processMs": 10325.806334,
+          "peakRSSKiB": 1353328,
+          "completedModules": 715,
+          "phpWrites": 0,
+          "failedBinding": "Core.Feat.Review.Message.Query.GetArticleQuote.Projection.Projection.ordQuote"
+        }
+      ],
+      "trials": [
+        {
+          "label": "measured-b8x-1-10000",
+          "limit": 10000,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 46838.589208000005,
+          "peakRSSKiB": 3495648,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 959.1746670000052,
+            "corefn.decode": 3576.6359130000096,
+            "corefn.sort": 18.089375000000473,
+            "ffi": 24.66896499998802,
+            "cache.plan": 0.042374999999992724,
+            "cache.load": 1.812852999957613,
+            "optimize": 28161.52237400018,
+            "translate": 5407.37112399987,
+            "print": 3300.6123219998317,
+            "php.mkdir": 962.9928619999837,
+            "php.write": 1386.23019700009,
+            "cache.store": 1.505553999922995,
+            "entrypoint": 77.79754200000025,
+            "composer": 5.320750000006228,
+            "cleanup": 6.854499999994005,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-1-11",
+          "limit": 11,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 47640.190584,
+          "peakRSSKiB": 3755616,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 509.22694000000047,
+            "corefn.decode": 3717.1921980000034,
+            "corefn.sort": 20.98833300000024,
+            "ffi": 13.430315000025075,
+            "cache.plan": 0.05195800000001327,
+            "cache.load": 2.0627349999313083,
+            "optimize": 29116.8178570001,
+            "translate": 5471.019429999844,
+            "print": 3428.0150770000164,
+            "php.mkdir": 1042.6444609999735,
+            "php.write": 1208.2353430000003,
+            "cache.store": 1.6517569999841726,
+            "entrypoint": 57.195707999999286,
+            "composer": 5.051915999996709,
+            "cleanup": 5.791250000002037,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-1-100",
+          "limit": 100,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 45759.68020799999,
+          "peakRSSKiB": 3775344,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 427.8814259999979,
+            "corefn.decode": 3455.6070839999975,
+            "corefn.sort": 18.985458000000108,
+            "ffi": 14.08729699999185,
+            "cache.plan": 0.047207999999955064,
+            "cache.load": 1.7323460001562125,
+            "optimize": 27902.827835999986,
+            "translate": 5271.786597999993,
+            "print": 3348.5433889999545,
+            "php.mkdir": 967.6374970000384,
+            "php.write": 1389.7015619999406,
+            "cache.store": 1.3751329999686277,
+            "entrypoint": 59.92037500000151,
+            "composer": 5.152375000005122,
+            "cleanup": 6.0040420000004815,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-2-11",
+          "limit": 11,
+          "repeat": 2,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 46290.937874999996,
+          "peakRSSKiB": 3690176,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 472.673270999995,
+            "corefn.decode": 3613.6054740000054,
+            "corefn.sort": 18.951125000000502,
+            "ffi": 15.08017700002165,
+            "cache.plan": 0.032124999999723514,
+            "cache.load": 1.8201009999957023,
+            "optimize": 28066.660199999907,
+            "translate": 5389.683836999934,
+            "print": 3485.3892809999497,
+            "php.mkdir": 972.6132510000607,
+            "php.write": 1221.3163280001327,
+            "cache.store": 1.894214999999349,
+            "entrypoint": 92.28454200000124,
+            "composer": 5.292459000003873,
+            "cleanup": 6.603917000000365,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-2-100",
+          "limit": 100,
+          "repeat": 2,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 47328.90733399998,
+          "peakRSSKiB": 3751680,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 421.63014300000145,
+            "corefn.decode": 3426.326818000014,
+            "corefn.sort": 19.123790999999983,
+            "ffi": 13.334886999991795,
+            "cache.plan": 0.05445800000006784,
+            "cache.load": 1.6954620000678915,
+            "optimize": 29059.547391999902,
+            "translate": 5386.518128999981,
+            "print": 3417.473574999952,
+            "php.mkdir": 998.2488559998733,
+            "php.write": 1420.5086879999521,
+            "cache.store": 1.3787999999321983,
+            "entrypoint": 62.23404200000368,
+            "composer": 5.284874999997555,
+            "cleanup": 6.57208399999945,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-2-10000",
+          "limit": 10000,
+          "repeat": 2,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 47268.09233299997,
+          "peakRSSKiB": 3786000,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 466.45484099999146,
+            "corefn.decode": 3578.550405999991,
+            "corefn.sort": 19.885167000000365,
+            "ffi": 14.08946399999786,
+            "cache.plan": 0.0634169999993901,
+            "cache.load": 2.099217000099088,
+            "optimize": 28758.571026999845,
+            "translate": 5468.47203299998,
+            "print": 3407.215971999898,
+            "php.mkdir": 1004.3522309999034,
+            "php.write": 1425.0477039999023,
+            "cache.store": 1.7794600001334402,
+            "entrypoint": 62.50116600000183,
+            "composer": 4.354540999993333,
+            "cleanup": 5.878541999998561,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-3-100",
+          "limit": 100,
+          "repeat": 3,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 45422.76504099999,
+          "peakRSSKiB": 3756336,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 464.1390079999975,
+            "corefn.decode": 3553.277602999998,
+            "corefn.sort": 20.45370800000046,
+            "ffi": 13.252524999968045,
+            "cache.plan": 0.06741599999986647,
+            "cache.load": 1.506046999937098,
+            "optimize": 27211.445896999805,
+            "translate": 5288.937458999895,
+            "print": 3321.922584000077,
+            "php.mkdir": 969.0950479999738,
+            "php.write": 1499.2752719999726,
+            "cache.store": 1.3415790002318317,
+            "entrypoint": 60.0815419999999,
+            "composer": 4.971916000002238,
+            "cleanup": 5.927000000003318,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-3-10000",
+          "limit": 10000,
+          "repeat": 3,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 48754.14587500001,
+          "peakRSSKiB": 3730912,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 441.508264999999,
+            "corefn.decode": 3455.6985060000047,
+            "corefn.sort": 20.227499999999964,
+            "ffi": 14.080671000004713,
+            "cache.plan": 0.043791999999939435,
+            "cache.load": 2.443576999911329,
+            "optimize": 30034.282309999984,
+            "translate": 5546.588402000034,
+            "print": 3465.4100800000238,
+            "php.mkdir": 1065.282674000145,
+            "php.write": 1298.96059900014,
+            "cache.store": 1.966050000022733,
+            "entrypoint": 65.46937500000058,
+            "composer": 5.289167000002635,
+            "cleanup": 6.335624999999709,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        },
+        {
+          "label": "measured-b8x-3-11",
+          "limit": 11,
+          "repeat": 3,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 50928.428,
+          "peakRSSKiB": 3531504,
+          "completedModules": 2684,
+          "phaseMs": {
+            "corefn.read": 665.3711810000033,
+            "corefn.decode": 4206.479702000011,
+            "corefn.sort": 22.161957999999686,
+            "ffi": 17.090892000004715,
+            "cache.plan": 0.043333999999958905,
+            "cache.load": 2.5204700000276716,
+            "optimize": 30816.42127100001,
+            "translate": 5690.236807999889,
+            "print": 3491.244005000017,
+            "php.mkdir": 1078.7134179998848,
+            "php.write": 1415.2350120000174,
+            "cache.store": 1.8564609999802997,
+            "entrypoint": 64.77208400000382,
+            "composer": 4.8122500000026776,
+            "cleanup": 6.618374999998196,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 5372,
+          "phpFiles": 2686,
+          "phpBytes": 135282480
+        }
+      ]
+    },
+    "bench": {
+      "modules": 306,
+      "astNodes": 147285,
+      "minimumObservedGuard": 8,
+      "diagnostic": {
+        "bindings": 4042,
+        "totalPasses": 6756,
+        "passHistogram": {
+          "1": 2324,
+          "2": 1075,
+          "3": 369,
+          "4": 223,
+          "5": 35,
+          "6": 7,
+          "7": 6,
+          "8": 3
+        },
+        "maximumPasses": 8,
+        "chunkBindings": 2,
+        "chunkNodes": 63,
+        "chunkLeaves": 32,
+        "maximumBindings": [
+          "Data.DateTime.Instant.fromDateTime",
+          "Data.DateTime.Instant.fromDate",
+          "Data.Map.Internal.unsafeBalancedNode"
+        ],
+        "scheduleSHA256": "448b1f0c5cb91738d5d275c9c26934b49084bb018012dbbb0120322d85fbbeb5"
+      },
+      "identicalFiles": 615,
+      "phpFiles": 307,
+      "phpBytes": 7373140,
+      "outputManifestSHA256": "c75dcce45b18d543975a587870efa2a880dfe791cf4fab9e60bd2b1c3af62974",
+      "statistics": {
+        "11": {
+          "processMs": {
+            "samples": [
+              3434.69325,
+              3362.441167,
+              3224.532666999998
+            ],
+            "min": 3224.532666999998,
+            "median": 3362.441167,
+            "max": 3434.69325
+          },
+          "optimizeMs": {
+            "samples": [
+              1267.676964999997,
+              1204.967209,
+              1166.662580000003
+            ],
+            "min": 1166.662580000003,
+            "median": 1204.967209,
+            "max": 1267.676964999997
+          },
+          "translateMs": {
+            "samples": [
+              931.745654999999,
+              896.6174500000022,
+              868.7090880000028
+            ],
+            "min": 868.7090880000028,
+            "median": 896.6174500000022,
+            "max": 931.745654999999
+          },
+          "peakRSSKiB": {
+            "samples": [
+              493792,
+              529632,
+              528352
+            ],
+            "min": 493792,
+            "median": 528352,
+            "max": 529632
+          },
+          "runtimeMs": {
+            "samples": [
+              69.847458,
+              68.051093,
+              70.092228
+            ],
+            "min": 68.051093,
+            "median": 69.847458,
+            "max": 70.092228
+          }
+        },
+        "100": {
+          "processMs": {
+            "samples": [
+              3381.825000000001,
+              3171.1502080000037,
+              3101.700041999997
+            ],
+            "min": 3101.700041999997,
+            "median": 3171.1502080000037,
+            "max": 3381.825000000001
+          },
+          "optimizeMs": {
+            "samples": [
+              1187.9740839999972,
+              1127.9957129999984,
+              1104.5544730000029
+            ],
+            "min": 1104.5544730000029,
+            "median": 1127.9957129999984,
+            "max": 1187.9740839999972
+          },
+          "translateMs": {
+            "samples": [
+              884.3863040000008,
+              877.2964690000013,
+              848.6237529999975
+            ],
+            "min": 848.6237529999975,
+            "median": 877.2964690000013,
+            "max": 884.3863040000008
+          },
+          "peakRSSKiB": {
+            "samples": [
+              510896,
+              561904,
+              528720
+            ],
+            "min": 510896,
+            "median": 528720,
+            "max": 561904
+          },
+          "runtimeMs": {
+            "samples": [
+              71.016577,
+              67.968612,
+              68.262955
+            ],
+            "min": 67.968612,
+            "median": 68.262955,
+            "max": 71.016577
+          }
+        },
+        "10000": {
+          "processMs": {
+            "samples": [
+              3514.428,
+              3147.0117920000007,
+              3181.617832999997
+            ],
+            "min": 3147.0117920000007,
+            "median": 3181.617832999997,
+            "max": 3514.428
+          },
+          "optimizeMs": {
+            "samples": [
+              1209.843871000003,
+              1138.2173350000032,
+              1138.715756
+            ],
+            "min": 1138.2173350000032,
+            "median": 1138.715756,
+            "max": 1209.843871000003
+          },
+          "translateMs": {
+            "samples": [
+              898.0183620000012,
+              861.445166999997,
+              864.7332400000024
+            ],
+            "min": 861.445166999997,
+            "median": 864.7332400000024,
+            "max": 898.0183620000012
+          },
+          "peakRSSKiB": {
+            "samples": [
+              568224,
+              492256,
+              574176
+            ],
+            "min": 492256,
+            "median": 568224,
+            "max": 574176
+          },
+          "runtimeMs": {
+            "samples": [
+              70.802789,
+              67.803225,
+              68.188286
+            ],
+            "min": 67.803225,
+            "median": 68.188286,
+            "max": 70.802789
+          }
+        }
+      },
+      "selectedModules": [
+        {
+          "name": "Data.Map.Internal",
+          "analysis": {
+            "bindings": 98,
+            "passes": 240,
+            "maxPasses": 8,
+            "chunkBindings": 0,
+            "chunkNodes": 0,
+            "chunkLeaves": 0
+          },
+          "phpBytes": 165211,
+          "optimizedAstNodes": 6555,
+          "optimizeMedianMs": {
+            "11": 55.33316599999989,
+            "100": 54.52012500000001,
+            "10000": 60.45941700000003
+          }
+        },
+        {
+          "name": "Data.DateTime.Instant",
+          "analysis": {
+            "bindings": 15,
+            "passes": 42,
+            "maxPasses": 8,
+            "chunkBindings": 0,
+            "chunkNodes": 0,
+            "chunkLeaves": 0
+          },
+          "phpBytes": 23458,
+          "optimizedAstNodes": 537,
+          "optimizeMedianMs": {
+            "11": 7.053667000000132,
+            "100": 6.750583000000006,
+            "10000": 6.755041999999776
+          }
+        },
+        {
+          "name": "Test.RBTree",
+          "analysis": {
+            "bindings": 13,
+            "passes": 27,
+            "maxPasses": 4,
+            "chunkBindings": 1,
+            "chunkNodes": 10,
+            "chunkLeaves": 0
+          },
+          "phpBytes": 111290,
+          "optimizedAstNodes": 1716,
+          "optimizeMedianMs": {
+            "11": 10.270207999999911,
+            "100": 9.83570799999984,
+            "10000": 9.536292000000003
+          }
+        },
+        {
+          "name": "Test.AstTree",
+          "analysis": {
+            "bindings": 8,
+            "passes": 15,
+            "maxPasses": 4,
+            "chunkBindings": 0,
+            "chunkNodes": 0,
+            "chunkLeaves": 0
+          },
+          "phpBytes": 15968,
+          "optimizedAstNodes": 141,
+          "optimizeMedianMs": {
+            "11": 1.7672919999999976,
+            "100": 1.7342499999999745,
+            "10000": 1.5637500000000273
+          }
+        }
+      ],
+      "boundaries": [
+        {
+          "label": "boundary-bench-1-1",
+          "limit": 1,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 1,
+          "processMs": 780.6976249999999,
+          "peakRSSKiB": 281808,
+          "completedModules": 8,
+          "phpWrites": 0,
+          "failedBinding": "Data.Void.absurd"
+        },
+        {
+          "label": "boundary-bench-1-7",
+          "limit": 7,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 1,
+          "processMs": 2407.773625,
+          "peakRSSKiB": 441952,
+          "completedModules": 226,
+          "phpWrites": 0,
+          "failedBinding": "Data.DateTime.Instant.fromDateTime"
+        },
+        {
+          "label": "boundary-bench-1-8",
+          "limit": 8,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3467.9818749999995,
+          "peakRSSKiB": 504544,
+          "completedModules": 306,
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.356155,
+              1.217354,
+              151.604813,
+              76.080566,
+              1560.0625,
+              49.755699,
+              2069.161375,
+              768.679688,
+              58655.75,
+              6547.854,
+              499.188813,
+              810.619813,
+              100.955727,
+              0.905479
+            ],
+            "total_ms": 71.294192,
+            "sum_displayed_lines_ms": 71.29419198199999,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        }
+      ],
+      "trials": [
+        {
+          "label": "measured-bench-1-10000",
+          "limit": 10000,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3514.428,
+          "peakRSSKiB": 568224,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 66.49667899999994,
+            "corefn.decode": 536.2408879999992,
+            "corefn.sort": 2.4238749999999527,
+            "ffi": 6.618666000001326,
+            "cache.plan": 0.035041999999975815,
+            "cache.load": 0.30787199999826953,
+            "optimize": 1209.843871000003,
+            "translate": 898.0183620000012,
+            "print": 123.27073600000074,
+            "php.mkdir": 46.506971999994676,
+            "php.write": 120.82333800000129,
+            "cache.store": 0.24462799999821527,
+            "entrypoint": 2.1830419999996593,
+            "composer": 0.5503340000000208,
+            "cleanup": 0.8925840000001699,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.390681,
+              1.225973,
+              151.988281,
+              75.912109,
+              1524.22925,
+              50.022949,
+              2074.526125,
+              776.242188,
+              58177.083,
+              6519.5,
+              502.48175,
+              847.447938,
+              98.819984,
+              0.919037
+            ],
+            "total_ms": 70.802789,
+            "sum_displayed_lines_ms": 70.80278926500002,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-1-11",
+          "limit": 11,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3434.69325,
+          "peakRSSKiB": 493792,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 71.93193400000146,
+            "corefn.decode": 547.914295999999,
+            "corefn.sort": 2.518332999999984,
+            "ffi": 6.685668999999052,
+            "cache.plan": 0.03462500000000546,
+            "cache.load": 0.33311999999682484,
+            "optimize": 1267.676964999997,
+            "translate": 931.745654999999,
+            "print": 125.98300400000107,
+            "php.mkdir": 58.168948999999884,
+            "php.write": 61.45373900000277,
+            "cache.store": 0.2723409999988462,
+            "entrypoint": 2.3017500000000837,
+            "composer": 1.48050000000012,
+            "cleanup": 0.8113750000002256,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.334,
+              1.205378,
+              150.724609,
+              76.759441,
+              1554.56775,
+              48.689125,
+              2028.895875,
+              766.953125,
+              57291.125,
+              6510.875,
+              497.860656,
+              815.099,
+              101.442055,
+              0.92718
+            ],
+            "total_ms": 69.847458,
+            "sum_displayed_lines_ms": 69.84745819400001,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-1-100",
+          "limit": 100,
+          "repeat": 1,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3381.825000000001,
+          "peakRSSKiB": 510896,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 74.98761000000131,
+            "corefn.decode": 541.3990880000002,
+            "corefn.sort": 2.6186250000000655,
+            "ffi": 6.605706000000282,
+            "cache.plan": 0.03533300000003692,
+            "cache.load": 0.2871229999981324,
+            "optimize": 1187.9740839999972,
+            "translate": 884.3863040000008,
+            "print": 119.74799899999846,
+            "php.mkdir": 50.04394900000068,
+            "php.write": 57.41125499999862,
+            "cache.store": 0.22637299999848892,
+            "entrypoint": 2.3205410000000484,
+            "composer": 0.635417000000416,
+            "cleanup": 0.7893340000000535,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.355464,
+              1.231717,
+              149.31575,
+              74.773762,
+              1551.599,
+              49.13216,
+              2055.739625,
+              777.898438,
+              58352.25,
+              6601.7705,
+              493.114594,
+              808.929688,
+              97.558914,
+              0.907056
+            ],
+            "total_ms": 71.016577,
+            "sum_displayed_lines_ms": 71.016576668,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-2-11",
+          "limit": 11,
+          "repeat": 2,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3362.441167,
+          "peakRSSKiB": 529632,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 66.52334000000022,
+            "corefn.decode": 519.4765079999995,
+            "corefn.sort": 2.606958000000077,
+            "ffi": 8.169921000002319,
+            "cache.plan": 0.03308300000003328,
+            "cache.load": 0.3480750000006765,
+            "optimize": 1204.967209,
+            "translate": 896.6174500000022,
+            "print": 120.12724100000264,
+            "php.mkdir": 55.19387000000245,
+            "php.write": 62.1324210000015,
+            "cache.store": 0.27678499999899486,
+            "entrypoint": 2.4455410000000484,
+            "composer": 0.44883400000026086,
+            "cleanup": 0.8070830000001479,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.365489,
+              1.225855,
+              149.764969,
+              74.882,
+              1496.359375,
+              48.261066,
+              2032.974,
+              750.033813,
+              55688.5,
+              6436.1455,
+              482.276031,
+              789.976563,
+              97.422195,
+              0.906621
+            ],
+            "total_ms": 68.051093,
+            "sum_displayed_lines_ms": 68.05109347700002,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-2-100",
+          "limit": 100,
+          "repeat": 2,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3171.1502080000037,
+          "peakRSSKiB": 561904,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 62.272343999999414,
+            "corefn.decode": 505.6168389999996,
+            "corefn.sort": 2.3050420000000713,
+            "ffi": 6.559348000000682,
+            "cache.plan": 0.0316250000000764,
+            "cache.load": 0.24685000000067703,
+            "optimize": 1127.9957129999984,
+            "translate": 877.2964690000013,
+            "print": 115.9622350000011,
+            "php.mkdir": 41.52008600000397,
+            "php.write": 52.29949000000033,
+            "cache.store": 0.19594999999742413,
+            "entrypoint": 2.2128750000001673,
+            "composer": 0.3999999999996362,
+            "cleanup": 0.7291249999998399,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.333806,
+              1.185371,
+              149.75325,
+              74.365563,
+              1498.1875,
+              51.987793,
+              2009.625,
+              747.927063,
+              55548.917,
+              6509.1665,
+              492.050781,
+              785.135438,
+              97.076172,
+              0.900304
+            ],
+            "total_ms": 67.968612,
+            "sum_displayed_lines_ms": 67.96861154099999,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-2-10000",
+          "limit": 10000,
+          "repeat": 2,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3147.0117920000007,
+          "peakRSSKiB": 492256,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 64.50229900000025,
+            "corefn.decode": 502.91570999999846,
+            "corefn.sort": 2.4159579999999323,
+            "ffi": 7.301877999998965,
+            "cache.plan": 0.03329099999996288,
+            "cache.load": 0.2218339999961927,
+            "optimize": 1138.2173350000032,
+            "translate": 861.445166999997,
+            "print": 118.15805200000102,
+            "php.mkdir": 52.220708999999374,
+            "php.write": 50.85921299999711,
+            "cache.store": 0.2005040000013878,
+            "entrypoint": 2.4167499999998654,
+            "composer": 0.4331670000001395,
+            "cleanup": 0.7579999999998108,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.289958,
+              1.179822,
+              147.225906,
+              74.389648,
+              1541.45825,
+              48.16618,
+              2005.8385,
+              747.35675,
+              55404.458,
+              6434.521,
+              486.182281,
+              812.645813,
+              96.611008,
+              0.901942
+            ],
+            "total_ms": 67.803225,
+            "sum_displayed_lines_ms": 67.803225058,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-3-100",
+          "limit": 100,
+          "repeat": 3,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3101.700041999997,
+          "peakRSSKiB": 528720,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 66.38475200000022,
+            "corefn.decode": 497.36362900000006,
+            "corefn.sort": 2.5223749999998972,
+            "ffi": 7.549795000000472,
+            "cache.plan": 0.03587500000003274,
+            "cache.load": 0.2364549999982728,
+            "optimize": 1104.5544730000029,
+            "translate": 848.6237529999975,
+            "print": 114.52173600000185,
+            "php.mkdir": 45.96803399999669,
+            "php.write": 52.05037200000004,
+            "cache.store": 0.20327799999824947,
+            "entrypoint": 2.8986250000002656,
+            "composer": 0.4349579999998241,
+            "cleanup": 0.741790999999921,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.285894,
+              1.177043,
+              146.747391,
+              74.461586,
+              1556.536375,
+              48.002441,
+              2004.80725,
+              742.921875,
+              55886.25,
+              6432.6875,
+              488.338531,
+              781.789063,
+              96.041016,
+              0.909238
+            ],
+            "total_ms": 68.262955,
+            "sum_displayed_lines_ms": 68.262955203,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-3-10000",
+          "limit": 10000,
+          "repeat": 3,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3181.617832999997,
+          "peakRSSKiB": 574176,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 63.1481109999996,
+            "corefn.decode": 504.5406229999995,
+            "corefn.sort": 2.2657500000000255,
+            "ffi": 6.708505000000741,
+            "cache.plan": 0.030000000000086402,
+            "cache.load": 0.2386770000010756,
+            "optimize": 1138.715756,
+            "translate": 864.7332400000024,
+            "print": 119.4223170000015,
+            "php.mkdir": 42.79241199999899,
+            "php.write": 52.010081999997624,
+            "cache.store": 0.21366800000191688,
+            "entrypoint": 2.2433750000000146,
+            "composer": 0.3941660000000411,
+            "cleanup": 0.7165410000002339,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.302633,
+              1.189176,
+              147.24675,
+              74.400391,
+              1467.432375,
+              48.244465,
+              2012.4895,
+              758.846313,
+              55854.917,
+              6441.833,
+              491.276063,
+              790.789063,
+              96.420578,
+              0.898618
+            ],
+            "total_ms": 68.188286,
+            "sum_displayed_lines_ms": 68.18828592500002,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        },
+        {
+          "label": "measured-bench-3-11",
+          "limit": 11,
+          "repeat": 3,
+          "diagnostic": false,
+          "exitCode": 0,
+          "processMs": 3224.532666999998,
+          "peakRSSKiB": 528352,
+          "completedModules": 306,
+          "phaseMs": {
+            "corefn.read": 62.504773999999834,
+            "corefn.decode": 499.8704119999999,
+            "corefn.sort": 2.554208000000017,
+            "ffi": 6.5848349999998845,
+            "cache.plan": 0.03224999999997635,
+            "cache.load": 0.3007470000000012,
+            "optimize": 1166.662580000003,
+            "translate": 868.7090880000028,
+            "print": 116.82775700000184,
+            "php.mkdir": 54.71729099999902,
+            "php.write": 57.854458999999,
+            "cache.store": 0.25258000000269476,
+            "entrypoint": 2.1755000000002838,
+            "composer": 0.49195800000006784,
+            "cleanup": 0.7735000000002401,
+            "diagnostics": 0
+          },
+          "phpWrites": 0,
+          "identicalFiles": 615,
+          "phpFiles": 307,
+          "phpBytes": 7373140,
+          "runtime": {
+            "mode": "pure",
+            "labels": [
+              "AST Evaluation:",
+              "Fibonacci:",
+              "List Processing (900 elements):",
+              "Tail Call Optimization (100k calls):",
+              "Deep Record Updates (10k iterations):",
+              "Ackermann (3, 4):",
+              "Church Numerals (100k Closure Applications):",
+              "Prime Sieve (sum primes up to 500):",
+              "Red-Black Tree (100k Worst-Case Insertions):",
+              "Polymorphism (10M Type Class Dict Lookups):",
+              "State Monad (1.2k Binds, 60 Stack Depth):",
+              "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+              "Array Processing (900 elements):",
+              "RowToList (Keys Count):"
+            ],
+            "values": [
+              "7",
+              "55",
+              "202950",
+              "100000",
+              "20000",
+              "125",
+              "100000",
+              "21536",
+              "22",
+              "10000000",
+              "1200",
+              "1000000",
+              "202950",
+              "5"
+            ],
+            "times_us": [
+              2.325714,
+              1.227926,
+              153.739578,
+              77.194992,
+              1603.3125,
+              48.680176,
+              2034.323,
+              743.03125,
+              57483.333,
+              6513.5,
+              507.362,
+              825.1745,
+              98.102867,
+              0.920443
+            ],
+            "total_ms": 70.092228,
+            "sum_displayed_lines_ms": 70.09222794599997,
+            "values_validated": true,
+            "oracle": "core",
+            "timer_unit": "microseconds"
+          },
+          "phpVersion": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies",
+          "phpFlags": [
+            "-d",
+            "xdebug.mode=off",
+            "-d",
+            "opcache.enable_cli=1",
+            "-d",
+            "opcache.file_update_protection=0",
+            "-d",
+            "opcache.jit_buffer_size=128M",
+            "-d",
+            "opcache.jit=1255"
+          ]
+        }
+      ]
+    }
+  },
+  "referenceChecks": {
+    "benchmarkIdenticalArtifacts": 350,
+    "vendorUnchanged": true,
+    "originalSourcesUnchanged": true,
+    "diagnosticSHA256": "93c58c174d30b93e4b1265c4f63e4baf1b0ce394bc393fe619bceebbfa88acb0",
+    "driverInputsSHA256": "6acae79fbd5654319da26c87c75b19aa9a9ab5ef23b8c71e7f8a9d8c9b91a1ae",
+    "vendorManifestSHA256": "c7d04249fc8075b92c91d2f3dfd36554eae1d129935a7d543dd2eaa3f2af9e2e",
+    "finalBenchmarkValidation": true
+  }
+}

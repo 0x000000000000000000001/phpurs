@@ -14,7 +14,8 @@ import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.Tuple (Tuple(..))
 import Phpurs.CodeGen.Types (exprTypeToPhpType)
-import Phpurs.Printer (safeFuncName, safeName)
+import Phpurs.PhpAst (PhpExpr(..), foreignValueArity)
+import Phpurs.Printer (printExpr, safeFuncName, safeName)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), ModuleName(..))
 
 type ForeignModule = { arities :: Map String Int, code :: String }
@@ -27,7 +28,8 @@ type ForeignBinding =
   { globalKey :: String
   , funcName :: String
   , ffiBaseVar :: Maybe String
-  , ffiValue :: String
+  , exportKey :: String
+  , missingForeign :: String
   , signature :: ForeignSignature
   }
 
@@ -42,16 +44,14 @@ genForeignModule { moduleName: ModuleName name, bindings, source } =
     ffiBase = "$ffi_" <> phpModName
     ffiCode = String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") source))
     hasSource = ffiCode /= ""
-    missingForeign = "new class { public function __invoke(...$args) { return $this; } }"
     prepareBinding (Tuple (Ident ident) type_) =
       let fullName = phpModName <> "_" <> ident
       in
         { globalKey: safeName fullName
         , funcName: safeFuncName fullName
         , ffiBaseVar: if hasSource then Just ffiBase else Nothing
-        , ffiValue: if hasSource then
-            "(\\array_key_exists('" <> ident <> "', " <> ffiBase <> ") ? " <> ffiBase <> "['" <> ident <> "'] : " <> missingForeign <> ")"
-          else missingForeign
+        , exportKey: printExpr Map.empty (PhpString ident)
+        , missingForeign: "throw new \\RuntimeException(" <> printExpr Map.empty (PhpString ("Missing PHP FFI export: " <> name <> "." <> ident)) <> ")"
         , signature: flattenFuncType (fromMaybe Any type_)
         }
     prepared = map prepareBinding (Map.toUnfoldable bindings :: Array _)
@@ -61,7 +61,8 @@ genForeignModule { moduleName: ModuleName name, bindings, source } =
         <> ffiCode <> "\n  return $exports;\n});\n" <> mappings <> "\n"
       else mappings <> (if mappings /= "" then "\n" else "")
   in
-    { arities: Map.fromFoldable (map (\binding -> Tuple binding.globalKey (Array.length binding.signature.args)) prepared)
+    { arities: Map.fromFoldable (map (\binding -> Tuple binding.globalKey
+        (if Array.null binding.signature.args then foreignValueArity else Array.length binding.signature.args)) prepared)
     , code
     }
 
@@ -79,12 +80,27 @@ flattenFuncType ty = case stripForAll ty of
   other -> { args: [], ret: other }
 
 genNativeWrapper :: ForeignBinding -> String
-genNativeWrapper { globalKey, funcName, ffiBaseVar, ffiValue, signature: flat } =
+genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, signature: flat } =
   let
     arity = Array.length flat.args
+    globalValue = "$GLOBALS['" <> globalKey <> "']"
+    hasExport base = "\\array_key_exists(" <> exportKey <> ", " <> base <> ")"
+    exportValue base = base <> "[" <> exportKey <> "]"
+    ffiValue = case ffiBaseVar of
+      Just base -> "(" <> hasExport base <> " ? " <> exportValue base <> " : (" <> missingForeign <> "))"
+      Nothing -> "(" <> missingForeign <> ")"
   in
     if arity <= 0 then
-      "$GLOBALS['" <> globalKey <> "'] = " <> ffiValue <> ";"
+      -- Valid values retain their raw PHP representation. An absent export has
+      -- no global slot. The printer uses ?? to call this getter only for absent
+      -- or null slots; array_key_exists preserves a legitimately exported null.
+      "function " <> funcName <> "() {\n"
+        <> "  return \\array_key_exists('" <> globalKey <> "', $GLOBALS) ? " <> globalValue <> " : (" <> missingForeign <> ");\n"
+        <> "}\n"
+        <> case ffiBaseVar of
+          Just base -> "if (" <> hasExport base <> ") {\n  " <> globalValue <> " = " <> exportValue base
+            <> ";\n} else {\n  unset(" <> globalValue <> ");\n}\n"
+          Nothing -> "unset(" <> globalValue <> ");\n"
     else
       let
         argsWithTypes = Array.mapWithIndex

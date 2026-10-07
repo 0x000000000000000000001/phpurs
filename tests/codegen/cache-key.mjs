@@ -7,6 +7,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { Left, Right } from '../../output/Data.Either/index.js';
 import { Just, Nothing } from '../../output/Data.Maybe/index.js';
+import { empty } from '../../output/Data.Map/index.js';
 import {
   fingerprintBytes, fingerprintString, NoForeign, MissingForeign, ForeignSource, planKeys,
 } from '../../output/Phpurs.CacheKey/index.js';
@@ -83,8 +84,8 @@ test('cache keys: toolchain, host, initial directives and every effective option
   assert.deepEqual(changed(before, plan(modules(), { ...context(), directives: fingerprint('Shared.value never') })),
     modules().map(m => m.name));
   // Nothing and an explicit default render different autoloader fallback code.
-  assert.notEqual(printBundleEntryPoint({ mainModule: 'App.Main', autoloadPath: Nothing.value }),
-    printBundleEntryPoint({ mainModule: 'App.Main', autoloadPath: new Just('vendor/autoload.php') }));
+  assert.notEqual(printBundleEntryPoint({ mainModule: 'App.Main', autoloadPath: Nothing.value, arities: empty }),
+    printBundleEntryPoint({ mainModule: 'App.Main', autoloadPath: new Just('vendor/autoload.php'), arities: empty }));
   const config = context();
   assert.notEqual(plan(modules(), { ...config, options: { ...config.options, autoloadPath: new Just('vendor/../vendor/autoload.php') } }).key,
     plan(modules(), { ...config, options: { ...config.options, autoloadPath: new Just('vendor/autoload.php') } }).key);

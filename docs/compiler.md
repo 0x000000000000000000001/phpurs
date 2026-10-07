@@ -25,6 +25,10 @@ the [README](../README.md#build-the-backend).
 | --- | --- | --- |
 | Build orchestration | [`Main.purs`](../src/Main.purs) | Load input, invoke PBO, discover FFI, write modules and entrypoints. |
 | Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO, lower bindings and expressions to PHP AST. |
+| Traversal callback specialization | [`CallbackSpecialization.purs`](../src/Phpurs/CallbackSpecialization.purs) | Prove generic list folds and select private copies at known native callbacks. |
+| Foreign callback contracts | [`NativeCallbacks.purs`](../src/Phpurs/NativeCallbacks.purs) | Tie native callback evidence to captured FFI source bytes and signatures. |
+| FFI traversal specialization | [`ArrayCallbacks.purs`](../src/Phpurs/ArrayCallbacks.purs) | Select bounded private Array folds/filters with proven callbacks. |
+| FFI traversal contracts | [`ForeignTraversals.purs`](../src/Phpurs/ForeignTraversals.purs) | Check exact source bytes, calling convention and polymorphic signatures for Array traversal templates. |
 | Free-variable reuse | [`FreeVars.purs`](../src/Phpurs/FreeVars.purs) | Memoize PBO's scope-aware free-variable sets by immutable TCO-node identity. |
 | Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
@@ -49,26 +53,34 @@ the [README](../README.md#build-the-backend).
 
 ## Pass order
 
-`CodeGen.translate` is the place to read the pipeline. The order matters because
+`CodeGen.translateWithContracts` is the place to read the pipeline. The order matters because
 later passes consume both the rewritten code and the proofs attached to private
 workers and constructors.
 
 1. **`PartialBindings`** reuses partial applications inside proven private regions.
 2. **`ThunkFusion`** creates scalar workers for eligible immediately forced chains.
-3. **`EnumRegions`** proves closed regions and prepares private representations.
-4. **`analyzeBindings`** runs PBO's tail-call analysis. Within recursive groups,
+3. **`StateFusion`** proves immediately executed State chains and their scalar projection.
+4. **`CallbackSpecialization`** copies proven list folds for native arithmetic callbacks.
+5. **`ArrayCallbacks`** selects contracted FFI traversal calls and prepares private PHP templates.
+6. **`EnumRegions`** proves closed regions and prepares private representations.
+7. **`analyzeBindings`** runs PBO's tail-call analysis. Within recursive groups,
    safe initializations precede expressions that can call into the group.
-5. **`translateBindingGroup` / `translateExpr`** construct PHP declarations and
+8. **`translateBindingGroup` / `translateExpr`** construct PHP declarations and
    bodies. `CompactLoops` runs while emitting eligible top-level recursive functions.
-6. **`TailInline`** simplifies terminal control flow and inlines eligible leaves.
-7. Private workers become **`PhpPrivateFunction`** declarations.
-8. **`NullableConstructors`** lowers proven private empty constructors to `null`.
-9. **`CopyCleanup`** removes redundant copies using the private-region metadata.
-10. **`ArrayRefs`** promotes owned arguments and rewrites eligible node rebuilds.
+9. **`TailInline`** simplifies terminal control flow and inlines eligible leaves.
+10. Private workers become **`PhpPrivateFunction`** declarations.
+11. **`NullableConstructors`** lowers proven private empty constructors to `null`.
+12. **`CopyCleanup`** removes redundant copies using the private-region metadata.
+13. **`ArrayRefs`** promotes owned arguments and rewrites eligible node rebuilds.
+14. Contracted **Array traversal templates** are appended as private declarations,
+    after the PHP AST optimizations; their arities are included before printing.
 
 The private scalar signatures are cleared before terminal inlining, where the
 typed-region proof already establishes the argument types. Public signatures
 and constructor representations are still generated at their boundaries.
+State guards retain the original constructor's PHP `Int` check on depth; their
+state and result remain untyped to preserve the original arithmetic at overflow.
+Callback-specialized copies retain the original fold's generic signature.
 
 `ThunkFusion` accepts a `Unit -> Int` seed whose body is either an integer
 literal or a typed read of an already evaluated local. The scanner tracks
@@ -81,6 +93,101 @@ The PHP emitter may flatten these calls after this pass. Any extension of the
 candidate application shapes must preserve that idempotence contract. See the
 [captured-seed audit](../audit/2026-10-05/scalar-seeds/report.md) and
 [`thunk-fusion.mjs`](../tests/codegen/thunk-fusion.mjs).
+
+`StateFusion` derives the two-field `Unit`/`Int` layout from the constructor's
+flattened signature, while requiring its actual runtime arity to be one. The
+zero case must return the input state with a canonical Unit value. The recursive
+case must prepare a proven same-module polymorphic modifier, with an optional
+proven getter, and run that transition before recurring at `depth - 1`. The
+callback must be a closed unary `Int` arithmetic operation (`+`, `-` or `*` by a
+literal); every operation survives in the TCO worker. Helper signatures and the
+effective native annotations are checked so no scalar coercion is silently lost.
+
+Only a flattened, fully applied constructor immediately projected on the state
+field is rewritten. Inputs must be typed integer literals or already evaluated
+lexical locals. Record results, value-field projections, retained States, unknown
+callbacks and foreign helpers retain their original paths. Both record labels
+and all function/module names come from the proof. Budgets limit bodies/helpers
+to 1,024 nodes, callers to 8,192 nodes, depth to 96, width to 64, scans to 32,768
+nodes and generated workers to 32 plus at most one guard per worker.
+
+Dynamic depth uses a private guard with the original constructor and projection
+as its negative fallback. As in `ThunkFusion`, this fallback uses nested
+applications, preserving idempotence on rescans. Public functions, closures and
+records are unchanged. See [`state-fusion.mjs`](../tests/codegen/state-fusion.mjs),
+the executable `ImmediateStateFusion` fixture and the
+[integration measurements](../audit/2026-10-06/state-fusion/report.md).
+
+`CallbackSpecialization` recognizes a same-module generic left fold from its
+body, polymorphic signature and two-constructor recursive layout. The empty
+branch returns the accumulator; the nonempty branch calls the callback on the
+accumulator and head, then recurs with the same callback and the tail. Constructor
+names and field positions come from declarations. Both the actual lambda chain
+and the effective flat native annotation must agree with the emitted arity.
+
+A selected consumer supplies a known binary native `Int` callback and a typed
+integer literal accumulator. Same-module callback bodies are restricted to closed
+addition, subtraction or multiplication of their two parameters. Foreign evidence
+currently covers `Data.Semiring.intAdd` and `intMul`, with exact source SHA-256 and
+binary `Int` signatures. `Main` derives this evidence from the same captures used
+for FFI emission and cache identity on every invocation, including full/mixed
+cache hits. The evidence is not inferred from a callback's functional type alone.
+`translate` and `translateModuleState` remain wrappers with empty foreign evidence;
+their `WithCallbacks` variants accept this invocation's proven set.
+
+One private copy per fold/callback pair replaces the two curried callback entries
+with one saturated call to the **existing native wrapper**. Its return `Int` check
+therefore still fails at overflow. The literal seed and checked callback results
+ensure the accumulator's first-argument check cannot fail before reading the next
+head. Traversal branches, read order and input evaluation are preserved. The
+invalid-constructor path delegates to the original fold, retaining its failure
+message and generated source location. Public folds/callbacks, partial applications
+and unknown callbacks retain their calling conventions.
+
+Proof bodies are limited to 1,024 nodes, callers to 8,192, depth to 96, width to
+64, the scan to 32,768 nodes and copies to 32 per invocation. Module selection
+also caps binding groups at 256, bindings per group at 64 and declarations at 128.
+Nested consumers are visited within the same scan; the generated copy's direct
+callback call prevents it from matching the generic fold proof on a rescan.
+FFI Array traversals are handled separately by the contracted pass below.
+See [`callback-specialization.mjs`](../tests/codegen/callback-specialization.mjs),
+the executable `NativeFoldCallbacks` fixture and the
+[integration audit](../audit/2026-10-06/callback-specialization/report.md).
+
+`ForeignTraversals` derives per-invocation evidence from the same source captures
+and type annotations as FFI emission/cache identity. Exact SHA-256 contracts cover
+`Data.Foldable.foldlArray` (generic native arity three) and `Data.Array.filterImpl`
+(generic raw `Fn2`). Each contract states traversal order, callback convention,
+result construction, input immutability and absence of callback retention. Changed
+bytes or incompatible signatures disable that contract, including on mixed cache
+hits. `translateWithContracts` / `translateModuleStateWithContracts` accept these
+contracts alongside native callback evidence; the earlier APIs supply no traversal
+evidence by default.
+
+`ArrayCallbacks` specializes fully applied folds with a known native binary Int
+callback and a typed literal Int seed. The private loop takes `count` once and
+visits increasing numeric indices, calling the existing native callback wrapper.
+Its return check preserves the Int accumulator invariant and overflow behavior.
+Non-arrays and non-list PHP arrays delegate to the original FFI, preserving
+Countable/ArrayAccess behavior and sparse-index diagnostics.
+
+Filters require an immediate unary lambda without a functional annotation or
+captures. The bounded predicate grammar permits Boolean literals, Int comparisons,
+logical operations and a parameter/literal scalar or modulo by a nonzero integer
+literal. The private `foreach` keeps insertion order and appends into a fresh dense
+array. Int elements use the proven expression; every other element invokes the
+original closure. Non-array inputs delegate to the original FFI, including iterator
+objects. Callback expressions and array inputs are still evaluated once, and the
+filter's result is materialized before a following fold.
+
+Predicate proofs are capped at 128 nodes; callers at 8,192; depth at 96; width at
+64; scans at 32,768; private copies at 32 per module. Selection also caps groups at
+256, bindings per group at 64 and declarations at 128. Copies are shared by native
+callback or normalized predicate, with fresh case-insensitive names and no public
+exports. The fixed `foreach` template contains only printer-rendered closed scalar
+code and is appended after ownership/inlining passes, which must not interpret it
+as a partially modeled loop. See [`array-callbacks.mjs`](../tests/codegen/array-callbacks.mjs),
+`NativeArrayCallbacks` and the [Array integration audit](../audit/2026-10-06/array-callbacks/report.md).
 
 ## Expression translation contracts
 
@@ -196,18 +303,52 @@ to Composer discovery. Pure rendering is delegated through two interfaces:
 
 - `genForeignModule { moduleName, bindings, source }` accepts the original FFI
   source and returns `{ code, arities }`. Each foreign signature is flattened
-  once for both the wrapper and its arity. The internal wrapper record names
-  the global key, native function name, optional export table and value expression;
+  once for both the wrapper and its arity marker. The internal wrapper record names
+  the global key, native function name, optional export table, escaped export key
+  and missing-export diagnostic;
   global-key escaping and native-function escaping are distinct operations.
 - `printModularEntryPoint` and `printBundleEntryPoint` share
-  `{ mainModule, autoloadPath }` options and the same startup sequence: load
+  `{ mainModule, autoloadPath, arities }` options and the same startup sequence: load
   Composer, install the exception handler, call main, then run Revolt. Modular
   entrypoints receive the reachable dependencies in topological order and require
-  them before the main call.
+  them before the main call. Both use the printer's global-read convention for
+  `main`, including a missing raw foreign action.
 
 Foreign arities take precedence over current-module arities, which take precedence
 over previously emitted modules. Keep that merge before printing either form of
 the module so direct calls and public wrappers agree.
+
+### Missing foreign exports
+
+A missing PHP file, an empty source and an absent key in its runtime `$exports`
+table produce the same demand-time `RuntimeException`:
+`Missing PHP FFI export: Module.Name.export`. Export lookup uses `array_key_exists`,
+not `isset`: an explicitly exported `null` is a value, not an absent binding.
+
+- A foreign `Func` retains its native wrapper, argument/result checks and curry
+  fallback. Taking that function or retaining an unsaturated application does not
+  demand the missing implementation. A saturated call diagnoses the missing export
+  before attempting to call it. PHP argument checks still run at wrapper entry.
+- Other foreign bindings, including raw `FnN`, `Effect` and unannotated values,
+  retain their raw PHP representation in `$GLOBALS` when present. Missing values
+  have no global slot. Generated reads use `($GLOBALS[key] ?? qualifiedGetter())`;
+  the getter distinguishes a legitimate `null` from an absent slot and throws only
+  for absence. It does not execute a returned action, wrap a callable or introduce
+  a scalar result check. Reading a value is strict even when its consumer ignores it.
+- The reserved `PhpAst.foreignValueArity` marker (`-1`) travels in the existing
+  per-module arity table, including cache hits. Ordinary nonnegative arities retain
+  their meaning; arity-zero PureScript globals do not acquire these getters.
+  The packaged compiler's source identity invalidates older cached output.
+
+Compilation and declaration loading alone do not reject missing foreign exports.
+Unused declarations and untaken branches are allowed. Modular entrypoints load
+their reachable modules; bundles still include all loaded modules and execute
+their initializers. An initializer that actually reads a missing value counts as
+a demand, including in a bundle. This does not suppress errors or effects in supplied
+FFI initialization code. Handwritten PHP that directly accesses `$GLOBALS` bypasses
+generated value-read checks; present-value interoperability is unchanged.
+See [`missing-ffi.mjs`](../tests/codegen/missing-ffi.mjs) and the
+[missing-FFI validation](../audit/2026-10-06/missing-ffi/report.md).
 
 During preparation, `Main` calls `resolvePackagePaths { ffiDir, modulePaths }`
 once. `PackagePaths` returns separate `ffiRoots` and `composerRoots` arrays from
@@ -307,7 +448,8 @@ relationship to PHPurs's versioned module-state store.
 `printExpr arities expr` uses the arity table to select saturated native calls.
 Global references carry their module qualification in the PHP AST. Their global
 keys and native names go through the same identifier construction before their
-respective escaping rules are applied.
+respective escaping rules are applied. The foreign-value marker selects the
+demand-time read above, including callable values in ordinary and direct AST calls.
 
 `genCurry arities params returnType captures body` renders a closure. Capture
 clauses and return signatures have shared renderers. `printCurryStatements`

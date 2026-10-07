@@ -6,6 +6,8 @@ module Phpurs.CodeGen
   , TranslationResult
   , initialContext
   , translate
+  , translateWithCallbacks
+  , translateWithContracts
   , translateExpr
   ) where
 
@@ -26,15 +28,20 @@ import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.Tuple (Tuple(..))
 import Phpurs.ArrayRefs as ArrayRefs
+import Phpurs.ArrayCallbacks as ArrayCallbacks
+import Phpurs.CallbackSpecialization as CallbackSpecialization
 import Phpurs.CodeGen.Operators (isLogicalShortCircuit, translateOperator1, translateOperator2)
 import Phpurs.CodeGen.Types (exprTypeToPhpType, extractFuncType, getRetType, remainingArity, zipArgsWithTypes)
 import Phpurs.CompactLoops as CompactLoops
 import Phpurs.CopyCleanup as CopyCleanup
 import Phpurs.EnumRegions as EnumRegions
 import Phpurs.FreeVars (freeVars)
+import Phpurs.ForeignTraversals (Traversals)
+import Phpurs.NativeCallbacks (Callbacks)
 import Phpurs.NullableConstructors as Nullable
 import Phpurs.PartialBindings as PartialBindings
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
+import Phpurs.StateFusion as StateFusion
 import Phpurs.TailInline as TailInline
 import Phpurs.ThunkFusion as ThunkFusion
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoAnalysis(..), TcoExpr(..), TcoRef(..), TcoUsage(..), tcoAnalysisOf)
@@ -567,11 +574,20 @@ isSafeRecursiveInit currentModule group = go
 -- | Takes module imports and the optimizer's `BackendModule`, performs local TCO
 -- | analysis and returns a fully constructed `PhpFile` ready for printing.
 translate :: Array (Array String) -> BackendModule -> PhpFile
-translate imports input =
+translate = translateWithCallbacks Set.empty
+
+translateWithCallbacks :: Callbacks -> Array (Array String) -> BackendModule -> PhpFile
+translateWithCallbacks callbacks = translateWithContracts callbacks Set.empty
+
+translateWithContracts :: Callbacks -> Traversals -> Array (Array String) -> BackendModule -> PhpFile
+translateWithContracts callbacks traversals imports input =
   let
     partialBindings = PartialBindings.optimize input
     fusion = ThunkFusion.optimize partialBindings.module_
-    regions = EnumRegions.optimize fusion.module_
+    stateFusion = StateFusion.optimize fusion.module_
+    specialized = CallbackSpecialization.optimize callbacks stateFusion.module_
+    arrays = ArrayCallbacks.optimize traversals callbacks specialized.module_
+    regions = EnumRegions.optimize arrays.module_
     mod = regions.module_
     modNameStr = String.replaceAll (Pattern ".") (Replacement "_") (unwrap mod.name)
     modPrefix = modNameStr <> "_"
@@ -603,7 +619,8 @@ translate imports input =
       (\group -> map (\(Tuple (Ident name) expr) -> Tuple (modPrefix <> name) (remainingArity expr)) group.bindings)
       tcoBindings)
 
-    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.unions [ regions.privateNames, fusion.privateNames, partialBindings.privateNames ])
+    privateNames = Set.map (\ident -> modPrefix <> unwrap ident) (Set.unions [ regions.privateNames, fusion.privateNames, stateFusion.privateNames, specialized.privateNames, partialBindings.privateNames ])
+    checkedSignatures = Set.map (\ident -> modPrefix <> unwrap ident) (Set.union stateFusion.checkedDepths specialized.privateNames)
     isArrayType = case _ of
       ADT name _ _ -> Set.member name regions.arrayLayouts
       _ -> false
@@ -628,7 +645,10 @@ translate imports input =
     -- Every private call is proven saturated and its arguments are checked on
     -- the typed AST. Avoid adding dynamic scalar coercions that would prevent
     -- the existing terminal inliner from simplifying these internal workers.
-    internalSignatures d = if Set.member d.identifier privateNames then case d.expression of
+    -- State guards preserve the original builder's Int depth check. Their
+    -- result is deliberately untyped, just like the original record field.
+    -- Callback-specialized copies also retain the original fold signature.
+    internalSignatures d = if Set.member d.identifier privateNames && not (Set.member d.identifier checkedSignatures) then case d.expression of
       PhpNativeFunction name args _ body -> d { expression = PhpNativeFunction name (map (\a -> a { type_ = "" }) args) "" body }
       _ -> d
       else d
@@ -638,13 +658,14 @@ translate imports input =
       else d
     -- Keep the pass order explicit: later passes consume the forms and private
     -- layout proofs established by the earlier ones.
-    phpFile = { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls: map internalSignatures decls, imports, arities: moduleArities }
+    phpFile = { namespace: String.split (Pattern ".") (unwrap mod.name), rawDecls, decls: map internalSignatures decls, imports, arities: Map.union arrays.arities moduleArities }
     inlined = TailInline.optimize phpFile
     privateWorkers = inlined { decls = map hideWorker inlined.decls }
     nullable = Nullable.lower nullableClasses privateWorkers
     cleaned = CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses } nullable
+    owned = ArrayRefs.optimize arrayParams privateClasses cleaned
   in
-    ArrayRefs.optimize arrayParams privateClasses cleaned
+    owned { decls = owned.decls <> arrays.workers }
 
 type AnalyzedBindingGroup =
   { recursive :: Boolean

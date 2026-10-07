@@ -8,15 +8,19 @@ module Phpurs.EntryPoint
 
 import Prelude
 
+import Data.Map (Map)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (unwrap)
 import Data.String as String
-import Data.String.Pattern (Pattern(..), Replacement(..))
+import Data.String.Pattern (Pattern(..))
+import Phpurs.PhpAst (PhpExpr(..))
+import Phpurs.Printer (printExpr)
 import PureScript.Backend.Optimizer.CoreFn (ModuleName)
 
 type EntryPointOptions =
   { mainModule :: String
   , autoloadPath :: Maybe String
+  , arities :: Map String Int
   }
 
 -- | Dependencies arrive in the module loader's topological order.
@@ -25,11 +29,11 @@ printModularEntryPoint options dependencies =
   let
     requires = String.joinWith "" (map (\name -> "require_once __DIR__ . '/../" <> unwrap name <> "/index.php';\n") dependencies)
   in
-    "<?php\n" <> printStartup options.autoloadPath <> requires <> printMainCall options.mainModule
+    "<?php\n" <> printStartup options.autoloadPath <> requires <> printMainCall options
 
 printBundleEntryPoint :: EntryPointOptions -> String
 printBundleEntryPoint options =
-  "namespace {\n" <> printStartup options.autoloadPath <> printMainCall options.mainModule <> "}\n"
+  "namespace {\n" <> printStartup options.autoloadPath <> printMainCall options <> "}\n"
 
 printStartup :: Maybe String -> String
 printStartup autoloadPath =
@@ -42,7 +46,7 @@ printStartup autoloadPath =
     autoload <> exceptionHandler
 
 -- | Keep draining Revolt after main returns so asynchronous effects complete.
-printMainCall :: String -> String
-printMainCall mainModule =
-  let globalKey = String.replaceAll (Pattern ".") (Replacement "_") mainModule <> "_main"
-  in "$GLOBALS['" <> globalKey <> "']();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"
+printMainCall :: EntryPointOptions -> String
+printMainCall { mainModule, arities } =
+  let main = printExpr arities (PhpGlobalVar (Just (String.split (Pattern ".") mainModule)) "main")
+  in main <> "();\nif (class_exists('\\\\Revolt\\\\EventLoop')) { \\Revolt\\EventLoop::run(); }\n"

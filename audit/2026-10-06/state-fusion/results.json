@@ -1,0 +1,512 @@
+{
+  "kind": "Integrated bounded State fusion; fresh codegen with pass enabled/disabled",
+  "preparation": {
+    "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-state-fusion-20261006-final",
+    "modules": 306,
+    "changed": [
+      "Test.StateMonad/index.php"
+    ],
+    "variants": {
+      "baseline": {
+        "phpFiles": 307,
+        "phpBytes": 7373140,
+        "moduleSHA256": "3da43523d94a93a06d67c0a7bbba358e5f37e10e53d5a0d52310e1b1526c83b6"
+      },
+      "integrated": {
+        "phpFiles": 307,
+        "phpBytes": 7374518,
+        "moduleSHA256": "54d7fa0e409add43a6b84eeebbd11c1cd9680250ac07bff9e6ad5295e64c9b51"
+      }
+    },
+    "publicDefinitionsSHA256": "842ed0f9a42543e0451232e94184349d49eedf9a3e5f02b7b310bfe31c96e74b",
+    "controlMatched": true,
+    "heads": {
+      "phpurs": "6745b189806df940ec8183c0f183ad6a8783c631",
+      "pbo": "157a544f0a469c7b0137a3fca66e626d717db493",
+      "bench": "be2b32d564a72fbafc429373697872b0a66e3c4c"
+    }
+  },
+  "compilers": {
+    "integrated": {
+      "sha256": "a38f27add0fc37ef338255b6aeb4cc7f91f243bd4fa56b7011d8a1e0cfde46e1",
+      "bytes": 1448418
+    },
+    "baseline": {
+      "sha256": "5ebc444fa8e93b9da3ce2f372489504f2deee62582d005baf440f3166d65f90b",
+      "bytes": 1419767
+    },
+    "onlyChangedInput": "output/Phpurs.StateFusion/index.js",
+    "sharedInputs": 323
+  },
+  "summary": {
+    "baseline": {
+      "isolatedMedianUs": 473.53840625,
+      "isolatedProcessMediansUs": [
+        478.25,
+        468.8268125
+      ],
+      "suiteStateProcessUs": [
+        480.042969,
+        478.821625
+      ],
+      "suiteStateMedianUs": 479.432297,
+      "suiteTotalProcessMs": [
+        67.69881,
+        67.645694
+      ],
+      "suiteTotalMedianMs": 67.672252
+    },
+    "integrated": {
+      "isolatedMedianUs": 2.6468200073242185,
+      "isolatedProcessMediansUs": [
+        2.611261962890625,
+        2.6823780517578126
+      ],
+      "suiteStateProcessUs": [
+        2.588867,
+        2.568644
+      ],
+      "suiteStateMedianUs": 2.5787554999999998,
+      "suiteTotalProcessMs": [
+        66.373898,
+        66.688723
+      ],
+      "suiteTotalMedianMs": 66.53131049999999,
+      "isolatedReductionPercent": 99.44105483897607,
+      "suiteStateSavedUs": 476.8535415
+    }
+  },
+  "counts": [
+    {
+      "variant": "baseline",
+      "output": 1200,
+      "incrementClosures": 1200,
+      "partialClosures": 1200,
+      "continuationClosures": 1200,
+      "baseClosures": 20,
+      "records": 2420,
+      "additions": 1200,
+      "outerAdditions": 20
+    },
+    {
+      "variant": "integrated",
+      "output": 1200,
+      "incrementClosures": 0,
+      "partialClosures": 0,
+      "continuationClosures": 0,
+      "baseClosures": 0,
+      "records": 0,
+      "additions": 1200,
+      "outerAdditions": 20
+    }
+  ],
+  "measurements": {
+    "phpFlags": [
+      "-d",
+      "xdebug.mode=off",
+      "-d",
+      "opcache.enable_cli=1",
+      "-d",
+      "opcache.file_cache=",
+      "-d",
+      "opcache.file_update_protection=0",
+      "-d",
+      "opcache.jit_buffer_size=128M",
+      "-d",
+      "opcache.jit=1255"
+    ],
+    "order": [
+      "baseline",
+      "integrated",
+      "integrated",
+      "baseline"
+    ],
+    "isolated": [
+      {
+        "variant": "baseline",
+        "output": 1200,
+        "iterations": 64,
+        "samplesUs": [
+          478.25,
+          491.665359375,
+          753.432296875,
+          490.856765625,
+          474.904296875,
+          476.632171875,
+          480.240234375,
+          480.387375,
+          469.80859375,
+          475.210296875,
+          472.30859375
+        ],
+        "minUs": 469.80859375,
+        "medianUs": 478.25,
+        "iqrUs": 15.95246874999998,
+        "peakBytes": 4194304,
+        "php": "8.5.4",
+        "jit": {
+          "enabled": true,
+          "on": true,
+          "kind": 5,
+          "opt_level": 5,
+          "opt_flags": 6,
+          "buffer_size": 134217712,
+          "buffer_free": 134184056
+        },
+        "opcacheEnabled": true,
+        "fileCache": "",
+        "xdebugLoaded": false
+      },
+      {
+        "variant": "integrated",
+        "output": 1200,
+        "iterations": 8192,
+        "samplesUs": [
+          2.603276611328125,
+          2.5923818359375,
+          2.6120401611328123,
+          2.6282703857421876,
+          2.630767822265625,
+          2.6162261962890625,
+          2.5894063720703127,
+          2.59836328125,
+          2.611261962890625,
+          2.6168365478515625,
+          2.608515380859375
+        ],
+        "minUs": 2.5894063720703127,
+        "medianUs": 2.611261962890625,
+        "iqrUs": 0.018473266601562344,
+        "peakBytes": 4194304,
+        "php": "8.5.4",
+        "jit": {
+          "enabled": true,
+          "on": true,
+          "kind": 5,
+          "opt_level": 5,
+          "opt_flags": 6,
+          "buffer_size": 134217712,
+          "buffer_free": 134204968
+        },
+        "opcacheEnabled": true,
+        "fileCache": "",
+        "xdebugLoaded": false
+      },
+      {
+        "variant": "integrated",
+        "output": 1200,
+        "iterations": 8192,
+        "samplesUs": [
+          2.5908914794921873,
+          2.6390126953125,
+          2.6823780517578126,
+          2.6841329345703127,
+          2.6808624267578125,
+          2.6813507080078125,
+          2.686945556640625,
+          2.683349609375,
+          2.6849263916015627,
+          2.6864013671875,
+          2.6702066650390623
+        ],
+        "minUs": 2.5908914794921873,
+        "medianUs": 2.6823780517578126,
+        "iqrUs": 0.014719726562500313,
+        "peakBytes": 4194304,
+        "php": "8.5.4",
+        "jit": {
+          "enabled": true,
+          "on": true,
+          "kind": 5,
+          "opt_level": 5,
+          "opt_flags": 6,
+          "buffer_size": 134217712,
+          "buffer_free": 134204968
+        },
+        "opcacheEnabled": true,
+        "fileCache": "",
+        "xdebugLoaded": false
+      },
+      {
+        "variant": "baseline",
+        "output": 1200,
+        "iterations": 64,
+        "samplesUs": [
+          466.79753125,
+          472.611984375,
+          472.414703125,
+          473.213546875,
+          465.447265625,
+          468.62175,
+          467.248046875,
+          468.8268125,
+          467.49609375,
+          471.783859375,
+          474.969390625
+        ],
+        "minUs": 465.447265625,
+        "medianUs": 468.8268125,
+        "iqrUs": 5.36393750000002,
+        "peakBytes": 4194304,
+        "php": "8.5.4",
+        "jit": {
+          "enabled": true,
+          "on": true,
+          "kind": 5,
+          "opt_level": 5,
+          "opt_flags": 6,
+          "buffer_size": 134217712,
+          "buffer_free": 134184056
+        },
+        "opcacheEnabled": true,
+        "fileCache": "",
+        "xdebugLoaded": false
+      }
+    ],
+    "suite": [
+      {
+        "variant": "baseline",
+        "mode": "pure",
+        "labels": [
+          "AST Evaluation:",
+          "Fibonacci:",
+          "List Processing (900 elements):",
+          "Tail Call Optimization (100k calls):",
+          "Deep Record Updates (10k iterations):",
+          "Ackermann (3, 4):",
+          "Church Numerals (100k Closure Applications):",
+          "Prime Sieve (sum primes up to 500):",
+          "Red-Black Tree (100k Worst-Case Insertions):",
+          "Polymorphism (10M Type Class Dict Lookups):",
+          "State Monad (1.2k Binds, 60 Stack Depth):",
+          "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "Array Processing (900 elements):",
+          "RowToList (Keys Count):"
+        ],
+        "values": [
+          "7",
+          "55",
+          "202950",
+          "100000",
+          "20000",
+          "125",
+          "100000",
+          "21536",
+          "22",
+          "10000000",
+          "1200",
+          "1000000",
+          "202950",
+          "5"
+        ],
+        "times_us": [
+          2.19959,
+          1.155711,
+          144.268555,
+          75.090004,
+          1489.7135,
+          47.243492,
+          1986.015625,
+          722.98175,
+          55461.25,
+          6395.7295,
+          480.042969,
+          797.11975,
+          95.099609,
+          0.899823
+        ],
+        "total_ms": 67.69881,
+        "sum_displayed_lines_ms": 67.698809878,
+        "values_validated": true,
+        "oracle": "core",
+        "timer_unit": "microseconds"
+      },
+      {
+        "variant": "integrated",
+        "mode": "pure",
+        "labels": [
+          "AST Evaluation:",
+          "Fibonacci:",
+          "List Processing (900 elements):",
+          "Tail Call Optimization (100k calls):",
+          "Deep Record Updates (10k iterations):",
+          "Ackermann (3, 4):",
+          "Church Numerals (100k Closure Applications):",
+          "Prime Sieve (sum primes up to 500):",
+          "Red-Black Tree (100k Worst-Case Insertions):",
+          "Polymorphism (10M Type Class Dict Lookups):",
+          "State Monad (1.2k Binds, 60 Stack Depth):",
+          "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "Array Processing (900 elements):",
+          "RowToList (Keys Count):"
+        ],
+        "values": [
+          "7",
+          "55",
+          "202950",
+          "100000",
+          "20000",
+          "125",
+          "100000",
+          "21536",
+          "22",
+          "10000000",
+          "1200",
+          "1000000",
+          "202950",
+          "5"
+        ],
+        "times_us": [
+          2.207916,
+          1.108144,
+          143.5,
+          74.258465,
+          1496.953125,
+          47.411621,
+          1983.364625,
+          726.020875,
+          54606.583,
+          6398.75,
+          2.588867,
+          793.828125,
+          96.438156,
+          0.885579
+        ],
+        "total_ms": 66.373898,
+        "sum_displayed_lines_ms": 66.37389849799999,
+        "values_validated": true,
+        "oracle": "core",
+        "timer_unit": "microseconds"
+      },
+      {
+        "variant": "integrated",
+        "mode": "pure",
+        "labels": [
+          "AST Evaluation:",
+          "Fibonacci:",
+          "List Processing (900 elements):",
+          "Tail Call Optimization (100k calls):",
+          "Deep Record Updates (10k iterations):",
+          "Ackermann (3, 4):",
+          "Church Numerals (100k Closure Applications):",
+          "Prime Sieve (sum primes up to 500):",
+          "Red-Black Tree (100k Worst-Case Insertions):",
+          "Polymorphism (10M Type Class Dict Lookups):",
+          "State Monad (1.2k Binds, 60 Stack Depth):",
+          "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "Array Processing (900 elements):",
+          "RowToList (Keys Count):"
+        ],
+        "values": [
+          "7",
+          "55",
+          "202950",
+          "100000",
+          "20000",
+          "125",
+          "100000",
+          "21536",
+          "22",
+          "10000000",
+          "1200",
+          "1000000",
+          "202950",
+          "5"
+        ],
+        "times_us": [
+          2.177556,
+          1.110992,
+          142.317719,
+          74.360352,
+          1517.104125,
+          47.405273,
+          2011.56775,
+          739.403688,
+          54851.791,
+          6427.083,
+          2.568644,
+          776.088563,
+          94.870773,
+          0.873782
+        ],
+        "total_ms": 66.688723,
+        "sum_displayed_lines_ms": 66.68872321699999,
+        "values_validated": true,
+        "oracle": "core",
+        "timer_unit": "microseconds"
+      },
+      {
+        "variant": "baseline",
+        "mode": "pure",
+        "labels": [
+          "AST Evaluation:",
+          "Fibonacci:",
+          "List Processing (900 elements):",
+          "Tail Call Optimization (100k calls):",
+          "Deep Record Updates (10k iterations):",
+          "Ackermann (3, 4):",
+          "Church Numerals (100k Closure Applications):",
+          "Prime Sieve (sum primes up to 500):",
+          "Red-Black Tree (100k Worst-Case Insertions):",
+          "Polymorphism (10M Type Class Dict Lookups):",
+          "State Monad (1.2k Binds, 60 Stack Depth):",
+          "Lazy Evaluation (1M Thunks Forced, 1k Depth):",
+          "Array Processing (900 elements):",
+          "RowToList (Keys Count):"
+        ],
+        "values": [
+          "7",
+          "55",
+          "202950",
+          "100000",
+          "20000",
+          "125",
+          "100000",
+          "21536",
+          "22",
+          "10000000",
+          "1200",
+          "1000000",
+          "202950",
+          "5"
+        ],
+        "times_us": [
+          2.263229,
+          1.157893,
+          142.892578,
+          73.789391,
+          1483.5,
+          47.369141,
+          1988.61975,
+          741.56775,
+          55531.667,
+          6253.4375,
+          478.821625,
+          804.895813,
+          94.834641,
+          0.87797
+        ],
+        "total_ms": 67.645694,
+        "sum_displayed_lines_ms": 67.64569428099999,
+        "values_validated": true,
+        "oracle": "core",
+        "timer_unit": "microseconds"
+      }
+    ]
+  },
+  "integrity": {
+    "sourceFilesUnchanged": 585,
+    "compiledInputsUnchanged": 324,
+    "activePhpFilesMatchIntegrated": 307,
+    "measuredPhpUnchanged": true,
+    "vendorUnchanged": true,
+    "publicDefinitionsUnchanged": true,
+    "effectEntryUnchanged": true,
+    "standaloneBeforeSHA256": "2e5bf836ae3f71b1acbcd30794db8d31c56e6c05571eb3962101042ff442a538",
+    "standaloneAfterSHA256": "7d088620418f83be1a3edce5188c907a8e0180925de989e5a7a296e297e500e1"
+  },
+  "versions": {
+    "node": "v24.8.0",
+    "php": "PHP 8.5.4 (cli) (built: Mar 10 2026 23:15:23) (NTS)\nCopyright (c) The PHP Group\nBuilt by Homebrew\nZend Engine v4.5.4, Copyright (c) Zend Technologies\n    with Zend OPcache v8.5.4, Copyright (c), by Zend Technologies"
+  }
+}

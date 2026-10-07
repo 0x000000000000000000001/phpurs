@@ -59,6 +59,13 @@ type PhpDecl =
   , expression :: PhpExpr
   }
 
+-- | Reserved arity-table marker for foreign values (including raw Fn/Effect
+-- | callables). Nonnegative entries keep their ordinary runtime-arity meaning.
+-- | Reads of these globals must diagnose missing exports without forcing them
+-- | at module load. Keep the marker in module state for cached consumers too.
+foreignValueArity :: Int
+foreignValueArity = -1
+
 type PhpFile =
   { namespace :: Array String
   , rawDecls :: Array String

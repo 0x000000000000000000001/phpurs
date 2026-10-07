@@ -31,7 +31,9 @@ import Phpurs.ComposerMerge (mergeComposers)
 import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
-import Phpurs.ModuleState (newBuildRefs, publishModuleStateWithProfile, printModuleState, translateModuleState, supportsEmission)
+import Phpurs.ModuleState (newBuildRefs, publishModuleStateWithProfile, printModuleState, translateModuleStateWithContracts, supportsEmission)
+import Phpurs.ForeignTraversals as ForeignTraversals
+import Phpurs.NativeCallbacks as NativeCallbacks
 import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
 import Phpurs.PackagePaths (resolvePackagePaths)
 import Phpurs.PurmetaBudget as PurmetaBudget
@@ -85,7 +87,7 @@ compile toolchain override cliArgs profile = do
   loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputsWithProfile profile outputDir
   let finalModules = loaded.modules
 
-  { refs, directives, packagePaths, foreignSources, cache, targetMainModules } <- Metrics.measure "prepare" \_ -> do
+  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache, targetMainModules } <- Metrics.measure "prepare" \_ -> do
     let
       modules = Array.fromFoldable finalModules
       exportsMain (Module m) = Array.elem (Ident "main") m.exports
@@ -107,6 +109,14 @@ compile toolchain override cliArgs profile = do
     cwd <- liftEffect Process.cwd
     let
       foreignSources = Map.fromFoldable $ map (\c -> Tuple c.core.name c.ffi.source) captures
+      -- Use the same captured source/signature as codegen and cache identity.
+      -- Reconstruct this evidence even when its module will be a cache hit.
+      nativeCallbacks = if loaded.cacheable then Set.unions (map
+        (\c -> NativeCallbacks.fromForeign c.core.name c.core.foreign c.ffi.source) captures)
+        else Set.empty
+      traversals = if loaded.cacheable then Set.unions (map
+        (\c -> ForeignTraversals.fromForeign c.core.name c.core.foreign c.ffi.source) captures)
+        else Set.empty
       inputs = if not loaded.cacheable then Left "Incomplete or duplicate module input" else
         note "Missing captured CoreFn fingerprint" $ traverse (\c -> do
           let name = unwrap c.core.name
@@ -120,7 +130,7 @@ compile toolchain override cliArgs profile = do
         , directives: fingerprintBytes (Bytes.fromString defaultDirectives UTF8)
         } inputs
       _, _ -> pure BuildCache.disabled
-    pure { refs, directives, packagePaths, foreignSources, cache, targetMainModules }
+    pure { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache, targetMainModules }
 
   Metrics.measure "optimize + emit" \_ ->
     PurmetaBudget.withBudget purmetaBudget $
@@ -153,7 +163,7 @@ compile toolchain override cliArgs profile = do
           let foreignSource = fromMaybe "" (Map.lookup backendMod.name foreignSources)
           currentArities <- liftEffect $ Ref.read refs.globalAritiesRef
           translated <- liftEffect $ Profile.measurePure profile "translate" modNameStr \_ ->
-            translateModuleState importsArray foreignSource currentArities backendMod
+            translateModuleStateWithContracts nativeCallbacks traversals importsArray foreignSource currentArities backendMod
           state <- liftEffect $ Profile.measurePure profile "print" modNameStr \_ -> printModuleState emission translated
           publishModuleStateWithProfile profile emission outputDir refs state
           Profile.measureAff profile "cache.store" modNameStr \_ -> cache.hooks.store state
@@ -162,10 +172,11 @@ compile toolchain override cliArgs profile = do
 
   Metrics.measure "finalize" \_ -> do
     backendModules <- liftEffect $ Ref.read refs.backendModulesRef
+    arities <- liftEffect $ Ref.read refs.globalAritiesRef
 
     _ <- traverse
       ( \mainMod -> do
-          let entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath }
+          let entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath, arities }
 
           if emitBundle then do
             bundleContent <- liftEffect $ Ref.read refs.bundleContentRef

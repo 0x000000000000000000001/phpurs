@@ -157,7 +157,7 @@ optional modular/bundle PHP strings. Its responsibilities are:
 | `backend.name`, `imports`, `implementations` | Rebuild `Main`'s module map for reachability and modular entrypoints. PBO republishes the implementations as current-build `.purmeta` for newly optimized consumers. |
 | `backend.directives` | PBO folds them into the directive environment before the next module, including exported never-inline/arity directives. |
 | Other `BackendModule` fields | Preserve the full typed PBO contract: comments, bindings, data/class declarations, data types, exports/re-exports and foreign signatures. |
-| `arities` | Restore this module's contribution to `globalAritiesRef`. Foreign arities take precedence over generated ones; the current module takes precedence over earlier modules. |
+| `arities` | Restore this module's contribution to `globalAritiesRef`, including the `foreignValueArity` marker (`-1`) for demand-checked foreign values. Foreign entries take precedence over generated ones; the current module takes precedence over earlier modules. |
 | `modularPhp :: Maybe String` | Emit the already printed module through byte-exact content comparison, repairing absent or damaged output. |
 | `bundlePhp :: Maybe String` | Append the already printed contribution, with the same separator and order as a fresh build. |
 

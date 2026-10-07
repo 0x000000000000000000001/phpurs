@@ -7,6 +7,8 @@ module Phpurs.ModuleState
   , renderModuleState
   , TranslatedModule
   , translateModuleState
+  , translateModuleStateWithCallbacks
+  , translateModuleStateWithContracts
   , printModuleState
   , supportsEmission
   , publishModuleState
@@ -20,6 +22,7 @@ import Data.Map as Map
 import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (unwrap)
 import Data.Set (Set)
+import Data.Set as Set
 import Effect (Effect)
 import Effect.Aff (Aff, attempt, throwError)
 import Effect.Class (liftEffect)
@@ -28,8 +31,10 @@ import Effect.Ref (Ref)
 import Effect.Ref as Ref
 import Node.FS.Aff as FS
 import Phpurs.BuildProfile as Profile
-import Phpurs.CodeGen (translate)
+import Phpurs.CodeGen (translateWithContracts)
+import Phpurs.ForeignTraversals (Traversals)
 import Phpurs.GenNativeForeign (genForeignModule)
+import Phpurs.NativeCallbacks (Callbacks)
 import Phpurs.OutputManifest (OutputKind(..), OutputTracker, newOutputTracker, writeOutput)
 import Phpurs.PhpAst (PhpFile)
 import Phpurs.Printer (printPhpFile)
@@ -73,9 +78,15 @@ type TranslatedModule =
   }
 
 translateModuleState :: Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
-translateModuleState imports foreignSource currentArities backend =
+translateModuleState = translateModuleStateWithCallbacks Set.empty
+
+translateModuleStateWithCallbacks :: Callbacks -> Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
+translateModuleStateWithCallbacks callbacks = translateModuleStateWithContracts callbacks Set.empty
+
+translateModuleStateWithContracts :: Callbacks -> Traversals -> Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
+translateModuleStateWithContracts callbacks traversals imports foreignSource currentArities backend =
   let
-    phpFile = translate imports backend
+    phpFile = translateWithContracts callbacks traversals imports backend
     foreignModule = genForeignModule { moduleName: backend.name, bindings: backend.foreign, source: foreignSource }
     -- Store this module's contribution, not a copy of the preceding environment.
     arities = Map.union foreignModule.arities phpFile.arities

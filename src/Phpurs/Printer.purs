@@ -18,7 +18,7 @@ import Data.Array (filter, length, mapWithIndex, concatMap)
 import Data.Array as Array
 import Data.Tuple (Tuple(..))
 import Data.Foldable (foldl)
-import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile)
+import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile, foreignValueArity)
 import Phpurs.PhpAst.Traversal (mapBlocks)
 import Phpurs.Printer.Runtime as Runtime
 
@@ -158,8 +158,21 @@ globalIdentifier moduleName ident = case moduleName of
   Just parts -> joinWith "_" parts <> "_" <> ident
   Nothing -> ident
 
-printGlobal :: Maybe (Array String) -> String -> String
-printGlobal moduleName ident = "$GLOBALS['" <> safeName (globalIdentifier moduleName ident) <> "']"
+nativeName :: Maybe (Array String) -> String -> String
+nativeName moduleName ident =
+  (case moduleName of
+    Just parts -> "\\" <> joinWith "\\" parts <> "\\"
+    Nothing -> "") <> safeFuncName (globalIdentifier moduleName ident)
+
+printGlobal :: Map String Int -> Maybe (Array String) -> String -> String
+printGlobal allArities moduleName ident =
+  let
+    key = safeName (globalIdentifier moduleName ident)
+    value = "$GLOBALS['" <> key <> "']"
+  in
+    if Map.lookup key allArities == Just foreignValueArity then
+      "(" <> value <> " ?? " <> nativeName moduleName ident <> "())"
+    else value
 
 printExpr :: Map String Int -> PhpExpr -> String
 printExpr allArities expr = case expr of
@@ -171,11 +184,11 @@ printExpr allArities expr = case expr of
   PhpFunction captures args retType stmts ->
     genCurry allArities args retType captures stmts
   PhpVar ident -> "$" <> safeName ident
-  PhpGlobalVar mbMod ident -> printGlobal mbMod ident
+  PhpGlobalVar mbMod ident -> printGlobal allArities mbMod ident
   PhpDirectCall name args ->
     let
       argsStr = joinWith ", " (map (printExpr allArities) args)
-    in printGlobal Nothing name <> "(" <> argsStr <> ")"
+    in printGlobal allArities Nothing name <> "(" <> argsStr <> ")"
   PhpCall _ _ ->
     let
       Tuple flatFn flatArgs = flattenPhpCalls expr
@@ -184,20 +197,17 @@ printExpr allArities expr = case expr of
           let
             fullName = globalIdentifier mbMod ident
             idStr = safeName fullName
-            funcName = safeFuncName fullName
+            funcName = nativeName mbMod ident
           in case Map.lookup idStr allArities of
-            Just arity | arity > 0 && length flatArgs >= arity -> Just { funcName, arity, mbMod }
+            Just arity | arity > 0 && length flatArgs >= arity -> Just { funcName, arity }
             _ -> Nothing
         _ -> Nothing
     in case canUnbox of
-      Just { funcName, arity, mbMod } ->
+      Just { funcName, arity } ->
         let
-          nsPrefix = case mbMod of
-            Just mod -> "\\" <> joinWith "\\" mod <> "\\"
-            Nothing -> ""
           directArgs = Array.take arity flatArgs
           remainingArgs = Array.drop arity flatArgs
-          callStr = nsPrefix <> funcName <> "(" <> joinWith ", " (map (printExpr allArities) directArgs) <> ")"
+          callStr = funcName <> "(" <> joinWith ", " (map (printExpr allArities) directArgs) <> ")"
         in
           if length remainingArgs > 0 then
             foldl (\acc a -> "(" <> acc <> ")(" <> printExpr allArities a <> ")") callStr remainingArgs
@@ -206,7 +216,7 @@ printExpr allArities expr = case expr of
       Nothing ->
         case expr of
           PhpCall (PhpGlobalVar mbMod ident) args ->
-            "(" <> printGlobal mbMod ident <> ")(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
+            "(" <> printGlobal allArities mbMod ident <> ")(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
           PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
           PhpCall abs args -> "(" <> printExpr allArities abs <> ")(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
           _ -> "/* ERROR: Impossible PhpCall match */"

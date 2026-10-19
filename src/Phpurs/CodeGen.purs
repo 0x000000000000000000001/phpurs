@@ -170,6 +170,127 @@ translateTailJump loop args =
     , nextId: args.nextId + Array.length args.exprs
     }
 
+recordFields :: ExprType -> Maybe (Array (Tuple String ExprType))
+recordFields = case _ of
+  Record (Row fields Nothing) -> Just fields
+  _ -> Nothing
+
+stripRoot :: TcoExpr -> TcoExpr
+stripRoot tcoExpr@(TcoExpr _ syntax) = case syntax of
+  Typed _ inner -> stripRoot inner
+  Syn.TypeApp inner _ -> stripRoot inner
+  _ -> tcoExpr
+
+sameRoot :: TcoExpr -> TcoExpr -> Boolean
+sameRoot left right =
+  let
+    TcoExpr _ a = stripRoot left
+    TcoExpr _ b = stripRoot right
+  in case a, b of
+    Local ident level, Local ident2 level2 -> localId ident level == localId ident2 level2
+    Var (Qualified moduleName ident), Var (Qualified moduleName2 ident2) -> moduleName == moduleName2 && ident == ident2
+    _, _ -> false
+
+type UpdatePath = { root :: TcoExpr, path :: Array String }
+
+updatePath :: TcoExpr -> Maybe UpdatePath
+updatePath tcoExpr@(TcoExpr _ syntax) = case syntax of
+  Typed _ inner -> updatePath inner
+  Syn.TypeApp inner _ -> updatePath inner
+  -- A global read may be a demand-time FFI getter and must still be evaluated
+  -- on the original path. Only local roots are proven side-effect free.
+  Local _ _ -> Just { root: tcoExpr, path: [] }
+  Var _ -> Nothing
+  Accessor inner (GetProp key) ->
+    (\found -> found { path = found.path <> [ key ] }) <$> updatePath inner
+  _ -> Nothing
+
+nestedUpdate :: ExprType -> TcoExpr -> Maybe { base :: TcoExpr, props :: Array (Prop TcoExpr) }
+nestedUpdate fieldType (TcoExpr _ syntax) = case syntax of
+  Typed _ inner -> nestedUpdate fieldType inner
+  Syn.TypeApp inner _ -> nestedUpdate fieldType inner
+  Update base props -> case recordFields fieldType of
+    Just _ -> Just { base, props }
+    Nothing -> Nothing
+  _ -> Nothing
+
+-- | A closed record whose every field is updated can be built directly. The
+-- | old object is never mutated; nested updates must target the expected field
+-- | of the same root. Open rows, partial updates and ambiguous paths keep the
+-- | existing clone path.
+tryFusedUpdate
+  :: TranslationContext
+  -> Int
+  -> UpdatePath
+  -> Array (Tuple String ExprType)
+  -> Array (Prop TcoExpr)
+  -> Maybe TranslationResult
+tryFusedUpdate ctx nextId path fields props =
+  let
+    labels = map (\(Tuple label _) -> label) fields
+    keys = map (\(Prop key _) -> key) props
+    validFields =
+      not (Array.null labels)
+        && not (Array.null keys)
+        && Array.length keys == Array.length labels
+        && Array.sort keys == Array.sort labels
+    fieldTypes = Map.fromFoldable fields
+    expectedPath key = path.path <> [ key ]
+    step Nothing _ = Nothing
+    step (Just acc) (Prop key value) = case Map.lookup key fieldTypes of
+      Nothing -> Nothing
+      Just fieldType -> case nestedUpdate fieldType value of
+        Just nested -> case updatePath nested.base of
+          Just nestedPath
+            | sameRoot path.root nestedPath.root && nestedPath.path == expectedPath key ->
+                case recordFields fieldType of
+                  Just nestedFields -> case tryFusedUpdate ctx acc.nextId nestedPath nestedFields nested.props of
+                    Just result ->
+                      Just { stmts: acc.stmts <> result.stmts
+                           , values: Map.insert key result.expr acc.values
+                           , nextId: result.nextId
+                           }
+                    Nothing -> plainValue acc key value
+                  Nothing -> plainValue acc key value
+          _ -> plainValue acc key value
+        Nothing -> plainValue acc key value
+    plainValue acc key value =
+      let result = translateValue ctx acc.nextId value
+      in Just { stmts: acc.stmts <> result.stmts
+              , values: Map.insert key result.expr acc.values
+              , nextId: result.nextId
+              }
+    initial = { stmts: [], values: Map.empty, nextId }
+  in
+    if not validFields then Nothing
+    else case Array.foldl step (Just initial) props of
+      Nothing -> Nothing
+      Just built ->
+        Just
+          { stmts: built.stmts
+          , expr: PhpAssocArray (map (\(Tuple label _) ->
+              { key: label
+              , value: fromMaybe (PhpRaw "null") (Map.lookup label built.values)
+              }) fields)
+          , nextId: built.nextId
+          }
+
+translateTyped :: TranslationContext -> Int -> ExprType -> TcoExpr -> TranslationResult
+translateTyped ctx nextId ty tcoExpr@(TcoExpr _ syntax) = case syntax of
+  Typed innerTy inner ->
+    let selected = case recordFields innerTy of
+          Just _ -> innerTy
+          Nothing -> ty
+    in translateTyped ctx nextId selected inner
+  Update base props -> case recordFields ty of
+    Just fields -> case updatePath base of
+      Just path -> case tryFusedUpdate ctx nextId path fields props of
+        Just result -> result
+        Nothing -> translateExpr ctx nextId tcoExpr
+      Nothing -> translateExpr ctx nextId tcoExpr
+    Nothing -> translateExpr ctx nextId tcoExpr
+  _ -> translateExpr ctx nextId tcoExpr
+
 -- | Local closures and native functions use the same loop-entry protocol.
 -- | The label follows initialization so a tail jump keeps the updated slots.
 wrapLoopBody :: LoopContext -> TranslationResult -> Array PhpExpr
@@ -536,7 +657,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
   PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
   Syn.TypeApp a _ -> translateExpr ctx nextId a
   Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }
-  Typed _ a -> translateExpr ctx nextId a
+  Typed ty a -> translateTyped ctx nextId ty a
 
 -- | Initialize recursive dictionaries and functions before expressions which
 -- | call into them (for example, Apply instances implemented with Monad.ap).

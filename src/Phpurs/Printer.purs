@@ -12,6 +12,8 @@ import Prelude
 
 import Data.Map (Map)
 import Data.Map as Map
+import Data.Set (Set)
+import Data.Set as Set
 import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), indexOf, take, drop)
 import Data.Maybe (isNothing, Maybe(..))
 import Data.Array (filter, length, mapWithIndex, concatMap)
@@ -19,7 +21,7 @@ import Data.Array as Array
 import Data.Tuple (Tuple(..))
 import Data.Foldable (foldl)
 import Phpurs.PhpAst (PhpExpr(..), PhpDecl, PhpFile, foreignValueArity)
-import Phpurs.PhpAst.Traversal (mapBlocks)
+import Phpurs.PhpAst.Traversal (children, mapBlocks)
 import Phpurs.Printer.Runtime as Runtime
 
 foreign import showInt32Impl :: Int -> String
@@ -33,6 +35,17 @@ flattenPhpCalls other = Tuple other []
 foreign import safeNameImpl :: String -> String
 foreign import safeFuncNameImpl :: String -> String
 foreign import escapePhpStringImpl :: String -> String
+
+-- | Exact bodies are private implementation functions. The public wrapper keeps
+-- | currying and overapplication; only calls with the proven runtime arity use
+-- | the body directly.
+type PrinterContext = { arities :: Map String Int, exacts :: Set String }
+
+exactSuffix :: String
+exactSuffix = "__phpurs_exact"
+
+emptyContext :: Map String Int -> PrinterContext
+emptyContext arities = { arities, exacts: Set.empty }
 
 safeName :: String -> String
 safeName = safeNameImpl
@@ -61,11 +74,11 @@ replaceReturn = concatMap replaceExpr
     replaceExpr (PhpReturn e) = [PhpAssign "__res" e, PhpGoto "__end"]
     replaceExpr other = [mapBlocks replaceReturn other]
 
-genNativeCurry :: Map String Int -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
+genNativeCurry :: PrinterContext -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
 genNativeCurry = genNativeCurryWithRoot false
 
-genNativeCurryWithRoot :: Boolean -> Map String Int -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
-genNativeCurryWithRoot compactRoot allArities name args retType stmts =
+genNativeCurryWithRoot :: Boolean -> PrinterContext -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
+genNativeCurryWithRoot compactRoot ctx name args retType stmts =
   let
     argStr = joinWith ", " (mapWithIndex (\i a -> 
       let t = if a.type_ == "&" then "&" else if a.type_ == "mixed" then "" else if a.type_ /= "" && i == 0 then a.type_ <> " " else ""
@@ -81,7 +94,7 @@ genNativeCurryWithRoot compactRoot allArities name args retType stmts =
       "  if ($__num < " <> nStr <> ") {\n" <>
       "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
       "  }\n" <>
-      printCurryStatements allArities stmts <>
+      printCurryStatements ctx stmts <>
       "  __end:\n" <>
       (if compactRoot then "  if ($__res instanceof Phpurs_InternalCallable) { $__res = \\Closure::fromCallable($__res); }\n" else "") <>
       "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
@@ -90,12 +103,15 @@ genNativeCurryWithRoot compactRoot allArities name args retType stmts =
     "function " <> name <> "(" <> argStr <> ")" <> retStr <> " {\n" <> fnBody <> "}"
 
 genCurry :: Map String Int -> Array { name :: String, type_ :: String } -> String -> Array String -> Array PhpExpr -> String
-genCurry allArities args retType captures stmts =
+genCurry allArities = genCurryWith (emptyContext allArities)
+
+genCurryWith :: PrinterContext -> Array { name :: String, type_ :: String } -> String -> Array String -> Array PhpExpr -> String
+genCurryWith ctx args retType captures stmts =
   let
     useClause = printCaptures captures
     recursiveUseClause = printCaptures (captures <> [ "&__fn" ])
   in if length args == 0 then
-    "function()" <> recursiveUseClause <> printReturnType retType <> " {\n" <> (joinWith ";\n" (map (printExpr allArities) stmts) <> ";") <> "\n}"
+    "function()" <> recursiveUseClause <> printReturnType retType <> " {\n" <> (joinWith ";\n" (map (printExprWith ctx) stmts) <> ";") <> "\n}"
   else
     let
       argStr = joinWith ", " (mapWithIndex (\i a -> 
@@ -103,7 +119,7 @@ genCurry allArities args retType captures stmts =
         in t <> "$" <> safeName a.name <> (if i > 0 then " = null" else "")
       ) args)
       nArgs = length args
-      fnBody = curryBody allArities nArgs stmts
+      fnBody = curryBody ctx nArgs stmts
     in 
       if nArgs == 1 then
         "function(" <> argStr <> ")" <> useClause <> " {\n" <> fnBody <> "}"
@@ -114,8 +130,8 @@ genCurry allArities args retType captures stmts =
         "})()"
 
 
-curryBody :: Map String Int -> Int -> Array PhpExpr -> String
-curryBody allArities nArgs stmts =
+curryBody :: PrinterContext -> Int -> Array PhpExpr -> String
+curryBody ctx nArgs stmts =
   let
     nStr = show nArgs
   in
@@ -123,22 +139,22 @@ curryBody allArities nArgs stmts =
     (if nArgs == 1 then "" else
       "  if ($__num < " <> nStr <> ") {\n" <>
       "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n  }\n") <>
-    printCurryStatements allArities stmts <>
+    printCurryStatements ctx stmts <>
     "  __end:\n" <>
     "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
 
 -- | Returns converge before the shared overapplication check. Rewriting stays
 -- | inside the current function; nested callable bodies keep their own returns.
-printCurryStatements :: Map String Int -> Array PhpExpr -> String
-printCurryStatements allArities stmts =
+printCurryStatements :: PrinterContext -> Array PhpExpr -> String
+printCurryStatements ctx stmts =
   let rewritten = replaceReturn stmts
   in if Array.null rewritten then ""
-     else "  " <> joinWith ";\n  " (map (printExpr allArities) rewritten) <> ";\n"
+     else "  " <> joinWith ";\n  " (map (printExprWith ctx) rewritten) <> ";\n"
 
 -- Capture slots are reloaded for every invocation, preserving PHP's by-value
 -- use bindings. Only the analysis in CompactLoops can create this AST node.
-genCompactFunction :: Map String Int -> Array String -> Array { name :: String, type_ :: String } -> Array PhpExpr -> String
-genCompactFunction allArities captures args stmts =
+genCompactFunction :: PrinterContext -> Array String -> Array { name :: String, type_ :: String } -> Array PhpExpr -> String
+genCompactFunction ctx captures args stmts =
   let
     names = map (\v -> "$" <> safeName v) captures
     field i = "__capture" <> show i
@@ -151,7 +167,7 @@ genCompactFunction allArities captures args stmts =
     joinWith "\n" declarations <> "\n" <>
     "  public function __construct(" <> joinWith ", " names <> ") { " <> joinWith " " initialize <> " }\n" <>
     "  public function __invoke(" <> joinWith ", " params <> ") {\n" <>
-    joinWith "\n" reload <> "\n" <> curryBody allArities (length args) stmts <> "  }\n}"
+    joinWith "\n" reload <> "\n" <> curryBody ctx (length args) stmts <> "  }\n}"
 
 globalIdentifier :: Maybe (Array String) -> String -> String
 globalIdentifier moduleName ident = case moduleName of
@@ -175,20 +191,23 @@ printGlobal allArities moduleName ident =
     else value
 
 printExpr :: Map String Int -> PhpExpr -> String
-printExpr allArities expr = case expr of
+printExpr allArities = printExprWith (emptyContext allArities)
+
+printExprWith :: PrinterContext -> PhpExpr -> String
+printExprWith ctx expr = case expr of
   PhpCompactLoop _ _ _ _ -> "/* ERROR: PhpCompactLoop inside expression */"
-  PhpCompactFunction captures args _ stmts -> genCompactFunction allArities captures args stmts
+  PhpCompactFunction captures args _ stmts -> genCompactFunction ctx captures args stmts
   PhpNativeFunction _ _ _ _ -> "/* ERROR: PhpNativeFunction inside expression */"
   PhpPrivateFunction _ _ _ _ -> "/* ERROR: PhpPrivateFunction inside expression */"
   PhpGlobalAssign _ _ -> "/* ERROR: PhpGlobalAssign inside expression */"
   PhpFunction captures args retType stmts ->
-    genCurry allArities args retType captures stmts
+    genCurryWith ctx args retType captures stmts
   PhpVar ident -> "$" <> safeName ident
-  PhpGlobalVar mbMod ident -> printGlobal allArities mbMod ident
+  PhpGlobalVar mbMod ident -> printGlobal ctx.arities mbMod ident
   PhpDirectCall name args ->
     let
-      argsStr = joinWith ", " (map (printExpr allArities) args)
-    in printGlobal allArities Nothing name <> "(" <> argsStr <> ")"
+      argsStr = joinWith ", " (map (printExprWith ctx) args)
+    in printGlobal ctx.arities Nothing name <> "(" <> argsStr <> ")"
   PhpCall _ _ ->
     let
       Tuple flatFn flatArgs = flattenPhpCalls expr
@@ -198,27 +217,29 @@ printExpr allArities expr = case expr of
             fullName = globalIdentifier mbMod ident
             idStr = safeName fullName
             funcName = nativeName mbMod ident
-          in case Map.lookup idStr allArities of
-            Just arity | arity > 0 && length flatArgs >= arity -> Just { funcName, arity }
+          in case Map.lookup idStr ctx.arities of
+            Just arity | arity > 0 && length flatArgs >= arity -> Just { funcName, arity, idStr }
             _ -> Nothing
         _ -> Nothing
     in case canUnbox of
-      Just { funcName, arity } ->
+      Just { funcName, arity, idStr } ->
         let
           directArgs = Array.take arity flatArgs
           remainingArgs = Array.drop arity flatArgs
-          callStr = funcName <> "(" <> joinWith ", " (map (printExpr allArities) directArgs) <> ")"
+          callStr = funcName <> "(" <> joinWith ", " (map (printExprWith ctx) directArgs) <> ")"
         in
-          if length remainingArgs > 0 then
-            foldl (\acc a -> "(" <> acc <> ")(" <> printExpr allArities a <> ")") callStr remainingArgs
+          if Set.member idStr ctx.exacts && length flatArgs == arity then
+            funcName <> exactSuffix <> "(" <> joinWith ", " (map (printExprWith ctx) flatArgs) <> ")"
+          else if length remainingArgs > 0 then
+            foldl (\acc a -> "(" <> acc <> ")(" <> printExprWith ctx a <> ")") callStr remainingArgs
           else
             callStr
       Nothing ->
         case expr of
           PhpCall (PhpGlobalVar mbMod ident) args ->
-            "(" <> printGlobal allArities mbMod ident <> ")(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
-          PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
-          PhpCall abs args -> "(" <> printExpr allArities abs <> ")(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
+            "(" <> printGlobal ctx.arities mbMod ident <> ")(" <> joinWith ", " (map (printExprWith ctx) args) <> ")"
+          PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExprWith ctx) args) <> ")"
+          PhpCall abs args -> "(" <> printExprWith ctx abs <> ")(" <> joinWith ", " (map (printExprWith ctx) args) <> ")"
           _ -> "/* ERROR: Impossible PhpCall match */"
   PhpInt i -> showInt32Impl i
   PhpNumber n -> case show n of
@@ -228,14 +249,14 @@ printExpr allArities expr = case expr of
     s -> s
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
-  PhpArray arr -> "[" <> joinWith ", " (map (printExpr allArities) arr) <> "]"
-  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExpr allArities item.value) arr) <> "]"
-  PhpPropertyAccess e prop -> "(" <> printExpr allArities e <> ")->{'" <> safeName prop <> "'}"
-  PhpRecordAccess e prop -> "(" <> printExpr allArities e <> ")->{'" <> safeName prop <> "'}"
-  PhpArrayIndex arr i -> "(" <> printExpr allArities arr <> ")[" <> printExpr allArities i <> "]"
-  PhpClone obj -> "clone " <> printExpr allArities obj
-  PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExpr allArities v
-  PhpAssignExpr left v -> printExpr allArities left <> " = " <> printExpr allArities v
+  PhpArray arr -> "[" <> joinWith ", " (map (printExprWith ctx) arr) <> "]"
+  PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExprWith ctx item.value) arr) <> "]"
+  PhpPropertyAccess e prop -> "(" <> printExprWith ctx e <> ")->{'" <> safeName prop <> "'}"
+  PhpRecordAccess e prop -> "(" <> printExprWith ctx e <> ")->{'" <> safeName prop <> "'}"
+  PhpArrayIndex arr i -> "(" <> printExprWith ctx arr <> ")[" <> printExprWith ctx i <> "]"
+  PhpClone obj -> "clone " <> printExprWith ctx obj
+  PhpAssign ident v -> "$" <> safeName ident <> " = " <> printExprWith ctx v
+  PhpAssignExpr left v -> printExprWith ctx left <> " = " <> printExprWith ctx v
   PhpIf cond thenStmts elseStmts ->
     let
       extractSwitch :: PhpExpr -> Maybe { subject :: PhpExpr, cases :: Array { val :: PhpExpr, body :: Array PhpExpr }, defaultBody :: Array PhpExpr }
@@ -261,43 +282,43 @@ printExpr allArities expr = case expr of
     in case extractSwitch (PhpIf cond thenStmts elseStmts) of
       Just sw ->
         let
-          caseStmts = joinWith "\n" (map (\c -> "case " <> printExpr allArities c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr allArities) c.body) <> ";") <> "\nbreak;") sw.cases)
-          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr allArities) sw.defaultBody) <> ";") <> "\nbreak;"
+          caseStmts = joinWith "\n" (map (\c -> "case " <> printExprWith ctx c.val <> ":\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExprWith ctx) c.body) <> ";") <> "\nbreak;") sw.cases)
+          defaultStmt = "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExprWith ctx) sw.defaultBody) <> ";") <> "\nbreak;"
         in
-          "switch (" <> printExpr allArities sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
+          "switch (" <> printExprWith ctx sw.subject <> ") {\n" <> caseStmts <> "\n" <> defaultStmt <> "\n}"
       Nothing ->
         let
-          thenBody = joinWith ";\n" (map (printExpr allArities) thenStmts) <> ";"
+          thenBody = joinWith ";\n" (map (printExprWith ctx) thenStmts) <> ";"
         in
-          "if (" <> printExpr allArities cond <> ") {\n" <> thenBody <> "\n}" <>
-          (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map (printExpr allArities) elseStmts) <> ";") <> "\n}" else "")
+          "if (" <> printExprWith ctx cond <> ") {\n" <> thenBody <> "\n}" <>
+          (if length elseStmts > 0 then " else {\n" <> (joinWith ";\n" (map (printExprWith ctx) elseStmts) <> ";") <> "\n}" else "")
 
-  PhpThrow v -> "throw new \\Exception(" <> printExpr allArities v <> ")"
-  PhpInstanceOf v cls -> printExpr allArities v <> " instanceof " <> cls
+  PhpThrow v -> "throw new \\Exception(" <> printExprWith ctx v <> ")"
+  PhpInstanceOf v cls -> printExprWith ctx v <> " instanceof " <> cls
   PhpMatch subj cases defExpr ->
     let
-      printCase { val, body } = printExpr allArities val <> " => " <> printExpr allArities body
+      printCase { val, body } = printExprWith ctx val <> " => " <> printExprWith ctx body
       casesStr = joinWith ", " (map printCase cases)
-      defStr = "default => " <> printExpr allArities defExpr
+      defStr = "default => " <> printExprWith ctx defExpr
     in
-      "match (" <> printExpr allArities subj <> ") { " <> casesStr <> (if length cases > 0 then ", " else "") <> defStr <> " }"
-  PhpTernary cond t e -> "(" <> printExpr allArities cond <> " ? " <> printExpr allArities t <> " : " <> printExpr allArities e <> ")"
-  PhpReturn v -> "return " <> printExpr allArities v
-  PhpBinOp op left right -> "(" <> printExpr allArities left <> " " <> op <> " " <> printExpr allArities right <> ")"
-  PhpWhile cond stmts -> "while (" <> printExpr allArities cond <> ") {\n" <> joinWith ";\n" (map (printExpr allArities) stmts) <> ";\n}"
+      "match (" <> printExprWith ctx subj <> ") { " <> casesStr <> (if length cases > 0 then ", " else "") <> defStr <> " }"
+  PhpTernary cond t e -> "(" <> printExprWith ctx cond <> " ? " <> printExprWith ctx t <> " : " <> printExprWith ctx e <> ")"
+  PhpReturn v -> "return " <> printExprWith ctx v
+  PhpBinOp op left right -> "(" <> printExprWith ctx left <> " " <> op <> " " <> printExprWith ctx right <> ")"
+  PhpWhile cond stmts -> "while (" <> printExprWith ctx cond <> ") {\n" <> joinWith ";\n" (map (printExprWith ctx) stmts) <> ";\n}"
   PhpContinue -> "continue /*__LVL__*/"
   PhpRaw raw -> raw
-  PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map (printExpr allArities) args) <> ")"
+  PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map (printExprWith ctx) args) <> ")"
   PhpGoto lbl -> "goto " <> safeName lbl <> ";"
   PhpLabel lbl -> safeName lbl <> ":"
   PhpSwitch subject cases defaultStmts ->
     let
-      printCase c = joinWith "\n" (map (\m -> "case " <> printExpr allArities m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr allArities) c.stmts) <> ";") <> "\nbreak;"
+      printCase c = joinWith "\n" (map (\m -> "case " <> printExprWith ctx m <> ":") c.matchCases) <> "\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExprWith ctx) c.stmts) <> ";") <> "\nbreak;"
       casesStr = joinWith "\n" (map printCase cases)
       defaultStr = case defaultStmts of
-        Just stmts -> "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExpr allArities) stmts) <> ";") <> "\nbreak;"
+        Just stmts -> "default:\n" <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/") (joinWith ";\n" (map (printExprWith ctx) stmts) <> ";") <> "\nbreak;"
         Nothing -> ""
-    in "switch (" <> printExpr allArities subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
+    in "switch (" <> printExprWith ctx subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
 
 resolveContinues :: String -> String
 resolveContinues str =
@@ -320,23 +341,118 @@ resolveContinues str =
     r15 = replaceAll (Pattern "continue IIIIIIIIIIIIIII;") (Replacement "continue 16;") r14
   in r15
 
-printDecl :: Map String Int -> PhpDecl -> String
-printDecl allArities decl = resolveContinues $ case decl.expression of
+-- | The exact body has the same first-parameter check as the public wrapper,
+-- | but requires every argument and returns without the Closure union.
+exactArgStr :: Array { name :: String, type_ :: String } -> String
+exactArgStr args = joinWith ", " (mapWithIndex
+  ( \i a ->
+      let
+        prefix = if a.type_ == "&" then "&" else if a.type_ == "mixed" || a.type_ == "" || i > 0 then "" else a.type_ <> " "
+      in prefix <> "$" <> safeName a.name
+  )
+  args)
+
+exactReturnType :: String -> String
+exactReturnType retType =
+  if retType == "" || retType == "mixed" || retType == "\\Closure" then ""
+  else ": " <> retType
+
+-- | A body containing a closure may return it through a value alias the type
+-- | annotation does not describe (effect thunks are the common case). Keep the
+-- | public union there and use the precise scalar check only for closure-free
+-- | bodies.
+containsClosure :: Array PhpExpr -> Boolean
+containsClosure = Array.any go
+  where
+  go expr = case expr of
+    PhpFunction _ _ _ _ -> true
+    PhpCompactFunction _ _ _ _ -> true
+    _ -> Array.any go (children expr)
+
+genExactFunction :: PrinterContext -> String -> Array { name :: String, type_ :: String } -> String -> Array PhpExpr -> String
+genExactFunction ctx name args retType stmts =
+  let
+    statements =
+      if Array.null stmts then ""
+      else "  " <> joinWith ";\n  " (map (printExprWith ctx) stmts) <> ";\n"
+    resultType = if containsClosure stmts then printReturnType retType else exactReturnType retType
+  in
+    "function " <> safeFuncName name <> exactSuffix <> "(" <> exactArgStr args <> ")" <> resultType <> " {\n" <>
+    statements <>
+    "}"
+
+genExactWrapper :: String -> Array { name :: String, type_ :: String } -> String -> String
+genExactWrapper name args retType =
+  let
+    argStr = joinWith ", " (mapWithIndex
+      ( \i a ->
+          let
+            prefix = if a.type_ == "&" then "&" else if a.type_ == "mixed" || a.type_ == "" || i > 0 then "" else a.type_ <> " "
+          in prefix <> "$" <> safeName a.name <> (if i > 0 then " = null" else "")
+      )
+      args)
+    nStr = show (length args)
+    callArgs = joinWith ", " (map (\a -> "$" <> safeName a.name) args)
+  in
+    "function " <> safeFuncName name <> "(" <> argStr <> ")" <> printReturnType retType <> " {\n" <>
+    "  $__num = \\func_num_args();\n" <>
+    "  $__fn = __NAMESPACE__ . '\\\\' . '" <> safeFuncName name <> "';\n" <>
+    "  if ($__num < " <> nStr <> ") {\n" <>
+    "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
+    "  }\n" <>
+    "  $__res = " <> safeFuncName name <> exactSuffix <> "(" <> callArgs <> ");\n" <>
+    "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n" <>
+    "}"
+
+declaredFunctionNames :: PhpFile -> Array String
+declaredFunctionNames file = Array.mapMaybe (\decl -> case decl.expression of
+  PhpNativeFunction name _ _ _ -> Just (safeFuncName name)
+  PhpPrivateFunction name _ _ _ -> Just (safeFuncName name)
+  PhpCompactLoop name _ _ _ -> Just (safeFuncName name)
+  _ -> Nothing) file.decls
+
+-- | Only global native forms get an exact body. Compact loops keep their root
+-- | conversion, and a suffix collision leaves the declaration unchanged.
+exactBodies :: Map String Int -> PhpFile -> Set String
+exactBodies allArities file =
+  let
+    declared = declaredFunctionNames file
+    candidate decl = case decl.expression of
+      PhpNativeFunction name args retType _ -> make decl.identifier name args retType
+      PhpPrivateFunction name args retType _ -> make decl.identifier name args retType
+      _ -> Nothing
+    scalarType ty = ty == "int" || ty == "float" || ty == "string" || ty == "bool"
+    make identifier name args retType
+      | Array.null args = Nothing
+      | not (Array.all (\a -> scalarType a.type_) args) = Nothing
+      | not (scalarType retType) = Nothing
+      | Map.lookup (safeName identifier) allArities /= Just (Array.length args) = Nothing
+      | Array.elem (safeFuncName name <> exactSuffix) declared = Nothing
+      | otherwise = Just (safeName identifier)
+  in
+    Set.fromFoldable (Array.mapMaybe candidate file.decls)
+
+printDecl :: PrinterContext -> PhpDecl -> String
+printDecl ctx decl = resolveContinues $ case decl.expression of
   PhpPrivateFunction name args retType stmts ->
     "// " <> decl.identifier <> "\n" <>
-    genNativeCurry allArities (safeFuncName name) args retType stmts <> "\n"
+    (if Set.member decl.identifier ctx.exacts
+      then genExactFunction ctx name args retType stmts <> "\n" <> genExactWrapper name args retType
+      else genNativeCurry ctx (safeFuncName name) args retType stmts) <> "\n"
   PhpCompactLoop name args retType stmts ->
     "// " <> decl.identifier <> "\n" <>
-    genNativeCurryWithRoot true allArities (safeFuncName name) args retType stmts <> "\n" <>
+    genNativeCurryWithRoot true ctx (safeFuncName name) args retType stmts <> "\n" <>
     "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
   PhpNativeFunction name args retType stmts ->
     "// " <> decl.identifier <> "\n" <>
-    genNativeCurry allArities (safeFuncName name) args retType stmts <> "\n" <>
+    (if Set.member decl.identifier ctx.exacts
+      then genExactFunction ctx name args retType stmts <> "\n" <> genExactWrapper name args retType
+      else genNativeCurry ctx (safeFuncName name) args retType stmts) <> "\n" <>
     "$GLOBALS['" <> safeName decl.identifier <> "'] = __NAMESPACE__ . '\\\\" <> safeFuncName name <> "';\n"
   PhpGlobalAssign name expr ->
-    "// " <> decl.identifier <> "\n$GLOBALS['" <> safeName name <> "'] = " <> printExpr allArities expr <> ";\n"
+    "// " <> decl.identifier <> "\n$GLOBALS['" <> safeName name <> "'] = " <> printExprWith ctx expr <> ";\n"
   expr ->
-    "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExpr allArities expr <> ";\n"
+    "// " <> decl.identifier <> "\n$" <> safeName decl.identifier <> " = " <> printExprWith ctx expr <> ";\n"
 
 -- | Assemble a complete PHP module: namespace/imports, runtime, FFI, data
 -- | declarations and bindings. Bundle mode uses a bracketed namespace.
@@ -358,7 +474,8 @@ printPhpFile isBundle ffiString allArities file =
       PhpCompactLoop _ _ _ _ -> true
       _ -> false) file.decls then "interface Phpurs_InternalCallable {}\n" else ""
     rawDeclsStr = compactRuntime <> joinWith "\n" file.rawDecls
-    decls = joinWith "\n" $ map (printDecl allArities) file.decls
+    ctx = { arities: allArities, exacts: exactBodies allArities file }
+    decls = joinWith "\n" $ map (printDecl ctx) file.decls
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"
   in

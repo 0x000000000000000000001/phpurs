@@ -1,0 +1,356 @@
+{
+  "r2Inventory": [
+    {
+      "name": "Effect.Uncurried",
+      "ua": 0,
+      "ue": 20,
+      "app": 0,
+      "eapp": 20
+    },
+    {
+      "name": "Data.Map.Internal",
+      "ua": 19,
+      "ue": 0,
+      "app": 92,
+      "eapp": 0
+    },
+    {
+      "name": "Effect.Aff.Compat",
+      "ua": 0,
+      "ue": 4,
+      "app": 2,
+      "eapp": 2
+    },
+    {
+      "name": "Data.Set",
+      "ua": 3,
+      "ue": 0,
+      "app": 9,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Set.NonEmpty",
+      "ua": 2,
+      "ue": 0,
+      "app": 0,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Array",
+      "ua": 0,
+      "ue": 0,
+      "app": 55,
+      "eapp": 24
+    },
+    {
+      "name": "Data.Array.NonEmpty",
+      "ua": 0,
+      "ue": 0,
+      "app": 7,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Array.NonEmpty.Internal",
+      "ua": 0,
+      "ue": 0,
+      "app": 3,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Array.Partial",
+      "ua": 0,
+      "ue": 0,
+      "app": 2,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Array.ST",
+      "ua": 0,
+      "ue": 0,
+      "app": 0,
+      "eapp": 4
+    },
+    {
+      "name": "Data.Array.ST.Iterator",
+      "ua": 0,
+      "ue": 0,
+      "app": 0,
+      "eapp": 1
+    },
+    {
+      "name": "Data.Date",
+      "ua": 0,
+      "ue": 0,
+      "app": 3,
+      "eapp": 0
+    },
+    {
+      "name": "Data.DateTime",
+      "ua": 0,
+      "ue": 0,
+      "app": 1,
+      "eapp": 0
+    },
+    {
+      "name": "Data.DateTime.Instant",
+      "ua": 0,
+      "ue": 0,
+      "app": 2,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Interval.Duration",
+      "ua": 0,
+      "ue": 0,
+      "app": 1,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Map",
+      "ua": 0,
+      "ue": 0,
+      "app": 1,
+      "eapp": 0
+    },
+    {
+      "name": "Data.Number",
+      "ua": 0,
+      "ue": 0,
+      "app": 1,
+      "eapp": 0
+    },
+    {
+      "name": "Effect.Aff",
+      "ua": 0,
+      "ue": 0,
+      "app": 19,
+      "eapp": 0
+    },
+    {
+      "name": "Test.ArrayOps",
+      "ua": 0,
+      "ue": 0,
+      "app": 4,
+      "eapp": 0
+    },
+    {
+      "name": "Test.WorkloadArrayInt",
+      "ua": 0,
+      "ue": 0,
+      "app": 4,
+      "eapp": 0
+    },
+    {
+      "name": "Test.WorkloadArrayNumber",
+      "ua": 0,
+      "ue": 0,
+      "app": 3,
+      "eapp": 0
+    },
+    {
+      "name": "Test.WorkloadMap",
+      "ua": 0,
+      "ue": 0,
+      "app": 1,
+      "eapp": 0
+    }
+  ],
+  "r5Prototype": {
+    "source": "copie fig\u00e9e de Test.Records/index.php",
+    "transformation": "3 clones + affectations remplac\u00e9s par une construction imbriqu\u00e9e",
+    "rows": [
+      {
+        "variant": "baseline",
+        "output": 20000,
+        "iterations": 16,
+        "samplesUs": [
+          1548.09375,
+          1615.1900625,
+          1565.8203125,
+          1557.0104375,
+          1580.8099375,
+          1562.229125,
+          1561.349,
+          1549.7421875,
+          1550.0703125,
+          1869.2318125,
+          2264.5546875
+        ],
+        "medianUs": 1562.229125,
+        "minUs": 1548.09375,
+        "iqrUs": 65.11975000000007
+      },
+      {
+        "variant": "fused",
+        "output": 20000,
+        "iterations": 32,
+        "samplesUs": [
+          1104.87759375,
+          1109.9856875,
+          1097.6080625,
+          1098.53125,
+          1093.05990625,
+          1102.10028125,
+          1108.7604375,
+          1102.109375,
+          1101.3671875,
+          1099.13803125,
+          1083.66146875
+        ],
+        "medianUs": 1101.3671875,
+        "minUs": 1083.66146875,
+        "iqrUs": 7.26953125
+      },
+      {
+        "variant": "fused",
+        "output": 20000,
+        "iterations": 32,
+        "samplesUs": [
+          1096.040375,
+          1501.609375,
+          1535.72134375,
+          1108.21875,
+          1083.90884375,
+          1086.03515625,
+          1097.216125,
+          1100.94921875,
+          1107.14453125,
+          1099.17709375,
+          1104.27603125
+        ],
+        "medianUs": 1100.94921875,
+        "minUs": 1083.90884375,
+        "iqrUs": 12.17837499999996
+      },
+      {
+        "variant": "baseline",
+        "output": 20000,
+        "iterations": 16,
+        "samplesUs": [
+          1587.263,
+          1629.734375,
+          1588.971375,
+          1587.224,
+          1594.6458125,
+          1598.489625,
+          1599.0963125,
+          1598.5833125,
+          1585.528625,
+          1592.5364375,
+          1719.8515625
+        ],
+        "medianUs": 1594.6458125,
+        "minUs": 1585.528625,
+        "iqrUs": 11.833312500000147
+      },
+      {
+        "variant": "baseline",
+        "output": 20000,
+        "iterations": 16,
+        "samplesUs": [
+          1563.13025,
+          1613.247375,
+          1562.8203125,
+          1532.989625,
+          1554.6979375,
+          1556.34375,
+          1585.8698125,
+          1553.7265625,
+          1571.8229375,
+          1534.7369375,
+          1565.3046875
+        ],
+        "medianUs": 1562.8203125,
+        "minUs": 1532.989625,
+        "iqrUs": 18.09637500000008
+      },
+      {
+        "variant": "fused",
+        "output": 20000,
+        "iterations": 32,
+        "samplesUs": [
+          1123.8984375,
+          1123.84246875,
+          1117.28775,
+          1121.915375,
+          1124.99609375,
+          1117.5051875,
+          1124.3268125,
+          1133.290375,
+          1119.21221875,
+          1116.10675,
+          1111.58725
+        ],
+        "medianUs": 1121.915375,
+        "minUs": 1111.58725,
+        "iqrUs": 7.0390625
+      },
+      {
+        "variant": "fused",
+        "output": 20000,
+        "iterations": 32,
+        "samplesUs": [
+          1119.61846875,
+          1159.21225,
+          1146.997375,
+          1153.08071875,
+          1164.49609375,
+          1152.74609375,
+          1159.75390625,
+          1147.80340625,
+          1157.8815,
+          1165.93359375,
+          1151.09115625
+        ],
+        "medianUs": 1153.08071875,
+        "minUs": 1119.61846875,
+        "iqrUs": 11.95049999999992
+      },
+      {
+        "variant": "baseline",
+        "output": 20000,
+        "iterations": 16,
+        "samplesUs": [
+          1699.895875,
+          1649.002625,
+          1598.296875,
+          1565.6666875,
+          1580.8203125,
+          1629.0364375,
+          1647.828125,
+          1637.3619375,
+          1615.1484375,
+          1608.359375,
+          1565.91925
+        ],
+        "medianUs": 1615.1484375,
+        "minUs": 1565.6666875,
+        "iqrUs": 67.0078125
+      }
+    ],
+    "summary": {
+      "baseline": {
+        "samplesUs": [
+          1562.229125,
+          1594.6458125,
+          1562.8203125,
+          1615.1484375
+        ],
+        "medianUs": 1578.7330625
+      },
+      "fused": {
+        "samplesUs": [
+          1101.3671875,
+          1100.94921875,
+          1121.915375,
+          1153.08071875
+        ],
+        "medianUs": 1111.64128125
+      }
+    }
+  },
+  "nocloneNegative": {
+    "result": "40000 apr\u00e8s deux actions",
+    "reason": "muter la base change la valeur conserv\u00e9e par l\u2019appelant"
+  }
+}

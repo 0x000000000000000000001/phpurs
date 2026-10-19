@@ -171,7 +171,7 @@ function run(php,checks) {
 const php=render(original);
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_foldcb_/.test(php),'workers stay private');
 const worker=php.slice(php.indexOf('// Demo___phpurs_foldcb_'));
-assert.match(worker,/\\Demo\\majDemo_add\(/,'call native wrapper, not primitive arithmetic');
+assert.match(worker,/\\Demo\\majDemo_add(?:__phpurs_exact)?\(/,'call native wrapper, not primitive arithmetic');
 assert.doesNotMatch(worker,/\(\(\$x0_0\)/,'no two-stage callback application');
 assert.match(worker,/goto tco_loop_[^;]*foldcb/,'traversal stays a TCO loop');
 const helpers=`
@@ -199,7 +199,7 @@ foreach ([fn($acc)=>throw $same, fn($acc)=>fn($item)=>throw $same] as $throwing)
 }
 // The raw primitive would return float; the existing native wrapper must fail.
 $overflow=outcome(fn()=>majDemo_entry(null,listOf([PHP_INT_MAX,1])));
-if ($overflow[0]!=='TypeError' || !str_contains($overflow[1],'majDemo_add(): Return value')) throw new \\Exception('native return check lost');
+if ($overflow[0]!=='TypeError' || !str_contains($overflow[1],'majDemo_add__phpurs_exact(): Return value')) throw new \\Exception('native return check lost');
 `);
 run(render(mod(consume(v('add'),lit(0),call('items',[local(0)])))),helpers+`
 $calls=0;

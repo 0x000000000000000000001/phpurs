@@ -82,6 +82,14 @@ State guards retain the original constructor's PHP `Int` check on depth; their
 state and result remain untyped to preserve the original arithmetic at overflow.
 Callback-specialized copies retain the original fold's generic signature.
 
+A closed record update is reconstructed directly only when the `Typed` result
+is `Record (Row fields Nothing)`, every row label is updated exactly once, and
+each nested update targets the expected field of the same local root. Values are
+translated in property order and the object is built in row order; the old
+record is never mutated. Partial updates, open rows and mismatched paths keep
+the existing clone-and-assign path. This is a bounded case of R5, not a general
+alias proof; see the [record measurement](../audit/2026-10-19/record-updates/report.md).
+
 `ThunkFusion` accepts a `Unit -> Int` seed whose body is either an integer
 literal or a typed read of an already evaluated local. The scanner tracks
 parameters and strict `Let`/`EffectBind` results by name and level; recursive
@@ -455,6 +463,18 @@ demand-time read above, including callable values in ordinary and direct AST cal
 clauses and return signatures have shared renderers. `printCurryStatements`
 rewrites returns to a common exit before applying extra arguments to the result;
 that rewrite stays within the current function's scope.
+
+For scalar monomorphic native declarations, `printPhpFile` also emits a private
+`name__phpurs_exact` body. Eligibility requires every argument and the return to
+map to `int`, `float`, `string` or `bool`, the emitted argument count to equal
+the runtime arity, no suffix collision, and a non-compact-loop declaration. Only
+calls with exactly that arity target the body; partial, overapplied, polymorphic,
+ADT, reference and FFI paths keep the public wrapper. The exact body keeps the
+wrapper's first-parameter check and required arguments. Its return is precise
+when the body has no nested closure; otherwise it keeps `T|\Closure`, because an
+alias can return a callable that the scalar annotation does not describe.
+Internal exact calls omit the public wrapper frame, so stack inspection and
+return-check diagnostics can differ from a public call.
 
 `Printer.Runtime.preamble` is shared by modular files and bundles. The generic
 data classes (arities 0–12) and fixed-parameter curry fallbacks (one to four missing

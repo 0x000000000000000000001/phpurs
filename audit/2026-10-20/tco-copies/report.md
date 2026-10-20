@@ -55,8 +55,8 @@ change.
 ## Campagne finale
 
 Campagne à trois processus : **64,707 ms**, 14 sorties validées.
-`runp -c` : **64,32 ms**. Les 14 valeurs et **100/100** contrôles codegen
-passent. Le PHP actif fait **110 fichiers / 1 483 431 octets**.
+`runp -c` : **64,32 ms**. Les 14 valeurs et **101/101** contrôles codegen passent, dont le nouveau
+`tco-direct.mjs` qui vérifie la permutation `x/y` et le repli bufferisé. Le PHP actif fait **110 fichiers / 1 483 431 octets**.
 
 Artefacts : sortie active `run/bak/php/modes/pure/output`, campagne
 `/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r4-campaign-20261020`, contrôle et prototype dans `/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/`.

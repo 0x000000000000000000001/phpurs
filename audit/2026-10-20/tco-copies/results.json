@@ -18,7 +18,7 @@
   "abbaReductionPercent": 3.21,
   "campaignTotalMs": 64.707,
   "campaignProcesses": 3,
-  "tests": "100/100",
+  "tests": "101/101",
   "runpMs": 64.322753,
   "directLoops": 41,
   "bufferedLoops": 5,

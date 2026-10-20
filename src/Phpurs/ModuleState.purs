@@ -17,6 +17,7 @@ module Phpurs.ModuleState
 
 import Prelude
 
+import Data.Array as Array
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), isJust)
@@ -52,6 +53,7 @@ type ModuleState =
 
 type BuildRefs =
   { bundleContentRef :: Ref String
+  , bundleModulesRef :: Ref (Array { name :: ModuleName, code :: String })
   , outputs :: OutputTracker
   , globalAritiesRef :: Ref (Map String Int)
   , backendModulesRef :: Ref (Map ModuleName { imports :: Set ModuleName, implementations :: BackendImplementations })
@@ -61,9 +63,10 @@ newBuildRefs :: Effect BuildRefs
 newBuildRefs = do
   outputs <- newOutputTracker
   bundleContentRef <- Ref.new "<?php\n\n"
+  bundleModulesRef <- Ref.new []
   globalAritiesRef <- Ref.new Map.empty
   backendModulesRef <- Ref.new Map.empty
-  pure { bundleContentRef, globalAritiesRef, backendModulesRef, outputs }
+  pure { bundleContentRef, bundleModulesRef, globalAritiesRef, backendModulesRef, outputs }
 
 renderModuleState :: Emission -> Array (Array String) -> String -> Map String Int -> BackendModule -> ModuleState
 renderModuleState modes imports foreignSource currentArities backend =
@@ -120,7 +123,9 @@ publishModuleStateWithProfile profile modes outputDir refs state = do
   _ <- Profile.measureAff profile "php.mkdir" (unwrap name) \_ -> attempt (FS.mkdir (outputDir <> "/" <> unwrap name))
   liftEffect $ Ref.modify_ (Map.union state.arities) refs.globalAritiesRef
   when modes.emitBundle case state.bundlePhp of
-    Just code -> liftEffect $ Ref.modify_ (\previous -> previous <> code <> "\n") refs.bundleContentRef
+    Just code -> liftEffect do
+      Ref.modify_ (\previous -> previous <> code <> "\n") refs.bundleContentRef
+      Ref.modify_ (\previous -> Array.snoc previous { name: state.backend.name, code }) refs.bundleModulesRef
     Nothing -> pure unit
   when modes.emitModules case state.modularPhp of
     Just code -> Profile.measureAff profile "php.write" (unwrap name) \_ ->

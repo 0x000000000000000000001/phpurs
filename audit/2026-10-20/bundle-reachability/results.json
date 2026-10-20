@@ -1,0 +1,25 @@
+{
+  "explicitMain": {
+    "modules": 108,
+    "bundleBytes": 1700126,
+    "modularRequires": 108,
+    "sameOrder": true,
+    "valuesValidated": true
+  },
+  "automaticBundle": {
+    "modules": 306,
+    "bundleBytes": 5596736
+  },
+  "reduction": {
+    "bytesPercent": 69.62,
+    "modules": 198
+  },
+  "decision": "Les bundles \u00e0 --main explicite utilisent la m\u00eame fermeture backend que main.mod.php. Les bundles automatiques restent complets.",
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r7-bundle-20261020",
+  "bundleOnly": {
+    "modules": 108,
+    "files": 1,
+    "valuesValidated": true,
+    "totalMs": 70.792797
+  }
+}

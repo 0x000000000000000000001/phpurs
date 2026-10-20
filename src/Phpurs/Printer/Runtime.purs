@@ -1,14 +1,23 @@
 -- | Namespace-local PHP helpers embedded in every emitted module. Keep their
 -- | order and formatting stable for modular output and concatenated bundles.
-module Phpurs.Printer.Runtime (preamble) where
+module Phpurs.Printer.Runtime (preamble, preambleFor) where
 
 import Prelude
 
 import Data.Array as Array
 import Data.String as String
 
+-- | Full runtime, retained for callers that need an unconditional preamble.
 preamble :: String
-preamble = dataClasses <> curryFallback <> effectHelpers <> referenceHelpers
+preamble = preambleFor { dataClasses: true, curry: true, effect: true, refs: true }
+
+-- | Emit only the runtime pieces referenced by the assembled module body.
+preambleFor :: { dataClasses :: Boolean, curry :: Boolean, effect :: Boolean, refs :: Boolean } -> String
+preambleFor usage =
+  (if usage.dataClasses then dataClasses else "")
+    <> (if usage.curry then curryFallback else "")
+    <> (if usage.effect then effectHelpers else "")
+    <> (if usage.refs then referenceHelpers else "")
 
 -- | The generic data representation supports constructor arities 0 through 12.
 dataClasses :: String

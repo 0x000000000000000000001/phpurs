@@ -5,6 +5,7 @@ import Prelude
 
 import Data.Array as Array
 import Data.Either (Either(..), note)
+import Data.List as List
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (unwrap)
@@ -43,7 +44,6 @@ import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), Module(..), ModuleName(..), importName)
 import PureScript.Backend.Optimizer.Directives.Defaults (defaultDirectives)
-import PureScript.Backend.Optimizer.Reachability (moduleReachability)
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 
 main :: Effect Unit
@@ -85,18 +85,37 @@ compile toolchain override cliArgs profile = do
     Right limit -> pure limit
 
   loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputsWithProfile profile outputDir
-  let finalModules = loaded.modules
+  let
+    allModules = loaded.modules
+    moduleGraph = Map.fromFoldable $ map
+      (\(Module m) -> Tuple m.name (Set.fromFoldable (map importName m.imports)))
+      (Array.fromFoldable allModules)
+    -- The modular entry only lists backend-reachable modules, but each loaded
+    -- index.php also requires its CoreFn imports. Bundles must cover that full
+    -- closure so their globals and initializers match the modular run.
+    reachableFrom roots = go Set.empty roots
+      where
+      go seen remaining = case Array.uncons remaining of
+        Nothing -> seen
+        Just { head: root, tail }
+          | Set.member root seen -> go seen tail
+          | otherwise -> go (Set.insert root seen)
+              (Array.fromFoldable (fromMaybe Set.empty (Map.lookup root moduleGraph)) <> tail)
+    exportsMain (Module m) = Array.elem (Ident "main") m.exports
 
-  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache, targetMainModules } <- Metrics.measure "prepare" \_ -> do
-    let
-      modules = Array.fromFoldable finalModules
-      exportsMain (Module m) = Array.elem (Ident "main") m.exports
-    targetMainModules <- case args.mbMainModule of
-      Nothing -> pure $ map (\(Module m) -> unwrap m.name) $ Array.filter exportsMain modules
-      Just mainMod -> case Array.find (\(Module m) -> unwrap m.name == mainMod) modules of
-        Nothing -> throwError $ error $ "Main module " <> mainMod <> " was not loaded"
-        Just m | not (exportsMain m) -> throwError $ error $ "Module " <> mainMod <> " does not export main"
-        Just _ -> pure [ mainMod ]
+  targetMainModules <- case args.mbMainModule of
+    Nothing -> pure $ map (\(Module m) -> unwrap m.name) $ Array.filter exportsMain (Array.fromFoldable allModules)
+    Just mainMod -> case Array.find (\(Module m) -> unwrap m.name == mainMod) (Array.fromFoldable allModules) of
+      Nothing -> throwError $ error $ "Main module " <> mainMod <> " was not loaded"
+      Just m | not (exportsMain m) -> throwError $ error $ "Module " <> mainMod <> " does not export main"
+      Just _ -> pure [ mainMod ]
+
+  let
+    roots = map ModuleName targetMainModules
+    selected = if Array.null roots then allModules else List.filter (\(Module m) -> Set.member m.name (reachableFrom roots)) allModules
+    finalModules = selected
+
+  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache } <- Metrics.measure "prepare" \_ -> do
     refs <- liftEffect newBuildRefs
 
     -- Composer precedence follows module-name order, not dependency order.
@@ -130,7 +149,7 @@ compile toolchain override cliArgs profile = do
         , directives: fingerprintBytes (Bytes.fromString defaultDirectives UTF8)
         } inputs
       _, _ -> pure BuildCache.disabled
-    pure { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache, targetMainModules }
+    pure { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache }
 
   Metrics.measure "optimize + emit" \_ ->
     PurmetaBudget.withBudget purmetaBudget $
@@ -171,15 +190,22 @@ compile toolchain override cliArgs profile = do
       finalModules
 
   Metrics.measure "finalize" \_ -> do
-    backendModules <- liftEffect $ Ref.read refs.backendModulesRef
     arities <- liftEffect $ Ref.read refs.globalAritiesRef
 
     _ <- traverse
       ( \mainMod -> do
-          let entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath, arities }
+          let
+            entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath, arities }
+            reachableSet = reachableFrom [ ModuleName mainMod ]
+            reachableModules = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
 
           if emitBundle then do
-            bundleContent <- liftEffect $ Ref.read refs.bundleContentRef
+            bundleContent <- case args.mbMainModule of
+              Just _ -> do
+                parts <- liftEffect $ Ref.read refs.bundleModulesRef
+                let bundleSelected = Array.filter (\item -> Set.member item.name reachableSet) parts
+                pure $ "<?php\n\n" <> String.joinWith "\n" (map (\item -> item.code <> "\n") bundleSelected)
+              Nothing -> liftEffect $ Ref.read refs.bundleContentRef
             code <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
               bundleContent <> "\n" <> printBundleEntryPoint entryPoint
             Profile.measureAff profile "php.write" mainMod \_ ->
@@ -187,11 +213,8 @@ compile toolchain override cliArgs profile = do
           else pure unit
 
           when emitModules do
-            reachable <- liftEffect $ Profile.measurePure profile "entrypoint" mainMod \_ ->
-              let reachableSet = moduleReachability [ModuleName mainMod] backendModules
-              in Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
             modEntryPoint <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
-              printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachable)
+              printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachableModules)
             when verbose $ liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
             Profile.measureAff profile "php.write" mainMod \_ ->
               writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php") modEntryPoint

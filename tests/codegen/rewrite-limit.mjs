@@ -122,6 +122,12 @@ test('rewrite limit CLI: a real multi-pass binding fails at a low limit even aft
   input.foreignAnnotations.opaque = { type: 1 };
   write(root, 'output/Limit/corefn.json', JSON.stringify(input));
   write(root, 'src/Limit.php', '<?php $exports["opaque"] = function($x) { return $x + 1; };');
+  // R7 keeps only the CoreFn closure of the selected main; make the
+  // multi-pass Limit module reachable from Main without changing its foreign API.
+  const mainPath = path.join(root, 'output/Main/corefn.json');
+  const main = JSON.parse(fs.readFileSync(mainPath, 'utf8'));
+  main.imports.push({ moduleName: ['Limit'], annotation: {} });
+  write(root, 'output/Main/corefn.json', JSON.stringify(main));
   build(root);
   const expected = outputs(root);
   assert.deepEqual(build(root).cache, [4, 0, 0]);

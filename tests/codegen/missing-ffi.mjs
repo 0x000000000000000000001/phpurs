@@ -211,10 +211,10 @@ for (const args of [['--bundle'], ['--bundle-only']]) {
       runEntries(root, 'read', null, 'Library.value');
       runEntries(root, 'call', null, 'Library.add');
     };
-    assert.deepEqual(build(root, args).counts, [0, 4, 4]);
+    assert.deepEqual(build(root, args).counts, [0, 3, 3]);
     checkMissing();
     const cold = snapshot(root);
-    assert.deepEqual(build(root, args).counts, [4, 0, 0]);
+    assert.deepEqual(build(root, args).counts, [3, 0, 0]);
     assert.deepEqual(snapshot(root), cold);
     checkMissing();
 
@@ -238,13 +238,13 @@ for (const args of [['--bundle'], ['--bundle-only']]) {
     runEntries(root, 'call', '3\n');
     runEntries(root, 'none', 'Done\n');
     const present = snapshot(root);
-    assert.deepEqual(build(root, args).counts, [4, 0, 0]);
+    assert.deepEqual(build(root, args).counts, [3, 0, 0]);
     assert.deepEqual(snapshot(root), present);
     build(root, [...args, '--no-cache']);
     assert.deepEqual(snapshot(root), present);
 
     fs.unlinkSync(path.join(root, 'src/Library.php'));
-    assert.deepEqual(build(root, args).counts, [4, 0, 0], 'original absent-source states may be restored');
+    assert.deepEqual(build(root, args).counts, [3, 0, 0], 'original absent-source states may be restored');
     assert.deepEqual(snapshot(root), cold);
     checkMissing();
   });
@@ -255,11 +255,11 @@ test('missing FFI: a foreign main uses the checked read in both entrypoints', t 
   fs.unlinkSync(path.join(root, 'src/Main.php'));
   build(root, ['--bundle']);
   runEntries(root, 'none', null, 'Main.main');
-  assert.deepEqual(build(root, ['--bundle']).counts, [4, 0, 0]);
+  assert.deepEqual(build(root, ['--bundle']).counts, [3, 0, 0]);
   runEntries(root, 'none', null, 'Main.main');
 });
 
-test('missing FFI: an evaluated initializer demands a value, an unloaded module does not', t => {
+test('missing FFI: an unloaded module is filtered from modular and bundle output', t => {
   const root = fixture(t);
   const unused = corefn('Unused', [], [{
     bindType: 'NonRec', identifier: 'eager', annotation: { type: 0 },
@@ -271,14 +271,34 @@ test('missing FFI: an evaluated initializer demands a value, an unloaded module 
   const run = entry => spawnSync('php', ['-d', 'opcache.enable_cli=0', path.join(root, 'output/Main', entry)], {
     cwd: root, encoding: 'utf8', timeout: 10000, env: { ...process.env, FFI_MODE: 'none' },
   });
-  const modular = run('main.mod.php');
-  assert.equal(modular.status, 0, modular.stdout + modular.stderr);
-  assert.equal(modular.stdout, 'Done\n');
-  assert.equal(modular.stderr, '');
-  // The existing bundle policy includes every loaded module and executes its
-  // initializers before the entrypoint startup. That evaluated read must fail.
-  const bundled = run('main.bundle.php');
-  assert.notEqual(bundled.status, 0);
-  assert.match(bundled.stdout + bundled.stderr, /RuntimeException: Missing PHP FFI export: Unused\.value/);
-  assert.doesNotMatch(bundled.stdout + bundled.stderr, /Undefined (array key|variable)|not callable|Return value must/);
+  for (const entry of ['main.mod.php', 'main.bundle.php']) {
+    const result = run(entry);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+    assert.equal(result.stdout, 'Done\n');
+    assert.equal(result.stderr, '');
+  }
+  assert.equal(fs.existsSync(path.join(root, 'output/Unused/index.php')), false);
+});
+
+test('missing FFI: a reachable evaluated initializer still demands its value', t => {
+  const root = fixture(t);
+  const unused = corefn('Unused', [], [{
+    bindType: 'NonRec', identifier: 'eager', annotation: { type: 0 },
+    expression: { type: 'Var', annotation: { type: 0 }, value: { moduleName: ['Unused'], identifier: 'value' } },
+  }], ['value']);
+  unused.foreignAnnotations.value = { type: 0 };
+  write(root, 'output/Unused/corefn.json', JSON.stringify(unused));
+  const main = corefn('Main', ['Consumer', 'Unused'], [], ['main']);
+  main.foreignAnnotations.main = { type: 4 };
+  write(root, 'output/Main/corefn.json', JSON.stringify(main));
+  build(root, ['--bundle']);
+  const run = entry => spawnSync('php', ['-d', 'opcache.enable_cli=0', path.join(root, 'output/Main', entry)], {
+    cwd: root, encoding: 'utf8', timeout: 10000, env: { ...process.env, FFI_MODE: 'none' },
+  });
+  for (const entry of ['main.mod.php', 'main.bundle.php']) {
+    const result = run(entry);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stdout + result.stderr, /Missing PHP FFI export: Unused\.value/);
+    assert.doesNotMatch(result.stdout + result.stderr, /Undefined (array key|variable)|not callable|Return value must/);
+  }
 });

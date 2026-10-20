@@ -476,7 +476,15 @@ printPhpFile isBundle ffiString allArities file =
     rawDeclsStr = compactRuntime <> joinWith "\n" file.rawDecls
     ctx = { arities: allArities, exacts: exactBodies allArities file }
     decls = joinWith "\n" $ map (printDecl ctx) file.decls
+    body = ffiString <> "\n\n" <> rawDeclsStr <> "\n\n" <> decls
+    mentions token = not (isNothing (indexOf (Pattern token) body))
+    runtime = Runtime.preambleFor
+      { dataClasses: mentions "Phpurs_Data"
+      , curry: mentions "phpurs_curry_fallback"
+      , effect: mentions "phpurs_execute_effect"
+      , refs: mentions "phpurs_ref_new" || mentions "phpurs_ref_read" || mentions "phpurs_ref_write"
+      }
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"
   in
-    prefix <> debugImps <> imps <> "\n\n" <> Runtime.preamble <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> ffiString <> "\n\n" <> rawDeclsStr <> "\n\n" <> decls <> suffix
+    prefix <> debugImps <> imps <> "\n\n" <> runtime <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> body <> suffix

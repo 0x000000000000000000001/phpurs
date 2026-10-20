@@ -1,0 +1,76 @@
+{
+  "files": 307,
+  "changed": 306,
+  "unchanged": 1,
+  "bytesBefore": 7431336,
+  "bytesAfter": 5787194,
+  "startup": [
+    {
+      "opcache": 0,
+      "variant": "control",
+      "samples": [
+        66.841917,
+        33.379584,
+        31.200916,
+        31.225459,
+        30.876084
+      ],
+      "median": 31.225459
+    },
+    {
+      "opcache": 0,
+      "variant": "selective",
+      "samples": [
+        24.922583,
+        24.532,
+        22.913917,
+        23.859167,
+        24.919875
+      ],
+      "median": 24.532
+    },
+    {
+      "opcache": 1,
+      "variant": "control",
+      "samples": [
+        60.832917,
+        63.152709,
+        63.414958,
+        62.836917,
+        96.811209
+      ],
+      "median": 63.152709
+    },
+    {
+      "opcache": 1,
+      "variant": "selective",
+      "samples": [
+        52.540042,
+        48.731792,
+        46.152125,
+        47.899875,
+        49.469166
+      ],
+      "median": 48.731792
+    }
+  ],
+  "preambleBytes": 8159,
+  "moduleFiles": 306,
+  "dataClassReferences": 0,
+  "curryModules": 284,
+  "effectModules": 59,
+  "refModules": 3,
+  "changedSample": [
+    "App/index.php",
+    "AppCppFFI/index.php",
+    "AppCppFFICheatcode/index.php",
+    "AppFFI/index.php",
+    "AppFFICheatcode/index.php",
+    "Bench/index.php",
+    "Bench.Aff/index.php",
+    "Control.Alt/index.php",
+    "Control.Alternative/index.php",
+    "Control.Applicative/index.php"
+  ],
+  "loadedModules": 108
+}

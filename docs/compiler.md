@@ -349,11 +349,13 @@ not `isset`: an explicitly exported `null` is a value, not an absent binding.
   The packaged compiler's source identity invalidates older cached output.
 
 Compilation and declaration loading alone do not reject missing foreign exports.
-Unused declarations and untaken branches are allowed. Modular entrypoints load
-their reachable modules; bundles still include all loaded modules and execute
-their initializers. An initializer that actually reads a missing value counts as
-a demand, including in a bundle. This does not suppress errors or effects in supplied
-FFI initialization code. Handwritten PHP that directly accesses `$GLOBALS` bypasses
+Unused declarations and untaken branches are allowed. Compilation first selects
+the union of CoreFn import closures rooted at the selected main module, or every
+exported main when none is explicit. Modular entrypoints and bundles both use
+that selected set; only a build with no discovered main keeps all loaded modules.
+An initializer that actually reads a missing value counts as a demand whenever
+its module is selected. This does not suppress errors or effects in supplied FFI
+initialization code. Handwritten PHP that directly accesses `$GLOBALS` bypasses
 generated value-read checks; present-value interoperability is unchanged.
 See [`missing-ffi.mjs`](../tests/codegen/missing-ffi.mjs) and the
 [missing-FFI validation](../audit/2026-10-06/missing-ffi/report.md).
@@ -386,12 +388,14 @@ options, including grouped Spago arguments. It enables `emitBundle` and disables
 the `index.php` writes and `main.mod.php` entrypoints. Bundle emission uses
 `printPhpFile true` and the same ordered module stream and arity table.
 
-With an explicit main, bundle-only emits its `main.bundle.php`. Without one, it
-emits a bundle entrypoint for every exported main plus a global `bundle.php` that
-does not invoke main. An explicit main must be loaded and export `main`; `Main`
-checks this during preparation, before module emission. Composer collection runs
-in every mode. The mode selects the current writes and preserves the existing
-files of disabled output families.
+With an explicit main, bundle-only emits its `main.bundle.php`, filtered to the
+same CoreFn closure as `main.mod.php`. Without one, it emits a bundle entrypoint
+for every exported main plus a global `bundle.php` for the union of their
+closures. If no exported main exists, all loaded modules are retained. An
+explicit main must be loaded and export `main`; `Main` checks this during
+preparation, before module emission. Composer collection runs in every mode. The
+mode selects the current writes and preserves the existing files of disabled
+output families.
 
 All four PHP write sites use `OutputManifest.writeOutput`: module
 `index.php`, `main.mod.php`, `main.bundle.php` and the global `bundle.php`.
@@ -476,11 +480,13 @@ alias can return a callable that the scalar annotation does not describe.
 Internal exact calls omit the public wrapper frame, so stack inspection and
 return-check diagnostics can differ from a public call.
 
-`Printer.Runtime.preamble` is shared by modular files and bundles. The generic
-data classes (arities 0–12) and fixed-parameter curry fallbacks (one to four missing
-arguments) are generated from common templates. Larger partial applications use
-the variadic fallback. Effect and reference helpers are kept as readable PHP
-blocks in the same module.
+`Printer.Runtime.preambleFor` is shared by modular files and bundles. It emits
+only the pieces referenced by the assembled module body: the generic data-class
+block (arities 0–12) when a `Phpurs_DataN` name occurs, the curry fallback when
+a wrapper uses it, and the effect/reference helpers when their functions are
+referenced. The fixed-parameter curry fallbacks (one to four missing arguments)
+and variadic fallback remain common templates. Effect and reference helpers are
+kept as readable PHP blocks in the same module.
 
 ## Validation commands
 

@@ -18,7 +18,7 @@ import Control.Monad.ST.Ref as STRef
 import Data.Array as Array
 import Data.Array.NonEmpty (fromArray, toArray)
 import Data.Array.ST as STArray
-import Data.Foldable (all, foldMap, foldl)
+import Data.Foldable (all, any, foldMap, foldl)
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -58,7 +58,13 @@ type TranslationResult = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: In
 
 type TranslatedValues = { stmts :: Array PhpExpr, exprs :: Array PhpExpr, nextId :: Int }
 
-type LoopContext = { ident :: String, params :: Array String, varPrefix :: String, labelName :: String }
+type LoopContext =
+  { ident :: String
+  , params :: Array String
+  , varPrefix :: String
+  , labelName :: String
+  , direct :: Boolean
+  }
 
 -- | Lexical scope and evaluation position for one expression. A value operand
 -- | starts outside the enclosing tail/effect position; binding bodies inherit it.
@@ -69,6 +75,7 @@ type TranslationContext =
   , loops :: Array LoopContext
   , isTail :: Boolean
   , inEffectBlock :: Boolean -- Already lowering an effect-executing body.
+  , allowDirect :: Boolean -- Parameters may replace buffered TCO registers.
   }
 
 -- | The module name uses the PHP global-key spelling, e.g. `Data_Maybe`.
@@ -80,6 +87,7 @@ initialContext moduleName =
   , loops: []
   , isTail: false
   , inEffectBlock: false
+  , allowDirect: true
   }
 
 valueContext :: TranslationContext -> TranslationContext
@@ -149,6 +157,17 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
   Syn.TypeApp inner _ -> flattenApp inner
   _ -> Tuple tcoExpr []
 
+-- | A loop can use its parameters as registers only when no nested TCO loop
+-- | can capture those registers by reference. Buffered loops keep the old
+-- | temporary/slot protocol.
+containsNestedLoop :: TcoExpr -> Boolean
+containsNestedLoop (TcoExpr _ syntax) = case syntax of
+  Syn.LetRec _ bindings body ->
+    any (\(Tuple _ value) -> (unwrap (tcoAnalysisOf value)).role.isLoop) bindings
+      || any (\(Tuple _ value) -> containsNestedLoop value) bindings
+      || containsNestedLoop body
+  other -> any containsNestedLoop (Array.fromFoldable other)
+
 findTailTarget :: TranslationContext -> String -> Maybe LoopContext
 findTailTarget ctx ident =
   if ctx.isTail then Array.find (\loop -> loop.ident == ident) ctx.loops
@@ -162,7 +181,12 @@ translateTailJump loop args =
     tempName index = "__tco_" <> show (args.nextId + index)
     saveArgs = Array.mapWithIndex (\index expr -> PhpAssign (tempName index) expr) args.exprs
     assignParams = Array.mapWithIndex
-      (\index _ -> PhpAssign (loop.varPrefix <> fromMaybe "" (Array.index loop.params index)) (PhpVar (tempName index)))
+      ( \index _ ->
+          let
+            param = fromMaybe "" (Array.index loop.params index)
+          in
+            PhpAssign (if loop.direct then param else loop.varPrefix <> param) (PhpVar (tempName index))
+      )
       args.exprs
   in
     { stmts: args.stmts <> saveArgs <> assignParams <> [ PhpGoto loop.labelName ]
@@ -298,8 +322,9 @@ wrapLoopBody loop result =
   let
     initVars = map (\param -> PhpAssign (loop.varPrefix <> param) (PhpVar param)) loop.params
     bindParams = map (\param -> PhpAssign param (PhpVar (loop.varPrefix <> param))) loop.params
+    prologue = if loop.direct then [ PhpLabel loop.labelName ] else initVars <> [ PhpLabel loop.labelName ] <> bindParams
   in
-    initVars <> [ PhpLabel loop.labelName ] <> bindParams <> result.stmts <> [ PhpReturn result.expr ]
+    prologue <> result.stmts <> [ PhpReturn result.expr ]
 
 translateExpr :: TranslationContext -> Int -> TcoExpr -> TranslationResult
 translateExpr ctx nextId tcoExpr
@@ -483,11 +508,14 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
             , params: fn.args
             , varPrefix: "__tco_var_" <> name <> "_" <> show nextId <> "_"
             , labelName: "tco_loop_" <> name <> "_" <> show nextId
+            , direct: ctx.allowDirect && Array.null loopCtx && not (containsNestedLoop fn.body)
             }
           resFnBody = translateExpr (recCtx { loops = [ loop ], isTail = true, inEffectBlock = false }) nextId fn.body
           mappedFvs = Array.filter (\v -> not (Array.elem v fn.args)) (map (renameLocal recCtx) fn.fvs)
           captures = Array.nub (map (captureVariable recCtx) mappedFvs)
-          outerLoopCaptures = foldMap (\outer -> map (\param -> "&" <> outer.varPrefix <> param) outer.params) loopCtx
+          outerLoopCaptures = foldMap
+            (\outer -> map (\param -> "&" <> (if outer.direct then param else outer.varPrefix <> param)) outer.params)
+            loopCtx
           types = extractFuncType value
           params = zipArgsWithTypes fn.args types
           returnType = getRetType (Array.length fn.args) types
@@ -642,17 +670,17 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
   PrimEffect effect -> case effect of
     EffectRefNew val ->
       let res = translateValue ctx nextId val
-      in { stmts: res.stmts, expr: PhpCall (PhpRaw "phpurs_ref_new") [ res.expr ], nextId: res.nextId }
+      in { stmts: res.stmts, expr: PhpCall (PhpRaw "\\phpurs_ref_new") [ res.expr ], nextId: res.nextId }
     EffectRefRead ref ->
       let res = translateValue ctx nextId ref
-      in { stmts: res.stmts, expr: PhpCall (PhpRaw "phpurs_ref_read") [ res.expr ], nextId: res.nextId }
+      in { stmts: res.stmts, expr: PhpCall (PhpRaw "\\phpurs_ref_read") [ res.expr ], nextId: res.nextId }
     EffectRefWrite ref val ->
       let
         resRef = translateValue ctx nextId ref
         resVal = translateValue ctx resRef.nextId val
       in
         { stmts: resRef.stmts <> resVal.stmts
-        , expr: PhpCall (PhpRaw "phpurs_ref_write") [ resRef.expr, resVal.expr ]
+        , expr: PhpCall (PhpRaw "\\phpurs_ref_write") [ resRef.expr, resVal.expr ]
         , nextId: resVal.nextId
         }
   PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
@@ -736,7 +764,7 @@ translateWithContracts callbacks traversals imports input =
       ) mod.dataDecls
 
     tcoBindings = analyzeBindings mod
-    decls = Array.concatMap (translateBindingGroup modNameStr) tcoBindings
+    decls = Array.concatMap (translateBindingGroup modNameStr (Set.isEmpty regions.privateConstructors)) tcoBindings
     moduleArities = Map.fromFoldable (Array.concatMap
       (\group -> map (\(Tuple (Ident name) expr) -> Tuple (modPrefix <> name) (remainingArity expr)) group.bindings)
       tcoBindings)
@@ -815,17 +843,23 @@ analyzeBindings mod =
     in
       Tuple nextEnv (Array.snoc groups { recursive: group.recursive, bindings: orderedBindings })
 
-translateBindingGroup :: String -> AnalyzedBindingGroup -> Array PhpDecl
-translateBindingGroup moduleName group = case group.bindings of
+translateBindingGroup :: String -> Boolean -> AnalyzedBindingGroup -> Array PhpDecl
+translateBindingGroup moduleName allowDirect group = case group.bindings of
   [ Tuple (Ident name) expr ] | group.recursive ->
     let
       identifier = moduleName <> "_" <> name
-      ctx = (initialContext moduleName) { recursiveVars = [ identifier ] }
+      ctx = (initialContext moduleName) { allowDirect = allowDirect, recursiveVars = [ identifier ] }
     in
       case extractUncurriedAbs expr of
         Just fn ->
           let
-            loop = { ident: identifier, params: fn.args, varPrefix: "__tco_var_" <> identifier <> "_", labelName: "tco_loop_" <> identifier }
+            loop =
+              { ident: identifier
+              , params: fn.args
+              , varPrefix: "__tco_var_" <> identifier <> "_"
+              , labelName: "tco_loop_" <> identifier
+              , direct: allowDirect && not (containsNestedLoop fn.body)
+              }
             result = translateExpr (ctx { loops = [ loop ], isTail = true }) 0 fn.body
             types = extractFuncType expr
             params = zipArgsWithTypes fn.args types
@@ -834,7 +868,7 @@ translateBindingGroup moduleName group = case group.bindings of
             [ { identifier, expression: CompactLoops.optimize loop.labelName types (PhpNativeFunction identifier params returnType (wrapLoopBody loop result)) } ]
         Nothing -> translateBinding ctx identifier expr
   _ -> Array.concatMap
-    (\(Tuple (Ident name) expr) -> translateBinding (initialContext moduleName) (moduleName <> "_" <> name) expr)
+    (\(Tuple (Ident name) expr) -> translateBinding ((initialContext moduleName) { allowDirect = allowDirect }) (moduleName <> "_" <> name) expr)
     group.bindings
 
 -- | A lambda becomes a native function. A function-valued expression is first
@@ -909,4 +943,4 @@ isEffectNode (TcoExpr _ syntax) = case syntax of
 executeIfOpaque :: TcoExpr -> PhpExpr -> PhpExpr
 executeIfOpaque expr phpExpr =
   if isEffectNode expr then phpExpr
-  else PhpCall (PhpRaw "phpurs_execute_effect") [ phpExpr ]
+  else PhpCall (PhpRaw "\\phpurs_execute_effect") [ phpExpr ]

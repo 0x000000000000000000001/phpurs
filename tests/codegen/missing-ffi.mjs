@@ -15,6 +15,7 @@ import * as P from '../../output/Phpurs.PhpAst/index.js';
 import { genForeignModule } from '../../output/Phpurs.GenNativeForeign/index.js';
 import { printExpr, printPhpFile } from '../../output/Phpurs.Printer/index.js';
 import { corefn, write } from './fixtures/cache-inputs.mjs';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int = T.Int.value, any = T.Any.value;
 const fn = new T.Func([int], new T.Func([int], int));
@@ -53,7 +54,7 @@ ${printPhpFile(true)(ffi.code)(ffi.arities)(file)}
 namespace Foreign\\Values { ${helpers}\n${body(expr)}\necho "Done\\n"; }
 `;
   assert.doesNotMatch(code, /public function __invoke\(\.\.\.\$args\) \{ return \$this;/);
-  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: code, encoding: 'utf8', timeout: 10000 });
+  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(code), encoding: 'utf8', timeout: 10000 });
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.equal(result.stderr, '');
   assert.equal(result.stdout, 'Done\n');

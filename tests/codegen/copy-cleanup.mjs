@@ -4,6 +4,7 @@ import {spawnSync} from 'node:child_process';
 import * as P from '../../output/Phpurs.PhpAst/index.js';
 import {optimize, nodeBudget, depthBudget, widthBudget} from '../../output/Phpurs.CopyCleanup/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import * as S from '../../output/Data.Set/index.js';
 import * as M from '../../output/Data.Map/index.js';
 import {ordString} from '../../output/Data.Ord/index.js';
@@ -111,7 +112,7 @@ foreach ([[-3,9],[0,4],[5,-2]] as [$x,$y]) {
 $new=majChecks_chain($old,null);
 if ($new->a!==$old || $new->b!==$old || serialize($old)!==$expected) throw new \\Exception('sharing changed');
 echo json_encode($results);`;
-  const result=spawnSync('php',['-d','opcache.enable_cli=0'],{input:php,encoding:'utf8'});
+  const result=spawnSync('php',['-d','opcache.enable_cli=0'],{input:withRuntime(php),encoding:'utf8'});
   assert.equal(result.status,0,result.stdout+result.stderr);assert.equal(result.stderr,'');
   return JSON.parse(result.stdout);
 }

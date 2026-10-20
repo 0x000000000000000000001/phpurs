@@ -35,7 +35,7 @@ the [README](../README.md#build-the-backend).
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
 | PHP AST traversal | [`PhpAst/Traversal.purs`](../src/Phpurs/PhpAst/Traversal.purs) | Enumerate children with explicit scope boundaries and map expression children or statement blocks. |
 | PHP printing | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and module layout. |
-| Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes, curry fallback, effect execution and reference helpers. |
+| Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes and the shared global curry/effect/reference runtime. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
@@ -360,6 +360,16 @@ generated value-read checks; present-value interoperability is unchanged.
 See [`missing-ffi.mjs`](../tests/codegen/missing-ffi.mjs) and the
 [missing-FFI validation](../audit/2026-10-06/missing-ffi/report.md).
 
+After loading all CoreFn inputs, `Main` selects the union of CoreFn import
+closures rooted at the target mains before `buildModules`. An explicit main is
+validated first; automatic builds use every exported main. If no main is found,
+all loaded modules are retained. Only selected modules are captured for FFI,
+keyed in the persistent cache, optimized, translated, printed and written.
+Composer and FFI package roots still describe the full loaded workspace, so a
+reviewed Composer lock remains valid when only the optimized subset changes.
+Obsolete outputs from a previous wider build are retired by the output manifest
+after successful finalization.
+
 During preparation, `Main` calls `resolvePackagePaths { ffiDir, modulePaths }`
 once. `PackagePaths` returns separate `ffiRoots` and `composerRoots` arrays from
 one discovery of the Spago package directories. These arrays belong to that build;
@@ -398,7 +408,8 @@ mode selects the current writes and preserves the existing files of disabled
 output families.
 
 All four PHP write sites use `OutputManifest.writeOutput`: module
-`index.php`, `main.mod.php`, `main.bundle.php` and the global `bundle.php`.
+`index.php`, `main.mod.php`, `main.bundle.php`, `runtime.php` and the global
+`bundle.php`.
 It awaits `FileEmission.writeTextFileIfChanged` before recording ownership.
 That helper encodes the generated string as UTF-8 and compares it with the existing
 file's raw bytes. Decoding the old file would conceal some invalid UTF-8 sequences
@@ -480,7 +491,12 @@ alias can return a callable that the scalar annotation does not describe.
 Internal exact calls omit the public wrapper frame, so stack inspection and
 return-check diagnostics can differ from a public call.
 
-`Printer.Runtime.preambleFor` is shared by modular files and bundles. It emits
+`Printer.Runtime.sharedRuntime` is emitted once per application. `sharedRuntimeFile`
+provides the module-side `runtime.php`; `bundleHeader` embeds the same helpers in a
+global namespace block at the start of each bundle. Generated calls are fully
+qualified as `\phpurs_*`. Modular files emit a guarded `require_once` for
+`runtime.php` only when they reference a helper; the runtime file is owned by the
+modular output manifest. It emits
 only the pieces referenced by the assembled module body: the generic data-class
 block (arities 0–12) when a `Phpurs_DataN` name occurs, the curry fallback when
 a wrapper uses it, and the effect/reference helpers when their functions are

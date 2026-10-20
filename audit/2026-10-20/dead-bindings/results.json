@@ -1,0 +1,14 @@
+{
+  "modules": 108,
+  "phpBytesBefore": 1766903,
+  "phpBytesAfter": 1271079,
+  "reductionPercent": 28.06,
+  "removedBindings": 574,
+  "removedExported": 568,
+  "valuesValidated": true,
+  "prototypeTotalMs": 64.90912,
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r7-dce-prototype-20261020",
+  "decision": "Annul\u00e9e : la suppression des exports non r\u00e9f\u00e9renc\u00e9s change le contrat public PHP; aucun flag n\u2019est conserv\u00e9.",
+  "counterexample": "Limit.run export\u00e9 supprim\u00e9 par le prototype puis appel\u00e9 par rewrite-limit",
+  "integrated": false
+}

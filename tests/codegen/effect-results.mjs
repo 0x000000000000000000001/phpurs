@@ -10,6 +10,7 @@ import { empty as emptyMap } from '../../output/Data.Map/index.js';
 import { empty as emptySet } from '../../output/Data.Set/index.js';
 import { translate } from '../../output/Phpurs.CodeGen/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const local = (name, level) => new S.Local(new Just(name), level);
 const global = name => new S.Var(new T.Qualified(new Just('EffectResults'), name));
@@ -60,7 +61,7 @@ $GLOBALS['EffectResults_mark'] = function($label) {
 const php = printPhpFile(false)(ffi)(file.arities)(file);
 const names = JSON.stringify(bodies.map(([name]) => name));
 const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {
-  input: php + `
+  input: withRuntime(php + `
 error_reporting(E_ALL);
 function check($condition, $message) {
   if (!$condition) throw new \\Exception($message);
@@ -90,7 +91,7 @@ check($first() === 41 && $second() === 41, 'ordinary effect can be run repeatedl
 check($GLOBALS['effectEvents'] === ['outer', 'outer', 'inner', 'inner'], 'ordinary effect order');
 check($GLOBALS['EffectResults_callableString']() === 'strlen', 'callable string is a value');
 echo "Done\n";
-`,
+`),
   encoding: 'utf8',
 });
 assert.equal(run.status, 0, run.stdout + run.stderr);

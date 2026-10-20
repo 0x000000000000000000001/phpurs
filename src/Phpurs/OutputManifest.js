@@ -11,6 +11,7 @@ function validEntry(entry) {
   if (!entry || !['modules', 'bundles'].includes(entry.family)
     || typeof entry.path !== 'string' || typeof entry.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(entry.sha256)) return false;
   if (entry.path === 'bundle.php') return entry.family === 'bundles';
+  if (entry.path === 'runtime.php') return entry.family === 'modules';
   const parts = entry.path.split('/');
   return parts.length === 2 && parts[0] !== '' && !['.', '..'].includes(parts[0])
     && !/[\\:\0]/.test(parts[0])

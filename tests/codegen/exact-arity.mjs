@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import * as A from '../../output/Phpurs.PhpAst/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import { empty, insert } from '../../output/Data.Map/index.js';
 import { ordString } from '../../output/Data.Ord/index.js';
 import { Just } from '../../output/Data.Maybe/index.js';
@@ -85,7 +86,7 @@ $values[] = \\Demo\\majDemo_collision__phpurs_exact(5);
 try { \\Demo\\majDemo_add(PHP_INT_MAX, 1); $values[] = 'no overflow'; }
 catch (\\TypeError $error) { $values[] = str_contains($error->getMessage(), 'majDemo_add__phpurs_exact(): Return value'); }
 echo json_encode($values, JSON_THROW_ON_ERROR);`;
-const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: source, encoding: 'utf8' });
+const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(source), encoding: 'utf8' });
 assert.equal(run.status, 0, run.stdout + run.stderr);
 assert.equal(run.stderr, '');
 assert.deepEqual(JSON.parse(run.stdout), [42, 42, 42, 43, 42, 7, 0, 9, 9, 4, 5, true]);

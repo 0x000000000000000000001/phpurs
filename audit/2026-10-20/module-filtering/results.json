@@ -1,0 +1,46 @@
+{
+  "control": {
+    "modules": 306,
+    "phpFiles": 307,
+    "bytes": 5789010,
+    "backendMs": 3823.014875,
+    "phasesMs": {
+      "corefn.read": 100.807493,
+      "corefn.decode": 564.744585,
+      "optimize": 1286.745338,
+      "translate": 1161.286869,
+      "print": 156.112095,
+      "php.write": 151.119092
+    }
+  },
+  "filtered": {
+    "modules": 108,
+    "phpFiles": 109,
+    "bytes": 1766903,
+    "backendMs": 1775.353,
+    "phasesMs": {
+      "corefn.read": 116.485338,
+      "corefn.decode": 602.453501,
+      "optimize": 363.915208,
+      "translate": 359.603381,
+      "print": 49.937749,
+      "php.write": 55.575158
+    }
+  },
+  "reductionPercent": {
+    "backend": 53.56,
+    "optimize": 71.72,
+    "translate": 69.03,
+    "print": 68.01,
+    "php.write": 63.23,
+    "bytes": 69.48
+  },
+  "valuesValidated": true,
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r7-filter-20261020",
+  "composer": {
+    "roots": "all loaded modules",
+    "lockChanged": false,
+    "runpValidated": true,
+    "values": 14
+  }
+}

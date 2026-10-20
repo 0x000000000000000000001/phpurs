@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import {spawnSync} from 'node:child_process';
+import fs from 'node:fs';
 import * as S from '../../output/PureScript.Backend.Optimizer.Syntax/index.js';
 import * as T from '../../output/PureScript.Backend.Optimizer.CoreFn/index.js';
 import {Just, Nothing} from '../../output/Data.Maybe/index.js';
@@ -13,6 +13,7 @@ import {optimize, workerBudget} from '../../output/Phpurs.CallbackSpecialization
 import {fromForeign} from '../../output/Phpurs.NativeCallbacks/index.js';
 import {translateWithCallbacks} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import {renderModuleState} from '../../output/Phpurs.ModuleState/index.js';
 
 const int=T.Int.value, any=T.Any.value, a=new T.TypeVar('a'), b=new T.TypeVar('b');
@@ -164,7 +165,7 @@ function render(input,proofs=emptySet,externalArities=emptyMap) {
   return printPhpFile(false)('')(union(ordString)(file.arities)(externalArities))(file);
 }
 function run(php,checks) {
-  const result=spawnSync('php',['-d','opcache.enable_cli=0'],{input:php+'\n'+checks+'\necho "Done\\n";',encoding:'utf8'});
+  const result=spawnSync('php',['-d','opcache.enable_cli=0'],{input:withRuntime(php+'\n'+checks+'\necho "Done\\n";'),encoding:'utf8'});
   assert.equal(result.status,0,result.stdout+result.stderr);
   assert.equal(result.stdout,'Done\n');
 }

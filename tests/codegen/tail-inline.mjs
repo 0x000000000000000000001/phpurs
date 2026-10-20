@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import * as A from '../../output/Phpurs.PhpAst/index.js';
 import { optimize, bodyBudget, callerBudget } from '../../output/Phpurs.TailInline/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import { empty, insert } from '../../output/Data.Map/index.js';
 import { ordString } from '../../output/Data.Ord/index.js';
 import { Just, Nothing } from '../../output/Data.Maybe/index.js';
@@ -97,7 +98,7 @@ $GLOBALS['events'] = [];
 try { $GLOBALS['Test_guardCaller'](0); } catch (\\Exception $error) { $values[] = $error->getMessage(); }
 $values[] = $GLOBALS['events'];
 echo json_encode($values, JSON_THROW_ON_ERROR);`;
-  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: source, encoding: 'utf8' });
+  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(source), encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, '');
   return JSON.parse(result.stdout);

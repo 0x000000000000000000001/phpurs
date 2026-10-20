@@ -1,0 +1,54 @@
+{
+  "modules": 108,
+  "modulesWithHelpers": 99,
+  "helperBlocks": {
+    "curry": {
+      "modules": 98,
+      "bytes": 289492,
+      "calls": 940
+    },
+    "effect": {
+      "modules": 22,
+      "bytes": 4730,
+      "calls": 157
+    },
+    "refs": {
+      "modules": 3,
+      "bytes": 891,
+      "calls": 25
+    }
+  },
+  "helperBlockBytes": 295113,
+  "runtimeFileBytes": 3419,
+  "modulesBytesBefore": 1766903,
+  "modulesBytesAfter": 1493656,
+  "modulesReductionPercent": 15.46,
+  "bundleBytesBefore": 1700126,
+  "bundleBytesAfter": 1409562,
+  "bundlePlusRuntimeBytes": 1409447,
+  "bundleReductionPercent": 17.1,
+  "startupModules": {
+    "opcacheOff": {
+      "controlMs": 24.7865,
+      "sharedMs": 20.664333,
+      "reductionPercent": 16.63
+    },
+    "opcacheOn": {
+      "controlMs": 48.228209,
+      "sharedMs": 40.096,
+      "reductionPercent": 16.86
+    }
+  },
+  "validation": {
+    "values": 14,
+    "modularEntry": true,
+    "bundleEntry": true,
+    "directModuleLoad": "Data.Array",
+    "codegen": "100/100",
+    "runpMs": 68.329888
+  },
+  "decision": "Int\u00e9gr\u00e9 : runtime.php partag\u00e9, require conditionnel dans 99 modules, runtime embarqu\u00e9 une fois dans les bundles. D\u00e9faut, sans flag.",
+  "artifacts": "/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r7-shared-runtime-proto-20261020, /private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r7-shared-runtime-bundle-20261020",
+  "integrated": true,
+  "moduleFiles": 110
+}

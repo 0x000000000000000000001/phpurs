@@ -1,0 +1,8 @@
+{
+  "phpurs_bundle_sha256": "d3af6bbf7de3d38c702cae5318c0c691cb04fceb363c475141d1eb5c17885bd0",
+  "phpurs_sources_sha256": "52f89ba103d51485066a83da8a165afeacbf551419628d7f2bec6b0e470cdbe9",
+  "phpurs_head": "70eb1f6a92ddd4fb78c49132a9d210645d575930",
+  "phpurs_dirty": true,
+  "host_purs": "0.15.16",
+  "tast_purs": "0.15.16 [development build; commit: 3c8fcfd7a3d440bba487fe9fe059284cffc6e908 DIRTY]"
+}

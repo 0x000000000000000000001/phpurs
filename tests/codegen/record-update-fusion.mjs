@@ -10,6 +10,7 @@ import { Just, Nothing } from '../../output/Data.Maybe/index.js';
 import { Tuple } from '../../output/Data.Tuple/index.js';
 import { translate } from '../../output/Phpurs.CodeGen/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int = T.Int.value;
 const record = fields => new T.Record(new T.Row(fields, Nothing.value));
@@ -82,7 +83,7 @@ try { \\Demo\\majDemo_throwing($old); $values[] = false; }
 catch (\\Exception $error) { $values[] = str_starts_with($error->getMessage(), 'record update failed'); }
 $values[] = $old->a;
 echo json_encode($values, JSON_THROW_ON_ERROR);`;
-const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: source, encoding: 'utf8' });
+const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(source), encoding: 'utf8' });
 assert.equal(run.status, 0, run.stdout + run.stderr);
 assert.equal(run.stderr, '');
 assert.deepEqual(JSON.parse(run.stdout), [

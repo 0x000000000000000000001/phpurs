@@ -48,7 +48,7 @@ function outputs(root) {
 }
 
 for (const [mode, args, prints, writes] of [
-  ['modules', [], 4, 4], ['both', ['--bundle'], 5, 5], ['bundle-only', ['--bundle-only'], 4, 1],
+  ['modules', [], 4, 5], ['both', ['--bundle'], 5, 6], ['bundle-only', ['--bundle-only'], 4, 1],
 ]) {
   test(`build profile: ${mode} reports separate phases, keeps outputs and gates detailed logs`, t => {
     const root = fixture(t);
@@ -93,7 +93,7 @@ test('build profile: flags do not partition persistent hits; mixed builds time o
   assert.match(hot.stderr, /cache: 3 hits, 0 misses, 0 stores/);
   for (const phase of ['optimize', 'translate', 'cache.store', 'diagnostics']) assert.equal(hot.profile.phases[phase].calls, 0, phase);
   assert.equal(hot.profile.phases.print.calls, 2, 'entrypoints are still printed on state hits');
-  assert.equal(hot.profile.phases['php.write'].calls, 5, 'unchanged output comparison still runs');
+  assert.equal(hot.profile.phases['php.write'].calls, 6, 'unchanged output comparison still runs');
   assert.ok(hot.profile.modules.every(m => m.source === 'cache'));
   assert.deepEqual(outputs(root), expected);
   fs.appendFileSync(path.join(root, 'src/Main.php'), '\n// invalidate only the final module\n');

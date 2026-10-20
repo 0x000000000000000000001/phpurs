@@ -10,6 +10,7 @@ import {empty as emptySet, size} from '../../output/Data.Set/index.js';
 import {optimize, workerBudget} from '../../output/Phpurs.StateFusion/index.js';
 import {translate} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int=T.Int.value, unit=T.Unit.value, any=T.Any.value, variable=new T.TypeVar('s');
 const typed=(ty,e)=>new S.Typed(ty,e);
@@ -178,7 +179,7 @@ function render(input) {
   return printPhpFile(false)('')(file.arities)(file);
 }
 function phpRun(php,checks) {
-  const result=spawnSync('php',['-d','opcache.enable_cli=0'],{input:php+"\n$GLOBALS['Data_Unit_unit']=null;\n"+checks+'\necho "Done\\n";',encoding:'utf8'});
+  const result=spawnSync('php',['-d','opcache.enable_cli=0'],{input:withRuntime(php+"\n$GLOBALS['Data_Unit_unit']=null;\n"+checks+'\necho "Done\\n";'),encoding:'utf8'});
   assert.equal(result.status,0,result.stdout+result.stderr);
   assert.equal(result.stdout,'Done\n');
 }

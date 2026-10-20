@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { genCurry } from '../../output/Phpurs.Printer/index.js';
 import { PhpRaw, PhpReturn } from '../../output/Phpurs.PhpAst/index.js';
 import { empty } from '../../output/Data.Map/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const generate = (captures, body, args = ['x']) => {
   const at = body.indexOf('return ');
@@ -54,7 +55,7 @@ $results = [$a(3), $b(3), $a(3), $refCapture(1), $go(4), $p(2), $multi(1, 2),
   $obj(2), $obj(4), is_callable($a), call_user_func($a, 2), array_map($a, [1, 2]), $error];
 echo json_encode($results, JSON_THROW_ON_ERROR);
 `;
-const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: php, encoding: 'utf8' });
+const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(php), encoding: 'utf8' });
 assert.equal(result.status, 0, result.stderr);
 assert.equal(result.stderr, '');
 assert.deepEqual(JSON.parse(result.stdout), [10, 14, 10, 21, 24, 23, 23, 23, 23, 21, 21,

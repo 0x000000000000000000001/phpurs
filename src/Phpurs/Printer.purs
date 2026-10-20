@@ -92,7 +92,7 @@ genNativeCurryWithRoot compactRoot ctx name args retType stmts =
       "  $__num = \\func_num_args();\n" <>
       "  $__fn = __NAMESPACE__ . '\\\\' . '" <> name <> "';\n" <>
       "  if ($__num < " <> nStr <> ") {\n" <>
-      "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
+      "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
       "  }\n" <>
       printCurryStatements ctx stmts <>
       "  __end:\n" <>
@@ -138,7 +138,7 @@ curryBody ctx nArgs stmts =
     "  $__num = \\func_num_args();\n" <>
     (if nArgs == 1 then "" else
       "  if ($__num < " <> nStr <> ") {\n" <>
-      "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n  }\n") <>
+      "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n  }\n") <>
     printCurryStatements ctx stmts <>
     "  __end:\n" <>
     "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
@@ -398,7 +398,7 @@ genExactWrapper name args retType =
     "  $__num = \\func_num_args();\n" <>
     "  $__fn = __NAMESPACE__ . '\\\\' . '" <> safeFuncName name <> "';\n" <>
     "  if ($__num < " <> nStr <> ") {\n" <>
-    "    return phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
+    "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
     "  }\n" <>
     "  $__res = " <> safeFuncName name <> exactSuffix <> "(" <> callArgs <> ");\n" <>
     "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n" <>
@@ -478,13 +478,17 @@ printPhpFile isBundle ffiString allArities file =
     decls = joinWith "\n" $ map (printDecl ctx) file.decls
     body = ffiString <> "\n\n" <> rawDeclsStr <> "\n\n" <> decls
     mentions token = not (isNothing (indexOf (Pattern token) body))
-    runtime = Runtime.preambleFor
-      { dataClasses: mentions "Phpurs_Data"
-      , curry: mentions "phpurs_curry_fallback"
-      , effect: mentions "phpurs_execute_effect"
-      , refs: mentions "phpurs_ref_new" || mentions "phpurs_ref_read" || mentions "phpurs_ref_write"
-      }
+    usesHelpers =
+      mentions "phpurs_curry_fallback" ||
+      mentions "phpurs_execute_effect" ||
+      mentions "phpurs_ref_new" ||
+      mentions "phpurs_ref_read" ||
+      mentions "phpurs_ref_write"
+    runtimeRequire =
+      if isBundle || not usesHelpers then ""
+      else "if (!\\function_exists('phpurs_curry_fallback') || !\\function_exists('phpurs_execute_effect') || !\\function_exists('phpurs_ref_new')) require_once __DIR__ . '/../runtime.php';\n"
+    dataPreamble = if mentions "Phpurs_Data" then Runtime.dataClasses else ""
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"
   in
-    prefix <> debugImps <> imps <> "\n\n" <> runtime <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> body <> suffix
+    prefix <> debugImps <> runtimeRequire <> imps <> "\n\n" <> dataPreamble <> "\n$GLOBALS['" <> safeName "Prim_undefined" <> "'] = function() { throw new \\Exception(\"undefined\"); };\n" <> body <> suffix

@@ -12,6 +12,7 @@ import {optimize} from '../../output/Phpurs.EnumRegions/index.js';
 import {layout, lower, nodeBudget, depthBudget} from '../../output/Phpurs.NullableConstructors/index.js';
 import {translate} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int=T.Int.value, tree=new T.ADT('Demo.Tree',['Demo','Tree'],[]);
 const q=(name,ns='Demo')=>new T.Qualified(new Just(ns),name);
@@ -77,12 +78,12 @@ assert.match(php,/!== null/);
 assert.match(php,/new \\Demo\\Demo_Empty\(/,'public Empty remains boxed');
 assert.match(php,/instanceof \\Demo\\Demo_Box/,'public tag checks remain');
 assert.doesNotMatch(php,/\$GLOBALS\['[^']*__phpurs_enum_/);
-const run=spawnSync('php',[],{input:php+`
+const run=spawnSync('php',[],{input:withRuntime(php+`
 if (\\Demo\\majDemo_score(-3)!==-1 || \\Demo\\majDemo_score(9)!==9) throw new \\Exception('nullable');
 $empty=\\Demo\\majDemo_make(-1); $box=\\Demo\\majDemo_make(7);
 if (!$empty instanceof \\Demo\\Demo_Empty || !$box instanceof \\Demo\\Demo_Box || $box->value0!==7) throw new \\Exception('public');
 try { new \\Demo\\Demo_Box([]); throw new \\Exception('type check lost'); } catch (\\TypeError $ok) {}
-echo "Done\\n";`,encoding:'utf8'});
+echo "Done\\n";`),encoding:'utf8'});
 assert.equal(run.status,0,run.stdout+run.stderr);
 assert.equal(run.stdout,'Done\n');
 
@@ -97,11 +98,11 @@ const nested=mod(fn('score',[int],int,call('readOuter',[typed(outer,call('makeOu
 assert.equal(M.size(optimize(nested).nullableConstructors),4);
 const nestedPhp=render(nested);
 assert.match(nestedPhp,/new \\Demo\\Demo___phpurs_enum_0_Wrap\(/);
-const nestedRun=spawnSync('php',[],{input:nestedPhp+`
+const nestedRun=spawnSync('php',[],{input:withRuntime(nestedPhp+`
 foreach ([[-1,-100],[0,99],[9,109]] as [$n,$want]) if (\\Demo\\majDemo_score($n)!==$want) throw new \\Exception('nested null');
 $wrapped=\\Demo\\majDemo_makemajOuter(0);
 if (!$wrapped instanceof \\Demo\\Demo_Wrap || !$wrapped->value0 instanceof \\Demo\\Demo_Empty) throw new \\Exception('public nesting');
-echo "Done\\n";`,encoding:'utf8'});
+echo "Done\\n";`),encoding:'utf8'});
 assert.equal(nestedRun.status,0,nestedRun.stdout+nestedRun.stderr);
 assert.equal(nestedRun.stdout,'Done\n');
 

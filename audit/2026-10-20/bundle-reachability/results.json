@@ -21,5 +21,10 @@
     "files": 1,
     "valuesValidated": true,
     "totalMs": 70.792797
+  },
+  "automaticBundleFinal": {
+    "modules": 141,
+    "bundleBytes": 1877552,
+    "note": "union des mains apr\u00e8s filtrage des modules"
   }
 }

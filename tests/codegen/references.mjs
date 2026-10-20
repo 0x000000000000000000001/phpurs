@@ -11,6 +11,7 @@ import { Just } from '../../output/Data.Maybe/index.js';
 import { Tuple } from '../../output/Data.Tuple/index.js';
 import { translate } from '../../output/Phpurs.CodeGen/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int = T.Int.value;
 const i = n => new S.Lit(new T.LitInt(n));
@@ -43,16 +44,17 @@ const body = defer(new S.EffectBind(new Just('r'), 1, defer(refNew(arg)),
       new S.EffectPure(add(v, i(1)))))));
 const file = translate([])(mod(fn('run', [int], int, body)));
 const php = printPhpFile(false)('')(file.arities)(file);
+const runtimePhp = withRuntime(php);
 
-assert.match(php, /function phpurs_ref_new\(\$value\)/, 'the runtime defines the ref helpers');
-assert.match(php, /phpurs_ref_new\(/, 'refNew reaches the runtime');
-assert.match(php, /phpurs_ref_read\(/, 'refRead reaches the runtime');
-assert.match(php, /phpurs_ref_write\(/, 'refWrite reaches the runtime');
+assert.match(runtimePhp, /function phpurs_ref_new\(\$value\)/, 'the runtime defines the ref helpers');
+assert.match(php, /\\phpurs_ref_new\(/, 'refNew reaches the runtime');
+assert.match(php, /\\phpurs_ref_read\(/, 'refRead reaches the runtime');
+assert.match(php, /\\phpurs_ref_write\(/, 'refWrite reaches the runtime');
 assert.doesNotMatch(php, /TODO_PrimEffect/, 'no placeholder survives');
-assert.match(php, /use \(\$x0_0, &\$__fn\)\s*\{\s*return phpurs_ref_new\(\$x0_0\)/, 'deferred ref effects capture their variables');
+assert.match(php, /use \(\$x0_0, &\$__fn\)\s*\{\s*return \\phpurs_ref_new\(\$x0_0\)/, 'deferred ref effects capture their variables');
 
 const run = spawnSync('php', [], {
-  input: php + `\n$GLOBALS['Data_Unit_unit'] = null;\n$effect = \\Demo\\majDemo_run(41);\nif ($effect() !== 42) throw new \\Exception('ref result');\necho "Done\\n";`,
+  input: withRuntime(php + `\n$GLOBALS['Data_Unit_unit'] = null;\n$effect = \\Demo\\majDemo_run(41);\nif ($effect() !== 42) throw new \\Exception('ref result');\necho "Done\\n";`),
   encoding: 'utf8',
 });
 assert.equal(run.status, 0, run.stdout + run.stderr);

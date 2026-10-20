@@ -10,6 +10,7 @@ import { Just } from '../../output/Data.Maybe/index.js';
 import { Tuple } from '../../output/Data.Tuple/index.js';
 import { translate } from '../../output/Phpurs.CodeGen/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime, moduleBlock } from './fixtures/runtime.mjs';
 
 const int = T.Int.value;
 const typed = (ty, expr) => new S.Typed(ty, expr);
@@ -37,14 +38,15 @@ assert.match(a, /__phpurs_data0_A_Nil/);
 assert.doesNotMatch(a, /__phpurs_data0_B_Nil/);
 assert.match(b, /__phpurs_data0_B_Nil/);
 assert.doesNotMatch(b, /__phpurs_data0_A_Nil/);
-const combined = a + '\n' + b.replace(/^<\?php\s*/, '');
+const combined = withRuntime(a) + '\n' + moduleBlock(b);
 const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {
-  input: combined + `
+  input: combined + `\nnamespace {
 $a1 = \\A\\majA_make(0); $b1 = \\B\\majB_make(0);
 if (get_class($a1) !== 'A\\A_Nil' || get_class($b1) !== 'B\\B_Nil') throw new \\Exception('collision');
 if (get_class($GLOBALS['A_Nil']) !== 'A\\A_Nil' || get_class($GLOBALS['B_Nil']) !== 'B\\B_Nil') throw new \\Exception('singleton class');
 if ($GLOBALS['A_Nil'] === $GLOBALS['B_Nil']) throw new \\Exception('shared singleton');
-echo "Done\\n";`, encoding: 'utf8' });
+echo "Done\\n";
+}`, encoding: 'utf8' });
 assert.equal(run.status, 0, run.stdout + run.stderr);
 assert.equal(run.stderr, '');
 assert.equal(run.stdout, 'Done\n');

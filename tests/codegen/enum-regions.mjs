@@ -9,6 +9,7 @@ import {empty as emptySet, size} from '../../output/Data.Set/index.js';
 import {optimize, nodeBudget, workerBudget} from '../../output/Phpurs.EnumRegions/index.js';
 import {translate} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import {spawnSync} from 'node:child_process';
 
 const int = T.Int.value;
@@ -90,7 +91,7 @@ assert.equal(size(optimize(rename(original)).privateNames),2,'no benchmark/modul
 const file=translate([])(original);
 const php=printPhpFile(false)('')(file.arities)(file);
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_enum_/.test(php),'private workers are not public globals');
-const run=spawnSync('php',[],{input:php+`\nif (\\Demo\\majDemo_score(1) !== 1 || \\Demo\\majDemo_score(-1) !== 2) throw new \\Exception('score');\n$color = \\Demo\\majDemo_choose(1);\nif (!$color instanceof \\Demo\\Demo_Red || \\Demo\\majDemo_read($color) !== 1) throw new \\Exception('public');\necho "Done\\n";`,encoding:'utf8'});
+const run=spawnSync('php',[],{input:withRuntime(php+`\nif (\\Demo\\majDemo_score(1) !== 1 || \\Demo\\majDemo_score(-1) !== 2) throw new \\Exception('score');\n$color = \\Demo\\majDemo_choose(1);\nif (!$color instanceof \\Demo\\Demo_Red || \\Demo\\majDemo_read($color) !== 1) throw new \\Exception('public');\necho "Done\\n";`),encoding:'utf8'});
 assert.equal(run.status,0,run.stdout+run.stderr);
 assert.equal(run.stdout,'Done\n');
 // A boxed nullary global must become a private constructor, never a reference
@@ -111,7 +112,7 @@ assert.doesNotMatch(treePhp.match(/final class Demo___phpurs_enum_0_Box[^\n]*/)[
 assert.doesNotMatch(treePhp.match(/final class Demo___phpurs_enum_0_Box[^\n]*/)[0],/\$tag/,'private constructors carry no tag');
 assert.match(treePhp,/final class Demo_Box \{ public \$tag = 'Box';/,'public constructors keep the tag');
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_enum_/.test(treePhp));
-const treeRun=spawnSync('php',[],{input:treePhp+`\nif (\\Demo\\majDemo_score(-1)!==0 || \\Demo\\majDemo_score(1)!==1) throw new \\Exception('tree');\ntry { new \\Demo\\Demo_Box(new \\Demo\\Demo_Red(), []); throw new \\Exception('public field check lost'); } catch (\\TypeError $expected) {}\necho "Done\\n";`,encoding:'utf8'});
+const treeRun=spawnSync('php',[],{input:withRuntime(treePhp+`\nif (\\Demo\\majDemo_score(-1)!==0 || \\Demo\\majDemo_score(1)!==1) throw new \\Exception('tree');\ntry { new \\Demo\\Demo_Box(new \\Demo\\Demo_Red(), []); throw new \\Exception('public field check lost'); } catch (\\TypeError $expected) {}\necho "Done\\n";`),encoding:'utf8'});
 assert.equal(treeRun.status,0,treeRun.stdout+treeRun.stderr);
 assert.equal(treeRun.stdout,'Done\n');
 console.log('enum-regions: selection, boundaries, unknown types/calls, budgets, fresh names and PHP execution passed');

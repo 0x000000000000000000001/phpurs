@@ -215,15 +215,17 @@ for (const { mode, emission } of cases) {
 
       const emitted = snapshot(path.join(root, output));
       const modules = ['A.Main', 'B.Main', 'Pure.Fallback', 'Pure.Local', 'Solo', 'Z.Library'];
+      const selectedModules = custom ? ['A.Main', 'Pure.Fallback', 'Pure.Local', 'Solo', 'Z.Library'] : modules;
       const mains = custom ? ['A.Main'] : ['A.Main', 'B.Main'];
       const entries = [
         ...(!bundleOnly ? ['main.mod.php'] : []),
         ...(emitBundle ? ['main.bundle.php'] : []),
       ];
       const expectedFiles = [
-        ...(!bundleOnly ? modules.map(name => `${name}/index.php`) : []),
+        ...(!bundleOnly ? selectedModules.map(name => `${name}/index.php`) : []),
         ...mains.flatMap(name => entries.map(entry => `${name}/${entry}`)),
         ...(emitBundle && !custom ? ['bundle.php'] : []),
+        ...(!bundleOnly ? ['runtime.php'] : []),
       ];
       assert.deepEqual(Object.keys(emitted).filter(file => file.endsWith('.php')).sort(), expectedFiles.sort());
       assert.deepEqual(writtenPhp(root, output), expectedFiles, 'a fresh build must write every selected PHP file');

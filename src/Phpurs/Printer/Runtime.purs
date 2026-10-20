@@ -1,23 +1,24 @@
--- | Namespace-local PHP helpers embedded in every emitted module. Keep their
--- | order and formatting stable for modular output and concatenated bundles.
-module Phpurs.Printer.Runtime (preamble, preambleFor) where
+-- | PHP runtime assembled once per output. Data classes remain namespace-local;
+-- | curry/effect/reference helpers live in a shared global runtime file and are
+-- | referenced through qualified `\phpurs_*` calls.
+module Phpurs.Printer.Runtime (dataClasses, sharedRuntime, sharedRuntimeFile, bundleHeader) where
 
 import Prelude
 
 import Data.Array as Array
 import Data.String as String
 
--- | Full runtime, retained for callers that need an unconditional preamble.
-preamble :: String
-preamble = preambleFor { dataClasses: true, curry: true, effect: true, refs: true }
+-- | Global helpers shared by every module. Generated calls use the fully
+-- | qualified names (`\phpurs_*`); the runtime itself is emitted once.
+sharedRuntime :: String
+sharedRuntime = curryFallback <> effectHelpers <> referenceHelpers
 
--- | Emit only the runtime pieces referenced by the assembled module body.
-preambleFor :: { dataClasses :: Boolean, curry :: Boolean, effect :: Boolean, refs :: Boolean } -> String
-preambleFor usage =
-  (if usage.dataClasses then dataClasses else "")
-    <> (if usage.curry then curryFallback else "")
-    <> (if usage.effect then effectHelpers else "")
-    <> (if usage.refs then referenceHelpers else "")
+sharedRuntimeFile :: String
+sharedRuntimeFile = "<?php\n\n" <> sharedRuntime
+
+-- | Runtime block prepended to a bundle before its module namespaces.
+bundleHeader :: String
+bundleHeader = "<?php\n\nnamespace {\n" <> sharedRuntime <> "}\n\n"
 
 -- | The generic data representation supports constructor arities 0 through 12.
 dataClasses :: String
@@ -38,7 +39,7 @@ dataClasses =
 
 curryFallback :: String
 curryFallback =
-  """if (!\function_exists(__NAMESPACE__ . '\\phpurs_curry_fallback')) {
+  """if (!\function_exists('phpurs_curry_fallback')) {
   function phpurs_curry_fallback($fn, $args, $expected) {
     $missing = $expected - \count($args);
 """ <> String.joinWith "" (map (\arity -> specializedCurry (Array.take arity [ "a", "b", "c", "d" ])) (Array.range 1 4)) <>
@@ -88,7 +89,7 @@ specializedCurry args =
 
 effectHelpers :: String
 effectHelpers =
-  """if (!\function_exists(__NAMESPACE__ . '\\phpurs_execute_effect')) {
+  """if (!\function_exists('phpurs_execute_effect')) {
   function phpurs_execute_effect($val) {
     if (\is_callable($val)) {
       return $val($GLOBALS['Data_Unit_unit']);
@@ -100,7 +101,7 @@ effectHelpers =
 
 referenceHelpers :: String
 referenceHelpers =
-  """if (!\function_exists(__NAMESPACE__ . '\\phpurs_ref_new')) {
+  """if (!\function_exists('phpurs_ref_new')) {
   function phpurs_ref_new($value) {
     return (object)['value' => $value];
   }

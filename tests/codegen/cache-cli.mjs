@@ -142,7 +142,9 @@ test('CLI cache: FFI edits, UTF-8 bytes, missing/empty sources and winning paths
   matchesUncached(root);
   execute(root);
 
-  write(root, 'output/Z.Missing/corefn.json', JSON.stringify(corefn('Z.Missing', [], [], ['add'])));
+  const missing = corefn('Z.Missing', [], [], ['add', 'main']);
+  missing.foreignAnnotations.main = { type: 4 };
+  write(root, 'output/Z.Missing/corefn.json', JSON.stringify(missing));
   build(root);
   write(root, 'Z.Missing.php', '');
   assert.deepEqual(build(root).generated, ['Z.Missing']);
@@ -234,7 +236,7 @@ test('CLI cache: missing/corrupt entries and unavailable storage use normal code
 test('CLI cache: graph changes invalidate keys; duplicate names and cycles disable the whole plan', t => {
   const root = fixture(t);
   build(root);
-  write(root, 'output/Extra/corefn.json', JSON.stringify(corefn('Extra')));
+  writeMain(root, 'Extra', 'extra\n');
   assert.equal(build(root).generated.length, 4);
   fs.rmSync(path.join(root, 'output/Extra'), { recursive: true });
   assert.deepEqual(build(root).counts, [3, 0, 0], 'returning to the original graph can reuse its complete plan');
@@ -243,7 +245,10 @@ test('CLI cache: graph changes invalidate keys; duplicate names and cycles disab
   assert.match(duplicate.stderr, /cache disabled: Incomplete or duplicate/);
   assert.deepEqual(duplicate.generated, names);
   fs.rmSync(path.join(root, 'output/Duplicate'), { recursive: true });
-  write(root, 'output/CycleA/corefn.json', JSON.stringify(corefn('CycleA', ['CycleB'])));
+  const cycleA = corefn('CycleA', ['CycleB'], [], ['main']);
+  cycleA.foreignAnnotations.main = { type: 4 };
+  write(root, 'output/CycleA/corefn.json', JSON.stringify(cycleA));
+  write(root, 'src/CycleA.php', '<?php\n$exports["main"] = function() { echo "cycle\\n"; };\n');
   write(root, 'output/CycleB/corefn.json', JSON.stringify(corefn('CycleB', ['CycleA'])));
   const cycle = build(root);
   assert.match(cycle.stderr, /cache disabled: Cache dependency/);
@@ -285,8 +290,10 @@ test('CLI lifecycle: deleting only CoreFn removes owned PHP on a full hit and re
   const root = fixture(t);
   build(root);
   const original = output(root);
-  const retired = corefn('Retired');
+  const retired = corefn('Retired', [], [], ['main']);
+  retired.foreignAnnotations.main = { type: 4 };
   retired.modulePath = 'packages/retired/src/Retired.purs';
+  write(root, 'src/Retired.php', '<?php\n$exports["main"] = function() { echo "retired\\n"; };\n');
   write(root, 'packages/retired/composer.json', '{"require":{"fixture/retired":"^1"}}');
   write(root, 'output/Retired/corefn.json', JSON.stringify(retired));
   assert.deepEqual(build(root).counts, [0, 4, 4]);
@@ -318,7 +325,7 @@ test('CLI lifecycle: deleting only CoreFn removes owned PHP on a full hit and re
 test('CLI lifecycle: main selection, automatic discovery, lost exports and deleted mains match fresh builds', t => {
   const root = fixture(t);
   writeMain(root, 'Alternate', 'alternate\n');
-  for (const [main, counts] of [[null, [0, 4, 4]], ['Alternate', [0, 4, 4]], ['Main', [0, 4, 4]], [null, [4, 0, 0]]]) {
+  for (const [main, counts] of [[null, [0, 4, 4]], ['Alternate', [0, 1, 1]], ['Main', [0, 3, 3]], [null, [4, 0, 0]]]) {
     const args = ['--bundle', ...(main ? ['--main', main] : [])];
     const result = build(root, args);
     assert.deepEqual(result.counts, counts);
@@ -332,7 +339,9 @@ test('CLI lifecycle: main selection, automatic discovery, lost exports and delet
   build(root);
   assert.equal(fs.existsSync(path.join(root, 'output/Main/main.mod.php')), false);
   assert.equal(fs.existsSync(path.join(root, 'output/Main/main.bundle.php')), false);
-  assert.ok(fs.existsSync(path.join(root, 'output/Main/index.php')));
+  // Main no longer exports main and is not imported by Alternate, so R7
+  // filters its module output as well.
+  assert.equal(fs.existsSync(path.join(root, 'output/Main/index.php')), false);
   matchesFreshUncached(root, ['--bundle'], { Alternate: 'alternate\n' });
 
   fs.unlinkSync(path.join(root, 'output/Alternate/corefn.json'));
@@ -370,7 +379,7 @@ for (const bundleOnly of [false, true]) {
     }
     const obsolete = bundleOnly ? ['Main/main.bundle.php', 'bundle.php'] : ['Main/index.php', 'Main/main.mod.php'];
     for (const file of obsolete) assert.equal(fs.existsSync(path.join(root, directory, file)), false, file);
-    assert.deepEqual(build(root, nextArgs).counts, [3, 0, 0]);
+    assert.deepEqual(build(root, nextArgs).counts, [1, 0, 0]);
     const finalArgs = withOutput(['--bundle']);
     build(root, finalArgs);
     matchesFreshUncached(root, finalArgs, { Alternate: 'alternate\n' }, directory);
@@ -394,7 +403,7 @@ test('CLI lifecycle: missing or non-exported explicit main fails before any emis
 
 test('CLI lifecycle: incomplete or duplicate input defers cleanup; emission failures retain prior ownership', t => {
   const root = fixture(t);
-  write(root, 'output/Retired/corefn.json', JSON.stringify(corefn('Retired')));
+  writeMain(root, 'Retired', 'retired\n');
   build(root);
   fs.unlinkSync(path.join(root, 'output/Retired/corefn.json'));
   write(root, 'output/Broken/corefn.json', '{');

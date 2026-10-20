@@ -32,6 +32,7 @@ import Effect.Ref (Ref)
 import Effect.Ref as Ref
 import Node.FS.Aff as FS
 import Phpurs.BuildProfile as Profile
+import Phpurs.Printer.Runtime as Runtime
 import Phpurs.CodeGen (translateWithContracts)
 import Phpurs.ForeignTraversals (Traversals)
 import Phpurs.GenNativeForeign (genForeignModule)
@@ -62,7 +63,7 @@ type BuildRefs =
 newBuildRefs :: Effect BuildRefs
 newBuildRefs = do
   outputs <- newOutputTracker
-  bundleContentRef <- Ref.new "<?php\n\n"
+  bundleContentRef <- Ref.new Runtime.bundleHeader
   bundleModulesRef <- Ref.new []
   globalAritiesRef <- Ref.new Map.empty
   backendModulesRef <- Ref.new Map.empty

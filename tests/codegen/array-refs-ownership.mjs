@@ -8,6 +8,7 @@ import {spawnSync} from 'node:child_process';
 import * as P from '../../output/Phpurs.PhpAst/index.js';
 import {optimize} from '../../output/Phpurs.ArrayRefs/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import {fromFoldable as setFromFoldable} from '../../output/Data.Set/index.js';
 import {fromFoldable as mapFromFoldable} from '../../output/Data.Map/index.js';
 import {foldableArray} from '../../output/Data.Foldable/index.js';
@@ -107,7 +108,7 @@ function shape($n) { return $n === null ? '.' : '(' . shape($n->value1) . ',' . 
 
 function execute(out, harness) {
   const php = printPhpFile(false)('')(out.arities)(out) + '\n' + shapeHelper + '\n' + harness;
-  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {input: php, encoding: 'utf8'});
+  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {input: withRuntime(php), encoding: 'utf8'});
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.equal(result.stderr, '');
   return result.stdout.trim();

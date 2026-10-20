@@ -5,6 +5,7 @@ import * as A from '../../output/Phpurs.PhpAst/index.js';
 import * as T from '../../output/PureScript.Backend.Optimizer.CoreFn/index.js';
 import { optimize } from '../../output/Phpurs.CompactLoops/index.js';
 import { printPhpFile } from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import { Just, Nothing } from '../../output/Data.Maybe/index.js';
 import { empty, insert } from '../../output/Data.Map/index.js';
 import { ordString } from '../../output/Data.Ord/index.js';
@@ -77,7 +78,7 @@ $exception = new \\RuntimeException('seed');
 $throws = $build(2,function($x) use ($exception) { throw $exception; });
 try { $throws(0); } catch (\\RuntimeException $e) { $values[] = $e === $exception; }
 echo json_encode($values,JSON_THROW_ON_ERROR);`;
-  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: php, encoding: 'utf8' });
+  const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(php), encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(result.stderr, '');
   return JSON.parse(result.stdout);

@@ -10,6 +10,7 @@ import {empty as emptySet, size} from '../../output/Data.Set/index.js';
 import {optimize, workerBudget} from '../../output/Phpurs.ThunkFusion/index.js';
 import {translate} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int = T.Int.value, unit = T.Unit.value, thunk = new T.Func([unit],int);
 const typed = (ty,e) => new S.Typed(ty,e);
@@ -180,7 +181,7 @@ assert.ok(!/\$GLOBALS\['[^']*__phpurs_(?:fuse|force)_/.test(dynamicPhp),'no dyna
 assert.match(dynamicPhp,/__phpurs_force_0_build/,'guard emitted');
 assert.match(dynamicPhp,/>= 0/,'runtime non-negative guard');
 assert.match(dynamicPhp,/goto tco_loop_[^;]*fuse/,'dynamic worker remains a loop');
-const dynamicRun=spawnSync('php',[],{input:dynamicPhp+`
+const dynamicRun=spawnSync('php',[],{input:withRuntime(dynamicPhp+`
 $GLOBALS['Data_Unit_unit']=null;
 foreach ([0,1,2,17,127,1000] as $depth) {
   $actual=\\Demo\\majDemo_dynamic($depth);
@@ -188,7 +189,7 @@ foreach ([0,1,2,17,127,1000] as $depth) {
   if(serialize($actual)!==serialize($expected)) throw new \\Exception('dynamic parity');
 }
 echo "Done\\n";
-`,encoding:'utf8'});
+`),encoding:'utf8'});
 assert.equal(dynamicRun.status,0,dynamicRun.stdout+dynamicRun.stderr);
 assert.equal(dynamicRun.stdout,'Done\n');
 
@@ -198,7 +199,7 @@ const guardStart=dynamicPhp.indexOf('function majDemo___phpurs_force_0_build(');
 assert.ok(guardStart>=0);
 const instrumented=dynamicPhp.slice(0,guardStart)+dynamicPhp.slice(guardStart).replaceAll('\\Demo\\majDemo_build(', '\\Demo\\probe_negative(');
 assert.notEqual(instrumented,dynamicPhp,'fallback call instrumented');
-const negativeRun=spawnSync('php',[],{input:instrumented+`
+const negativeRun=spawnSync('php',[],{input:withRuntime(instrumented+`
 $GLOBALS['Data_Unit_unit']=null;
 $GLOBALS['fallbacks']=0;
 function probe_negative($depth,$seed,$input) {
@@ -213,7 +214,7 @@ catch (\\RuntimeException $e) { $caught=true; if($e!==$GLOBALS['sentinel']) thro
 if(!$caught || $GLOBALS['fallbacks']!==1) throw new \\Exception('missing fallback');
 if(\\Demo\\majDemo_dynamic(0)!==11 || \\Demo\\majDemo_dynamic(17)!==28 || $GLOBALS['fallbacks']!==1) throw new \\Exception('nonnegative path');
 echo "Done\\n";
-`,encoding:'utf8'});
+`),encoding:'utf8'});
 assert.equal(negativeRun.status,0,negativeRun.stdout+negativeRun.stderr);
 assert.equal(negativeRun.stdout,'Done\n');
 
@@ -223,7 +224,7 @@ assert.match(capturedPhp,/fuse[^\n]*\(17, \$x1_1\)/,'static consumer passes its 
 const capturedGuardStart=capturedPhp.indexOf('function majDemo___phpurs_force_0_build(');
 assert.ok(capturedGuardStart>=0);
 const capturedInstrumented=capturedPhp.slice(0,capturedGuardStart)+capturedPhp.slice(capturedGuardStart).replaceAll('\\Demo\\majDemo_build(', '\\Demo\\probe_capture(');
-const capturedRun=spawnSync('php',[],{input:capturedInstrumented+`
+const capturedRun=spawnSync('php',[],{input:withRuntime(capturedInstrumented+`
 $GLOBALS['Data_Unit_unit']=null;
 $GLOBALS['fallbacks']=0;
 function probe_capture($depth,$seed,$input) {
@@ -247,7 +248,7 @@ foreach ([-31,0,11,2147483647] as $value) {
 }
 if($GLOBALS['fallbacks']!==4) throw new \\Exception('captured route selection');
 echo "Done\\n";
-`,encoding:'utf8'});
+`),encoding:'utf8'});
 assert.equal(capturedRun.status,0,capturedRun.stdout+capturedRun.stderr);
 assert.equal(capturedRun.stdout,'Done\n');
 
@@ -255,7 +256,7 @@ const foreignValue = name => typed(int,app(new S.Var(q(name,'FFI')),[u()]));
 const orderedCapture = new S.Let(new Just('x3'),3,foreignValue('depth'),
   new S.Let(new Just('x4'),4,foreignValue('seed'),call('build',[loc(3),capturedSeed(loc(4)),u()])));
 assert.equal(size(optimize(mod(orderedCapture)).privateNames),2,'opaque values are fused only after binding');
-const orderedRun=spawnSync('php',[],{input:render(mod(orderedCapture))+`
+const orderedRun=spawnSync('php',[],{input:withRuntime(render(mod(orderedCapture))+`
 $GLOBALS['Data_Unit_unit']=null;
 $events=[];
 $GLOBALS['FFI_depth']=function($u) use (&$events) { $events[]='depth'; return 17; };
@@ -268,7 +269,7 @@ try { \\Demo\\majDemo_entry(null); }
 catch (\\RuntimeException $e) { $caught=true; if($e!==$same) throw new \\Exception('seed exception identity'); }
 if(!$caught || $events!==['depth','seed','depth','throw']) throw new \\Exception('seed exception order');
 echo "Done\\n";
-`,encoding:'utf8'});
+`),encoding:'utf8'});
 assert.equal(orderedRun.status,0,orderedRun.stdout+orderedRun.stderr);
 assert.equal(orderedRun.stdout,'Done\n');
 const callbackEntry = new Tuple('observe',typed(new T.Func([thunk],int),abs([0],typed(int,consume(17,loc(0,thunk))))));
@@ -276,7 +277,7 @@ const php=render(mod(consume(),builder(),[{recursive:false,bindings:[callbackEnt
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_fuse_/.test(php),'no private globals');
 assert.match(php,/goto tco_loop_[^;]*fuse/,'worker becomes a loop');
 assert.match(php,/fuse[^\n]*\(17, 11\)/,'consumer passes scalars');
-const run=spawnSync('php',[],{input:php+`
+const run=spawnSync('php',[],{input:withRuntime(php+`
 $GLOBALS['Data_Unit_unit'] = null;
 if (\\Demo\\majDemo_entry(null) !== 28) throw new \\Exception('fused result');
 $seedCalls = 0; $capture = 4;
@@ -301,7 +302,7 @@ $ordered = \\Demo\\majDemo___phpurs_fuse_0_build(2048, $large);
 $chain = \\Demo\\majDemo_build(2048, fn($u) => $large, null);
 if (serialize($ordered) !== serialize($chain) || serialize($ordered) === serialize($large + 2048)) throw new \\Exception('addition shortcut');
 echo "Done\\n";
-`,encoding:'utf8'});
+`),encoding:'utf8'});
 assert.equal(run.status,0,run.stdout+run.stderr);
 assert.equal(run.stdout,'Done\n');
 
@@ -322,7 +323,7 @@ for (const [operation,amount,seeds,depths] of [
     checks.push(`$a=\\Demo\\majDemo___phpurs_fuse_0_build(${depth}, ${initial}); $b=\\Demo\\majDemo_build(${depth}, fn($u)=>${initial}, null); if (serialize($a)!==serialize($b)) throw new \\Exception('${name}: '.serialize([$a,$b]));`);
   }
   const m=mod(consume(),builder({operation,amount}),[{recursive:false,bindings:entries}]);
-  const result=spawnSync('php',[],{input:render(m)+`\n$GLOBALS['Data_Unit_unit']=null;\n`+checks.join('\n')+'\necho "Done\\n";',encoding:'utf8'});
+  const result=spawnSync('php',[],{input:withRuntime(render(m)+`\n$GLOBALS['Data_Unit_unit']=null;\n`+checks.join('\n')+'\necho "Done\\n";'),encoding:'utf8'});
   assert.equal(result.status,0,result.stdout+result.stderr);
   assert.equal(result.stdout,'Done\n');
 }

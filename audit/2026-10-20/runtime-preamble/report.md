@@ -46,7 +46,7 @@ chaudes. Aucun résultat des 14 benchmarks ne change.
 ## Validation
 
 - Build sans warning.
-- **99/99** contrôles codegen, dont le nouveau `runtime-preamble.mjs`.
+- **100/100** contrôles codegen, dont le nouveau `runtime-preamble.mjs`.
 - Les 14 valeurs passent après régénération.
 - Le test vérifie l'absence des classes/helpers inutilisés et leur présence
   lorsqu'une référence existe, y compris les trois helpers de référence et le

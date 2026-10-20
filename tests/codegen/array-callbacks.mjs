@@ -14,6 +14,7 @@ import {fromForeign,FoldlArray,FilterImpl,ordTraversal} from '../../output/Phpur
 import {optimize,workerBudget} from '../../output/Phpurs.ArrayCallbacks/index.js';
 import {translateWithContracts} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 import {renderModuleState} from '../../output/Phpurs.ModuleState/index.js';
 
 const int=T.Int.value,any=T.Any.value,bool=T.Boolean.value,a=new T.TypeVar('a'),b=new T.TypeVar('b');
@@ -185,7 +186,7 @@ if($overflow[0]!=='TypeError' || !str_contains($overflow[1],'majData_majSemiring
 echo "Done\\n";
 `;
 for(const [name,code] of [['integrated',php],['baseline',render(program,emptySet)]]) {
-  const run=spawnSync('php',['-d','xdebug.mode=off','-d','opcache.enable_cli=0'],{input:code+checks,encoding:'utf8'});
+  const run=spawnSync('php',['-d','xdebug.mode=off','-d','opcache.enable_cli=0'],{input:withRuntime(code+checks),encoding:'utf8'});
   assert.equal(run.status,0,name+': '+run.stdout+run.stderr);
   assert.equal(run.stdout,'Done\n');
   assert.equal(run.stderr,'');

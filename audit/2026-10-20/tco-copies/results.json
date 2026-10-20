@@ -1,0 +1,42 @@
+{
+  "loops": 46,
+  "initCopies": 85,
+  "labelCopies": 85,
+  "jumpAssignments": 58,
+  "changedModules": 20,
+  "removedLines": 174,
+  "renamedReferences": 285,
+  "phpBytesBefore": 1493656,
+  "phpBytesAfter": 1482165,
+  "reductionPercent": 0.77,
+  "valuesValidated": true,
+  "abbaProcesses": 11,
+  "mediansUs": {
+    "control": {
+      "total": 67651,
+      "Tail": 75.814,
+      "Lazy": 815.602,
+      "Poly": 6554.667,
+      "Ack": 45.507,
+      "Primes": 753.016,
+      "List": 67.597,
+      "RBTree": 56146.708,
+      "Records": 1047.55,
+      "State": 2.131
+    },
+    "r4": {
+      "total": 65208,
+      "Tail": 51.102,
+      "Lazy": 518.654,
+      "Poly": 5027.375,
+      "Ack": 36.939,
+      "Primes": 720.622,
+      "List": 64.686,
+      "RBTree": 55629.958,
+      "Records": 1031.784,
+      "State": 2.69
+    }
+  },
+  "totalReductionPercent": 3.61,
+  "decision": "Prototype PHP valid\u00e9 sur les 14 sorties. Non int\u00e9gr\u00e9 : preuve TAST/CodeGen et fixtures de permutation/captures requises."
+}

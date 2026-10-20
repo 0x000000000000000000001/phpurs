@@ -9,10 +9,12 @@ bundle automatique conserve la politique existante de tous les modules chargés.
 | Bundle | Modules | Octets |
 | --- | ---: | ---: |
 | `App/main.bundle.php`, `--main App` | **108** | **1 700 126** |
-| `bundle.php`, automatique | 306 | 5 596 736 |
+| `bundle.php`, automatique (avant filtrage) | 306 | 5 596 736 |
+| `bundle.php`, automatique final (union des mains) | 141 | 1 877 552 |
 
-Le bundle explicite représente **69,62 % d'octets en moins** et **198 modules en
-moins**. L'ordre des namespaces du bundle est identique à l'ordre des
+Avant le filtrage des modules, le bundle explicite représentait **69,62 %
+d'octets en moins** et **198 modules en moins**. Après filtrage, l'union
+automatique finale contient 141 modules et le bundle explicite en garde 108. L'ordre des namespaces du bundle est identique à l'ordre des
 `require_once` de `main.mod.php`.
 
 ## Contrat
@@ -36,7 +38,7 @@ moins**. L'ordre des namespaces du bundle est identique à l'ordre des
   aussi les 14 valeurs.
 - Le test `missing-ffi.mjs` couvre le bundle automatique complet et le bundle
   explicite filtré.
-- Build sans warning ; **99/99** contrôles codegen.
+- Build sans warning ; **100/100** contrôles codegen.
 
 ## Suite
 

@@ -15,6 +15,7 @@ import * as S from '../../output/PureScript.Backend.Optimizer.Syntax/index.js';
 import { fingerprintBytes, NoForeign, ForeignSource, planKeys } from '../../output/Phpurs.CacheKey/index.js';
 import { loadModuleState, saveModuleState } from '../../output/Phpurs.ModuleCache/index.js';
 import { newBuildRefs, publishModuleState } from '../../output/Phpurs.ModuleState/index.js';
+import { bundleHeader } from '../../output/Phpurs.Printer.Runtime/index.js';
 import { runAff } from '../../output/Effect.Aff/index.js';
 import { defaultDirectives } from '../../output/PureScript.Backend.Optimizer.Directives.Defaults/index.js';
 import { write, writeFixture } from './fixtures/cache-inputs.mjs';
@@ -70,7 +71,7 @@ test('module cache: restores constructor graphs, sharing, deep expressions and a
     await run(publishModuleState(both)(root)(refs)(previous));
     await run(publishModuleState(both)(root)(refs)(restored.value0));
     assert.equal(lookup(ordString)('Library_apply')(refs.globalAritiesRef.value).value0, 2);
-    assert.equal(refs.bundleContentRef.value, '<?php\n\n// bundle\n\n// bundle\n\n');
+    assert.equal(refs.bundleContentRef.value, bundleHeader + '// bundle\n\n// bundle\n\n');
     assert.equal(fs.readFileSync(path.join(root, 'Library/index.php'), 'utf8'), state.modularPhp.value0);
     assert.ok(lookup(ordString)('Library')(refs.backendModulesRef.value) instanceof Just);
     const incomplete = { ...restored.value0, bundlePhp: Nothing.value };

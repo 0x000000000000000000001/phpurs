@@ -38,6 +38,7 @@ import Phpurs.NativeCallbacks as NativeCallbacks
 import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
 import Phpurs.PackagePaths (resolvePackagePaths)
 import Phpurs.PurmetaBudget as PurmetaBudget
+import Phpurs.Printer.Runtime as Runtime
 import Phpurs.PurmetaProfile (withProfile)
 import Phpurs.RewriteLimit as RewriteLimit
 import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
@@ -119,7 +120,9 @@ compile toolchain override cliArgs profile = do
     refs <- liftEffect newBuildRefs
 
     -- Composer precedence follows module-name order, not dependency order.
-    let modulePaths = map (\(Module m) -> m.path) $ Array.sortWith (\(Module m) -> m.name) (Array.fromFoldable finalModules)
+    -- Package roots describe the loaded workspace, not the optimized subset:
+    -- narrowing them would invalidate an existing reviewed Composer lock.
+    let modulePaths = map (\(Module m) -> m.path) $ Array.sortWith (\(Module m) -> m.name) (Array.fromFoldable allModules)
     packagePaths <- liftEffect $ resolvePackagePaths { ffiDir: args.mbFfiDir, modulePaths }
     directives <- loadDirectives
     captures <- traverse (\m@(Module core) -> do
@@ -191,6 +194,8 @@ compile toolchain override cliArgs profile = do
 
   Metrics.measure "finalize" \_ -> do
     arities <- liftEffect $ Ref.read refs.globalAritiesRef
+    when (emitModules && not (List.null finalModules)) $ Profile.measureAff profile "php.write" "" \_ ->
+      writeOutput refs.outputs outputDir ModularOutput "runtime.php" Runtime.sharedRuntimeFile
 
     _ <- traverse
       ( \mainMod -> do
@@ -204,7 +209,7 @@ compile toolchain override cliArgs profile = do
               Just _ -> do
                 parts <- liftEffect $ Ref.read refs.bundleModulesRef
                 let bundleSelected = Array.filter (\item -> Set.member item.name reachableSet) parts
-                pure $ "<?php\n\n" <> String.joinWith "\n" (map (\item -> item.code <> "\n") bundleSelected)
+                pure $ Runtime.bundleHeader <> String.joinWith "\n" (map (\item -> item.code <> "\n") bundleSelected)
               Nothing -> liftEffect $ Ref.read refs.bundleContentRef
             code <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
               bundleContent <> "\n" <> printBundleEntryPoint entryPoint

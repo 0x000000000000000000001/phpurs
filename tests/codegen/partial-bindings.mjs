@@ -10,6 +10,7 @@ import {empty as emptySet, size} from '../../output/Data.Set/index.js';
 import {optimize, workerBudget} from '../../output/Phpurs.PartialBindings/index.js';
 import {translate} from '../../output/Phpurs.CodeGen/index.js';
 import {printPhpFile} from '../../output/Phpurs.Printer/index.js';
+import { withRuntime } from './fixtures/runtime.mjs';
 
 const int=T.Int.value, unary=new T.Func([int],int), chain=new T.Func([unary,int],int), factory=new T.Func([int,unary,int],int);
 const typed=(ty,e)=>new S.Typed(ty,e);
@@ -97,7 +98,7 @@ const file=translate([])(mod(consume(),builder(),[dynamic,unknown]));
 const php=printPhpFile(false)('')(file.arities)(file);
 assert.ok(!/\$GLOBALS\['[^']*__phpurs_bind_/.test(php),'no private globals, including partial calls');
 assert.match(php,/bound/,'bound callback emitted');
-const run=spawnSync('php',[],{input:php+`
+const run=spawnSync('php',[],{input:withRuntime(php+`
 if (\\Demo\\majDemo_entry(0) !== 82) throw new \\Exception('closed result');
 foreach ([0,1,2,5,10] as $n) {
  if (\\Demo\\majDemo_dynamic($n) !== 7+3*$n*$n) throw new \\Exception('dynamic result');
@@ -127,6 +128,6 @@ foreach ([fn($x)=>$x+3, fn($x)=>$x-3, fn($x)=>$x*2] as $operation) {
  }
 }
 echo "Done\\n";
-`,encoding:'utf8'});
+`),encoding:'utf8'});
 assert.equal(run.status,0,run.stdout+run.stderr);assert.equal(run.stdout,'Done\n');
 console.log('partial-bindings: typed provenance, refusals, bounds and PHP semantics passed');

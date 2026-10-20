@@ -128,7 +128,7 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
             <> "  if ($__num < "
             <> show arity
             <> ") {\n"
-            <> "    return phpurs_curry_fallback($__fn, \\func_get_args(), "
+            <> "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), "
             <> show arity
             <> ");\n"
             <>

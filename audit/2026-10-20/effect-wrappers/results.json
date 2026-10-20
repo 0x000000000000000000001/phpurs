@@ -1,0 +1,31 @@
+{
+  "modules": 108,
+  "phpFiles": 110,
+  "executeEffectCalls": 157,
+  "modulesWithExecuteEffect": 22,
+  "argumentKinds": {
+    "variable": 43,
+    "parenthesized": 65,
+    "functionCall": 46,
+    "global": 3,
+    "closureLiteral": 0
+  },
+  "topModules": {
+    "Bench": 60,
+    "App": 34,
+    "Data.Array": 21,
+    "Control.Monad.Rec.Class": 9,
+    "Control.Monad.ST.Internal": 6,
+    "Data.Array.ST.Iterator": 6,
+    "Data.Array.ST": 4,
+    "Effect.Console": 3
+  },
+  "testModulesWithOneCall": 14,
+  "closures": 2463,
+  "closuresWithCaptures": 1476,
+  "captureEntries": 2743,
+  "emptyCaptureClauses": 0,
+  "immediateClosureSyntax": 277,
+  "decision": "R3 non prioritaire pour les 14 benchmarks : les appels sont concentrés dans le harness Bench/App et les opérations ST, pas dans les boucles chaudes. Aucun changement de code.",
+  "next": "R4 — réduire les copies de paramètres dans les boucles TCO."
+}

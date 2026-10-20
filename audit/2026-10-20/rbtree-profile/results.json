@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-20",
+  "benchmark": "Test.RBTree",
+  "currentRbtreeMs": 54.607833,
+  "campaignRbtreeUs": 55196.709,
+  "counts": {
+    "insert": 100000,
+    "privateIns": 2283976,
+    "privateT": 499934,
+    "privateBalance": 0,
+    "publicR": 1,
+    "publicB": 1,
+    "peakMemoryBytes": 16777216
+  },
+  "nativeSample": {
+    "tool": "/usr/bin/sample",
+    "activeSamples": 5087,
+    "topSymbols": [
+      ["zend_object_dtor_property", 168],
+      ["ZEND_NEW_SPEC_CONST_UNUSED_HANDLER", 129],
+      ["zend_objects_store_del", 106],
+      ["object_init_ex", 104],
+      ["ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER", 94],
+      ["_emalloc", 77],
+      ["_efree", 61],
+      ["zend_object_std_dtor", 55],
+      ["gc_possible_root", 40]
+    ],
+    "note": "JIT symbols are opaque; Xdebug is not installed in PHP 8.5.4."
+  },
+  "gcOff": {
+    "processes": 5,
+    "normalMedianUs": 56039.25,
+    "gcOffMedianUs": 56073.375,
+    "deltaPercent": 0.06
+  },
+  "decision": "Pas de nouveau levier TCO/GC. Le coût restant est dominé par l'allocation et la destruction des nœuds privés T; prochaine piste : mutation/representation des nœuds privés avec preuve d'absence d'alias."
+}

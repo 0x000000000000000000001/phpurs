@@ -58,5 +58,15 @@
   },
   "prototypeRemovedLines": 174,
   "prototypeRenamedReferences": 285,
-  "closureTest": "tco-direct.mjs"
+  "closureTest": "tco-direct.mjs",
+  "branchReturnPrototype": {
+    "gate": "allowDirect",
+    "phpBytes": 1477266,
+    "totalControlMs": 63.999,
+    "totalBranchMs": 64.028,
+    "totalDeltaPercent": 0.05,
+    "rbtreeControlUs": 54538.416,
+    "rbtreeBranchUs": 54640.208,
+    "decision": "Refus\u00e9 : seuil de 0,5 % total / 2 % RBTree non atteint."
+  }
 }

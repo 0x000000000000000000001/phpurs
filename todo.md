@@ -55,7 +55,9 @@ Priorité : dégrossir avec les gros gains démontrés, puis refaire le classeme
 
 15. **R3 inventorié, non prioritaire** : 157 appels `phpurs_execute_effect` dans 22 modules, surtout Bench/App/Data.Array et les opérations ST ; un seul par module Test.*, aucun dans une boucle chaude. Les 2 463 closures incluent 1 476 captures, sans `use ()` vide. Le gain serait négligeable sur les 14 benchmarks ; un benchmark Effect dédié serait requis avant transformation ([bilan](audit/2026-10-20/effect-wrappers/report.md)). Prochaine micro-étape : R4, copies de paramètres TCO.
 
-16. **R4 intégré** : registres TCO directs hors modules à constructeurs privés et boucles imbriquées ; ABBA 66,20 → **64,07 ms** (−3,21 %), Tail −32,6 %, Lazy −36,9 %, Poly −23,6 %, Ackermann −18,6 %, PHP 1 493 656 → **1 483 431 octets**. Campagne 64,71 ms, runp 64,32 ms, 14 valeurs, 101/101. La garde RBTree préserve ArrayRefs ; `tco-direct.mjs` couvre permutation, repli bufferisé et closure capturant l’ancienne valeur ; les dépendances croisées calculées restent à couvrir ([bilan](audit/2026-10-20/tco-copies/report.md)).
+16. **R4 intégré** : registres TCO directs hors modules à constructeurs privés et boucles imbriquées ; ABBA 66,20 → **64,07 ms** (−3,21 %), Tail −32,6 %, Lazy −36,9 %, Poly −23,6 %, Ackermann −18,6 %, PHP 1 493 656 → **1 483 431 octets**. Campagne 64,71 ms, runp 64,32 ms, 14 valeurs, 101/101. La garde RBTree préserve ArrayRefs ; `tco-direct.mjs` couvre permutation, dépendances croisées calculées, repli bufferisé et closure capturant l’ancienne valeur. Le détour de branche a été mesuré puis refusé ([bilan](audit/2026-10-20/tco-copies/report.md)).
+
+17. **Profil RBTree après R4** : 54,61 ms ABBA / 55,20 ms campagne ; 100k insertions, 2 283 976 appels `ins`, 499 934 nœuds `T` privés, 0 `balance`. L’échantillonnage natif montre allocation/destruction d’objets ; GC désactivé est neutre (+0,06 %). Le prochain levier est la mutation/représentation des nœuds privés `T`, pas les copies TCO ni le GC ([bilan](audit/2026-10-20/rbtree-profile/report.md)).
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
 
@@ -163,13 +165,15 @@ Constat : CodeGen.purs, lignes 270–273 et 306–309, copie arguments → tempo
 Intégré le 20 octobre 2026 : registres TCO directs quand le module n’a pas de constructeurs privés et qu’aucune boucle imbriquée n’est présente ; sinon protocole bufferisé. ABBA 11 processus : total 66,20 → **64,07 ms** (−3,21 %), Tail −32,6 %, Lazy −36,9 %, Poly −23,6 %, Ackermann −18,6 % ; PHP 1 493 656 → **1 483 431 octets** (−0,68 %). Campagne 3 processus 64,71 ms, runp 64,32 ms, 14 valeurs, 101/101. La garde RBTree évite la désactivation d’ArrayRefs (sinon RBTree ~105 ms). Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
 
 - [x] R12 supprime les allers-retours d'entrée devenus inactifs, avec preuve des définitions/usages et garde sur les captures. Les copies des vraies boucles, permutations et temporaires encore utilisés restent présentes ; ce résultat ne clôt pas les points suivants.
-- [ ] Ajouter permutation de paramètres, dépendances croisées, arguments calculés et closure conservant une ancienne valeur de paramètre.
+- [x] Ajouter permutation de paramètres, dépendances croisées, arguments calculés et closure conservant une ancienne valeur de paramètre. `tco-direct.mjs` couvre les quatre cas, y compris le staging avant écriture directe et le repli `__tco_var_*`. Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
 - [ ] Supprimer les affectations identiques, sans autre transformation.
 - [x] Pour une boucle sans capture problématique, affecter les paramètres depuis les temporaires en préservant une mise à jour simultanée. Registres directs uniquement hors constructeurs privés et sans boucle imbriquée ; les arguments restent évalués dans `$__tco_*` avant toute écriture. Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
-- [ ] Remplacer le détour retour/variable/label quand une branche peut retourner directement.
+- [ ] Remplacer le détour retour/variable/label quand une branche peut retourner directement. **Mesuré et refusé** : avec la garde allowDirect, total 63,999 → 64,028 ms (+0,05 %), RBTree +0,19 %, Lazy +1,24 % ; PHP 1 483 431 → 1 477 266 o. Seuil non atteint, code restauré. Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
 - [ ] Dans un changement ultérieur distinct, transformer un cas pair/impair mutuellement terminal en un dispatcher unique ; ne jamais faire traverser un goto entre fonctions PHP.
 
 Mesure : TCO puis ListOps/Records ; ajouter un vrai cas mutuellement récursif. Vérifier profondeur supportée, résultat et anciennes captures, pas seulement le temps.
+
+**R4 clôturé pour l’optimisation** : les registres directs sont intégrés, les tests de permutation/dépendances/closure passent et le détour de branche a été mesuré puis refusé. Les cases restantes (affectations identiques générales, dispatcher mutuel) ne sont pas prioritaires après le profil RBTree.
 
 ## R5 — P2 — Réduire les clones de records avec des preuves locales
 

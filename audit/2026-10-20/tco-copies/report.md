@@ -52,6 +52,23 @@ constructeurs privés (`regions.privateConstructors` non vide). RBTree retrouve
 Les captures de boucles imbriquées restent bufferisées ; aucun nom public ne
 change.
 
+## Détour de branche mesuré et refusé
+
+Un prototype de retour direct depuis les branches terminales a été mesuré avec
+la même garde `allowDirect`. Sans garde, RBTree remontait à ~111 ms ; avec la
+garde, les résultats ABBA à 11 processus donnent :
+
+| Mesure | Contrôle R4 | Branche directe |
+| --- | ---: | ---: |
+| Total | 63,999 ms | 64,028 ms (+0,05 %) |
+| RBTree | 54 538,4 µs | 54 640,2 µs (+0,19 %) |
+| Lazy | 507,5 µs | 513,8 µs (+1,24 %) |
+| PHP | 1 483 431 o | 1 477 266 o |
+
+Le seuil d’intégration (0,5 % total ou 2 % RBTree) n’est pas atteint. Le code
+est restauré ; seul le gain de taille reste anecdotique. Le détour
+retour/variable/label reste donc en l’état.
+
 ## Campagne finale
 
 Campagne à trois processus : **64,707 ms**, 14 sorties validées.

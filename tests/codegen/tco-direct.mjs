@@ -1,6 +1,7 @@
 // Direct TCO registers must stage every new argument before writing parameters.
 import assert from 'node:assert/strict';
 import * as S from '../../output/PureScript.Backend.Optimizer.Syntax/index.js';
+import * as C from '../../output/PureScript.Backend.Optimizer.CoreFn/index.js';
 import { analyze } from '../../output/PureScript.Backend.Optimizer.Codegen.Tco/index.js';
 import { initialContext, translateExpr } from '../../output/Phpurs.CodeGen/index.js';
 import { printExpr } from '../../output/Phpurs.Printer/index.js';
@@ -31,6 +32,16 @@ assert.deepEqual(render(false), [
 ], 'buffered registers keep the old slot protocol');
 
 console.log('tco-direct: permutation staging and buffered fallback passed');
+// Computed arguments that depend on both old parameters are still staged.
+const add = (a, b) => new S.PrimOp(new S.Op2(new S.OpIntNum(S.OpAdd.value), a, b));
+const computed = new S.App(local('f', 0), [add(local('y', 1), new S.Lit(new C.LitInt(1))), add(local('x', 0), local('y', 1))]);
+const computedStmts = translateExpr(context(true))(0)(analyze([])(computed)).stmts.map(printExpr(empty));
+assert.match(computedStmts[0], /^\$__tco_0 = \(\$y_1 \+ 1\)$/);
+assert.match(computedStmts[1], /^\$__tco_1 = \(\$x_0 \+ \$y_1\)$/);
+assert.equal(computedStmts[2], '$x_0 = $__tco_0');
+assert.equal(computedStmts[3], '$y_1 = $__tco_1');
+console.log('tco-direct: computed cross-dependencies staged before writes');
+
 
 // A closure built as a tail argument must capture the old parameter value
 // before the direct register is updated.

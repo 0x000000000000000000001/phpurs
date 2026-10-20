@@ -612,7 +612,8 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
       numFields = Array.length fields
       body = PhpNew absClass (map PhpVar fields)
       safeCtorNameStr = String.replaceAll (Pattern "'") (Replacement "\\'") ctorName
-      singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['__phpurs_data0_" <> safeCtorNameStr <> "']")) body
+      singletonKey = "__phpurs_data0_" <> ctx.moduleName <> "_" <> safeCtorNameStr
+      singletonBody = PhpBinOp "??=" (PhpRaw ("$GLOBALS['" <> singletonKey <> "']")) body
     in
       if numFields == 0 then { stmts: [], expr: singletonBody, nextId } else { stmts: [], expr: PhpFunction [] (map (\n -> { name: n, type_: "" }) fields) "" [ PhpReturn body ], nextId }
 

@@ -31,3 +31,15 @@ assert.deepEqual(render(false), [
 ], 'buffered registers keep the old slot protocol');
 
 console.log('tco-direct: permutation staging and buffered fallback passed');
+
+// A closure built as a tail argument must capture the old parameter value
+// before the direct register is updated.
+const closure = new S.Abs([new S.Pair(new Just('x'), 1)], local('x', 0));
+const capturedCall = new S.App(local('f', 0), [closure]);
+const capturedLoop = { ident: 'f_0', params: ['x_0'], varPrefix: '__tco_var_f_', labelName: 'tco_loop_f', direct: true };
+const capturedContext = { ...initialContext('Demo'), loops: [capturedLoop], isTail: true };
+const captured = translateExpr(capturedContext)(0)(analyze([])(capturedCall)).stmts.map(printExpr(empty));
+assert.match(captured[0], /use \(\$x_0\)/, 'closure captures the old register value');
+assert.equal(captured[1], '$x_0 = $__tco_0', 'direct assignment happens after closure construction');
+assert.equal(captured[2], 'goto tco_loop_f;');
+console.log('tco-direct: closure captures the old parameter value');

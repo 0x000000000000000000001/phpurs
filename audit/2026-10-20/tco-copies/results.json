@@ -57,5 +57,6 @@
     ]
   },
   "prototypeRemovedLines": 174,
-  "prototypeRenamedReferences": 285
+  "prototypeRenamedReferences": 285,
+  "closureTest": "tco-direct.mjs"
 }

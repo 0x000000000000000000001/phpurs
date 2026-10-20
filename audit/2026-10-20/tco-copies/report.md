@@ -1,51 +1,62 @@
 # R4 — Supprimer les copies de paramètres TCO
 
-Le 20 octobre 2026. Prototype sur la sortie R7 active, sans modification du
-générateur. Les 46 boucles TCO passent leurs paramètres par un temporaire
-`$__tco_var_*`, puis recopient le temporaire vers le paramètre au label de
-boucle. Le prototype renomme les références vers les paramètres, supprime les
-initialisations et les recopies, et conserve les affectations de saut déjà
-calculées dans des temporaires.
+Le 20 octobre 2026. Intégré dans `CodeGen` et mesuré sur la sortie R7. Les
+boucles TCO bufferisées passent leurs paramètres par un temporaire
+`$__tco_var_*`, puis recopient le temporaire vers le paramètre au label. La
+version intégrée supprime ce protocole pour 41 boucles sûres et conserve les
+5 boucles restantes (constructeurs privés ou boucles imbriquées).
 
 ## Inventaire
 
 - 46 boucles TCO dans 20 modules.
 - 85 copies d’initialisation et 85 recopies au label.
 - 58 affectations de saut, toutes alimentées par `$__tco_*` ou un littéral.
-- 174 lignes supprimées, 285 références renommées, `__tco_var_*` éliminé.
-- PHP : 1 493 656 → **1 482 165 octets** (−0,77 %).
+- 41 boucles directes, 5 bufferisées ; le prototype textuel avait supprimé 174 lignes et 285 références, l’intégration garde 30 références `__tco_var_*` dans les replis.
+- PHP : 1 493 656 → **1 483 431 octets** (−0,68 %).
+- 30 références `__tco_var_*` restent dans les boucles bufferisées (modules à
+  constructeurs privés et boucles imbriquées).
 
 ## Mesure ABBA, 11 processus
 
-| Test | Contrôle | Prototype | Écart |
+| Test | Contrôle | Intégré | Écart |
 | --- | ---: | ---: | ---: |
-| Tail Call Optimization | 75,81 µs | **51,10 µs** | **−32,60 %** |
-| Lazy Evaluation | 815,60 µs | **518,65 µs** | **−36,41 %** |
-| Polymorphism | 6 554,67 µs | **5 027,38 µs** | **−23,30 %** |
-| Ackermann | 45,51 µs | **36,94 µs** | **−18,83 %** |
-| Primes | 753,02 µs | **720,62 µs** | −4,30 % |
-| List Processing | 67,60 µs | **64,69 µs** | −4,31 % |
-| Records | 1 047,55 µs | **1 031,78 µs** | −1,51 % |
-| RBTree | 56 146,71 µs | **55 629,96 µs** | −0,92 % |
-| **Total** | **67,651 ms** | **65,208 ms** | **−3,61 %** |
+| Tail Call Optimization | 74,73 µs | **50,39 µs** | **−32,57 %** |
+| Lazy Evaluation | 812,71 µs | **512,85 µs** | **−36,90 %** |
+| Polymorphism | 6 457,71 µs | **4 933,75 µs** | **−23,60 %** |
+| Ackermann | 44,64 µs | **36,34 µs** | **−18,60 %** |
+| Primes | 731,41 µs | **719,90 µs** | −1,57 % |
+| List Processing | 66,44 µs | **63,65 µs** | −4,21 % |
+| Records | 1 039,03 µs | **1 026,16 µs** | −1,24 % |
+| RBTree | 54 852,04 µs | **54 607,83 µs** | −0,45 % |
+| **Total** | **66,197 ms** | **64,074 ms** | **−3,21 %** |
 
-State passe de 2,13 à 2,69 µs (+0,56 µs absolus), cellule négligeable.
+State passe de 2,10 à 2,67 µs (+0,57 µs absolus), cellule négligeable.
 Les 14 valeurs passent.
 
-## Avant intégration
+## Intégration et garde RBTree
 
-Le prototype renomme aussi les captures de closures imbriquées qui référencent
-les temporaires extérieurs, notamment dans Primes. Il faut :
+La première tentative activait les registres directs dans toutes les boucles.
+RBTree est alors passé d’environ 55 à 105 ms : `ArrayRefs` ne reconnaissait plus
+les porteurs `__tco_var_*` et désactivait la mutation en place de `ins`. La
+version intégrée désactive donc les registres directs dans les modules à
+constructeurs privés (`regions.privateConstructors` non vide). RBTree retrouve
+55 ms, tout en conservant les gains TCO/Lazy/Poly/Ackermann.
 
-- porter la suppression dans `CodeGen` au niveau de la boucle TCO, pas par
-  réécriture textuelle ;
-- prouver la bijection temporaire/paramètre, l’usage unique des temporaires et
-  l’absence de collision de noms ;
-- conserver les captures par référence et les permutations d’arguments ;
-- ajouter des fixtures pour dépendances croisées, closure capturant l’ancienne
-  valeur, boucles imbriquées et arguments calculés ;
-- replier sur le code actuel si une preuve manque ;
-- rejouer R0/R8/R9/R10/R12, les tests TCO/ListOps/Records et `bin/php/run -c`.
+`LoopContext.direct` est vrai seulement si :
 
-Artefact :
-`/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r4-tco-proto2-20261020`.
+- le module n’a pas de constructeurs privés (garde ArrayRefs) ;
+- aucune boucle TCO imbriquée n’est présente dans le corps ;
+- les arguments de saut sont déjà évalués dans `$__tco_*`, donc l’affectation
+  des paramètres est simultanée et sûre.
+
+Les captures de boucles imbriquées restent bufferisées ; aucun nom public ne
+change.
+
+## Campagne finale
+
+Campagne à trois processus : **64,707 ms**, 14 sorties validées.
+`runp -c` : **64,32 ms**. Les 14 valeurs et **100/100** contrôles codegen
+passent. Le PHP actif fait **110 fichiers / 1 483 431 octets**.
+
+Artefacts : sortie active `run/bak/php/modes/pure/output`, campagne
+`/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/phpurs-r4-campaign-20261020`, contrôle et prototype dans `/private/var/folders/w9/l8bnb22d6c75c401f71djbt00000gn/T/opencode/`.

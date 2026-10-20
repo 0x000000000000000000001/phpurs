@@ -55,7 +55,7 @@ Priorité : dégrossir avec les gros gains démontrés, puis refaire le classeme
 
 15. **R3 inventorié, non prioritaire** : 157 appels `phpurs_execute_effect` dans 22 modules, surtout Bench/App/Data.Array et les opérations ST ; un seul par module Test.*, aucun dans une boucle chaude. Les 2 463 closures incluent 1 476 captures, sans `use ()` vide. Le gain serait négligeable sur les 14 benchmarks ; un benchmark Effect dédié serait requis avant transformation ([bilan](audit/2026-10-20/effect-wrappers/report.md)). Prochaine micro-étape : R4, copies de paramètres TCO.
 
-16. **R4 prototype concluant** : suppression des temporaires TCO sur 46 boucles et 20 modules ; total ABBA 67,65 → **65,21 ms** (−3,61 %), Tail −32,6 %, Lazy −36,4 %, Poly −23,3 %, Ackermann −18,8 %. 174 lignes et 285 références retirées, PHP −0,77 %, 14 valeurs. Reste à intégrer dans CodeGen avec preuve des permutations, captures et collisions ([bilan](audit/2026-10-20/tco-copies/report.md)). Prochaine micro-étape : intégration et fixtures TCO.
+16. **R4 intégré** : registres TCO directs hors modules à constructeurs privés et boucles imbriquées ; ABBA 66,20 → **64,07 ms** (−3,21 %), Tail −32,6 %, Lazy −36,9 %, Poly −23,6 %, Ackermann −18,6 %, PHP 1 493 656 → **1 483 431 octets**. Campagne 64,71 ms, runp 64,32 ms, 14 valeurs, 100/100. La garde RBTree préserve ArrayRefs ; les fixtures dédiées de permutation/closure restent à ajouter ([bilan](audit/2026-10-20/tco-copies/report.md)).
 
 Le TAST v3 est une donnée de départ : ann.type, dataDecls, classDecls et TypeApp portent les types et leurs instanciations. PHPurs exploite déjà dataDecls et certains types primitifs. Mobiliser ces informations pour les signatures, appels et représentations quand une expérience montre un gain important ; un audit général du TAST ne bloque pas R0. Comparer aussi les mesures aux baselines historiques du README d'altbak.pub.
 
@@ -160,12 +160,12 @@ Mesure : benchmark dédié de chaînes Effect/bind/Ref et nombre de closures pro
 
 Constat : CodeGen.purs, lignes 270–273 et 306–309, copie arguments → temporaires → variables de boucle ; lignes 777–778, la boucle recopie vers les paramètres. Les transformations TCO locales et globales sont limitées à un groupe d'une fonction.
 
-Prototype du 20 octobre 2026 : 46 boucles, 170 copies initiales/de label, 174 lignes supprimées et `__tco_var_*` éliminé. PHP −0,77 % et **−3,61 %** sur le total ABBA à 11 processus : Tail −32,6 %, Lazy −36,4 %, Poly −23,3 %, Ackermann −18,8 %, Primes/ListOps −4,3 %. Les 14 valeurs passent. Non intégré : la preuve CodeGen des bijections, captures et collisions reste à écrire. Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
+Intégré le 20 octobre 2026 : registres TCO directs quand le module n’a pas de constructeurs privés et qu’aucune boucle imbriquée n’est présente ; sinon protocole bufferisé. ABBA 11 processus : total 66,20 → **64,07 ms** (−3,21 %), Tail −32,6 %, Lazy −36,9 %, Poly −23,6 %, Ackermann −18,6 % ; PHP 1 493 656 → **1 483 431 octets** (−0,68 %). Campagne 3 processus 64,71 ms, runp 64,32 ms, 14 valeurs, 100/100. La garde RBTree évite la désactivation d’ArrayRefs (sinon RBTree ~105 ms). Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
 
 - [x] R12 supprime les allers-retours d'entrée devenus inactifs, avec preuve des définitions/usages et garde sur les captures. Les copies des vraies boucles, permutations et temporaires encore utilisés restent présentes ; ce résultat ne clôt pas les points suivants.
 - [ ] Ajouter permutation de paramètres, dépendances croisées, arguments calculés et closure conservant une ancienne valeur de paramètre.
 - [ ] Supprimer les affectations identiques, sans autre transformation.
-- [ ] Pour une boucle sans capture problématique, affecter les paramètres depuis les temporaires en préservant une mise à jour simultanée.
+- [x] Pour une boucle sans capture problématique, affecter les paramètres depuis les temporaires en préservant une mise à jour simultanée. Registres directs uniquement hors constructeurs privés et sans boucle imbriquée ; les arguments restent évalués dans `$__tco_*` avant toute écriture. Voir le [bilan](audit/2026-10-20/tco-copies/report.md).
 - [ ] Remplacer le détour retour/variable/label quand une branche peut retourner directement.
 - [ ] Dans un changement ultérieur distinct, transformer un cas pair/impair mutuellement terminal en un dispatcher unique ; ne jamais faire traverser un goto entre fonctions PHP.
 

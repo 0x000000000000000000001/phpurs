@@ -208,7 +208,10 @@ as a partially modeled loop. See [`array-callbacks.mjs`](../tests/codegen/array-
 - `recursiveVars` identifies captures that need PHP references so a closure can
   observe its own eventual initialization.
 - `loops` and `isTail` identify legal tail jumps. Arguments are evaluated into
-  temporaries before loop parameters are reassigned, preserving simultaneous updates.
+  temporaries before loop parameters are reassigned, preserving simultaneous
+  updates. Direct parameter registers are used only outside private-constructor
+  modules and when no nested TCO loop can capture them; other loops keep the
+  buffered `__tco_var_*` slots.
 - `inEffectBlock` says the expression is already inside an effect-executing body.
   Otherwise an effect node is wrapped in a zero-argument closure.
 

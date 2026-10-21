@@ -1,0 +1,22 @@
+{
+  "helper": "tests/codegen/fixtures/cli.mjs",
+  "export": "temporaryRoot",
+  "migrated": [
+    "cache-cli.mjs",
+    "composer-merge.mjs",
+    "file-emission.mjs",
+    "build-profile.mjs",
+    "purmeta-budget.mjs",
+    "purmeta-profile.mjs",
+    "rewrite-limit.mjs",
+    "module-cache.mjs"
+  ],
+  "tests": "102/102",
+  "decision": "Premier helper de cycle de vie partag\u00e9 ; migrations suppl\u00e9mentaires \u00e0 faire.",
+  "helpers": [
+    "temporaryRoot",
+    "runPhp",
+    "snapshotFiles",
+    "snapshotText"
+  ]
+}

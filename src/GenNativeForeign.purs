@@ -14,6 +14,7 @@ import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.Tuple (Tuple(..))
 import Phpurs.CodeGen.Types (exprTypeToPhpType)
+import Phpurs.RuntimeNames as RuntimeNames
 import Phpurs.PhpAst (PhpExpr(..), foreignValueArity)
 import Phpurs.Printer (printExpr, safeFuncName, safeName)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), ModuleName(..))
@@ -128,7 +129,7 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
             <> "  if ($__num < "
             <> show arity
             <> ") {\n"
-            <> "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), "
+            <> "    return \\" <> RuntimeNames.curryFallback <> "($__fn, \\func_get_args(), "
             <> show arity
             <> ");\n"
             <>

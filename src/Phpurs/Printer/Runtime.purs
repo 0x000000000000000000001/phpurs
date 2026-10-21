@@ -7,6 +7,17 @@ import Prelude
 
 import Data.Array as Array
 import Data.String as String
+import Data.String.Pattern (Pattern(..), Replacement(..))
+import Phpurs.RuntimeNames as Names
+
+replaceNames :: String -> String
+replaceNames text =
+  text
+    # String.replaceAll (Pattern "__CURRY__") (Replacement Names.curryFallback)
+    # String.replaceAll (Pattern "__EFFECT__") (Replacement Names.executeEffect)
+    # String.replaceAll (Pattern "__REF_NEW__") (Replacement Names.refNew)
+    # String.replaceAll (Pattern "__REF_READ__") (Replacement Names.refRead)
+    # String.replaceAll (Pattern "__REF_WRITE__") (Replacement Names.refWrite)
 
 -- | Global helpers shared by every module. Generated calls use the fully
 -- | qualified names (`\phpurs_*`); the runtime itself is emitted once.
@@ -39,8 +50,9 @@ dataClasses =
 
 curryFallback :: String
 curryFallback =
-  """if (!\function_exists('phpurs_curry_fallback')) {
-  function phpurs_curry_fallback($fn, $args, $expected) {
+  replaceNames
+    ("""if (!\function_exists('__CURRY__')) {
+  function __CURRY__($fn, $args, $expected) {
     $missing = $expected - \count($args);
 """ <> String.joinWith "" (map (\arity -> specializedCurry (Array.take arity [ "a", "b", "c", "d" ])) (Array.range 1 4)) <>
   """    return function(...$more) use ($fn, $args, $expected) {
@@ -52,11 +64,12 @@ curryFallback =
         }
         return $res;
       }
-      return phpurs_curry_fallback($fn, $merged, $expected);
+      return __CURRY__($fn, $merged, $expected);
     };
   }
 }
 """
+    )
 
 -- | One to four missing arguments use fixed PHP parameters. Larger partial
 -- | applications use the variadic fallback above. Both paths allow extra args.
@@ -70,7 +83,7 @@ specializedCurry args =
     partialCounts = if arity > 1 then Array.range 1 (arity - 1) else []
     partialCalls = map
       (\count -> "        if ($num === " <> show count <> ") { " <> appendArgs (Array.take count args)
-        <> " return phpurs_curry_fallback($fn, $args, $expected); }\n")
+        <> " return __CURRY__($fn, $args, $expected); }\n")
       partialCounts
   in
     "    if ($missing === " <> n <> ") {\n"
@@ -89,28 +102,28 @@ specializedCurry args =
 
 effectHelpers :: String
 effectHelpers =
-  """if (!\function_exists('phpurs_execute_effect')) {
-  function phpurs_execute_effect($val) {
+  replaceNames ("""if (!\function_exists('__EFFECT__')) {
+  function __EFFECT__($val) {
     if (\is_callable($val)) {
       return $val($GLOBALS['Data_Unit_unit']);
     }
     return $val;
   }
 }
-"""
+""")
 
 referenceHelpers :: String
 referenceHelpers =
-  """if (!\function_exists('phpurs_ref_new')) {
-  function phpurs_ref_new($value) {
+  replaceNames ("""if (!\function_exists('__REF_NEW__')) {
+  function __REF_NEW__($value) {
     return (object)['value' => $value];
   }
-  function phpurs_ref_read($ref) {
+  function __REF_READ__($ref) {
     return $ref->value;
   }
-  function phpurs_ref_write($ref, $value) {
+  function __REF_WRITE__($ref, $value) {
     $ref->value = $value;
     return null;
   }
 }
-"""
+""")

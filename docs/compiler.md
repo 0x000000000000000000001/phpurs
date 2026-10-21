@@ -19,6 +19,12 @@ wrong `purs` for PHP generation.
 The local optimizer dependency and sibling library layout are described in
 the [README](../README.md#build-the-backend).
 
+## Architecture
+
+Voir [`architecture.md`](architecture.md) pour la vue d’ensemble du pipeline,
+des frontières FFI et du cycle de vie des sorties, et
+[`development.md`](development.md) pour le build, les tests et le runner.
+
 ## Source map
 
 | Area | Entry point | Responsibility |
@@ -27,6 +33,7 @@ the [README](../README.md#build-the-backend).
 | Main selection | [`Main/Selection.purs`](../src/Main/Selection.purs) | Select exported mains and compute the CoreFn import closure. |
 | Main output lifecycle | [`Main/Outputs.purs`](../src/Main/Outputs.purs) | Write entrypoints and bundles, merge Composer roots and finalize owned outputs. |
 | Main options | [`Main/Options.purs`](../src/Main/Options.purs) | Parse CLI flags, budgets, output mode and directory. |
+| Main preparation | [`Main/Prepare.purs`](../src/Main/Prepare.purs) | Resolve package roots, capture FFI evidence, callbacks/traversals and prepare cache. |
 | Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO and lower bindings/expressions to PHP AST. |
 | Translation context | [`CodeGen/Context.purs`](../src/Phpurs/CodeGen/Context.purs) | Shared translation state, loop context and lexical/evaluation position. |
 | TCO helpers | [`CodeGen/Tco.purs`](../src/Phpurs/CodeGen/Tco.purs) | Detect nested loops, select tail targets and emit loop jumps/entry slots. |
@@ -42,13 +49,15 @@ the [README](../README.md#build-the-backend).
 | Ownership rewrite | [`ArrayRefs/Rebuild.purs`](../src/Phpurs/ArrayRefs/Rebuild.purs) | Rewrite owned-node rebuilds into in-place field writes. |
 | Ownership helpers | [`ArrayRefs/Support.purs`](../src/Phpurs/ArrayRefs/Support.purs) | Shared expression traversal and field-accessor helpers. |
 | Ownership analysis | [`ArrayRefs/Analysis.purs`](../src/Phpurs/ArrayRefs/Analysis.purs) | Scan passability, TCO carriers, call sites and ownership fixpoint. |
-| PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
+| PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types, including named `PhpNull`. |
 | PHP AST traversal | [`PhpAst/Traversal.purs`](../src/Phpurs/PhpAst/Traversal.purs) | Enumerate children with explicit scope boundaries and map expression children or statement blocks. |
 | PHP printing API | [`Printer.purs`](../src/Phpurs/Printer.purs) | Public facade for expression, declaration and module printing. |
 | PHP expressions | [`Printer/Expr.purs`](../src/Phpurs/Printer/Expr.purs) | Render expressions, captures, currying and PHP names. |
 | PHP declarations | [`Printer/Decl.purs`](../src/Phpurs/Printer/Decl.purs) | Render declarations, exact bodies and complete module layout. |
-| Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes and the shared global curry/effect/reference runtime. |
+| Runtime names | [`RuntimeNames.purs`](../src/Phpurs/RuntimeNames.purs) | Canonical PHP helper names used by code generation and printing. |
+| Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble data classes and the global runtime from canonical helper names. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
+| JS/PureScript boundaries | [`ffi-boundaries.md`](ffi-boundaries.md) | Contracts for JavaScript FFI modules, errors and data ownership. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
 | Output lifecycle | [`OutputManifest.purs`](../src/Phpurs/OutputManifest.purs) | Record generated PHP ownership and retire unchanged obsolete outputs after successful finalization. |

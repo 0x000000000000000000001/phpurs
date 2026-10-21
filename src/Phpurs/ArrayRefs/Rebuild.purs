@@ -93,4 +93,4 @@ mutateRebuilds privateClasses promoted body = rewriteList assigns body
 
   localAt args j = case Array.index args j of
     Just (PhpVar v) -> PhpVar v
-    _ -> PhpRaw "null"
+    _ -> PhpNull

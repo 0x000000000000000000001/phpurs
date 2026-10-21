@@ -28,6 +28,7 @@ data PhpExpr
   | PhpNumber Number
   | PhpString String
   | PhpBoolean Boolean
+  | PhpNull
   | PhpArray (Array PhpExpr)
   | PhpAssocArray (Array { key :: String, value :: PhpExpr })
   | PhpPropertyAccess PhpExpr String

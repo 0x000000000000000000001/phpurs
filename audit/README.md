@@ -131,4 +131,13 @@ Le backlog de performance complet est archivé dans
 | [Extraction de Main.Selection](2026-10-20/main-selection/report.md) | Intégré | Sélection des mains et fermeture CoreFn isolées ; 110 fichiers PHP identiques, 101/101 tests. |
 | [Extraction de Main.Outputs](2026-10-20/main-outputs/report.md) | Intégré | Finalisation des sorties isolée ; 110 fichiers PHP identiques, 101/101 tests. |
 | [Extraction de Main.Options](2026-10-20/main-options/report.md) | Intégré | Parsing CLI et budgets isolés ; 110 fichiers PHP identiques, 101/101 tests. |
+| [Extraction de Main.Prepare](2026-10-20/main-prepare/report.md) | Intégré | Préparation FFI/cache isolée ; 110 fichiers PHP identiques, 101/101 tests. |
+| [Noms canoniques du runtime PHP](2026-10-20/runtime-names/report.md) | Intégré | Noms des helpers centralisés et vérifiés ; 110 fichiers PHP identiques, 101/101 tests. |
+| [Templates du runtime paramétrés](2026-10-20/runtime-templates/report.md) | Intégré | Runtime généré depuis les noms canoniques ; 110 fichiers PHP identiques, 101/101 tests. |
+| [Nœud AST PhpNull](2026-10-20/php-null/report.md) | Intégré | Null promu en nœud AST nommé ; 110 fichiers PHP identiques, 101/101 tests. |
+| [Couverture des erreurs FFI](2026-10-20/ffi-errors/report.md) | Rapport | Audit des chemins d’erreur et test ComposerMerge ajouté ; 102/102 tests. |
+| [Helper de fixtures temporaires](2026-10-20/test-helpers/report.md) | Intégré | Premier helper partagé et migrations cache-cli/composer-merge ; 20/20 ciblés. |
+| [Familles de tests codegen](2026-10-20/test-families/report.md) | Rapport | 36 fichiers classés en direct/CLI/FFI et conventions documentées. |
+| [Inventaire des flags et scripts](2026-10-20/surface-inventory/report.md) | Rapport | Surface active recensée ; aucun flag/script actif obsolète. |
+| [Clôture du cleanup](2026-10-20/cleanup-closeout/report.md) | Rapport | Bilan structurel, tests et décisions de clôture de la maintenabilité. |
 

@@ -6,6 +6,7 @@ module Phpurs.CodeGen.Effects
   ) where
 
 import Phpurs.PhpAst (PhpExpr(..))
+import Phpurs.RuntimeNames as RuntimeNames
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoExpr(..))
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..)) as Syn
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..))
@@ -30,4 +31,4 @@ isEffectNode (TcoExpr _ syntax) = case syntax of
 executeIfOpaque :: TcoExpr -> PhpExpr -> PhpExpr
 executeIfOpaque expr phpExpr =
   if isEffectNode expr then phpExpr
-  else PhpCall (PhpRaw "\\phpurs_execute_effect") [ phpExpr ]
+  else PhpCall (PhpRaw (RuntimeNames.qualified RuntimeNames.executeEffect)) [ phpExpr ]

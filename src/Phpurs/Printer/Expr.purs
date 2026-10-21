@@ -26,6 +26,7 @@ import Data.Array as Array
 import Data.Tuple (Tuple(..))
 import Data.Foldable (foldl)
 import Phpurs.PhpAst (PhpExpr(..), foreignValueArity)
+import Phpurs.RuntimeNames as RuntimeNames
 import Phpurs.PhpAst.Traversal (mapBlocks)
 
 foreign import showInt32Impl :: Int -> String
@@ -96,7 +97,7 @@ genNativeCurryWithRoot compactRoot ctx name args retType stmts =
       "  $__num = \\func_num_args();\n" <>
       "  $__fn = __NAMESPACE__ . '\\\\' . '" <> name <> "';\n" <>
       "  if ($__num < " <> nStr <> ") {\n" <>
-      "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
+      "    return \\" <> RuntimeNames.curryFallback <> "($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
       "  }\n" <>
       printCurryStatements ctx stmts <>
       "  __end:\n" <>
@@ -142,7 +143,7 @@ curryBody ctx nArgs stmts =
     "  $__num = \\func_num_args();\n" <>
     (if nArgs == 1 then "" else
       "  if ($__num < " <> nStr <> ") {\n" <>
-      "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n  }\n") <>
+      "    return \\" <> RuntimeNames.curryFallback <> "($__fn, \\func_get_args(), " <> nStr <> ");\n  }\n") <>
     printCurryStatements ctx stmts <>
     "  __end:\n" <>
     "  return $__num > " <> nStr <> " ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n"
@@ -253,6 +254,7 @@ printExprWith ctx expr = case expr of
     s -> s
   PhpString s -> "\"" <> escapePhpStringImpl s <> "\""
   PhpBoolean b -> if b then "true" else "false"
+  PhpNull -> "null"
   PhpArray arr -> "[" <> joinWith ", " (map (printExprWith ctx) arr) <> "]"
   PhpAssocArray arr -> "(object)[" <> joinWith ", " (map (\item -> "\"" <> safeName item.key <> "\" => " <> printExprWith ctx item.value) arr) <> "]"
   PhpPropertyAccess e prop -> "(" <> printExprWith ctx e <> ")->{'" <> safeName prop <> "'}"

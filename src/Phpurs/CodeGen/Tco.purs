@@ -52,7 +52,7 @@ translateTailJump loop args =
       args.exprs
   in
     { stmts: args.stmts <> saveArgs <> assignParams <> [ PhpGoto loop.labelName ]
-    , expr: PhpRaw "null"
+    , expr: PhpNull
     , nextId: args.nextId + Array.length args.exprs
     }
 

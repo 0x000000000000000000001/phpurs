@@ -1,0 +1,10 @@
+{
+  "module": "Phpurs.Printer.Runtime",
+  "lines": 129,
+  "placeholders": ["__CURRY__","__EFFECT__","__REF_NEW__","__REF_READ__","__REF_WRITE__"],
+  "nameSource": "Phpurs.RuntimeNames",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Les templates du runtime sont paramétrés par les constantes ; aucun littéral de nom ne reste dans Runtime.purs."
+}

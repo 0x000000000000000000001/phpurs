@@ -1,0 +1,12 @@
+{
+  "modules": 14,
+  "explicitErrorTests": [
+    "ComposerMerge","BuildProfile","CacheKey","FileEmission","ModuleCache",
+    "OutputManifest","PackagePaths","PurmetaBudget","RewriteLimit"
+  ],
+  "pureNoErrorPath": ["BuildInputs","FreeVars","Metrics","Printer/Expr"],
+  "newTest": "tests/codegen/composer-merge.mjs",
+  "covered": "malformed and missing composer manifests, ordered precedence",
+  "tests": "102/102",
+  "remaining": "BuildInputs/PackagePaths filesystem failures are exercised indirectly; FreeVars has no explicit error contract."
+}

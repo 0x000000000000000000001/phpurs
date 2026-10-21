@@ -71,6 +71,7 @@ simplifyReturns original = clean 4 (settle 16 original)
         PhpGoto l -> Just l
         _ -> Nothing) ns
       keep = case _ of
+        PhpAssign v PhpNull -> Array.elem v reads
         PhpAssign v (PhpRaw "null") -> Array.elem v reads
         PhpLabel l -> Array.elem l jumps
         _ -> true
@@ -108,6 +109,7 @@ leafNode = case _ of
   PhpTernary _ _ _ -> true
   PhpReturn _ -> true
   PhpBinOp _ _ _ -> true
+  PhpNull -> true
   PhpRaw "null" -> true
   PhpNew _ _ -> true
   PhpSwitch _ _ _ -> true

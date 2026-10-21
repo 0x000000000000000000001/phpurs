@@ -54,7 +54,7 @@ lower names file
   | otherwise = file { decls = map (\d -> d { expression = go d.expression }) file.decls }
   where
   go expr = case mapChildren go expr of
-    PhpNew name [] | Map.lookup name names == Just true -> PhpRaw "null"
+    PhpNew name [] | Map.lookup name names == Just true -> PhpNull
     PhpInstanceOf value name | Just empty <- Map.lookup name names ->
-      PhpBinOp (if empty then "===" else "!==") value (PhpRaw "null")
+      PhpBinOp (if empty then "===" else "!==") value (PhpNull)
     other -> other

@@ -1,0 +1,8 @@
+{
+  "cliFlags": ["--main","--autoload-path","--ffi-dir","--output","--rewrite-limit","--bundle","--bundle-only","--verbose","--no-cache","--profile-build","--profile-purmeta","--purmeta-cache-mib"],
+  "testEnv": ["PHPURS_TEST_CLI","PHPURS_CLI_PROBE","PHPURS_PURMETA_PROBE","PHPURS_TEST_CACHE_CONFIG","PHPURS_TEST_IO_ERROR","GOPURS_JOBS"],
+  "tools": ["tools/bundle.mjs"],
+  "obsoleteFound": [],
+  "historicalOnly": ["--dce-exports","--no-dce-exports","shared runtime flag"],
+  "decision": "Aucun flag ou script actif obsolète identifié ; aucune suppression."
+}

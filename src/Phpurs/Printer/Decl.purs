@@ -16,6 +16,7 @@ import Data.Array (filter, length, mapWithIndex)
 import Data.Array as Array
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
 import Phpurs.PhpAst.Traversal (children)
+import Phpurs.RuntimeNames as RuntimeNames
 import Phpurs.Printer.Expr (PrinterContext, exactSuffix, genNativeCurry, genNativeCurryWithRoot, printExprWith, printReturnType, resolveContinues, safeFuncName, safeName)
 import Phpurs.Printer.Runtime as Runtime
 
@@ -76,7 +77,7 @@ genExactWrapper name args retType =
     "  $__num = \\func_num_args();\n" <>
     "  $__fn = __NAMESPACE__ . '\\\\' . '" <> safeFuncName name <> "';\n" <>
     "  if ($__num < " <> nStr <> ") {\n" <>
-    "    return \\phpurs_curry_fallback($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
+    "    return \\" <> RuntimeNames.curryFallback <> "($__fn, \\func_get_args(), " <> nStr <> ");\n" <>
     "  }\n" <>
     "  $__res = " <> safeFuncName name <> exactSuffix <> "(" <> callArgs <> ");\n" <>
     "  return " <> nStr <> " < $__num ? $__res(...\\array_slice(\\func_get_args(), " <> nStr <> ")) : $__res;\n" <>
@@ -157,14 +158,14 @@ printPhpFile isBundle ffiString allArities file =
     body = ffiString <> "\n\n" <> rawDeclsStr <> "\n\n" <> decls
     mentions token = not (isNothing (indexOf (Pattern token) body))
     usesHelpers =
-      mentions "phpurs_curry_fallback" ||
-      mentions "phpurs_execute_effect" ||
-      mentions "phpurs_ref_new" ||
-      mentions "phpurs_ref_read" ||
-      mentions "phpurs_ref_write"
+      mentions RuntimeNames.curryFallback ||
+      mentions RuntimeNames.executeEffect ||
+      mentions RuntimeNames.refNew ||
+      mentions RuntimeNames.refRead ||
+      mentions RuntimeNames.refWrite
     runtimeRequire =
       if isBundle || not usesHelpers then ""
-      else "if (!\\function_exists('phpurs_curry_fallback') || !\\function_exists('phpurs_execute_effect') || !\\function_exists('phpurs_ref_new')) require_once __DIR__ . '/../runtime.php';\n"
+      else "if (!\\function_exists('" <> RuntimeNames.curryFallback <> "') || !\\function_exists('" <> RuntimeNames.executeEffect <> "') || !\\function_exists('" <> RuntimeNames.refNew <> "')) require_once __DIR__ . '/../runtime.php';\n"
     dataPreamble = if mentions "Phpurs_Data" then Runtime.dataClasses else ""
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"

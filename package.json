@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "spago build && node tools/bundle.mjs",
-    "test:codegen": "node --test --test-concurrency=1 tests/codegen/*.mjs",
+    "test:codegen": "node --test --test-concurrency=1 tests/codegen/direct/*.mjs tests/codegen/cli/*.mjs tests/codegen/ffi/*.mjs",
     "prepare": "npm run build"
   },
   "dependencies": {

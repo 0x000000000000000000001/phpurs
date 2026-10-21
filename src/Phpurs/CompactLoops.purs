@@ -75,6 +75,7 @@ optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret bo
             PhpSwitch s cs d -> clean s && all (\c -> all clean c.matchCases && all safeOuter c.stmts) cs && all safeOuter (fromMaybe [] d)
             PhpGoto _ -> true
             PhpLabel _ -> true
+            PhpNull -> true
             PhpRaw "null" -> true
             PhpRaw "" -> true
             e -> clean e
@@ -117,6 +118,7 @@ safeInner tracked = go
     PhpNumber _ -> true
     PhpString _ -> true
     PhpBoolean _ -> true
+    PhpNull -> true
     PhpRaw "null" -> true
     PhpRaw "" -> true
     PhpCall (PhpVar v) xs | Array.elem v tracked -> all (\e -> not (tainted e) && go e) xs

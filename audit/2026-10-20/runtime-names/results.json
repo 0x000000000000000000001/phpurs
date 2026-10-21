@@ -1,0 +1,9 @@
+{
+  "module": "Phpurs.RuntimeNames",
+  "names": ["phpurs_curry_fallback","phpurs_execute_effect","phpurs_ref_new","phpurs_ref_read","phpurs_ref_write"],
+  "callSitesUpdated": ["CodeGen","CodeGen/Effects","Printer/Expr","Printer/Decl","GenNativeForeign"],
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "remaining": "Les définitions littérales restent dans Printer/Runtime.purs ; un test vérifie que les noms canoniques y existent."
+}

@@ -37,6 +37,7 @@ supportedChildren = case _ of
   PhpNumber _ -> Just []
   PhpString _ -> Just []
   PhpBoolean _ -> Just []
+  PhpNull -> Just []
   PhpRaw "null" -> Just []
   PhpRaw "" -> Just []
   -- This exact CodeGen diagnostic reads no locals and executes no user code.
@@ -87,6 +88,7 @@ pureResult constructors = go
     PhpNumber _ -> true
     PhpString _ -> true
     PhpBoolean _ -> true
+    PhpNull -> true
     PhpRaw "null" -> true
     PhpPropertyAccess e _ -> go e
     PhpBinOp _ a b -> go a && go b

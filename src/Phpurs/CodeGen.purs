@@ -41,6 +41,7 @@ import Phpurs.NativeCallbacks (Callbacks)
 import Phpurs.NullableConstructors as Nullable
 import Phpurs.PartialBindings as PartialBindings
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
+import Phpurs.RuntimeNames as RuntimeNames
 import Phpurs.StateFusion as StateFusion
 import Phpurs.TailInline as TailInline
 import Phpurs.ThunkFusion as ThunkFusion
@@ -215,7 +216,7 @@ tryFusedUpdate ctx nextId path fields props =
           { stmts: built.stmts
           , expr: PhpAssocArray (map (\(Tuple label _) ->
               { key: label
-              , value: fromMaybe (PhpRaw "null") (Map.lookup label built.values)
+              , value: fromMaybe (PhpNull) (Map.lookup label built.values)
               }) fields)
           , nextId: built.nextId
           }
@@ -403,7 +404,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
         bindings
       newBound = foldl (\acc pair -> Map.insert pair.oldName pair.newName acc) bound oldNewPairs
       recCtx = ctx { recursiveVars = recVars <> map _.newName oldNewPairs, boundVars = newBound }
-      initStmts = map (\pair -> PhpAssign pair.newName (PhpRaw "null")) oldNewPairs
+      initStmts = map (\pair -> PhpAssign pair.newName (PhpNull)) oldNewPairs
       -- Loop lowering handles a single recursive function. Match that shape
       -- directly rather than constructing and searching a singleton loop table.
       loopBinding = case bindings of
@@ -514,7 +515,7 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
     in case extractMatch accPairs.stmts finalDef of
       Just matchExpr -> { stmts: [], expr: matchExpr, nextId: accPairs.nextId }
       Nothing ->
-        { stmts: [ PhpAssign tmpVar (PhpRaw "null") ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
+        { stmts: [ PhpAssign tmpVar (PhpNull) ] <> accPairs.stmts <> finalDef, expr: PhpVar tmpVar, nextId: accPairs.nextId }
 
   Update e props ->
     let
@@ -580,22 +581,22 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
   PrimEffect effect -> case effect of
     EffectRefNew val ->
       let res = translateValue ctx nextId val
-      in { stmts: res.stmts, expr: PhpCall (PhpRaw "\\phpurs_ref_new") [ res.expr ], nextId: res.nextId }
+      in { stmts: res.stmts, expr: PhpCall (PhpRaw (RuntimeNames.qualified RuntimeNames.refNew)) [ res.expr ], nextId: res.nextId }
     EffectRefRead ref ->
       let res = translateValue ctx nextId ref
-      in { stmts: res.stmts, expr: PhpCall (PhpRaw "\\phpurs_ref_read") [ res.expr ], nextId: res.nextId }
+      in { stmts: res.stmts, expr: PhpCall (PhpRaw (RuntimeNames.qualified RuntimeNames.refRead)) [ res.expr ], nextId: res.nextId }
     EffectRefWrite ref val ->
       let
         resRef = translateValue ctx nextId ref
         resVal = translateValue ctx resRef.nextId val
       in
         { stmts: resRef.stmts <> resVal.stmts
-        , expr: PhpCall (PhpRaw "\\phpurs_ref_write") [ resRef.expr, resVal.expr ]
+        , expr: PhpCall (PhpRaw (RuntimeNames.qualified RuntimeNames.refWrite)) [ resRef.expr, resVal.expr ]
         , nextId: resVal.nextId
         }
-  PrimUndefined -> { stmts: [], expr: PhpRaw "null", nextId }
+  PrimUndefined -> { stmts: [], expr: PhpNull, nextId }
   Syn.TypeApp a _ -> translateExpr ctx nextId a
-  Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }
+  Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpNull, nextId }
   Typed ty a -> translateTyped ctx nextId ty a
 
 -- | Main translation function.

@@ -1,0 +1,17 @@
+{
+  "testFiles": 36,
+  "tests": "102/102",
+  "families": {
+    "direct": 24,
+    "cli": 10,
+    "ffi": 2
+  },
+  "readme": "tests/codegen/README.md",
+  "decision": "Les trois familles sont s\u00e9par\u00e9es ; script et imports ajust\u00e9s.",
+  "moved": [
+    "direct/",
+    "cli/",
+    "ffi/"
+  ],
+  "command": "npm run test:codegen (race + cli)"
+}

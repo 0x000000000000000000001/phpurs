@@ -4,13 +4,13 @@ module Main (main, mainWithCache, mainWithToolchain) where
 import Prelude
 
 import Data.Array as Array
+import Data.Either (Either(..))
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (unwrap)
 import Data.Set as Set
 import Data.String as String
 import Data.String.Pattern (Pattern(..))
-import Data.Traversable (traverse)
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff_, throwError)
 import Effect.Class (liftEffect)
@@ -25,6 +25,7 @@ import Main.Selection as Selection
 import Phpurs.AstMetrics (countModuleNodes)
 import Phpurs.BuildInputs (loadInputsWithProfile)
 import Phpurs.BuildProfile as Profile
+import Phpurs.CacheKey (Toolchain)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
 import Phpurs.ModuleState (publishModuleStateWithProfile, printModuleState, translateModuleStateWithContracts, supportsEmission)

@@ -1,0 +1,8 @@
+{
+  "constructor": "PhpNull",
+  "sourceReplacements": "all CodeGen/pass null literals",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Null est un nœud AST nommé ; PhpRaw \"null\" reste accepté par les passes pour compatibilité."
+}

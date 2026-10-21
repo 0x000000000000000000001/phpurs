@@ -1,0 +1,10 @@
+{
+  "mainBeforeLines": 180,
+  "mainAfterLines": 146,
+  "prepareLines": 101,
+  "module": "Main.Prepare",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Captures FFI, callbacks, chemins de paquets et cache isolés."
+}

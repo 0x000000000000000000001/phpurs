@@ -44,6 +44,7 @@ childrenWithScope scope = case _ of
   PhpNumber _ -> []
   PhpString _ -> []
   PhpBoolean _ -> []
+  PhpNull -> []
   PhpArray xs -> xs
   PhpAssocArray xs -> map _.value xs
   PhpPropertyAccess e _ -> [ e ]
@@ -89,6 +90,7 @@ mapChildren f = case _ of
   PhpNumber n -> PhpNumber n
   PhpString s -> PhpString s
   PhpBoolean b -> PhpBoolean b
+  PhpNull -> PhpNull
   PhpArray xs -> PhpArray (map f xs)
   PhpAssocArray xs -> PhpAssocArray (map (\x -> x { value = f x.value }) xs)
   PhpPropertyAccess e key -> PhpPropertyAccess (f e) key

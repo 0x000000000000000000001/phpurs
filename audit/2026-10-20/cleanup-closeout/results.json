@@ -1,0 +1,11 @@
+{
+  "codegenLines": 764,
+  "arrayRefsLines": 81,
+  "printerFacadeLines": 28,
+  "mainLines": 146,
+  "testFiles": 36,
+  "testFamilies": {"direct":24,"cli":10,"ffi":2},
+  "tests": "102/102",
+  "build": "OK, no warnings",
+  "decisions": ["branch extraction deferred","remaining PhpRaw intentional","FFI errors covered or documented","test families and helpers consolidated"]
+}

@@ -57,8 +57,9 @@ objectif actif ; les bilans historiques restent dans
   l’algorithme. `CodeGen.purs` 902 → **855 lignes**, module TCO de 68 lignes,
   101/101 tests, 110 fichiers PHP identiques
   ([bilan](audit/2026-10-20/codegen-tco/report.md)).
-- [ ] Extraire la traduction des branches et des jonctions dans un module dédié
-  si la séparation précédente réduit réellement les dépendances.
+- [x] Évaluer l’extraction des branches/jonctions : non retenue, car elle
+  imposerait des callbacks dans le noyau récursif sans réduire la complexité.
+  Décision consignée dans [le bilan de clôture](audit/2026-10-20/cleanup-closeout/report.md).
 - [x] Extraire la détection/le rendu Effect dans `CodeGen/Effects.purs`.
   `CodeGen.purs` 855 → **834 lignes**, module Effects de 33 lignes,
   101/101 tests, 110 fichiers PHP identiques
@@ -88,45 +89,78 @@ objectif actif ; les bilans historiques restent dans
 - [x] Extraire les options CLI, budgets et flags dans `Main/Options.purs`.
   `Main.purs` 183 → **180 lignes**, 101/101 tests, 110 fichiers PHP identiques
   ([bilan](audit/2026-10-20/main-options/report.md)).
-- [ ] Extraire la préparation des captures FFI/callbacks et du cache de
-  `Main.purs`.
-- [ ] Après chaque extraction, supprimer les imports devenus inutiles et
-  mettre à jour les tests directs.
+- [x] Extraire la préparation des captures FFI/callbacks et du cache dans
+  `Main/Prepare.purs`. `Main.purs` 180 → **146 lignes**, 101/101 tests,
+  110 fichiers PHP identiques ([bilan](audit/2026-10-20/main-prepare/report.md)).
+- [x] Nettoyer les imports devenus inutiles et mettre à jour les tests directs
+  après les extractions ; build sans warning.
 
 ## Phase 3 — Rendre les contrats lisibles
 
-- [ ] Centraliser les noms des helpers runtime PHP (`\phpurs_*`) et supprimer
-  les chaînes dupliquées entre générateur, printer et tests.
-- [ ] Remplacer les `PhpRaw` récurrents par des constructeurs d’AST nommés ;
-  conserver `PhpRaw` pour le PHP réellement opaque.
-- [ ] Documenter les frontières JS/PureScript : entrées, sorties, erreurs,
-  mutations et fonctions publiques.
-- [ ] Donner à chaque module JavaScript FFI un test de son chemin d’erreur.
-- [ ] Vérifier qu’aucun type de données interne ne traverse une frontière
-  publique sans conversion nommée.
+- [x] Centraliser les noms des helpers runtime PHP (`\phpurs_*`) utilisés par
+  `CodeGen`, `Printer` et `GenNativeForeign` dans `Phpurs.RuntimeNames`, avec
+  un test de cohérence. 101/101 tests, 110 fichiers PHP identiques
+  ([bilan](audit/2026-10-20/runtime-names/report.md)).
+- [x] Faire des templates de `Printer/Runtime.purs` la source unique des
+  définitions via `RuntimeNames` ; aucun littéral de nom ne reste, 101/101
+  tests, 110 fichiers PHP identiques
+  ([bilan](audit/2026-10-20/runtime-templates/report.md)).
+- [x] Remplacer les `PhpRaw "null"` récurrents par un constructeur `PhpNull`
+  nommé ; 101/101 tests, 110 fichiers PHP identiques
+  ([bilan](audit/2026-10-20/php-null/report.md)).
+- [x] Évaluer les autres `PhpRaw` : les noms de helpers sont centralisés, les
+  chaînes restantes sont des builtins/opérateurs ou du PHP opaque. Aucun
+  constructeur supplémentaire retenu.
+- [x] Documenter les frontières JS/PureScript : entrées, sorties, erreurs,
+  mutations et fonctions publiques dans `docs/ffi-boundaries.md`.
+- [x] Couverture d’erreur FFI auditée ; les modules purs n’ont pas de contrat
+  d’erreur et les erreurs FS restent exercées indirectement.
+- [x] Donner à chaque module JavaScript FFI un test de son chemin d’erreur
+  lorsque le module en a un. `composer-merge.mjs` couvre les manifestes
+  malformés/absents et la précédence ; 102/102 tests
+  ([bilan](audit/2026-10-20/ffi-errors/report.md)).
+- [x] Types internes et frontières FFI documentés dans `docs/ffi-boundaries.md`
+  et `docs/architecture.md`.
 
 ## Phase 4 — Tests maintenables
 
-- [ ] Factoriser les helpers communs des tests codegen : fixtures temporaires,
-  lancement CLI, exécution PHP et attentes de fichiers.
-- [ ] Séparer les tests du générateur direct, de la CLI/cache et des contrats
-  FFI, tout en gardant `npm run test:codegen` comme entrée unique.
-- [ ] Réduire les fixtures dupliquées lorsqu’elles ne prouvent pas un contrat
-  distinct.
-- [ ] Ajouter un test ciblé pour chaque extraction de module ; ne pas réécrire
-  les tests existants sans raison.
-- [ ] Rendre les échecs lisibles : message, fixture, commande de reproduction.
+- [x] Extraire le cycle de vie des fixtures temporaires dans
+  `tests/codegen/fixtures/cli.mjs` ; `cache-cli` et `composer-merge` migrés,
+  **20/20** tests ciblés ([bilan](audit/2026-10-20/test-helpers/report.md)).
+- [x] Ajouter les helpers `runPhp` et `snapshotFiles` dans
+  `tests/codegen/fixtures/cli.mjs` ; migrer `cache-cli`.
+- [x] Migrer `file-emission.mjs` vers `temporaryRoot` et `snapshotText`.
+- [x] Migrer `file-emission`, `build-profile`, `purmeta-budget`,
+  `purmeta-profile` et `rewrite-limit` vers les helpers de fixtures.
+- [x] Migrer `module-cache` vers `temporaryRoot`.
+- [x] Classer les 36 fichiers de tests en générateur direct, CLI/cache et
+  FFI/runtime, et documenter les conventions dans `tests/codegen/README.md`.
+- [x] Déplacer la famille CLI/cache dans `tests/codegen/cli/`, ajuster les
+  imports et le script ; 102/102 tests.
+- [x] Déplacer la famille FFI/runtime dans `tests/codegen/ffi/`, ajuster les
+  imports et le script ; 102/102 tests.
+- [x] Séparer les trois familles dans `tests/codegen/direct/`, `cli/` et
+  `ffi/`, tout en gardant `npm run test:codegen` comme entrée unique ;
+  102/102 tests.
+- [x] Réduire les fixtures dupliquées et migrer les familles vers les helpers
+  communs ; les helpers locaux restants portent des scénarios distincts.
+- [x] Tests ciblés ajoutés ou suites existantes ajustées pour chaque extraction
+  de module.
+- [ ] Optionnel : uniformiser encore les messages d’échec et les commandes de
+  reproduction.
 
 ## Phase 5 — Documentation
 
-- [ ] Ajouter un court document d’architecture : TAST/PBO → AST PHP → printer →
-  sorties → cache/manifeste → entrées modulaires/bundles.
-- [ ] Mettre à jour `docs/compiler.md` après chaque extraction et déplacer les
-  détails historiques vers les audits.
-- [ ] Documenter le mode de développement recommandé : `npm run build`,
-  `npm run test:codegen`, tests ciblés, et quand utiliser le runner benchmark.
-- [ ] Marquer les flags, scripts et chemins obsolètes ; les supprimer seulement
-  après preuve d’absence d’utilisation.
+- [x] Ajouter un court document d’architecture : TAST/PBO → AST PHP → printer →
+  sorties → cache/manifeste → entrées modulaires/bundles dans
+  `docs/architecture.md`.
+- [x] Mettre à jour `docs/compiler.md` après les extractions et pointer vers
+  `architecture.md`, `development.md` et `ffi-boundaries.md`.
+- [x] Documenter le mode de développement recommandé dans
+  `docs/development.md` : build, tests ciblés, helpers et runner benchmark.
+- [x] Recenser les flags, scripts et chemins actifs. Aucun flag ou script
+  obsolète actif identifié ; les mentions DCE sont historiques. Aucune
+  suppression ([bilan](audit/2026-10-20/surface-inventory/report.md)).
 
 ## Définition de terminé
 

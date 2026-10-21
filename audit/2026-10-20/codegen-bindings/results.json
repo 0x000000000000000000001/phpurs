@@ -1,0 +1,11 @@
+{
+  "module": "Phpurs.CodeGen.Bindings",
+  "codegenBeforeLines": 834,
+  "codegenAfterLines": 763,
+  "bindingsLines": 94,
+  "exports": ["AnalyzedBindingGroup","analyzeBindings","isSafeRecursiveInit","extractUncurriedAbs"],
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Extraction mécanique réussie, aucun changement de sortie."
+}

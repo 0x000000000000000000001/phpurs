@@ -1,0 +1,17 @@
+{
+  "file": "src/Phpurs/CodeGen.purs",
+  "lines": 946,
+  "topLevelDefinitions": 31,
+  "groups": [
+    {"name":"types-context","lines":"55-97","approxLines":43,"dependencies":["PhpExpr","TcoExpr","Map"],"extractable":"yes-first"},
+    {"name":"tco-helpers","lines":"160-195,318-327","approxLines":46,"dependencies":["TranslationContext","TranslationResult","TcoAnalysis","PhpExpr"],"extractable":"after-types"},
+    {"name":"record-fusion","lines":"197-300","approxLines":104,"dependencies":["TranslationContext","translateValue","PhpExpr"],"extractable":"needs-translateValue-interface"},
+    {"name":"expression-translator","lines":"302-690","approxLines":389,"dependencies":["all expression helpers","TcoExpr","PhpExpr"],"extractable":"late-recursive-core"},
+    {"name":"bindings-pipeline","lines":"691-921","approxLines":231,"dependencies":["translation-core","TcoAnalysis","PhpDecl"],"extractable":"after-core"},
+    {"name":"effect-helpers","lines":"926-946","approxLines":21,"dependencies":["TcoExpr","PhpExpr"],"extractable":"yes"},
+    {"name":"pipeline-orchestration","lines":"723-819","approxLines":97,"dependencies":["local passes","ModuleState","PhpFile"],"extractable":"after-interfaces"}
+  ],
+  "proposedOrder": ["CodeGen/Types.purs","CodeGen/Tco.purs","CodeGen/Effects.purs","CodeGen/Bindings.purs","CodeGen/Pipeline.purs"],
+  "doNotSplitYet": ["translateSyntax recursive core","record fusion until translateValue is injected"],
+  "decision": "Cartographie terminée ; extraction Types puis Tco en premier. Aucun changement de code."
+}

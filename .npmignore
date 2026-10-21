@@ -2,3 +2,10 @@
 /.spago
 /.psc-ide-port
 /.purs-repl
+/output
+/output-es
+/output.php
+/.purmeta
+/audit
+/tests
+/todo.md

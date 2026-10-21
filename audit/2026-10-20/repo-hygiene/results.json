@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-20",
+  "gitIgnored": {
+    "node_modules": "149M",
+    "output": "99M",
+    ".purmeta": "54M",
+    ".spago": "4.1M",
+    "audit": "7.4M",
+    "tests": "3.9M",
+    "bin/phpurs.js": "1.6M"
+  },
+  "npmPackBefore": { "packedBytes": 10569199, "unpackedBytes": 163120256, "files": 4906 },
+  "npmPackAfter": { "packedBytes": 747612, "unpackedBytes": 2596529, "files": 76 },
+  "decision": "Les artefacts restent ignorés par Git. .npmignore exclut désormais output/, .purmeta/, audit/ et tests/ du paquet npm."
+}

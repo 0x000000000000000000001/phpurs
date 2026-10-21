@@ -1,0 +1,10 @@
+{
+  "mainBeforeLines": 242,
+  "mainAfterLines": 219,
+  "selectionLines": 60,
+  "module": "Main.Selection",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Sélection des mains, fermeture CoreFn et graphe déplacés dans un module pur."
+}

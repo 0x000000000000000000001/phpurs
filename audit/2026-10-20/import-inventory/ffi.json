@@ -1,0 +1,158 @@
+[
+  {
+    "js": "src/ComposerMerge.js",
+    "exports": [
+      "mergeComposersImpl"
+    ],
+    "foreign": [
+      "mergeComposersImpl"
+    ]
+  },
+  {
+    "js": "src/Phpurs/BuildInputs.js",
+    "exports": [
+      "isMissingFile",
+      "moduleReadConcurrency"
+    ],
+    "foreign": [
+      "moduleReadConcurrency",
+      "isMissingFile"
+    ]
+  },
+  {
+    "js": "src/Phpurs/BuildProfile.js",
+    "exports": [
+      "disabled",
+      "enabled",
+      "create",
+      "begin",
+      "finish",
+      "measurePure",
+      "beginOptimization",
+      "endOptimization",
+      "restoredModule",
+      "reportJson"
+    ],
+    "foreign": [
+      "Profile",
+      "Span",
+      "disabled",
+      "enabled",
+      "create",
+      "begin",
+      "finish",
+      "reportJson",
+      "beginOptimization",
+      "endOptimization",
+      "restoredModule",
+      "measurePure"
+    ]
+  },
+  {
+    "js": "src/Phpurs/CacheKey.js",
+    "exports": [
+      "fingerprintBytesImpl",
+      "planKeysImpl"
+    ],
+    "foreign": [
+      "fingerprintBytesImpl",
+      "planKeysImpl"
+    ]
+  },
+  {
+    "js": "src/Phpurs/FileEmission.js",
+    "exports": [
+      "isMissingFile"
+    ],
+    "foreign": [
+      "isMissingFile"
+    ]
+  },
+  {
+    "js": "src/Phpurs/FreeVars.js",
+    "exports": [
+      "memoizeFreeVars"
+    ],
+    "foreign": [
+      "memoizeFreeVars"
+    ]
+  },
+  {
+    "js": "src/Phpurs/Metrics.js",
+    "exports": [
+      "now"
+    ],
+    "foreign": [
+      "now"
+    ]
+  },
+  {
+    "js": "src/Phpurs/ModuleCache.js",
+    "exports": [
+      "loadModuleStateImpl",
+      "saveModuleStateImpl"
+    ],
+    "foreign": [
+      "loadModuleStateImpl",
+      "saveModuleStateImpl"
+    ]
+  },
+  {
+    "js": "src/Phpurs/OutputManifest.js",
+    "exports": [
+      "newOutputTracker",
+      "rememberOutput",
+      "finalizeOutputs"
+    ],
+    "foreign": [
+      "OutputTracker",
+      "newOutputTracker",
+      "rememberOutput",
+      "finalizeOutputs"
+    ]
+  },
+  {
+    "js": "src/Phpurs/PackagePaths.js",
+    "exports": [
+      "resolvePackagePathsImpl",
+      "findForeignFileImpl"
+    ],
+    "foreign": [
+      "resolvePackagePathsImpl",
+      "findForeignFileImpl"
+    ]
+  },
+  {
+    "js": "src/Phpurs/Printer.js",
+    "exports": [
+      "showInt32Impl",
+      "safeNameImpl",
+      "safeFuncNameImpl",
+      "escapePhpStringImpl"
+    ],
+    "foreign": [
+      "showInt32Impl",
+      "safeNameImpl",
+      "safeFuncNameImpl",
+      "escapePhpStringImpl"
+    ]
+  },
+  {
+    "js": "src/Phpurs/PurmetaBudget.js",
+    "exports": [
+      "parseBudgetImpl"
+    ],
+    "foreign": [
+      "parseBudgetImpl"
+    ]
+  },
+  {
+    "js": "src/Phpurs/RewriteLimit.js",
+    "exports": [
+      "parseLimitImpl"
+    ],
+    "foreign": [
+      "parseLimitImpl"
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "pursFiles": 39,
+  "jsFiles": 13,
+  "importsScanned": 480,
+  "explicitImportsUnused": 0,
+  "qualifiedImportsUnused": 0,
+  "extraJsExports": 0,
+  "typeOnlyForeignWithoutJs": ["BuildProfile.Profile", "BuildProfile.Span", "OutputManifest.OutputTracker"],
+  "notes": "Scanner lexical: imports explicites mono-ligne, alias qualifiés et exports JS. Les imports ouverts, multi-lignes et les usages uniquement dans les tests ne sont pas une preuve de suppression."
+}

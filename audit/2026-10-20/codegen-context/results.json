@@ -1,0 +1,18 @@
+{
+  "module": "Phpurs.CodeGen.Context",
+  "codegenBeforeLines": 946,
+  "codegenAfterLines": 902,
+  "contextLines": 56,
+  "exports": [
+    "LoopContext",
+    "TranslationContext",
+    "TranslationResult",
+    "TranslatedValues",
+    "initialContext",
+    "valueContext"
+  ],
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Extraction m\u00e9canique r\u00e9ussie, aucun changement de sortie."
+}

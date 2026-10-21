@@ -16,15 +16,42 @@
     "tool": "/usr/bin/sample",
     "activeSamples": 5087,
     "topSymbols": [
-      ["zend_object_dtor_property", 168],
-      ["ZEND_NEW_SPEC_CONST_UNUSED_HANDLER", 129],
-      ["zend_objects_store_del", 106],
-      ["object_init_ex", 104],
-      ["ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER", 94],
-      ["_emalloc", 77],
-      ["_efree", 61],
-      ["zend_object_std_dtor", 55],
-      ["gc_possible_root", 40]
+      [
+        "zend_object_dtor_property",
+        168
+      ],
+      [
+        "ZEND_NEW_SPEC_CONST_UNUSED_HANDLER",
+        129
+      ],
+      [
+        "zend_objects_store_del",
+        106
+      ],
+      [
+        "object_init_ex",
+        104
+      ],
+      [
+        "ZEND_FUNC_NUM_ARGS_SPEC_UNUSED_UNUSED_HANDLER",
+        94
+      ],
+      [
+        "_emalloc",
+        77
+      ],
+      [
+        "_efree",
+        61
+      ],
+      [
+        "zend_object_std_dtor",
+        55
+      ],
+      [
+        "gc_possible_root",
+        40
+      ]
     ],
     "note": "JIT symbols are opaque; Xdebug is not installed in PHP 8.5.4."
   },
@@ -34,5 +61,11 @@
     "gcOffMedianUs": 56073.375,
     "deltaPercent": 0.06
   },
-  "decision": "Pas de nouveau levier TCO/GC. Le coût restant est dominé par l'allocation et la destruction des nœuds privés T; prochaine piste : mutation/representation des nœuds privés avec preuve d'absence d'alias."
+  "decision": "Pas d\u2019int\u00e9gration RBTree : mutation autonome plus lente, GC neutre. Ne pas ouvrir une repr\u00e9sentation priv\u00e9e sans prototype CodeGen mesurable.",
+  "mutationPrototype": {
+    "generatedRbtreeMs": 54.607833,
+    "standaloneMutableMs": 98.988833,
+    "depth": 22,
+    "decision": "Non retenu : prototype autonome plus lent ; aucune preuve de gain g\u00e9n\u00e9rateur."
+  }
 }

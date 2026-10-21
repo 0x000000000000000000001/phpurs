@@ -1,0 +1,9 @@
+{
+  "arrayRefsBeforeLines": 646,
+  "arrayRefsAfterLines": 81,
+  "analysisLines": 590,
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Analyse d'ownership isolée ; ArrayRefs ne garde que optimize et la réécriture des paramètres."
+}

@@ -1,0 +1,12 @@
+{
+  "arrayRefsBeforeLines": 733,
+  "arrayRefsAfterLines": 646,
+  "supportLines": 21,
+  "rebuildLines": 96,
+  "modules": ["Phpurs.ArrayRefs.Support","Phpurs.ArrayRefs.Rebuild"],
+  "exports": ["mutateRebuilds"],
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Réécriture des reconstructions isolée ; analyse d'ownership restante dans ArrayRefs.purs."
+}

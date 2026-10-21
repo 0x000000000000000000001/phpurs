@@ -43,13 +43,20 @@ Cinq processus alternés, GC normal contre `gc_disable()` :
 Le GC n’est pas un levier sur cette charge. Le coût est la vie des objets
 eux-mêmes, pas leur collecte cyclique.
 
+## Prototype de mutation
+
+Un prototype autonome de LLRB mutable (mêmes 100 000 insertions, profondeur
+22) a été mesuré : **98,99 ms**, contre **54,61 ms** pour le générateur. Ce
+n’est pas une transformation du générateur et le code JIT est moins spécialisé,
+mais le résultat ne fournit aucune preuve qu’une mutation en place soit
+rentable. Le prototype n’est pas intégré.
+
 ## Conclusion
 
 R4 est clôturé pour l’optimisation : les copies TCO ne sont plus le premier coût
-RBTree. La prochaine piste mesurable est la **représentation/mutation des nœuds
-privés `T`** : prouver qu’une insertion peut réutiliser les nœuds non observés
-au lieu d’en allouer 499 934, ou tester une représentation compacte des champs
-privés. Toute variante doit conserver les anciennes racines, les frontières FFI
-et les 14 résultats.
+RBTree. La mutation autonome n’est pas retenue : elle est plus lente que le
+générateur et ne prouve pas un gain in-place. Ne pas ouvrir une nouvelle
+représentation privée sans prototype CodeGen mesurable ; le prochain travail
+doit être choisi hors de cette piste.
 
 Artefacts : `native-sample.txt`, `gc-off.json` et `results.json` dans ce dossier.

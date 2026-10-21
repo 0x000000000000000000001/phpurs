@@ -1,0 +1,12 @@
+{
+  "printerBeforeLines": 494,
+  "facadeLines": 28,
+  "exprLines": 346,
+  "declLines": 172,
+  "modules": ["Phpurs.Printer","Phpurs.Printer.Expr","Phpurs.Printer.Decl"],
+  "jsMoved": "src/Phpurs/Printer.js -> src/Phpurs/Printer/Expr.js",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Facade publique conservée ; expressions et déclarations séparées."
+}

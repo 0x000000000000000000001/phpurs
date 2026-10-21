@@ -1,10 +1,7 @@
 -- | Lower optimized, typed modules to PHP: prepare private workers, analyze
 -- | tail calls, translate expressions and declarations, then run PHP AST passes.
 module Phpurs.CodeGen
-  ( LoopContext
-  , TranslationContext
-  , TranslationResult
-  , initialContext
+  ( module Phpurs.CodeGen.Context
   , translate
   , translateWithCallbacks
   , translateWithContracts
@@ -16,10 +13,9 @@ import Prelude
 import Control.Monad.ST as ST
 import Control.Monad.ST.Ref as STRef
 import Data.Array as Array
-import Data.Array.NonEmpty (fromArray, toArray)
+import Data.Array.NonEmpty (toArray)
 import Data.Array.ST as STArray
-import Data.Foldable (all, any, foldMap, foldl)
-import Data.Map (Map)
+import Data.Foldable (foldMap, foldl)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (unwrap)
@@ -30,7 +26,11 @@ import Data.Tuple (Tuple(..))
 import Phpurs.ArrayRefs as ArrayRefs
 import Phpurs.ArrayCallbacks as ArrayCallbacks
 import Phpurs.CallbackSpecialization as CallbackSpecialization
+import Phpurs.CodeGen.Context (LoopContext, TranslatedValues, TranslationContext, TranslationResult, initialContext, valueContext)
+import Phpurs.CodeGen.Bindings (AnalyzedBindingGroup, analyzeBindings, extractUncurriedAbs)
+import Phpurs.CodeGen.Effects (executeIfOpaque, isEffectNode)
 import Phpurs.CodeGen.Operators (isLogicalShortCircuit, translateOperator1, translateOperator2)
+import Phpurs.CodeGen.Tco (containsNestedLoop, findTailTarget, translateTailJump, wrapLoopBody)
 import Phpurs.CodeGen.Types (exprTypeToPhpType, extractFuncType, getRetType, remainingArity, zipArgsWithTypes)
 import Phpurs.CompactLoops as CompactLoops
 import Phpurs.CopyCleanup as CopyCleanup
@@ -45,53 +45,11 @@ import Phpurs.StateFusion as StateFusion
 import Phpurs.TailInline as TailInline
 import Phpurs.ThunkFusion as ThunkFusion
 import PureScript.Backend.Optimizer.Codegen.Tco (TcoAnalysis(..), TcoExpr(..), TcoRef(..), TcoUsage(..), tcoAnalysisOf)
-import PureScript.Backend.Optimizer.Codegen.Tco as Tco
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Literal(..), ModuleName(..), Prop(..), Qualified(..))
 import PureScript.Backend.Optimizer.FreeVars (localId)
 import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendEffect(..), BackendOperator(..), BackendSyntax(..), Pair(..))
 import PureScript.Backend.Optimizer.Syntax as Syn
-
--- | Statements must execute before the result expression is consumed. `nextId`
--- | is threaded through siblings so their live temporaries cannot collide.
-type TranslationResult = { stmts :: Array PhpExpr, expr :: PhpExpr, nextId :: Int }
-
-type TranslatedValues = { stmts :: Array PhpExpr, exprs :: Array PhpExpr, nextId :: Int }
-
-type LoopContext =
-  { ident :: String
-  , params :: Array String
-  , varPrefix :: String
-  , labelName :: String
-  , direct :: Boolean
-  }
-
--- | Lexical scope and evaluation position for one expression. A value operand
--- | starts outside the enclosing tail/effect position; binding bodies inherit it.
-type TranslationContext =
-  { moduleName :: String
-  , recursiveVars :: Array String
-  , boundVars :: Map String String -- Optimizer local IDs -> renamed PHP locals.
-  , loops :: Array LoopContext
-  , isTail :: Boolean
-  , inEffectBlock :: Boolean -- Already lowering an effect-executing body.
-  , allowDirect :: Boolean -- Parameters may replace buffered TCO registers.
-  }
-
--- | The module name uses the PHP global-key spelling, e.g. `Data_Maybe`.
-initialContext :: String -> TranslationContext
-initialContext moduleName =
-  { moduleName
-  , recursiveVars: []
-  , boundVars: Map.empty
-  , loops: []
-  , isTail: false
-  , inEffectBlock: false
-  , allowDirect: true
-  }
-
-valueContext :: TranslationContext -> TranslationContext
-valueContext ctx = ctx { loops = [], isTail = false, inEffectBlock = false }
 
 translateValue :: TranslationContext -> Int -> TcoExpr -> TranslationResult
 translateValue ctx = translateExpr (valueContext ctx)
@@ -156,43 +114,6 @@ flattenApp tcoExpr@(TcoExpr _ syntax) = case syntax of
   Typed _ inner -> flattenApp inner
   Syn.TypeApp inner _ -> flattenApp inner
   _ -> Tuple tcoExpr []
-
--- | A loop can use its parameters as registers only when no nested TCO loop
--- | can capture those registers by reference. Buffered loops keep the old
--- | temporary/slot protocol.
-containsNestedLoop :: TcoExpr -> Boolean
-containsNestedLoop (TcoExpr _ syntax) = case syntax of
-  Syn.LetRec _ bindings body ->
-    any (\(Tuple _ value) -> (unwrap (tcoAnalysisOf value)).role.isLoop) bindings
-      || any (\(Tuple _ value) -> containsNestedLoop value) bindings
-      || containsNestedLoop body
-  other -> any containsNestedLoop (Array.fromFoldable other)
-
-findTailTarget :: TranslationContext -> String -> Maybe LoopContext
-findTailTarget ctx ident =
-  if ctx.isTail then Array.find (\loop -> loop.ident == ident) ctx.loops
-  else Nothing
-
--- | Save every argument before updating any loop parameter: recursive calls
--- | may swap parameters or reuse their old values in later arguments.
-translateTailJump :: LoopContext -> TranslatedValues -> TranslationResult
-translateTailJump loop args =
-  let
-    tempName index = "__tco_" <> show (args.nextId + index)
-    saveArgs = Array.mapWithIndex (\index expr -> PhpAssign (tempName index) expr) args.exprs
-    assignParams = Array.mapWithIndex
-      ( \index _ ->
-          let
-            param = fromMaybe "" (Array.index loop.params index)
-          in
-            PhpAssign (if loop.direct then param else loop.varPrefix <> param) (PhpVar (tempName index))
-      )
-      args.exprs
-  in
-    { stmts: args.stmts <> saveArgs <> assignParams <> [ PhpGoto loop.labelName ]
-    , expr: PhpRaw "null"
-    , nextId: args.nextId + Array.length args.exprs
-    }
 
 recordFields :: ExprType -> Maybe (Array (Tuple String ExprType))
 recordFields = case _ of
@@ -314,17 +235,6 @@ translateTyped ctx nextId ty tcoExpr@(TcoExpr _ syntax) = case syntax of
       Nothing -> translateExpr ctx nextId tcoExpr
     Nothing -> translateExpr ctx nextId tcoExpr
   _ -> translateExpr ctx nextId tcoExpr
-
--- | Local closures and native functions use the same loop-entry protocol.
--- | The label follows initialization so a tail jump keeps the updated slots.
-wrapLoopBody :: LoopContext -> TranslationResult -> Array PhpExpr
-wrapLoopBody loop result =
-  let
-    initVars = map (\param -> PhpAssign (loop.varPrefix <> param) (PhpVar param)) loop.params
-    bindParams = map (\param -> PhpAssign param (PhpVar (loop.varPrefix <> param))) loop.params
-    prologue = if loop.direct then [ PhpLabel loop.labelName ] else initVars <> [ PhpLabel loop.labelName ] <> bindParams
-  in
-    prologue <> result.stmts <> [ PhpReturn result.expr ]
 
 translateExpr :: TranslationContext -> Int -> TcoExpr -> TranslationResult
 translateExpr ctx nextId tcoExpr
@@ -688,38 +598,6 @@ translateSyntax ctx@{ moduleName: modNameStr, recursiveVars: recVars, boundVars:
   Fail msg -> { stmts: [ PhpThrow (PhpRaw ("\"" <> msg <> " at \" . __FILE__ . \":\" . __LINE__")) ], expr: PhpRaw "null", nextId }
   Typed ty a -> translateTyped ctx nextId ty a
 
--- | Initialize recursive dictionaries and functions before expressions which
--- | call into them (for example, Apply instances implemented with Monad.ap).
-isSafeRecursiveInit :: ModuleName -> Array Ident -> TcoExpr -> Boolean
-isSafeRecursiveInit currentModule group = go
-  where
-  go (TcoExpr _ expr) = case expr of
-    Abs _ _ -> true
-    UncurriedAbs _ _ -> true
-    UncurriedEffectAbs _ _ -> true
-    CtorDef _ _ _ _ -> true
-    EffectBind _ _ _ _ -> true
-    EffectPure _ -> true
-    Var (Qualified (Just mn) ident) | mn == currentModule -> not (Array.elem ident group)
-    Var _ -> true
-    Lit lit -> all go lit
-    Accessor a _ -> go a
-    Update a props -> go a && all (\(Prop _ value) -> go value) props
-    CtorSaturated _ _ _ _ values -> all (\(Tuple _ value) -> go value) values
-    PrimOp op -> all go op
-    -- Pure applications such as a composed `pure` implementation can also be
-    -- initialized early when they are independent of the recursive group.
-    -- Inspect callback bodies too: the callee may invoke them immediately.
-    App _ _ -> all independent expr
-    UncurriedApp _ _ -> all independent expr
-    Typed _ a -> go a
-    Syn.TypeApp a _ -> go a
-    _ -> false
-
-  independent (TcoExpr _ expr) = case expr of
-    Var (Qualified (Just mn) ident) | mn == currentModule -> not (Array.elem ident group)
-    _ -> all independent expr
-
 -- | Main translation function.
 -- | Takes module imports and the optimizer's `BackendModule`, performs local TCO
 -- | analysis and returns a fully constructed `PhpFile` ready for printing.
@@ -817,32 +695,6 @@ translateWithContracts callbacks traversals imports input =
   in
     owned { decls = owned.decls <> arrays.workers }
 
-type AnalyzedBindingGroup =
-  { recursive :: Boolean
-  , bindings :: Array (Tuple Ident TcoExpr)
-  }
-
-analyzeBindings :: BackendModule -> Array AnalyzedBindingGroup
-analyzeBindings mod =
-  let Tuple _ groups = foldl analyzeGroup (Tuple [] []) mod.bindings
-  in groups
-  where
-  analyzeGroup (Tuple env groups) group =
-    let
-      nextEnv = case fromArray group.bindings of
-        Just nonEmptyBindings | group.recursive -> Tco.topLevelTcoEnvGroup mod.name nonEmptyBindings <> env
-        _ -> env
-      bindings = map (\(Tuple ident expr) -> Tuple ident (Tco.analyze nextEnv expr)) group.bindings
-      orderedBindings =
-        if group.recursive then
-          let
-            groupIdents = map (\(Tuple ident _) -> ident) group.bindings
-            ready = Array.partition (\(Tuple _ expr) -> isSafeRecursiveInit mod.name groupIdents expr) bindings
-          in ready.yes <> ready.no
-        else bindings
-    in
-      Tuple nextEnv (Array.snoc groups { recursive: group.recursive, bindings: orderedBindings })
-
 translateBindingGroup :: String -> Boolean -> AnalyzedBindingGroup -> Array PhpDecl
 translateBindingGroup moduleName allowDirect group = case group.bindings of
   [ Tuple (Ident name) expr ] | group.recursive ->
@@ -909,38 +761,3 @@ totalUsagesOf :: TcoRef -> TcoAnalysis -> Int
 totalUsagesOf ref (TcoAnalysis { usages }) = case Map.lookup ref usages of
   Just (TcoUsage { total }) -> total
   _ -> 0
-
-extractUncurriedAbs :: TcoExpr -> Maybe { args :: Array String, body :: TcoExpr, fvs :: Array String }
-extractUncurriedAbs tcoExpr@(TcoExpr _ syntax) = case syntax of
-  UncurriedAbs args body ->
-    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
-  Abs args body ->
-    let
-      thisArgs = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
-    in case extractUncurriedAbs body of
-      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Array.nub (Array.fromFoldable (freeVars tcoExpr) <> inner.fvs) }
-      Nothing -> Just { args: thisArgs, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
-  Typed _ inner -> extractUncurriedAbs inner
-  _ -> Nothing
-
--- | Explicit effect syntax produces its result inside an effect block. Outside
--- | such a block, the same classification tells us to defer its execution.
-isEffectNode :: TcoExpr -> Boolean
-isEffectNode (TcoExpr _ syntax) = case syntax of
-  EffectBind _ _ _ _ -> true
-  EffectPure _ -> true
-  EffectDefer _ -> false
-  PrimEffect _ -> true
-  UncurriedEffectApp _ _ -> true
-  Let _ _ _ body -> isEffectNode body
-  LetRec _ _ body -> isEffectNode body
-  -- Annotations preserve the body's evaluation convention, including when an
-  -- EffectBind or EffectFn returns an already computed callable value.
-  Typed _ body -> isEffectNode body
-  Syn.TypeApp body _ -> isEffectNode body
-  _ -> false
-
-executeIfOpaque :: TcoExpr -> PhpExpr -> PhpExpr
-executeIfOpaque expr phpExpr =
-  if isEffectNode expr then phpExpr
-  else PhpCall (PhpRaw "\\phpurs_execute_effect") [ phpExpr ]

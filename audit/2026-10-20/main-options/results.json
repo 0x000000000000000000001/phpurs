@@ -1,0 +1,10 @@
+{
+  "mainBeforeLines": 183,
+  "mainAfterLines": 180,
+  "optionsLines": 52,
+  "module": "Main.Options",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Parsing CLI et budgets isolé ; Main garde l'orchestration."
+}

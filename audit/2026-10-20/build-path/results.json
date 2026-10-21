@@ -1,0 +1,14 @@
+{
+  "before": {
+    "npm": "spago build && node tools/bundle.mjs",
+    "runner": "spago build && spago bundle --module Main",
+    "runnerCache": "disabled"
+  },
+  "after": {
+    "runner": "spago build (host compiler) && node tools/bundle.mjs",
+    "cache": "enabled",
+    "runpTotalMs": 64.010226,
+    "values": 14
+  },
+  "scope": "altbak.pub-phpurs/bin/php/run"
+}

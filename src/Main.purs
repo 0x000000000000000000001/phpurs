@@ -4,8 +4,6 @@ module Main (main, mainWithCache, mainWithToolchain) where
 import Prelude
 
 import Data.Array as Array
-import Data.Either (Either(..), note)
-import Data.List as List
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (unwrap)
@@ -13,38 +11,27 @@ import Data.Set as Set
 import Data.String as String
 import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
-import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff_, throwError)
 import Effect.Class (liftEffect)
 import Effect.Console as Console
 import Effect.Exception (error)
 import Effect.Ref as Ref
-import Node.Buffer.Immutable as Bytes
-import Node.Encoding (Encoding(..))
 import Node.Process as Process
+import Main.Options as Options
+import Main.Prepare as Prepare
+import Main.Outputs as Outputs
+import Main.Selection as Selection
 import Phpurs.AstMetrics (countModuleNodes)
-import Phpurs.BuildCache as BuildCache
-import Phpurs.BuildInputs (captureForeign, loadInputsWithProfile)
+import Phpurs.BuildInputs (loadInputsWithProfile)
 import Phpurs.BuildProfile as Profile
-import Phpurs.CacheKey (Toolchain, fingerprintBytes)
-import Phpurs.ComposerMerge (mergeComposers)
-import Phpurs.EntryPoint (printBundleEntryPoint, printModularEntryPoint)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
-import Phpurs.ModuleState (newBuildRefs, publishModuleStateWithProfile, printModuleState, translateModuleStateWithContracts, supportsEmission)
-import Phpurs.ForeignTraversals as ForeignTraversals
-import Phpurs.NativeCallbacks as NativeCallbacks
-import Phpurs.OutputManifest (OutputKind(..), finalizeOutputs, writeOutput)
-import Phpurs.PackagePaths (resolvePackagePaths)
+import Phpurs.ModuleState (publishModuleStateWithProfile, printModuleState, translateModuleStateWithContracts, supportsEmission)
 import Phpurs.PurmetaBudget as PurmetaBudget
-import Phpurs.Printer.Runtime as Runtime
 import Phpurs.PurmetaProfile (withProfile)
-import Phpurs.RewriteLimit as RewriteLimit
-import PureScript.Backend.Optimizer.App (loadDirectives, parseCLIArgs)
 import PureScript.Backend.Optimizer.Builder (buildModules)
-import PureScript.Backend.Optimizer.CoreFn (Ident(..), Module(..), ModuleName(..), importName)
-import PureScript.Backend.Optimizer.Directives.Defaults (defaultDirectives)
+import PureScript.Backend.Optimizer.CoreFn (Module(..), importName)
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 
 main :: Effect Unit
@@ -69,94 +56,42 @@ run toolchain override = launchAff_ do
 
 compile :: Maybe Toolchain -> Maybe CacheHooks -> Array String -> Profile.Profile -> Aff Unit
 compile toolchain override cliArgs profile = do
+  options <- case Options.parseOptions cliArgs of
+    Left message -> throwError $ error message
+    Right parsed -> pure parsed
   let
-    args = parseCLIArgs cliArgs
-    verbose = Array.elem "--verbose" cliArgs
-    bundleOnly = Array.elem "--bundle-only" cliArgs
-    emitBundle = args.bundle || bundleOnly
-    emitModules = not bundleOnly
-    emission = { emitModules, emitBundle }
-    outputDir = fromMaybe "output" args.mbOutputDir
-
-  purmetaBudget <- case PurmetaBudget.parseBudget cliArgs of
-    Left message -> throwError $ error message
-    Right budget -> pure budget
-  rewriteLimit <- case RewriteLimit.parseLimit cliArgs of
-    Left message -> throwError $ error message
-    Right limit -> pure limit
+    args = options.args
+    verbose = options.verbose
+    emission = options.emission
+    outputDir = options.outputDir
+    purmetaBudget = options.purmetaBudget
+    rewriteLimit = options.rewriteLimit
 
   loaded <- Metrics.measure "load TAST + sort" \_ -> loadInputsWithProfile profile outputDir
-  let
-    allModules = loaded.modules
-    moduleGraph = Map.fromFoldable $ map
-      (\(Module m) -> Tuple m.name (Set.fromFoldable (map importName m.imports)))
-      (Array.fromFoldable allModules)
-    -- The modular entry only lists backend-reachable modules, but each loaded
-    -- index.php also requires its CoreFn imports. Bundles must cover that full
-    -- closure so their globals and initializers match the modular run.
-    reachableFrom roots = go Set.empty roots
-      where
-      go seen remaining = case Array.uncons remaining of
-        Nothing -> seen
-        Just { head: root, tail }
-          | Set.member root seen -> go seen tail
-          | otherwise -> go (Set.insert root seen)
-              (Array.fromFoldable (fromMaybe Set.empty (Map.lookup root moduleGraph)) <> tail)
-    exportsMain (Module m) = Array.elem (Ident "main") m.exports
+  let allModulesArray = Array.fromFoldable loaded.modules
+  targetMainModules <- case Selection.selectTargetMains args.mbMainModule allModulesArray of
+    Left message -> throwError $ error message
+    Right mains -> pure mains
+  let finalModules = Selection.selectModules targetMainModules loaded.modules
 
-  targetMainModules <- case args.mbMainModule of
-    Nothing -> pure $ map (\(Module m) -> unwrap m.name) $ Array.filter exportsMain (Array.fromFoldable allModules)
-    Just mainMod -> case Array.find (\(Module m) -> unwrap m.name == mainMod) (Array.fromFoldable allModules) of
-      Nothing -> throwError $ error $ "Main module " <> mainMod <> " was not loaded"
-      Just m | not (exportsMain m) -> throwError $ error $ "Module " <> mainMod <> " does not export main"
-      Just _ -> pure [ mainMod ]
-
-  let
-    roots = map ModuleName targetMainModules
-    selected = if Array.null roots then allModules else List.filter (\(Module m) -> Set.member m.name (reachableFrom roots)) allModules
-    finalModules = selected
-
-  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache } <- Metrics.measure "prepare" \_ -> do
-    refs <- liftEffect newBuildRefs
-
-    -- Composer precedence follows module-name order, not dependency order.
-    -- Package roots describe the loaded workspace, not the optimized subset:
-    -- narrowing them would invalidate an existing reviewed Composer lock.
-    let modulePaths = map (\(Module m) -> m.path) $ Array.sortWith (\(Module m) -> m.name) (Array.fromFoldable allModules)
-    packagePaths <- liftEffect $ resolvePackagePaths { ffiDir: args.mbFfiDir, modulePaths }
-    directives <- loadDirectives
-    captures <- traverse (\m@(Module core) -> do
-      ffi <- Profile.measureAff profile "ffi" (unwrap core.name) \_ -> captureForeign packagePaths.ffiRoots m
-      pure { core, ffi }) (Array.fromFoldable finalModules)
-    cwd <- liftEffect Process.cwd
-    let
-      foreignSources = Map.fromFoldable $ map (\c -> Tuple c.core.name c.ffi.source) captures
-      -- Use the same captured source/signature as codegen and cache identity.
-      -- Reconstruct this evidence even when its module will be a cache hit.
-      nativeCallbacks = if loaded.cacheable then Set.unions (map
-        (\c -> NativeCallbacks.fromForeign c.core.name c.core.foreign c.ffi.source) captures)
-        else Set.empty
-      traversals = if loaded.cacheable then Set.unions (map
-        (\c -> ForeignTraversals.fromForeign c.core.name c.core.foreign c.ffi.source) captures)
-        else Set.empty
-      inputs = if not loaded.cacheable then Left "Incomplete or duplicate module input" else
-        note "Missing captured CoreFn fingerprint" $ traverse (\c -> do
-          let name = unwrap c.core.name
-          coreFn <- Map.lookup name loaded.fingerprints
-          pure { name, coreFn, foreignInput: c.ffi.input, dependencies: map (unwrap <<< importName) c.core.imports }) captures
-    cache <- Profile.measureAff profile "cache.plan" "" \_ -> case override, toolchain of
-      Just hooks, _ -> pure { hooks, report: pure unit }
-      _, Just identity | not (Array.elem "--no-cache" cliArgs) -> liftEffect $ BuildCache.prepareCache
-        { toolchain: identity
-        , options: { cwd, outputDir, ffiRoots: packagePaths.ffiRoots, emitModules, emitBundle, mainModule: args.mbMainModule, autoloadPath: args.mbAutoloadPath, rewriteLimit }
-        , directives: fingerprintBytes (Bytes.fromString defaultDirectives UTF8)
-        } inputs
-      _, _ -> pure BuildCache.disabled
-    pure { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache }
+  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache } <- Metrics.measure "prepare" \_ ->
+    Prepare.prepare
+      { profile
+      , args
+      , allModules: allModulesArray
+      , finalModules
+      , loaded
+      , override
+      , toolchain
+      , emission
+      , outputDir
+      , rewriteLimit
+      , noCache: options.noCache
+      }
 
   Metrics.measure "optimize + emit" \_ ->
     PurmetaBudget.withBudget purmetaBudget $
-    withProfile (Array.elem "--profile-purmeta" cliArgs) $
+    withProfile options.profilePurmeta $
     buildModules
       { directives
       , rewriteLimit
@@ -192,51 +127,19 @@ compile toolchain override cliArgs profile = do
       }
       finalModules
 
-  Metrics.measure "finalize" \_ -> do
-    arities <- liftEffect $ Ref.read refs.globalAritiesRef
-    when (emitModules && not (List.null finalModules)) $ Profile.measureAff profile "php.write" "" \_ ->
-      writeOutput refs.outputs outputDir ModularOutput "runtime.php" Runtime.sharedRuntimeFile
+  Metrics.measure "finalize" \_ ->
+    Outputs.finalize
+      { profile
+      , refs
+      , outputDir
+      , emission
+      , mainModule: args.mbMainModule
+      , autoloadPath: args.mbAutoloadPath
+      , verbose
+      , targetMainModules
+      , finalModules
+      , composerRoots: packagePaths.composerRoots
+      , cacheable: loaded.cacheable
+      }
 
-    _ <- traverse
-      ( \mainMod -> do
-          let
-            entryPoint = { mainModule: mainMod, autoloadPath: args.mbAutoloadPath, arities }
-            reachableSet = reachableFrom [ ModuleName mainMod ]
-            reachableModules = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
-
-          if emitBundle then do
-            bundleContent <- case args.mbMainModule of
-              Just _ -> do
-                parts <- liftEffect $ Ref.read refs.bundleModulesRef
-                let bundleSelected = Array.filter (\item -> Set.member item.name reachableSet) parts
-                pure $ Runtime.bundleHeader <> String.joinWith "\n" (map (\item -> item.code <> "\n") bundleSelected)
-              Nothing -> liftEffect $ Ref.read refs.bundleContentRef
-            code <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
-              bundleContent <> "\n" <> printBundleEntryPoint entryPoint
-            Profile.measureAff profile "php.write" mainMod \_ ->
-              writeOutput refs.outputs outputDir BundleOutput (mainMod <> "/main.bundle.php") code
-          else pure unit
-
-          when emitModules do
-            modEntryPoint <- liftEffect $ Profile.measurePure profile "print" mainMod \_ ->
-              printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachableModules)
-            when verbose $ liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
-            Profile.measureAff profile "php.write" mainMod \_ ->
-              writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php") modEntryPoint
-      )
-      targetMainModules
-
-    if emitBundle then do
-      case args.mbMainModule of
-        Just _ -> pure unit
-        Nothing -> do
-          bundleContent <- liftEffect $ Ref.read refs.bundleContentRef
-          Profile.measureAff profile "php.write" "" \_ ->
-            writeOutput refs.outputs outputDir BundleOutput "bundle.php" bundleContent
-    else pure unit
-
-    Profile.measureAff profile "composer" "" \_ ->
-      liftEffect $ mergeComposers { outputDir, packageRoots: packagePaths.composerRoots }
-    Profile.measureAff profile "cleanup" "" \_ ->
-      liftEffect $ finalizeOutputs refs.outputs outputDir emission loaded.cacheable
   liftEffect cache.report

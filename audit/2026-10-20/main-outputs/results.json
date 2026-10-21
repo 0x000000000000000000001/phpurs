@@ -1,0 +1,10 @@
+{
+  "mainBeforeLines": 219,
+  "mainAfterLines": 183,
+  "outputsLines": 96,
+  "module": "Main.Outputs",
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Finalisation des sorties isolée ; Main garde l'orchestration et la préparation."
+}

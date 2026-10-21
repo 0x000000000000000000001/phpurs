@@ -1,0 +1,3118 @@
+[
+  {
+    "file": "src/ComposerMerge.purs",
+    "module": "Phpurs.ComposerMerge",
+    "imports": [
+      {
+        "module": "Prelude",
+        "name": "Unit",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/GenNativeForeign.purs",
+    "module": "Phpurs.GenNativeForeign",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Types",
+        "name": "exprTypeToPhpType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "printExpr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "safeFuncName",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "safeName",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Main.purs",
+    "module": "Main",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.List",
+        "alias": "List",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "launchAff_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "throwError",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Console",
+        "alias": "Console",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Effect.Exception",
+        "name": "error",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Ref",
+        "alias": "Ref",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer.Immutable",
+        "alias": "Bytes",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.Process",
+        "alias": "Process",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.AstMetrics",
+        "name": "countModuleNodes",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.BuildCache",
+        "alias": "BuildCache",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.BuildInputs",
+        "name": "captureForeign",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.BuildInputs",
+        "name": "loadInputsWithProfile",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.BuildProfile",
+        "alias": "Profile",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "Toolchain",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "fingerprintBytes",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ComposerMerge",
+        "name": "mergeComposers",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.EntryPoint",
+        "name": "printBundleEntryPoint",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.EntryPoint",
+        "name": "printModularEntryPoint",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Metrics",
+        "alias": "Metrics",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleCache",
+        "name": "CacheHooks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "newBuildRefs",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "publishModuleStateWithProfile",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "printModuleState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "translateModuleStateWithContracts",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "supportsEmission",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ForeignTraversals",
+        "alias": "ForeignTraversals",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NativeCallbacks",
+        "alias": "NativeCallbacks",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PackagePaths",
+        "name": "resolvePackagePaths",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PurmetaBudget",
+        "alias": "PurmetaBudget",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer.Runtime",
+        "alias": "Runtime",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PurmetaProfile",
+        "name": "withProfile",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.RewriteLimit",
+        "alias": "RewriteLimit",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.App",
+        "name": "loadDirectives",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.App",
+        "name": "parseCLIArgs",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Builder",
+        "name": "buildModules",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Directives.Defaults",
+        "name": "defaultDirectives",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Semantics.Foreign",
+        "name": "coreForeignSemantics",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/ArrayCallbacks.purs",
+    "module": "Phpurs.ArrayCallbacks",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "State",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "get",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "modify_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "alias": "NEA",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CallbackSpecialization",
+        "name": "Binder",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CallbackSpecialization",
+        "name": "local",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CallbackSpecialization",
+        "name": "nativeCallback",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Operators",
+        "name": "translateOperator1",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Operators",
+        "name": "translateOperator2",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NativeCallbacks",
+        "name": "Callbacks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "printExpr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "safeFuncName",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "bounded",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "freshPrefixFor",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "hasType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "integer",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "peel",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "require",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/ArrayRefs.purs",
+    "module": "Phpurs.ArrayRefs",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Int",
+        "alias": "Int",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "children",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "mapBlocks",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/AstMetrics.purs",
+    "module": "Phpurs.AstMetrics",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldMap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.List",
+        "alias": "List",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/BuildCache.purs",
+    "module": "Phpurs.BuildCache",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Console",
+        "alias": "Console",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Effect.Ref",
+        "alias": "Ref",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "BuildContext",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "ModuleInput",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "planKeys",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleCache",
+        "name": "CacheHooks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleCache",
+        "name": "loadModuleState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleCache",
+        "name": "saveModuleState",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/BuildInputs.purs",
+    "module": "Phpurs.BuildInputs",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Parallel",
+        "name": "parTraverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.List",
+        "name": "List",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.List",
+        "alias": "List",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "attempt",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Console",
+        "alias": "Console",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Effect.Exception",
+        "name": "Error",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer",
+        "alias": "Buffer",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer.Immutable",
+        "alias": "Bytes",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.FS.Aff",
+        "alias": "FS",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.FS.Stats",
+        "alias": "Stats",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.BuildProfile",
+        "alias": "Profile",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PackagePaths",
+        "name": "findForeignFile",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.CoreFn.Json.Text",
+        "name": "parseModule",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.CoreFn.Sort",
+        "name": "sortModules",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/BuildProfile.purs",
+    "module": "Phpurs.BuildProfile",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "generalBracket",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Console",
+        "alias": "Console",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CacheKey.purs",
+    "module": "Phpurs.CacheKey",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Nullable",
+        "name": "Nullable",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Nullable",
+        "name": "toNullable",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer.Immutable",
+        "name": "ImmutableBuffer",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CallbackSpecialization.purs",
+    "module": "Phpurs.CallbackSpecialization",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "State",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "get",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "modify_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "alias": "NEA",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NativeCallbacks",
+        "name": "Callbacks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "bounded",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "freshPrefixFor",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "hasType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "integer",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "peel",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "require",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CodeGen/Operators.purs",
+    "module": "Phpurs.CodeGen.Operators",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CodeGen/Types.purs",
+    "module": "Phpurs.CodeGen.Types",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "name": "toArray",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Syntax",
+        "alias": "Syn",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CodeGen.purs",
+    "module": "Phpurs.CodeGen",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.ST",
+        "alias": "ST",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.ST.Ref",
+        "alias": "STRef",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "name": "fromArray",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "name": "toArray",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array.ST",
+        "alias": "STArray",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "any",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldMap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ArrayRefs",
+        "alias": "ArrayRefs",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ArrayCallbacks",
+        "alias": "ArrayCallbacks",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CallbackSpecialization",
+        "alias": "CallbackSpecialization",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Operators",
+        "name": "isLogicalShortCircuit",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Operators",
+        "name": "translateOperator1",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Operators",
+        "name": "translateOperator2",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Types",
+        "name": "exprTypeToPhpType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Types",
+        "name": "extractFuncType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Types",
+        "name": "getRetType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Types",
+        "name": "remainingArity",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen.Types",
+        "name": "zipArgsWithTypes",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CompactLoops",
+        "alias": "CompactLoops",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CopyCleanup",
+        "alias": "CopyCleanup",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.EnumRegions",
+        "alias": "EnumRegions",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.FreeVars",
+        "name": "freeVars",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ForeignTraversals",
+        "name": "Traversals",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NativeCallbacks",
+        "name": "Callbacks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NullableConstructors",
+        "alias": "Nullable",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PartialBindings",
+        "alias": "PartialBindings",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.StateFusion",
+        "alias": "StateFusion",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.TailInline",
+        "alias": "TailInline",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "alias": "ThunkFusion",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Codegen.Tco",
+        "alias": "Tco",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.FreeVars",
+        "name": "localId",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Syntax",
+        "alias": "Syn",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CompactLoops.purs",
+    "module": "Phpurs.CompactLoops",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "any",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "localChildren",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "mapBranches",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/CopyCleanup.purs",
+    "module": "Phpurs.CopyCleanup",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "any",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "mapBlocks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.TailInline",
+        "name": "simplifyReturns",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/EntryPoint.purs",
+    "module": "Phpurs.EntryPoint",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "printExpr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.CoreFn",
+        "name": "ModuleName",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/EnumRegions.purs",
+    "module": "Phpurs.EnumRegions",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "State",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "StateT",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "get",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "modify_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runStateT",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.Trans.Class",
+        "name": "lift",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "alias": "NEA",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "traverse_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NullableConstructors",
+        "alias": "Nullable",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Syntax",
+        "alias": "Syn",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/FileEmission.purs",
+    "module": "Phpurs.FileEmission",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "attempt",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "throwError",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Exception",
+        "name": "Error",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer",
+        "alias": "Buffer",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer.Immutable",
+        "alias": "ImmutableBuffer",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.FS.Aff",
+        "alias": "FS",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/ForeignTraversals.purs",
+    "module": "Phpurs.ForeignTraversals",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer.Immutable",
+        "alias": "Bytes",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "fingerprintBytes",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "fingerprintString",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/FreeVars.purs",
+    "module": "Phpurs.FreeVars",
+    "imports": [
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Codegen.Tco",
+        "name": "TcoExpr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.FreeVars",
+        "name": "freeVarsWith",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/Metrics.purs",
+    "module": "Phpurs.Metrics",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Int",
+        "alias": "Int",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "attempt",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "throwError",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Console",
+        "alias": "Console",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/ModuleCache.purs",
+    "module": "Phpurs.ModuleCache",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "Fingerprint",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "fingerprintString",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "Emission",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "ModuleState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ModuleState",
+        "name": "supportsEmission",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.CoreFn",
+        "name": "ModuleName",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/ModuleState.purs",
+    "module": "Phpurs.ModuleState",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "attempt",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "throwError",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Exception",
+        "name": "error",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Ref",
+        "name": "Ref",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Ref",
+        "alias": "Ref",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.FS.Aff",
+        "alias": "FS",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.BuildProfile",
+        "alias": "Profile",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer.Runtime",
+        "alias": "Runtime",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CodeGen",
+        "name": "translateWithContracts",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ForeignTraversals",
+        "name": "Traversals",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.GenNativeForeign",
+        "name": "genForeignModule",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.NativeCallbacks",
+        "name": "Callbacks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst",
+        "name": "PhpFile",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer",
+        "name": "printPhpFile",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendImplementations",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.CoreFn",
+        "name": "ModuleName",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/NativeCallbacks.purs",
+    "module": "Phpurs.NativeCallbacks",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Node.Buffer.Immutable",
+        "alias": "Bytes",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "fingerprintBytes",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.CacheKey",
+        "name": "fingerprintString",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/NullableConstructors.purs",
+    "module": "Phpurs.NullableConstructors",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "children",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "mapChildren",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.CoreFn",
+        "name": "DataDecl",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/OutputManifest.purs",
+    "module": "Phpurs.OutputManifest",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.FileEmission",
+        "name": "writeTextFileIfChanged",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/PackagePaths.purs",
+    "module": "Phpurs.PackagePaths",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Maybe",
+        "name": "Maybe",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Nullable",
+        "name": "Nullable",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Nullable",
+        "name": "toMaybe",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Nullable",
+        "name": "toNullable",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect",
+        "name": "Effect",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/PartialBindings.purs",
+    "module": "Phpurs.PartialBindings",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "State",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "get",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "modify_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "alias": "NEA",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.EnumRegions",
+        "name": "signature",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "bounded",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "hasType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "integer",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "local",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "peel",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "require",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "typed",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/PhpAst/Traversal.purs",
+    "module": "Phpurs.PhpAst.Traversal",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Maybe",
+        "name": "fromMaybe",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/PhpAst.purs",
+    "module": "Phpurs.PhpAst",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Maybe",
+        "name": "Maybe",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Generic.Rep",
+        "name": "Generic",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Show.Generic",
+        "name": "genericShow",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/Printer/Runtime.purs",
+    "module": "Phpurs.Printer.Runtime",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/Printer.purs",
+    "module": "Phpurs.Printer",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "name": "filter",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "name": "length",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "name": "mapWithIndex",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "name": "concatMap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "children",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "mapBlocks",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.Printer.Runtime",
+        "alias": "Runtime",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/PurmetaBudget.purs",
+    "module": "Phpurs.PurmetaBudget",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "bracket",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Cache",
+        "name": "setPurmetaCacheBudgetBytes",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Cache",
+        "name": "trimPurmetaCache",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/PurmetaProfile.purs",
+    "module": "Phpurs.PurmetaProfile",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "Aff",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Aff",
+        "name": "bracket",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Class",
+        "name": "liftEffect",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Effect.Console",
+        "alias": "Console",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Cache",
+        "name": "readPurmetaStatsJson",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Cache",
+        "name": "setPurmetaStatsEnabled",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/RewriteLimit.purs",
+    "module": "Phpurs.RewriteLimit",
+    "imports": [],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/StateFusion.purs",
+    "module": "Phpurs.StateFusion",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "State",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "get",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "modify_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "alias": "NEA",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "Step",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "bounded",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "call",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "freshPrefixFor",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "hasType",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "int",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "integer",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "makeWorker",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "peel",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "require",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.ThunkFusion",
+        "name": "typed",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/TailInline.purs",
+    "module": "Phpurs.TailInline",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Data.Array",
+        "alias": "Array",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "all",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "any",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldMap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "localChildren",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Phpurs.PhpAst.Traversal",
+        "name": "mapBlocks",
+        "kind": "explicit",
+        "used": true
+      }
+    ],
+    "unused": []
+  },
+  {
+    "file": "src/Phpurs/ThunkFusion.purs",
+    "module": "Phpurs.ThunkFusion",
+    "imports": [
+      {
+        "module": "Prelude",
+        "kind": "open",
+        "used": null
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "State",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "get",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "modify_",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Control.Monad.State",
+        "name": "runState",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Array",
+        "alias": "A",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Array.NonEmpty",
+        "alias": "NEA",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldl",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Foldable",
+        "name": "foldr",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "name": "Map",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Map",
+        "alias": "Map",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Newtype",
+        "name": "unwrap",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "name": "Set",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "Data.Set",
+        "alias": "Set",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.String",
+        "alias": "String",
+        "kind": "qualified",
+        "used": true
+      },
+      {
+        "module": "Data.Traversable",
+        "name": "traverse",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Convert",
+        "name": "BackendModule",
+        "kind": "explicit",
+        "used": true
+      },
+      {
+        "module": "PureScript.Backend.Optimizer.Syntax",
+        "alias": "Syn",
+        "kind": "qualified",
+        "used": true
+      }
+    ],
+    "unused": []
+  }
+]

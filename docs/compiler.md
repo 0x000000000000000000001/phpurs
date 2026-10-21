@@ -24,7 +24,14 @@ the [README](../README.md#build-the-backend).
 | Area | Entry point | Responsibility |
 | --- | --- | --- |
 | Build orchestration | [`Main.purs`](../src/Main.purs) | Load input, invoke PBO, discover FFI, write modules and entrypoints. |
-| Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO, lower bindings and expressions to PHP AST. |
+| Main selection | [`Main/Selection.purs`](../src/Main/Selection.purs) | Select exported mains and compute the CoreFn import closure. |
+| Main output lifecycle | [`Main/Outputs.purs`](../src/Main/Outputs.purs) | Write entrypoints and bundles, merge Composer roots and finalize owned outputs. |
+| Main options | [`Main/Options.purs`](../src/Main/Options.purs) | Parse CLI flags, budgets, output mode and directory. |
+| Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO and lower bindings/expressions to PHP AST. |
+| Translation context | [`CodeGen/Context.purs`](../src/Phpurs/CodeGen/Context.purs) | Shared translation state, loop context and lexical/evaluation position. |
+| TCO helpers | [`CodeGen/Tco.purs`](../src/Phpurs/CodeGen/Tco.purs) | Detect nested loops, select tail targets and emit loop jumps/entry slots. |
+| Effect classification | [`CodeGen/Effects.purs`](../src/Phpurs/CodeGen/Effects.purs) | Recognize explicit effect syntax and defer execution through the runtime helper. |
+| Binding analysis | [`CodeGen/Bindings.purs`](../src/Phpurs/CodeGen/Bindings.purs) | Analyze TCO environments, order safe recursive initialization and flatten lambdas. |
 | Traversal callback specialization | [`CallbackSpecialization.purs`](../src/Phpurs/CallbackSpecialization.purs) | Prove generic list folds and select private copies at known native callbacks. |
 | Foreign callback contracts | [`NativeCallbacks.purs`](../src/Phpurs/NativeCallbacks.purs) | Tie native callback evidence to captured FFI source bytes and signatures. |
 | FFI traversal specialization | [`ArrayCallbacks.purs`](../src/Phpurs/ArrayCallbacks.purs) | Select bounded private Array folds/filters with proven callbacks. |
@@ -32,9 +39,14 @@ the [README](../README.md#build-the-backend).
 | Free-variable reuse | [`FreeVars.purs`](../src/Phpurs/FreeVars.purs) | Memoize PBO's scope-aware free-variable sets by immutable TCO-node identity. |
 | Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
+| Ownership rewrite | [`ArrayRefs/Rebuild.purs`](../src/Phpurs/ArrayRefs/Rebuild.purs) | Rewrite owned-node rebuilds into in-place field writes. |
+| Ownership helpers | [`ArrayRefs/Support.purs`](../src/Phpurs/ArrayRefs/Support.purs) | Shared expression traversal and field-accessor helpers. |
+| Ownership analysis | [`ArrayRefs/Analysis.purs`](../src/Phpurs/ArrayRefs/Analysis.purs) | Scan passability, TCO carriers, call sites and ownership fixpoint. |
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types. |
 | PHP AST traversal | [`PhpAst/Traversal.purs`](../src/Phpurs/PhpAst/Traversal.purs) | Enumerate children with explicit scope boundaries and map expression children or statement blocks. |
-| PHP printing | [`Printer.purs`](../src/Phpurs/Printer.purs) | Render the AST, calling conventions and module layout. |
+| PHP printing API | [`Printer.purs`](../src/Phpurs/Printer.purs) | Public facade for expression, declaration and module printing. |
+| PHP expressions | [`Printer/Expr.purs`](../src/Phpurs/Printer/Expr.purs) | Render expressions, captures, currying and PHP names. |
+| PHP declarations | [`Printer/Decl.purs`](../src/Phpurs/Printer/Decl.purs) | Render declarations, exact bodies and complete module layout. |
 | Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble namespace-local data classes and the shared global curry/effect/reference runtime. |
 | FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |

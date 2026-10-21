@@ -1,0 +1,11 @@
+{
+  "module": "Phpurs.CodeGen.Tco",
+  "codegenBeforeLines": 902,
+  "codegenAfterLines": 855,
+  "tcoLines": 68,
+  "exports": ["containsNestedLoop","findTailTarget","translateTailJump","wrapLoopBody"],
+  "tests": "101/101",
+  "phpFilesCompared": 110,
+  "phpOutputIdentical": true,
+  "decision": "Extraction mécanique réussie, aucun changement de sortie."
+}

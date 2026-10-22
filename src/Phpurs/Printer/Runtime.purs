@@ -18,11 +18,16 @@ replaceNames text =
     # String.replaceAll (Pattern "__REF_NEW__") (Replacement Names.refNew)
     # String.replaceAll (Pattern "__REF_READ__") (Replacement Names.refRead)
     # String.replaceAll (Pattern "__REF_WRITE__") (Replacement Names.refWrite)
+    # String.replaceAll (Pattern "__VALUE__") (Replacement Names.value)
+    # String.replaceAll (Pattern "__RECORD__") (Replacement Names.record)
+    # String.replaceAll (Pattern "__PROMISE_MAP__") (Replacement Names.promiseMap)
+    # String.replaceAll (Pattern "__PROMISE__") (Replacement Names.promise)
+    # String.replaceAll (Pattern "__EFFECT_MAP__") (Replacement Names.effectMap)
 
 -- | Global helpers shared by every module. Generated calls use the fully
 -- | qualified names (`\phpurs_*`); the runtime itself is emitted once.
 sharedRuntime :: String
-sharedRuntime = curryFallback <> effectHelpers <> referenceHelpers
+sharedRuntime = curryFallback <> effectHelpers <> referenceHelpers <> conversionHelpers <> promiseHelpers
 
 sharedRuntimeFile :: String
 sharedRuntimeFile = "<?php\n\n" <> sharedRuntime
@@ -124,6 +129,85 @@ referenceHelpers =
   function __REF_WRITE__($ref, $value) {
     $ref->value = $value;
     return null;
+  }
+}
+""")
+
+-- | FFI boundary conversion helpers. `value` follows the shape of the PHP
+-- | value (lists stay lists, associative arrays become records); `record`
+-- | forces the root to be a record. The map helpers adapt Effect and Promise
+-- | results so plain PHP arrays can stay in FFI source files.
+conversionHelpers :: String
+conversionHelpers =
+  replaceNames ("""if (!\function_exists('__VALUE__')) {
+  function __VALUE__($value) {
+    if (\is_object($value) || !\is_array($value)) {
+      return $value;
+    }
+    if (\array_is_list($value)) {
+      $result = [];
+      foreach ($value as $item) {
+        $result[] = __VALUE__($item);
+      }
+      return $result;
+    }
+    $result = new \stdClass();
+    foreach ($value as $key => $item) {
+      $result->{$key} = __VALUE__($item);
+    }
+    return $result;
+  }
+  function __RECORD__($value) {
+    if (\is_object($value) || !\is_array($value)) {
+      return $value;
+    }
+    $result = new \stdClass();
+    foreach ($value as $key => $item) {
+      $result->{$key} = __VALUE__($item);
+    }
+    return $result;
+  }
+  function __PROMISE_MAP__($promise, $map) {
+    if (\class_exists('PhpursPromise', false) && $promise instanceof \PhpursPromise) {
+      $mapped = new \PhpursPromise();
+      $promise->then(function($value) use ($mapped, $map) {
+        $mapped->resolve($map($value));
+      }, [$mapped, 'reject']);
+      return $mapped;
+    }
+    return new \PhpursThenable(function($resolve, $reject) use ($promise, $map) {
+      $promise->then(function($value) use ($resolve, $map) {
+        return $resolve($map($value));
+      }, $reject);
+    });
+  }
+  function __EFFECT_MAP__($effect, $map) {
+    return function(...$args) use ($effect, $map) {
+      $value = \is_callable($effect) ? $effect(...$args) : $effect;
+      return $map($value);
+    };
+  }
+}
+""")
+
+-- | The Aff bridge calls `then` on the returned value. Keeping the shape in
+-- | one place avoids hand-built `(object)['then' => ...]` literals in FFI code.
+promiseHelpers :: String
+promiseHelpers =
+  replaceNames ("""if (!\class_exists('PhpursThenable')) {
+  class PhpursThenable extends \stdClass {
+    public $executor;
+    public function __construct($executor) {
+      $this->executor = $executor;
+    }
+    public function then($resolve, $reject) {
+      return ($this->executor)($resolve, $reject);
+    }
+  }
+}
+if (!\function_exists('__PROMISE__')) {
+  function __PROMISE__($executor) {
+    return new \PhpursThenable($executor);
   }
 }
 """)

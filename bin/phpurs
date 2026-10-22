@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-node --expose-gc "$DIR/phpurs.js" "$@"
+# The optimizer keeps module-level continuations on the JavaScript stack.
+# Large dependency graphs (for example the phpurs-arrays suite) exceed the
+# default 984 kB stack, so keep a larger explicit budget.
+node --stack-size=4096 --expose-gc "$DIR/phpurs.js" "$@"

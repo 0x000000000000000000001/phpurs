@@ -225,6 +225,8 @@ $exports['printLine'] = function(string $message) {
 
 `add` accepts both arguments directly. The wrapper handles PureScript partial application. `printLine` returns a zero-argument closure so its side effect occurs when the `Effect` runs, not when its argument is supplied. Preserve that delay when writing effectful imports; callback and ADT representations should follow the existing `phpurs-*` implementations.
 
+PureScript records are `stdClass` values on the PHP side, but the generated wrapper adapts foreign returns from plain PHP arrays using the foreign import type: associative arrays become records, lists stay arrays, and `Effect`/`Promise` payloads are adapted at the boundary. `Foreign` and `Object` values are accepted as plain arrays by the runtime (`tagOf` treats associative arrays as `Object` and lists as `Array`), so large dynamic values do not need conversion. `\phpurs_promise($executor)` builds the thenable shape expected by the Promise/Aff runtime; `\phpurs_value` and `\phpurs_record` remain internal escape hatches.
+
 Useful examples include the sibling `phpurs-console/src/Effect/Console.php` and the local [function/FFI boundary fixture](tests/passing/FunctionFFIBoundary.php). The latter covers captured closures, callbacks stored in records and effectful retention. Records use PHP object properties, and generated public ADT constructors expose a tag and constructor fields.
 
 Check every imported symbol: the current compiler can generate placeholder callables for missing FFI files or exports instead of issuing a hard error. Successful code generation alone does not validate an FFI port.

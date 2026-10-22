@@ -40,6 +40,26 @@ export const resolvePackagePathsImpl = function({ ffiDir, modulePaths }) {
         const scanDirs = getScanDirs(rootDir, ffiDir);
         const composerRoots = new Set(scanDirs);
 
+        // Local phpurs-* checkouts are siblings of each test/application
+        // workspace. Spago copies only PureScript/JS sources into .spago, so
+        // their .php FFI files are not visible through the copied roots.
+        // Keep sibling checkouts as FFI-only roots; Composer roots remain the
+        // declared workspace packages and module roots.
+        const siblingRoots = [];
+        try {
+            const parent = path.dirname(rootDir);
+            const resolvedRoot = path.resolve(rootDir);
+            for (const entry of fs.readdirSync(parent)) {
+                if (!entry.startsWith('phpurs-')) continue;
+                const candidate = path.resolve(parent, entry);
+                if (candidate === resolvedRoot) continue;
+                if (!fs.existsSync(path.join(candidate, 'spago.yaml'))) continue;
+                if (fs.statSync(candidate).isDirectory()) siblingRoots.push(candidate);
+            }
+        } catch (_) {
+            // A flat or isolated workspace simply has no sibling checkouts.
+        }
+
         // Module roots contribute Composer requirements in module-name order.
         // Their FFI already has a direct path through the adjacent-file lookup.
         for (const modulePath of modulePaths) {
@@ -49,7 +69,7 @@ export const resolvePackagePathsImpl = function({ ffiDir, modulePaths }) {
         }
 
         return {
-            ffiRoots: [...new Set([...scanDirs, rootDir])],
+            ffiRoots: [...new Set([...siblingRoots, ...scanDirs, rootDir])],
             composerRoots: [...composerRoots]
         };
     };

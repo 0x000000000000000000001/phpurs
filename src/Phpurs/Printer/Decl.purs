@@ -162,10 +162,15 @@ printPhpFile isBundle ffiString allArities file =
       mentions RuntimeNames.executeEffect ||
       mentions RuntimeNames.refNew ||
       mentions RuntimeNames.refRead ||
-      mentions RuntimeNames.refWrite
+      mentions RuntimeNames.refWrite ||
+      mentions RuntimeNames.value ||
+      mentions RuntimeNames.record ||
+      mentions RuntimeNames.promise ||
+      mentions RuntimeNames.promiseMap ||
+      mentions RuntimeNames.effectMap
     runtimeRequire =
       if isBundle || not usesHelpers then ""
-      else "if (!\\function_exists('" <> RuntimeNames.curryFallback <> "') || !\\function_exists('" <> RuntimeNames.executeEffect <> "') || !\\function_exists('" <> RuntimeNames.refNew <> "')) require_once __DIR__ . '/../runtime.php';\n"
+      else "if (!\\function_exists('" <> RuntimeNames.curryFallback <> "') || !\\function_exists('" <> RuntimeNames.executeEffect <> "') || !\\function_exists('" <> RuntimeNames.refNew <> "') || !\\function_exists('" <> RuntimeNames.value <> "') || !\\function_exists('" <> RuntimeNames.record <> "') || !\\function_exists('" <> RuntimeNames.promise <> "')) require_once __DIR__ . '/../runtime.php';\n"
     dataPreamble = if mentions "Phpurs_Data" then Runtime.dataClasses else ""
     prefix = if isBundle then "namespace " <> ns <> " {\n" else "<?php\n\nnamespace " <> ns <> ";\n\n"
     suffix = if isBundle then "\n}\n" else "\n"

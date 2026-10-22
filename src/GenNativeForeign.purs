@@ -67,6 +67,43 @@ genForeignModule { moduleName: ModuleName name, bindings, source } =
     , code
     }
 
+-- | Boundary adaptation derived from the foreign import type. `Any` and
+-- | records need a structural conversion because PureScript records are
+-- | stdClass values; `Foreign` and `Object` are accepted as plain arrays by
+-- | the runtime, so they stay untouched.
+data Conversion
+  = ConvertDirect String
+  | ConvertEffect Conversion
+  | ConvertPromise Conversion
+
+conversionFor :: ExprType -> Maybe Conversion
+conversionFor ty = case stripForAll ty of
+  Any -> Just (ConvertDirect RuntimeNames.value)
+  Record _ -> Just (ConvertDirect RuntimeNames.record)
+  Array inner -> case conversionFor inner of
+    Just (ConvertDirect _) -> Just (ConvertDirect RuntimeNames.value)
+    _ -> Nothing
+  ADT _ fqn [inner]
+    | fqn == [ "Effect", "Effect" ] -> ConvertEffect <$> conversionFor inner
+    | fqn == [ "Promise", "Internal", "Promise" ] -> ConvertPromise <$> conversionFor inner
+  _ -> Nothing
+
+applyConversion :: Conversion -> String -> String
+applyConversion conversion expr = case conversion of
+  ConvertDirect helper -> "\\" <> helper <> "(" <> expr <> ")"
+  ConvertEffect inner -> "\\" <> RuntimeNames.effectMap <> "(" <> expr <> ", " <> conversionCallable inner <> ")"
+  ConvertPromise inner -> "\\" <> RuntimeNames.promiseMap <> "(" <> expr <> ", " <> conversionCallable inner <> ")"
+
+conversionCallable :: Conversion -> String
+conversionCallable conversion = case conversion of
+  ConvertDirect helper -> "'" <> helper <> "'"
+  _ -> "function($__value) { return " <> applyConversion conversion "$__value" <> "; }"
+
+adaptReturn :: ExprType -> String -> String
+adaptReturn ty expr = case conversionFor ty of
+  Just conversion -> applyConversion conversion expr
+  Nothing -> expr
+
 stripForAll :: ExprType -> ExprType
 stripForAll (ForAll _ t) = stripForAll t
 stripForAll t = t
@@ -92,14 +129,14 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
       Nothing -> "(" <> missingForeign <> ")"
   in
     if arity <= 0 then
-      -- Valid values retain their raw PHP representation. An absent export has
-      -- no global slot. The printer uses ?? to call this getter only for absent
-      -- or null slots; array_key_exists preserves a legitimately exported null.
+      -- Values are adapted once when the export is captured. An absent export
+      -- has no global slot. The printer uses ?? to call this getter only for
+      -- absent or null slots; array_key_exists preserves an exported null.
       "function " <> funcName <> "() {\n"
         <> "  return \\array_key_exists('" <> globalKey <> "', $GLOBALS) ? " <> globalValue <> " : (" <> missingForeign <> ");\n"
         <> "}\n"
         <> case ffiBaseVar of
-          Just base -> "if (" <> hasExport base <> ") {\n  " <> globalValue <> " = " <> exportValue base
+          Just base -> "if (" <> hasExport base <> ") {\n  " <> globalValue <> " = " <> adaptReturn flat.ret (exportValue base)
             <> ";\n} else {\n  unset(" <> globalValue <> ");\n}\n"
           Nothing -> "unset(" <> globalValue <> ");\n"
     else
@@ -141,9 +178,12 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
           <> "  $f = "
           <> ffiValue
           <> ";\n"
-          <> "  return $f("
+          <> "  $__ret = $f("
           <> String.joinWith ", " callArgs
           <> ");\n"
+          <> "  return "
+          <> adaptReturn flat.ret "$__ret"
+          <> ";\n"
           <> "}\n"
           <> "$GLOBALS['"
           <> globalKey

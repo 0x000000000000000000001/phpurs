@@ -66,9 +66,30 @@ printReturnType retType =
   else if retType == "\\Closure" then ": \\Closure"
   else ": " <> retType <> "|\\Closure"
 
+-- | A loop can contribute a by-reference capture for the same variable that
+-- | ordinary free-variable collection contributes by value. PHP rejects
+-- | `use (&$x, $x)`, so keep one entry per base name and prefer the reference.
+dedupeCaptures :: Array String -> Array String
+dedupeCaptures = foldl step []
+  where
+  step acc name =
+    let
+      isRef = take 1 name == "&"
+      base = captureBase name
+    in case Array.findIndex (\existing -> captureBase existing == base) acc of
+      Nothing -> Array.snoc acc name
+      Just index ->
+        if isRef then
+          Array.mapWithIndex
+            (\i existing -> if i == index && take 1 existing /= "&" then name else existing)
+            acc
+        else acc
+
+  captureBase name = if take 1 name == "&" then drop 1 name else name
+
 printCaptures :: Array String -> String
 printCaptures [] = ""
-printCaptures captures = " use (" <> joinWith ", " (map printCapture captures) <> ")"
+printCaptures captures = " use (" <> joinWith ", " (map printCapture (dedupeCaptures captures)) <> ")"
   where
   printCapture name = if take 1 name == "&" then "&$" <> safeName (drop 1 name) else "$" <> safeName name
 

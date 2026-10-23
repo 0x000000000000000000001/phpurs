@@ -11,7 +11,7 @@ import { empty as emptySet } from '../../../output/Data.Set/index.js';
 import { translate } from '../../../output/Phpurs.CodeGen/index.js';
 import { printPhpFile } from '../../../output/Phpurs.Printer/index.js';
 
-const global = name => new S.Var(new T.Qualified(new Just('Init'), name));
+const global = (name) => new S.Var(new T.Qualified(new Just('Init'), name));
 const record = (name, value) => new S.Lit(new T.LitRecord([new T.Prop(name, value)]));
 const readValue = new S.Accessor(global('dictionary'), new S.GetProp('value'));
 const getter = new S.UncurriedAbs([], readValue);
@@ -22,13 +22,24 @@ const bindings = [
   // during initialization, even though creating a closure by itself is safe.
   new Tuple('fromCallback', new S.App(global('invoke'), [getter])),
   new Tuple('fromUncurriedCallback', new S.UncurriedApp(global('invoke'), [getter])),
-  new Tuple('dictionary', record('value', new S.App(global('identity'), [new S.Lit(new T.LitInt(41))]))),
+  new Tuple(
+    'dictionary',
+    record('value', new S.App(global('identity'), [new S.Lit(new T.LitInt(41))])),
+  ),
 ];
 const file = translate([])({
-  name: 'Init', bindings: [{ recursive: true, bindings }],
-  dataDecls: [], foreign: emptyMap, exports: emptySet, imports: emptySet,
-  dataTypes: emptyMap, comments: [], reExports: emptySet, classDecls: [],
-  implementations: emptyMap, directives: emptyMap,
+  name: 'Init',
+  bindings: [{ recursive: true, bindings }],
+  dataDecls: [],
+  foreign: emptyMap,
+  exports: emptySet,
+  imports: emptySet,
+  dataTypes: emptyMap,
+  comments: [],
+  reExports: emptySet,
+  classDecls: [],
+  implementations: emptyMap,
+  directives: emptyMap,
 });
 const ffi = `
 error_reporting(E_ALL);
@@ -41,7 +52,9 @@ $GLOBALS['Init_invoke'] = function($callback) { return $callback(); };
 `;
 const php = printPhpFile(false)(ffi)(file.arities)(file);
 const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {
-  input: php + `
+  input:
+    php +
+    `
 foreach (['fromReader', 'fromCallback', 'fromUncurriedCallback'] as $name) {
   if ($GLOBALS['Init_' . $name] !== 41) throw new \\Exception($name);
 }
@@ -52,4 +65,6 @@ echo "Done\n";
 assert.equal(run.status, 0, run.stdout + run.stderr);
 assert.equal(run.stderr, '');
 assert.equal(run.stdout, 'Done\n');
-console.log('recursive-initialization: applied dictionary fields and dependencies inside callbacks passed');
+console.log(
+  'recursive-initialization: applied dictionary fields and dependencies inside callbacks passed',
+);

@@ -29,21 +29,27 @@ type AnalyzedBindingGroup =
 
 analyzeBindings :: BackendModule -> Array AnalyzedBindingGroup
 analyzeBindings mod =
-  let Tuple _ groups = foldl analyzeGroup (Tuple [] []) mod.bindings
-  in groups
+  let
+    Tuple _ groups = foldl analyzeGroup (Tuple [] []) mod.bindings
+  in
+    groups
   where
   analyzeGroup (Tuple env groups) group =
     let
       nextEnv = case fromArray group.bindings of
-        Just nonEmptyBindings | group.recursive -> Tco.topLevelTcoEnvGroup mod.name nonEmptyBindings <> env
+        Just nonEmptyBindings | group.recursive -> Tco.topLevelTcoEnvGroup mod.name nonEmptyBindings
+          <> env
         _ -> env
       bindings = map (\(Tuple ident expr) -> Tuple ident (Tco.analyze nextEnv expr)) group.bindings
       orderedBindings =
         if group.recursive then
           let
             groupIdents = map (\(Tuple ident _) -> ident) group.bindings
-            ready = Array.partition (\(Tuple _ expr) -> isSafeRecursiveInit mod.name groupIdents expr) bindings
-          in ready.yes <> ready.no
+            ready = Array.partition
+              (\(Tuple _ expr) -> isSafeRecursiveInit mod.name groupIdents expr)
+              bindings
+          in
+            ready.yes <> ready.no
         else bindings
     in
       Tuple nextEnv (Array.snoc groups { recursive: group.recursive, bindings: orderedBindings })
@@ -80,15 +86,25 @@ isSafeRecursiveInit currentModule group = go
     Var (Qualified (Just mn) ident) | mn == currentModule -> not (Array.elem ident group)
     _ -> all independent expr
 
-extractUncurriedAbs :: Tco.TcoExpr -> Maybe { args :: Array String, body :: Tco.TcoExpr, fvs :: Array String }
+extractUncurriedAbs
+  :: Tco.TcoExpr -> Maybe { args :: Array String, body :: Tco.TcoExpr, fvs :: Array String }
 extractUncurriedAbs tcoExpr@(Tco.TcoExpr _ syntax) = case syntax of
   UncurriedAbs args body ->
-    Just { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
+    Just
+      { args: map (\(Tuple mbI lvl) -> localId mbI lvl) args
+      , body
+      , fvs: Array.fromFoldable (freeVars tcoExpr)
+      }
   Abs args body ->
     let
       thisArgs = map (\(Tuple mbI lvl) -> localId mbI lvl) (toArray args)
-    in case extractUncurriedAbs body of
-      Just inner -> Just { args: thisArgs <> inner.args, body: inner.body, fvs: Array.nub (Array.fromFoldable (freeVars tcoExpr) <> inner.fvs) }
-      Nothing -> Just { args: thisArgs, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
+    in
+      case extractUncurriedAbs body of
+        Just inner -> Just
+          { args: thisArgs <> inner.args
+          , body: inner.body
+          , fvs: Array.nub (Array.fromFoldable (freeVars tcoExpr) <> inner.fvs)
+          }
+        Nothing -> Just { args: thisArgs, body, fvs: Array.fromFoldable (freeVars tcoExpr) }
   Typed _ inner -> extractUncurriedAbs inner
   _ -> Nothing

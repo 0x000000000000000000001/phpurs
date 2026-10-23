@@ -1,4 +1,4 @@
-export const isMissingFile = error => error.code === 'ENOENT';
+export const isMissingFile = (error) => error.code === 'ENOENT';
 
 // Same bounded policy as PBO.App; scheduling must preserve the input order.
 export const moduleReadConcurrency = () => {

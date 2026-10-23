@@ -29,9 +29,12 @@ collectAssigns statements = Array.foldl collect Map.empty (allStatements stateme
     PhpWhile _ body -> allStatements body
     _ -> []
   collect acc st = case st of
-    PhpAssign name e -> Map.insert name (case Map.lookup name acc of
-      Nothing -> Just e
-      Just _ -> Nothing) acc
+    PhpAssign name e -> Map.insert name
+      ( case Map.lookup name acc of
+          Nothing -> Just e
+          Just _ -> Nothing
+      )
+      acc
     _ -> acc
 
 -- | Rebuilds of an owned node from its own fields become in-place updates.

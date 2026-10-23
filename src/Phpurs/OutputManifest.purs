@@ -25,9 +25,10 @@ foreign import rememberOutput :: OutputTracker -> Boolean -> String -> String ->
 writeOutput :: OutputTracker -> String -> OutputKind -> String -> String -> Aff Unit
 writeOutput tracker outputDir kind relative contents = do
   writeTextFileIfChanged (outputDir <> "/" <> relative) contents
-  let bundle = case kind of
-        ModularOutput -> false
-        BundleOutput -> true
+  let
+    bundle = case kind of
+      ModularOutput -> false
+      BundleOutput -> true
   liftEffect $ rememberOutput tracker bundle relative contents
 
 -- | Incomplete/ambiguous input cannot authorize removal. Disabled emission

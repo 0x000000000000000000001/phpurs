@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 # Clones all core phpurs-* repositories as siblings of the phpurs directory.
 # Useful for setting up the local development and testing environment.

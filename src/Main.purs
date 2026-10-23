@@ -28,7 +28,12 @@ import Phpurs.BuildProfile as Profile
 import Phpurs.CacheKey (Toolchain)
 import Phpurs.Metrics as Metrics
 import Phpurs.ModuleCache (CacheHooks)
-import Phpurs.ModuleState (publishModuleStateWithProfile, printModuleState, translateModuleStateWithContracts, supportsEmission)
+import Phpurs.ModuleState
+  ( publishModuleStateWithProfile
+  , printModuleState
+  , translateModuleStateWithContracts
+  , supportsEmission
+  )
 import Phpurs.PurmetaBudget as PurmetaBudget
 import Phpurs.PurmetaProfile (withProfile)
 import PureScript.Backend.Optimizer.Builder (buildModules)
@@ -75,58 +80,71 @@ compile toolchain override cliArgs profile = do
     Right mains -> pure mains
   let finalModules = Selection.selectModules targetMainModules loaded.modules
 
-  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache } <- Metrics.measure "prepare" \_ ->
-    Prepare.prepare
-      { profile
-      , args
-      , allModules: allModulesArray
-      , finalModules
-      , loaded
-      , override
-      , toolchain
-      , emission
-      , outputDir
-      , rewriteLimit
-      , noCache: options.noCache
-      }
+  { refs, directives, packagePaths, foreignSources, nativeCallbacks, traversals, cache } <-
+    Metrics.measure "prepare" \_ ->
+      Prepare.prepare
+        { profile
+        , args
+        , allModules: allModulesArray
+        , finalModules
+        , loaded
+        , override
+        , toolchain
+        , emission
+        , outputDir
+        , rewriteLimit
+        , noCache: options.noCache
+        }
 
   Metrics.measure "optimize + emit" \_ ->
-    PurmetaBudget.withBudget purmetaBudget $
-    withProfile options.profilePurmeta $
-    buildModules
-      { directives
-      , rewriteLimit
-      , analyzeCustom: \_ _ -> Nothing
-      , foreignSemantics: coreForeignSemantics
-      , traceIdents: Set.empty
-      , onPrepareModule: \_ m -> pure m
-      , onSkipModule: \_ (Module coreFnMod) -> do
-          let name = unwrap coreFnMod.name
-          restored <- Profile.measureAff profile "cache.load" name \_ -> cache.hooks.load coreFnMod.name
-          case restored of
-            Just state | state.backend.name == coreFnMod.name && supportsEmission emission state -> do
-              liftEffect $ Profile.restoredModule profile name
+    PurmetaBudget.withBudget purmetaBudget
+      $ withProfile options.profilePurmeta
+      $
+        buildModules
+          { directives
+          , rewriteLimit
+          , analyzeCustom: \_ _ -> Nothing
+          , foreignSemantics: coreForeignSemantics
+          , traceIdents: Set.empty
+          , onPrepareModule: \_ m -> pure m
+          , onSkipModule: \_ (Module coreFnMod) -> do
+              let name = unwrap coreFnMod.name
+              restored <- Profile.measureAff profile "cache.load" name \_ -> cache.hooks.load
+                coreFnMod.name
+              case restored of
+                Just state
+                  | state.backend.name == coreFnMod.name && supportsEmission emission state -> do
+                      liftEffect $ Profile.restoredModule profile name
+                      publishModuleStateWithProfile profile emission outputDir refs state
+                      pure (Just state.backend)
+                _ -> do
+                  liftEffect $ Profile.beginOptimization profile name
+                  pure Nothing
+          , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
+              liftEffect $ Profile.endOptimization profile
+              let modNameStr = unwrap backendMod.name
+              when verbose $ Profile.measureAff profile "diagnostics" modNameStr \_ -> do
+                let totalNodes = countModuleNodes backendMod
+                liftEffect $ Console.log $ "Generating PHP code for " <> modNameStr
+                  <> " (Total AST Nodes: "
+                  <> show totalNodes
+                  <> ")"
+              let
+                importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i)))
+                  coreFnMod.imports
+              let foreignSource = fromMaybe "" (Map.lookup backendMod.name foreignSources)
+              currentArities <- liftEffect $ Ref.read refs.globalAritiesRef
+              translated <- liftEffect $ Profile.measurePure profile "translate" modNameStr \_ ->
+                translateModuleStateWithContracts nativeCallbacks traversals importsArray
+                  foreignSource
+                  currentArities
+                  backendMod
+              state <- liftEffect $ Profile.measurePure profile "print" modNameStr \_ ->
+                printModuleState emission translated
               publishModuleStateWithProfile profile emission outputDir refs state
-              pure (Just state.backend)
-            _ -> do
-              liftEffect $ Profile.beginOptimization profile name
-              pure Nothing
-      , onCodegenModule: \_ (Module coreFnMod) backendMod _ -> do
-          liftEffect $ Profile.endOptimization profile
-          let modNameStr = unwrap backendMod.name
-          when verbose $ Profile.measureAff profile "diagnostics" modNameStr \_ -> do
-            let totalNodes = countModuleNodes backendMod
-            liftEffect $ Console.log $ "Generating PHP code for " <> modNameStr <> " (Total AST Nodes: " <> show totalNodes <> ")"
-          let importsArray = map (\i -> String.split (Pattern ".") (unwrap (importName i))) coreFnMod.imports
-          let foreignSource = fromMaybe "" (Map.lookup backendMod.name foreignSources)
-          currentArities <- liftEffect $ Ref.read refs.globalAritiesRef
-          translated <- liftEffect $ Profile.measurePure profile "translate" modNameStr \_ ->
-            translateModuleStateWithContracts nativeCallbacks traversals importsArray foreignSource currentArities backendMod
-          state <- liftEffect $ Profile.measurePure profile "print" modNameStr \_ -> printModuleState emission translated
-          publishModuleStateWithProfile profile emission outputDir refs state
-          Profile.measureAff profile "cache.store" modNameStr \_ -> cache.hooks.store state
-      }
-      finalModules
+              Profile.measureAff profile "cache.store" modNameStr \_ -> cache.hooks.store state
+          }
+          finalModules
 
   Metrics.measure "finalize" \_ ->
     Outputs.finalize

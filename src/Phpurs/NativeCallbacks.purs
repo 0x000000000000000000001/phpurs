@@ -27,15 +27,20 @@ binaryInt _ = false
 -- phpurs-prelude/src/Data/Semiring.php: both exports are raw binary arithmetic
 -- functions. GenNativeForeign emits two-argument wrappers for these exact
 -- signatures. A changed/missing/overridden FFI source gets no contract.
-semiringSource :: String
-semiringSource = "e3a03820f8461b5485f4515d91b6c0f17d092013e8c7cccc2ee8e5448f39b706"
+-- Both the original source and its formatted equivalent are supported so
+-- compiler and library checkouts can be upgraded independently.
+semiringSources :: Array String
+semiringSources =
+  [ "e3a03820f8461b5485f4515d91b6c0f17d092013e8c7cccc2ee8e5448f39b706"
+  , "d9c36f1aa00c084dce84ab3fd33c39a8d88e97e645d57786fc0abc0f737d01a3"
+  ]
 
 fromForeign :: ModuleName -> Map Ident (Maybe ExprType) -> String -> Callbacks
 fromForeign mn@(ModuleName "Data.Semiring") bindings source
-  | fingerprintString (fingerprintBytes (Bytes.fromString source UTF8)) == semiringSource =
+  | A.elem (fingerprintString (fingerprintBytes (Bytes.fromString source UTF8))) semiringSources =
       Set.fromFoldable $ A.mapMaybe prove [ Ident "intAdd", Ident "intMul" ]
-  where
-  prove ident = case Map.lookup ident bindings of
-    Just (Just ty) | binaryInt ty -> Just (Qualified (Just mn) ident)
-    _ -> Nothing
+      where
+      prove ident = case Map.lookup ident bindings of
+        Just (Just ty) | binaryInt ty -> Just (Qualified (Just mn) ident)
+        _ -> Nothing
 fromForeign _ _ _ = Set.empty

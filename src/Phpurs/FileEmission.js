@@ -1,1 +1,1 @@
-export const isMissingFile = error => error.code === 'ENOENT';
+export const isMissingFile = (error) => error.code === 'ENOENT';

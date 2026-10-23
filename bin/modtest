@@ -1,39 +1,60 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-# Se placer dans le dossier racine htdocs
-cd "$(dirname "$0")/../.."
-
+# Run executable test suites from sibling phpurs-* package checkouts.
+ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
+SIBLING_DIR=$(dirname "$ROOT_DIR")
 CLEAN=0
-for arg in "$@"; do
-  if [ "$arg" == "-c" ] || [ "$arg" == "--clean" ]; then
-    CLEAN=1
+SUITES=()
+
+usage() {
+  printf 'Usage: bin/modtest [-c|--clean]\n\n'
+  printf 'Run sibling phpurs-* packages with an executable bin/test.\n'
+  printf '%s\n' '--clean rebuilds the compiler before running the package suites.'
+}
+
+fail() {
+  printf '[ERROR] %s\n' "$*" >&2
+  exit 1
+}
+
+parse_arguments() {
+  local argument
+  for argument in "$@"; do
+    case "$argument" in
+      -c|--clean) CLEAN=1 ;;
+      -h|--help) usage; exit 0 ;;
+      *) fail "Unknown argument: $argument" ;;
+    esac
+  done
+}
+
+find_suites() {
+  local directory
+  for directory in "$SIBLING_DIR"/phpurs-*; do
+    if [[ -d "$directory" && -f "$directory/bin/test" && -x "$directory/bin/test" ]]; then
+      SUITES+=("$directory")
+    fi
+  done
+  [[ ${#SUITES[@]} -gt 0 ]] || fail "No executable sibling suites found in $SIBLING_DIR."
+}
+
+main() {
+  parse_arguments "$@"
+  find_suites
+  if [[ $CLEAN -eq 1 ]]; then
+    printf 'Building phpurs compiler...\n'
+    (cd "$ROOT_DIR" && npm run build) || fail "Compiler build failed."
   fi
-done
 
-if [ "$CLEAN" == "1" ]; then
-  echo "=== Recompiling phpurs ==="
-  (cd phpurs && npm run build) || { echo "Compiler build failed"; exit 1; }
-  echo ""
-fi
+  local directory name passed=0
+  for directory in "${SUITES[@]}"; do
+    name=$(basename "$directory")
+    printf '\n=> Testing package %s\n' "$name"
+    (cd "$directory" && ./bin/test) || fail "Tests failed in $name; remaining suites were not run."
+    passed=$((passed + 1))
+  done
+  printf '\nSummary: %s package suites passed.\n' "$passed"
+}
 
-echo "Détection des modules phpurs-*"
-echo "================================"
-
-for dir in phpurs-*/; do
-  if [ -x "${dir}bin/test" ]; then
-    echo ""
-    echo "=============================================="
-    echo "🧪 Testing module: $dir"
-    echo "=============================================="
-    (cd "$dir" && ./bin/test) || {
-      echo ""
-      echo "❌ ERROR: Tests failed in module $dir"
-      echo "🛑 Aborting remaining tests."
-      exit 1
-    }
-  fi
-done
-
-echo ""
-echo "✅ All tests passed successfully!"
+main "$@"

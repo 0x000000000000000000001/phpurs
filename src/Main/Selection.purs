@@ -43,12 +43,13 @@ selectTargetMains :: forall a. Maybe String -> Array (Module a) -> Either String
 selectTargetMains explicit modules =
   let
     discovered = map (\(Module m) -> unwrap m.name) $ Array.filter exportsMain modules
-  in case explicit of
-    Nothing -> Right discovered
-    Just mainMod -> case Array.find (\(Module m) -> unwrap m.name == mainMod) modules of
-      Nothing -> Left $ "Main module " <> mainMod <> " was not loaded"
-      Just m | not (exportsMain m) -> Left $ "Module " <> mainMod <> " does not export main"
-      Just _ -> Right [ mainMod ]
+  in
+    case explicit of
+      Nothing -> Right discovered
+      Just mainMod -> case Array.find (\(Module m) -> unwrap m.name == mainMod) modules of
+        Nothing -> Left $ "Main module " <> mainMod <> " was not loaded"
+        Just m | not (exportsMain m) -> Left $ "Module " <> mainMod <> " does not export main"
+        Just _ -> Right [ mainMod ]
 
 selectModules :: forall a. Array String -> List (Module a) -> List (Module a)
 selectModules targetMainModules modules =

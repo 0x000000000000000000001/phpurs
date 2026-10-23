@@ -12,8 +12,9 @@ withProfile :: forall a. Boolean -> Aff a -> Aff a
 withProfile false action = action
 withProfile true action = bracket
   (liftEffect $ setPurmetaStatsEnabled true)
-  (\_ -> liftEffect do
-    stats <- readPurmetaStatsJson
-    setPurmetaStatsEnabled false
-    Console.error $ "[phpurs] purmeta: " <> stats)
+  ( \_ -> liftEffect do
+      stats <- readPurmetaStatsJson
+      setPurmetaStatsEnabled false
+      Console.error $ "[phpurs] purmeta: " <> stats
+  )
   (\_ -> action)

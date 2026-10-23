@@ -43,27 +43,44 @@ genForeignModule { moduleName: ModuleName name, bindings, source } =
   let
     phpModName = String.replaceAll (Pattern ".") (Replacement "_") name
     ffiBase = "$ffi_" <> phpModName
-    ffiCode = String.trim (String.replace (Pattern "<?php\n") (Replacement "") (String.replace (Pattern "<?php") (Replacement "") source))
+    ffiCode = String.trim
+      ( String.replace (Pattern "<?php\n") (Replacement "")
+          (String.replace (Pattern "<?php") (Replacement "") source)
+      )
     hasSource = ffiCode /= ""
     prepareBinding (Tuple (Ident ident) type_) =
-      let fullName = phpModName <> "_" <> ident
+      let
+        fullName = phpModName <> "_" <> ident
       in
         { globalKey: safeName fullName
         , funcName: safeFuncName fullName
         , ffiBaseVar: if hasSource then Just ffiBase else Nothing
         , exportKey: printExpr Map.empty (PhpString ident)
-        , missingForeign: "throw new \\RuntimeException(" <> printExpr Map.empty (PhpString ("Missing PHP FFI export: " <> name <> "." <> ident)) <> ")"
+        , missingForeign: "throw new \\RuntimeException("
+            <> printExpr Map.empty (PhpString ("Missing PHP FFI export: " <> name <> "." <> ident))
+            <> ")"
         , signature: flattenFuncType (fromMaybe Any type_)
         }
     prepared = map prepareBinding (Map.toUnfoldable bindings :: Array _)
     mappings = String.joinWith "\n" (map genNativeWrapper prepared)
-    code = if hasSource then
-      ffiBase <> " = \\call_user_func(function() {\n  $exports = [];\n"
-        <> ffiCode <> "\n  return $exports;\n});\n" <> mappings <> "\n"
+    code =
+      if hasSource then
+        ffiBase <> " = \\call_user_func(function() {\n  $exports = [];\n"
+          <> ffiCode
+          <> "\n  return $exports;\n});\n"
+          <> mappings
+          <> "\n"
       else mappings <> (if mappings /= "" then "\n" else "")
   in
-    { arities: Map.fromFoldable (map (\binding -> Tuple binding.globalKey
-        (if Array.null binding.signature.args then foreignValueArity else Array.length binding.signature.args)) prepared)
+    { arities: Map.fromFoldable
+        ( map
+            ( \binding -> Tuple binding.globalKey
+                ( if Array.null binding.signature.args then foreignValueArity
+                  else Array.length binding.signature.args
+                )
+            )
+            prepared
+        )
     , code
     }
 
@@ -83,7 +100,7 @@ conversionFor ty = case stripForAll ty of
   Array inner -> case conversionFor inner of
     Just (ConvertDirect _) -> Just (ConvertDirect RuntimeNames.value)
     _ -> Nothing
-  ADT _ fqn [inner]
+  ADT _ fqn [ inner ]
     | fqn == [ "Effect", "Effect" ] -> ConvertEffect <$> conversionFor inner
     | fqn == [ "Promise", "Internal", "Promise" ] -> ConvertPromise <$> conversionFor inner
   _ -> Nothing
@@ -91,8 +108,12 @@ conversionFor ty = case stripForAll ty of
 applyConversion :: Conversion -> String -> String
 applyConversion conversion expr = case conversion of
   ConvertDirect helper -> "\\" <> helper <> "(" <> expr <> ")"
-  ConvertEffect inner -> "\\" <> RuntimeNames.effectMap <> "(" <> expr <> ", " <> conversionCallable inner <> ")"
-  ConvertPromise inner -> "\\" <> RuntimeNames.promiseMap <> "(" <> expr <> ", " <> conversionCallable inner <> ")"
+  ConvertEffect inner -> "\\" <> RuntimeNames.effectMap <> "(" <> expr <> ", "
+    <> conversionCallable inner
+    <> ")"
+  ConvertPromise inner -> "\\" <> RuntimeNames.promiseMap <> "(" <> expr <> ", "
+    <> conversionCallable inner
+    <> ")"
 
 conversionCallable :: Conversion -> String
 conversionCallable conversion = case conversion of
@@ -125,7 +146,8 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
     hasExport base = "\\array_key_exists(" <> exportKey <> ", " <> base <> ")"
     exportValue base = base <> "[" <> exportKey <> "]"
     ffiValue = case ffiBaseVar of
-      Just base -> "(" <> hasExport base <> " ? " <> exportValue base <> " : (" <> missingForeign <> "))"
+      Just base -> "(" <> hasExport base <> " ? " <> exportValue base <> " : (" <> missingForeign <>
+        "))"
       Nothing -> "(" <> missingForeign <> ")"
   in
     if arity <= 0 then
@@ -133,11 +155,20 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
       -- has no global slot. The printer uses ?? to call this getter only for
       -- absent or null slots; array_key_exists preserves an exported null.
       "function " <> funcName <> "() {\n"
-        <> "  return \\array_key_exists('" <> globalKey <> "', $GLOBALS) ? " <> globalValue <> " : (" <> missingForeign <> ");\n"
+        <> "  return \\array_key_exists('"
+        <> globalKey
+        <> "', $GLOBALS) ? "
+        <> globalValue
+        <> " : ("
+        <> missingForeign
+        <> ");\n"
         <> "}\n"
         <> case ffiBaseVar of
-          Just base -> "if (" <> hasExport base <> ") {\n  " <> globalValue <> " = " <> adaptReturn flat.ret (exportValue base)
-            <> ";\n} else {\n  unset(" <> globalValue <> ");\n}\n"
+          Just base -> "if (" <> hasExport base <> ") {\n  " <> globalValue <> " = "
+            <> adaptReturn flat.ret (exportValue base)
+            <> ";\n} else {\n  unset("
+            <> globalValue
+            <> ");\n}\n"
           Nothing -> "unset(" <> globalValue <> ");\n"
     else
       let
@@ -146,7 +177,8 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
               let
                 phpTy = exprTypeToPhpType ty
               in
-                (if phpTy == "" || i > 0 then "" else phpTy <> " ") <> "$v" <> show i <> (if i > 0 then " = null" else "")
+                (if phpTy == "" || i > 0 then "" else phpTy <> " ") <> "$v" <> show i <>
+                  (if i > 0 then " = null" else "")
           )
           flat.args
         callArgs = map (\i -> "$v" <> show i) (Array.range 0 (arity - 1))
@@ -166,13 +198,16 @@ genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, s
             <> "  if ($__num < "
             <> show arity
             <> ") {\n"
-            <> "    return \\" <> RuntimeNames.curryFallback <> "($__fn, \\func_get_args(), "
+            <> "    return \\"
+            <> RuntimeNames.curryFallback
+            <> "($__fn, \\func_get_args(), "
             <> show arity
             <> ");\n"
             <>
               "  }\n"
       in
-        "function " <> funcName <> "(" <> String.joinWith ", " argsWithTypes <> ")" <> retTypeSig <> " {\n"
+        "function " <> funcName <> "(" <> String.joinWith ", " argsWithTypes <> ")" <> retTypeSig
+          <> " {\n"
           <> fallbackStr
           <> globalDecl
           <> "  $f = "

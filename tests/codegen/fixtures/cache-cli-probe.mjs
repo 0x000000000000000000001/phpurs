@@ -29,13 +29,18 @@ for (const operation of ['readFileSync', 'unlinkSync', 'renameSync']) {
   fs[operation] = (file, ...args) => {
     const target = operation === 'renameSync' ? args[0] : file;
     if (config.failure?.operation === operation && String(target) === config.failure.file) {
-      throw Object.assign(new Error('fixture I/O failure: ' + config.failure.code), { code: config.failure.code });
+      throw Object.assign(new Error('fixture I/O failure: ' + config.failure.code), {
+        code: config.failure.code,
+      });
     }
     return original(file, ...args);
   };
 }
 if (config.host) {
-  for (const [field, value] of Object.entries(config.host)) Object.defineProperty(process, field, { value });
+  for (const [field, value] of Object.entries(config.host))
+    Object.defineProperty(process, field, { value });
 }
 syncBuiltinESMExports();
-process.on('exit', () => fs.writeFileSync(config.stats, JSON.stringify({ reads, writes, mutated })));
+process.on('exit', () =>
+  fs.writeFileSync(config.stats, JSON.stringify({ reads, writes, mutated })),
+);

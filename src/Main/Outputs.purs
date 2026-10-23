@@ -56,15 +56,18 @@ finalize config = do
     ( \mainMod -> do
         let
           entryPoint = { mainModule: mainMod, autoloadPath: config.autoloadPath, arities }
-          reachableSet = Selection.reachableFrom (Selection.moduleClosure finalModules) [ ModuleName mainMod ]
-          reachableModules = Array.filter (\(Module m) -> Set.member m.name reachableSet) (Array.fromFoldable finalModules)
+          reachableSet = Selection.reachableFrom (Selection.moduleClosure finalModules)
+            [ ModuleName mainMod ]
+          reachableModules = Array.filter (\(Module m) -> Set.member m.name reachableSet)
+            (Array.fromFoldable finalModules)
 
         if emission.emitBundle then do
           bundleContent <- case mainModule of
             Just _ -> do
               parts <- liftEffect $ Ref.read refs.bundleModulesRef
               let bundleSelected = Array.filter (\item -> Set.member item.name reachableSet) parts
-              pure $ Runtime.bundleHeader <> String.joinWith "\n" (map (\item -> item.code <> "\n") bundleSelected)
+              pure $ Runtime.bundleHeader <> String.joinWith "\n"
+                (map (\item -> item.code <> "\n") bundleSelected)
             Nothing -> liftEffect $ Ref.read refs.bundleContentRef
           code <- liftEffect $ Profile.measurePure config.profile "print" mainMod \_ ->
             bundleContent <> "\n" <> printBundleEntryPoint entryPoint
@@ -77,7 +80,8 @@ finalize config = do
             printModularEntryPoint entryPoint (map (\(Module m) -> m.name) reachableModules)
           when verbose $ liftEffect $ Console.log $ "Generating main.mod.php for " <> mainMod
           Profile.measureAff config.profile "php.write" mainMod \_ ->
-            writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php") modEntryPoint
+            writeOutput refs.outputs outputDir ModularOutput (mainMod <> "/main.mod.php")
+              modEntryPoint
     )
     config.targetMainModules
 

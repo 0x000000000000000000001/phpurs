@@ -63,7 +63,8 @@ childrenWithScope scope = case _ of
   PhpRaw _ -> []
   PhpNew _ args -> args
   PhpClone e -> [ e ]
-  PhpSwitch e cases fallback -> [ e ] <> Array.concatMap (\c -> c.matchCases <> c.stmts) cases <> fromMaybe [] fallback
+  PhpSwitch e cases fallback -> [ e ] <> Array.concatMap (\c -> c.matchCases <> c.stmts) cases <>
+    fromMaybe [] fallback
   PhpGoto _ -> []
   PhpLabel _ -> []
   PhpInstanceOf e _ -> [ e ]
@@ -99,7 +100,8 @@ mapChildren f = case _ of
   PhpAssign name e -> PhpAssign name (f e)
   PhpAssignExpr a b -> PhpAssignExpr (f a) (f b)
   PhpIf condition yes no -> PhpIf (f condition) (map f yes) (map f no)
-  PhpMatch e cases fallback -> PhpMatch (f e) (map (\c -> { val: f c.val, body: f c.body }) cases) (f fallback)
+  PhpMatch e cases fallback -> PhpMatch (f e) (map (\c -> { val: f c.val, body: f c.body }) cases)
+    (f fallback)
   PhpThrow e -> PhpThrow (f e)
   PhpTernary condition yes no -> PhpTernary (f condition) (f yes) (f no)
   PhpReturn e -> PhpReturn (f e)
@@ -110,7 +112,8 @@ mapChildren f = case _ of
   PhpNew name args -> PhpNew name (map f args)
   PhpClone e -> PhpClone (f e)
   PhpSwitch e cases fallback -> PhpSwitch (f e)
-    (map (\c -> { matchCases: map f c.matchCases, stmts: map f c.stmts }) cases) (map (map f) fallback)
+    (map (\c -> { matchCases: map f c.matchCases, stmts: map f c.stmts }) cases)
+    (map (map f) fallback)
   PhpGoto name -> PhpGoto name
   PhpLabel name -> PhpLabel name
   PhpInstanceOf e name -> PhpInstanceOf (f e) name
@@ -120,7 +123,8 @@ mapChildren f = case _ of
 mapBranches :: (Array PhpExpr -> Array PhpExpr) -> PhpExpr -> PhpExpr
 mapBranches f = case _ of
   PhpIf condition yes no -> PhpIf condition (f yes) (f no)
-  PhpSwitch e cases fallback -> PhpSwitch e (map (\c -> c { stmts = f c.stmts }) cases) (map f fallback)
+  PhpSwitch e cases fallback -> PhpSwitch e (map (\c -> c { stmts = f c.stmts }) cases)
+    (map f fallback)
   e -> e
 
 -- | Rewrite branch and loop statement lists, without entering nested functions.

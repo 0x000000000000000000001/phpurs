@@ -1,7 +1,13 @@
 -- | Invocation-local, observational timings. No process-global profiler state.
 module Phpurs.BuildProfile
-  ( Profile, disabled, withProfile, measureAff, measurePure
-  , beginOptimization, endOptimization, restoredModule
+  ( Profile
+  , disabled
+  , withProfile
+  , measureAff
+  , measurePure
+  , beginOptimization
+  , endOptimization
+  , restoredModule
   ) where
 
 import Prelude

@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Shared runner for sibling PHP library checkouts. Package wrappers supply
+# their directory; every generated file and cache cleanup stays in that package.
+COMPILER_DIR=$(cd "$(dirname "$0")/.." && pwd)
+PACKAGE_DIR=${1:?Usage: test-package PACKAGE_DIR [-c|--clean]}
+shift
+CLEAN=0
+
+fail() {
+  printf '[ERROR] %s\n' "$*" >&2
+  exit 1
+}
+
+for argument in "$@"; do
+  case "$argument" in
+    -c|--clean) CLEAN=1 ;;
+    -h|--help)
+      printf 'Usage: bin/test [-c|--clean]\n\n'
+      printf 'Build this library with the TAST compiler and run Test.Main in PHP.\n'
+      printf '%s\n' '--clean also rebuilds the phpurs compiler.'
+      exit 0
+      ;;
+    *) fail "Unknown argument: $argument" ;;
+  esac
+done
+
+cd "$PACKAGE_DIR"
+PACKAGE_DIR=$PWD
+[[ -f spago.php.yaml ]] || fail "Missing PHP package configuration: $PACKAGE_DIR/spago.php.yaml"
+
+if [[ $CLEAN -eq 1 ]]; then
+  printf 'Building phpurs compiler...\n'
+  (cd "$COMPILER_DIR" && npm run build) || fail 'Compiler build failed.'
+fi
+
+TEMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/phpurs-package-test.XXXXXX")
+HAD_CONFIG=0
+SELECTED_CONFIG=0
+cleanup() {
+  if [[ $SELECTED_CONFIG -eq 1 ]]; then
+    rm -f "$PACKAGE_DIR/spago.yaml"
+    if [[ $HAD_CONFIG -eq 1 ]]; then mv "$TEMP_DIR/spago.yaml" "$PACKAGE_DIR/spago.yaml"; fi
+  fi
+  rm -rf "$TEMP_DIR"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+# Preserve both regular configurations and symlinks, including on failure.
+if [[ -e spago.yaml || -L spago.yaml ]]; then
+  mv spago.yaml "$TEMP_DIR/spago.yaml"
+  HAD_CONFIG=1
+fi
+SELECTED_CONFIG=1
+ln -s spago.php.yaml spago.yaml
+
+rm -rf output
+printf 'Building %s with Spago...\n' "$(basename "$PACKAGE_DIR")"
+# Package locks describe the test environment; a test run must not rewrite them.
+spago build --pure || fail 'PureScript compilation failed.'
+
+node -e '
+  const fs = require("node:fs");
+  const input = JSON.parse(fs.readFileSync("output/Test.Main/corefn.json", "utf8"));
+  if (!Array.isArray(input.dataDecls) || !Array.isArray(input.classDecls)) {
+    console.error("Test inputs lack TAST declarations. Put the TAST-capable purs on PATH.");
+    process.exit(1);
+  }
+' || fail 'Expected typed CoreFn for Test.Main.'
+
+printf 'Generating PHP...\n'
+"$COMPILER_DIR/bin/phpurs" --main Test.Main || fail 'PHP generation failed.'
+[[ -f output/Test.Main/main.mod.php ]] || fail 'Missing generated Test.Main entrypoint.'
+
+printf 'Running PHP tests...\n'
+PHP_OPTIONS=(-d memory_limit=512M -d opcache.enable_cli=0)
+if [[ -f vendor/autoload.php ]]; then
+  PHP_OPTIONS+=(-d auto_prepend_file=vendor/autoload.php)
+fi
+if [[ -f test/ffi.php ]]; then
+  php "${PHP_OPTIONS[@]}" test/ffi.php || fail 'Direct PHP FFI tests failed.'
+fi
+set +e
+php "${PHP_OPTIONS[@]}" output/Test.Main/main.mod.php | tee "$TEMP_DIR/php.log"
+statuses=("${PIPESTATUS[@]}")
+set -e
+[[ ${statuses[0]} -eq 0 ]] || fail "PHP tests failed (status ${statuses[0]})."
+[[ ${statuses[1]} -eq 0 ]] || fail 'Could not record PHP test output.'
+
+if [[ -n ${PHPURS_TEST_COMPLETION_MARKER:-} ]]; then
+  grep -Fq -- "$PHPURS_TEST_COMPLETION_MARKER" "$TEMP_DIR/php.log" ||
+    fail "PHP tests exited before completion marker: $PHPURS_TEST_COMPLETION_MARKER"
+fi
+printf '\nTests passed: %s\n' "$(basename "$PACKAGE_DIR")"

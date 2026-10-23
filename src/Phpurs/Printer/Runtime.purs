@@ -27,7 +27,8 @@ replaceNames text =
 -- | Global helpers shared by every module. Generated calls use the fully
 -- | qualified names (`\phpurs_*`); the runtime itself is emitted once.
 sharedRuntime :: String
-sharedRuntime = curryFallback <> effectHelpers <> referenceHelpers <> conversionHelpers <> promiseHelpers
+sharedRuntime = curryFallback <> effectHelpers <> referenceHelpers <> conversionHelpers <>
+  promiseHelpers
 
 sharedRuntimeFile :: String
 sharedRuntimeFile = "<?php\n\n" <> sharedRuntime
@@ -40,27 +41,37 @@ bundleHeader = "<?php\n\nnamespace {\n" <> sharedRuntime <> "}\n\n"
 dataClasses :: String
 dataClasses =
   "if (!class_exists(__NAMESPACE__ . '\\\\Phpurs_Data0')) {\n"
-    <> String.joinWith "" (map dataClass (Array.range 0 12)) <> "}\n"
+    <> String.joinWith "" (map dataClass (Array.range 0 12))
+    <> "}\n"
   where
   dataClass arity =
     let
       fields = map (\index -> "value" <> show index) (Array.take arity (Array.range 0 11))
       args = map ("$" <> _) fields
       properties = if Array.null fields then "" else " public " <> String.joinWith ", " args <> ";"
-      assignments = String.joinWith "" (map (\field -> " $this->" <> field <> " = $" <> field <> ";") fields)
+      assignments = String.joinWith ""
+        (map (\field -> " $this->" <> field <> " = $" <> field <> ";") fields)
     in
       "  class Phpurs_Data" <> show arity <> " { public $tag;" <> properties
-        <> " public function __construct(" <> String.joinWith ", " ([ "$t" ] <> args)
-        <> ") { $this->tag = $t;" <> assignments <> " } }\n"
+        <> " public function __construct("
+        <> String.joinWith ", " ([ "$t" ] <> args)
+        <> ") { $this->tag = $t;"
+        <> assignments
+        <> " } }\n"
 
 curryFallback :: String
 curryFallback =
   replaceNames
-    ("""if (!\function_exists('__CURRY__')) {
+    ( """if (!\function_exists('__CURRY__')) {
   function __CURRY__($fn, $args, $expected) {
     $missing = $expected - \count($args);
-""" <> String.joinWith "" (map (\arity -> specializedCurry (Array.take arity [ "a", "b", "c", "d" ])) (Array.range 1 4)) <>
-  """    return function(...$more) use ($fn, $args, $expected) {
+"""
+        <> String.joinWith ""
+          ( map (\arity -> specializedCurry (Array.take arity [ "a", "b", "c", "d" ]))
+              (Array.range 1 4)
+          )
+        <>
+          """    return function(...$more) use ($fn, $args, $expected) {
       $merged = \array_merge($args, $more);
       if (\count($merged) >= $expected) {
         $res = $fn(...\array_slice($merged, 0, $expected));
@@ -83,31 +94,41 @@ specializedCurry args =
   let
     arity = Array.length args
     n = show arity
-    params = Array.mapWithIndex (\index arg -> "$" <> arg <> (if index == 0 then "" else " = null")) args
+    params = Array.mapWithIndex (\index arg -> "$" <> arg <> (if index == 0 then "" else " = null"))
+      args
     appendArgs supplied = String.joinWith " " (map (\arg -> "$args[] = $" <> arg <> ";") supplied)
     partialCounts = if arity > 1 then Array.range 1 (arity - 1) else []
     partialCalls = map
-      (\count -> "        if ($num === " <> show count <> ") { " <> appendArgs (Array.take count args)
-        <> " return __CURRY__($fn, $args, $expected); }\n")
+      ( \count -> "        if ($num === " <> show count <> ") { "
+          <> appendArgs (Array.take count args)
+          <> " return __CURRY__($fn, $args, $expected); }\n"
+      )
       partialCounts
   in
     "    if ($missing === " <> n <> ") {\n"
-      <> "      return function(" <> String.joinWith ", " params <> ") use ($fn, $args, $expected) {\n"
+      <> "      return function("
+      <> String.joinWith ", " params
+      <> ") use ($fn, $args, $expected) {\n"
       <> "        $num = \\func_num_args();\n"
       <> String.joinWith "" partialCalls
-      <> "        if ($num > " <> n <> ") {\n"
+      <> "        if ($num > "
+      <> n
+      <> ") {\n"
       <> "          $merged = \\array_merge($args, \\func_get_args());\n"
       <> "          $res = $fn(...\\array_slice($merged, 0, $expected));\n"
       <> "          return $res(...\\array_slice($merged, $expected));\n"
       <> "        }\n"
-      <> "        " <> appendArgs args <> "\n"
+      <> "        "
+      <> appendArgs args
+      <> "\n"
       <> "        return $fn(...$args);\n"
       <> "      };\n"
       <> "    }\n"
 
 effectHelpers :: String
 effectHelpers =
-  replaceNames ("""if (!\function_exists('__EFFECT__')) {
+  replaceNames
+    ( """if (!\function_exists('__EFFECT__')) {
   function __EFFECT__($val) {
     if (\is_callable($val)) {
       return $val($GLOBALS['Data_Unit_unit']);
@@ -115,11 +136,13 @@ effectHelpers =
     return $val;
   }
 }
-""")
+"""
+    )
 
 referenceHelpers :: String
 referenceHelpers =
-  replaceNames ("""if (!\function_exists('__REF_NEW__')) {
+  replaceNames
+    ( """if (!\function_exists('__REF_NEW__')) {
   function __REF_NEW__($value) {
     return (object)['value' => $value];
   }
@@ -131,7 +154,8 @@ referenceHelpers =
     return null;
   }
 }
-""")
+"""
+    )
 
 -- | FFI boundary conversion helpers. `value` follows the shape of the PHP
 -- | value (lists stay lists, associative arrays become records); `record`
@@ -139,7 +163,8 @@ referenceHelpers =
 -- | results so plain PHP arrays can stay in FFI source files.
 conversionHelpers :: String
 conversionHelpers =
-  replaceNames ("""if (!\function_exists('__VALUE__')) {
+  replaceNames
+    ( """if (!\function_exists('__VALUE__')) {
   function __VALUE__($value) {
     if (\is_object($value) || !\is_array($value)) {
       return $value;
@@ -188,13 +213,15 @@ conversionHelpers =
     };
   }
 }
-""")
+"""
+    )
 
 -- | The Aff bridge calls `then` on the returned value. Keeping the shape in
 -- | one place avoids hand-built `(object)['then' => ...]` literals in FFI code.
 promiseHelpers :: String
 promiseHelpers =
-  replaceNames ("""if (!\class_exists('PhpursThenable')) {
+  replaceNames
+    ( """if (!\class_exists('PhpursThenable')) {
   class PhpursThenable extends \stdClass {
     public $executor;
     public function __construct($executor) {
@@ -210,4 +237,5 @@ if (!\function_exists('__PROMISE__')) {
     return new \PhpursThenable($executor);
   }
 }
-""")
+"""
+    )

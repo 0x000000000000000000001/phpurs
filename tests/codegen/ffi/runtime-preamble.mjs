@@ -6,9 +6,31 @@ import { printPhpFile } from '../../../output/Phpurs.Printer/index.js';
 import { empty, insert } from '../../../output/Data.Map/index.js';
 import { ordString } from '../../../output/Data.Ord/index.js';
 import { sharedRuntime } from '../../../output/Phpurs.Printer.Runtime/index.js';
-import { curryFallback, effectMap, executeEffect, promise, promiseMap, record, refNew, refRead, refWrite, value } from '../../../output/Phpurs.RuntimeNames/index.js';
+import {
+  curryFallback,
+  effectMap,
+  executeEffect,
+  promise,
+  promiseMap,
+  record,
+  refNew,
+  refRead,
+  refWrite,
+  value,
+} from '../../../output/Phpurs.RuntimeNames/index.js';
 
-for (const name of [curryFallback, executeEffect, refNew, refRead, refWrite, value, record, promise, promiseMap, effectMap]) {
+for (const name of [
+  curryFallback,
+  executeEffect,
+  refNew,
+  refRead,
+  refWrite,
+  value,
+  record,
+  promise,
+  promiseMap,
+  effectMap,
+]) {
   assert.match(sharedRuntime, new RegExp(`function ${name}`), `runtime defines ${name}`);
 }
 
@@ -54,16 +76,29 @@ $mappedPromise->then(function($v) use (&$captured) { $captured = $v; }, null);
 if (!($captured instanceof \\stdClass) || $captured->a !== 1) exit(14);
 echo "ok\\n";
 `;
-const probe = spawnSync('php', ['-d', 'opcache.enable_cli=0', '-r', helperProbe], { encoding: 'utf8', timeout: 10000 });
+const probe = spawnSync('php', ['-d', 'opcache.enable_cli=0', '-r', helperProbe], {
+  encoding: 'utf8',
+  timeout: 10000,
+});
 assert.equal(probe.status, 0, probe.stdout + probe.stderr);
 assert.equal(probe.stdout, 'ok\n');
 
-const render = (decls, arities = empty) => printPhpFile(false)('')(arities)({
-  namespace: ['Demo'], imports: [], decls, rawDecls: [], arities,
-});
-const fn = { identifier: 'Demo_fn', expression: new A.PhpNativeFunction('Demo_fn', [{ name: 'x', type_: '' }], '', [new A.PhpReturn(new A.PhpVar('x'))]) };
+const render = (decls, arities = empty) =>
+  printPhpFile(false)('')(arities)({
+    namespace: ['Demo'],
+    imports: [],
+    decls,
+    rawDecls: [],
+    arities,
+  });
+const fn = {
+  identifier: 'Demo_fn',
+  expression: new A.PhpNativeFunction('Demo_fn', [{ name: 'x', type_: '' }], '', [
+    new A.PhpReturn(new A.PhpVar('x')),
+  ]),
+};
 const arities = insert(ordString)('Demo_fn')(1)(empty);
-const raw = text => ({ identifier: 'Demo_raw', expression: new A.PhpRaw(text) });
+const raw = (text) => ({ identifier: 'Demo_raw', expression: new A.PhpRaw(text) });
 
 const emptyPhp = render([]);
 assert.doesNotMatch(emptyPhp, /Phpurs_Data/);
@@ -106,7 +141,9 @@ assert.match(valuePhp, /require_once __DIR__ \. '\/\.\.\/runtime\.php';/);
 assert.match(valuePhp, /\\phpurs_value/);
 assert.doesNotMatch(valuePhp, /function phpurs_value/);
 
-const mapsPhp = render([raw('\\phpurs_promise_map($p, "phpurs_value"); \\phpurs_effect_map($e, "phpurs_value")')]);
+const mapsPhp = render([
+  raw('\\phpurs_promise_map($p, "phpurs_value"); \\phpurs_effect_map($e, "phpurs_value")'),
+]);
 assert.match(mapsPhp, /require_once __DIR__ \. '\/\.\.\/runtime\.php';/);
 assert.match(mapsPhp, /\\phpurs_promise_map/);
 assert.match(mapsPhp, /\\phpurs_effect_map/);
@@ -116,4 +153,6 @@ assert.doesNotMatch(mapsPhp, /function phpurs_effect_map/);
 const dataPhp = render([raw('new \\Demo\\Phpurs_Data2("x", null)')]);
 assert.match(dataPhp, /class Phpurs_Data0/);
 assert.match(dataPhp, /class Phpurs_Data12/);
-console.log('runtime-preamble: selective data classes, curry, effect, reference, record and promise helpers passed');
+console.log(
+  'runtime-preamble: selective data classes, curry, effect, reference, record and promise helpers passed',
+);

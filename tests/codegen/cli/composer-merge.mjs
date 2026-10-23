@@ -7,19 +7,36 @@ import test from 'node:test';
 import { temporaryRoot } from '../fixtures/cli.mjs';
 import { mergeComposers } from '../../../output/Phpurs.ComposerMerge/index.js';
 
-test('composer merge: ordered roots, malformed manifests and missing roots', t => {
+test('composer merge: ordered roots, malformed manifests and missing roots', (t) => {
   const root = temporaryRoot(t, 'phpurs-composer-merge-');
   const write = (dir, contents) => {
     fs.mkdirSync(path.join(root, dir), { recursive: true });
     fs.writeFileSync(path.join(root, dir, 'composer.json'), contents);
   };
-  write('first', JSON.stringify({ require: { 'fixture/shared': '^1', 'fixture/first': '^1' }, 'require-dev': { 'fixture/dev': '^1' } }));
+  write(
+    'first',
+    JSON.stringify({
+      require: { 'fixture/shared': '^1', 'fixture/first': '^1' },
+      'require-dev': { 'fixture/dev': '^1' },
+    }),
+  );
   write('malformed', '{');
-  write('second', JSON.stringify({ require: { 'fixture/shared': '^2', 'fixture/second': '^2' }, 'require-dev': { 'fixture/dev': '^2' } }));
+  write(
+    'second',
+    JSON.stringify({
+      require: { 'fixture/shared': '^2', 'fixture/second': '^2' },
+      'require-dev': { 'fixture/dev': '^2' },
+    }),
+  );
   const output = path.join(root, 'generated');
   mergeComposers({
     outputDir: output,
-    packageRoots: [path.join(root, 'first'), path.join(root, 'missing'), path.join(root, 'malformed'), path.join(root, 'second')],
+    packageRoots: [
+      path.join(root, 'first'),
+      path.join(root, 'missing'),
+      path.join(root, 'malformed'),
+      path.join(root, 'second'),
+    ],
   })();
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(output, 'composer.json'), 'utf8')), {
     name: 'phpurs/lib-deps',

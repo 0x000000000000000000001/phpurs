@@ -19,9 +19,12 @@ measure label action = do
   started <- liftEffect now
   result <- attempt (pure unit >>= action)
   ended <- liftEffect now
-  let status = case result of
-        Left _ -> " (failed)"
-        Right _ -> ""
+  let
+    status = case result of
+      Left _ -> " (failed)"
+      Right _ -> ""
   liftEffect $ Console.error $ "[phpurs] " <> label <> ": "
-    <> show (Int.round (ended - started)) <> " ms" <> status
+    <> show (Int.round (ended - started))
+    <> " ms"
+    <> status
   either throwError pure result

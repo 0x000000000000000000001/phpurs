@@ -42,8 +42,10 @@ bounded exprs = go 0 (foldr (\e xs -> Cons (Tuple 0 e) xs) Nil exprs)
   go count _ | count > nodeBudget = false
   go _ Nil = true
   go count (Cons (Tuple depth e) rest) =
-    let cs = children e
-    in if depth > depthBudget || A.length cs > 8192 then false
+    let
+      cs = children e
+    in
+      if depth > depthBudget || A.length cs > 8192 then false
       else go (count + 1) (foldr (\child xs -> Cons (Tuple (depth + 1) child) xs) rest cs)
 
 -- True denotes the empty constructor; false denotes its boxed alternative.
@@ -52,9 +54,9 @@ lower :: Map String Boolean -> PhpFile -> PhpFile
 lower names file
   | Map.isEmpty names || not (bounded (map _.expression file.decls)) = file
   | otherwise = file { decls = map (\d -> d { expression = go d.expression }) file.decls }
-  where
-  go expr = case mapChildren go expr of
-    PhpNew name [] | Map.lookup name names == Just true -> PhpNull
-    PhpInstanceOf value name | Just empty <- Map.lookup name names ->
-      PhpBinOp (if empty then "===" else "!==") value (PhpNull)
-    other -> other
+      where
+      go expr = case mapChildren go expr of
+        PhpNew name [] | Map.lookup name names == Just true -> PhpNull
+        PhpInstanceOf value name | Just empty <- Map.lookup name names ->
+          PhpBinOp (if empty then "===" else "!==") value (PhpNull)
+        other -> other

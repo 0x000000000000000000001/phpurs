@@ -11,21 +11,37 @@ export function temporaryRoot(t, prefix) {
 }
 
 export function runPhp(root, file, options = {}) {
-  return spawnSync('php', [...(options.phpArgs ?? ['-d', 'opcache.enable_cli=0']), file, ...(options.args ?? [])], {
-    cwd: root, encoding: 'utf8', timeout: options.timeout ?? 10000,
-    input: options.input, env: { ...process.env, ...options.env },
-  });
+  return spawnSync(
+    'php',
+    [...(options.phpArgs ?? ['-d', 'opcache.enable_cli=0']), file, ...(options.args ?? [])],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      timeout: options.timeout ?? 10000,
+      input: options.input,
+      env: { ...process.env, ...options.env },
+    },
+  );
 }
 
-export function snapshotFiles(root, directory = 'output', filter = /\.php$|composer\.json$|\.phpurs-outputs\.json$/) {
+export function snapshotFiles(
+  root,
+  directory = 'output',
+  filter = /\.php$|composer\.json$|\.phpurs-outputs\.json$/,
+) {
   const target = path.resolve(root, directory);
-  return Object.fromEntries(fs.readdirSync(target, { recursive: true }).filter(file => filter.test(file)).sort()
-    .map(file => [file, fs.readFileSync(path.join(target, file))]));
+  return Object.fromEntries(
+    fs
+      .readdirSync(target, { recursive: true })
+      .filter((file) => filter.test(file))
+      .sort()
+      .map((file) => [file, fs.readFileSync(path.join(target, file))]),
+  );
 }
 
 export function snapshotText(directory) {
   const files = {};
-  const visit = relative => {
+  const visit = (relative) => {
     for (const name of fs.readdirSync(path.join(directory, relative))) {
       const file = path.join(relative, name);
       const full = path.join(directory, file);

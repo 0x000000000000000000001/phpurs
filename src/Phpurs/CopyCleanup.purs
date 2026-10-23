@@ -42,22 +42,23 @@ supportedChildren = case _ of
   PhpRaw "" -> Just []
   -- This exact CodeGen diagnostic reads no locals and executes no user code.
   PhpRaw "\"Failed pattern match at \" . __FILE__ . \":\" . __LINE__" -> Just []
-  PhpAssign _ e -> Just [e]
-  PhpPropertyAccess e _ -> Just [e]
-  PhpBinOp _ a b -> Just [a, b]
-  PhpInstanceOf e _ -> Just [e]
+  PhpAssign _ e -> Just [ e ]
+  PhpPropertyAccess e _ -> Just [ e ]
+  PhpBinOp _ a b -> Just [ a, b ]
+  PhpInstanceOf e _ -> Just [ e ]
   PhpNew _ args -> Just args
-  PhpCall f@(PhpGlobalVar _ _) args -> Just ([f] <> args)
+  PhpCall f@(PhpGlobalVar _ _) args -> Just ([ f ] <> args)
   -- Saturated curried calls remain nested until Printer flattens them. The
   -- worklist checks every inner call, eventually requiring a global target.
-  PhpCall f@(PhpCall _ _) args -> Just ([f] <> args)
+  PhpCall f@(PhpCall _ _) args -> Just ([ f ] <> args)
   PhpDirectCall _ args -> Just args
-  PhpIf c t e -> Just ([c] <> t <> e)
-  PhpSwitch s cs d -> Just ([s] <> A.concatMap (\c -> c.matchCases <> c.stmts) cs <> fromMaybe [] d)
-  PhpWhile c b -> Just ([c] <> b)
+  PhpIf c t e -> Just ([ c ] <> t <> e)
+  PhpSwitch s cs d -> Just
+    ([ s ] <> A.concatMap (\c -> c.matchCases <> c.stmts) cs <> fromMaybe [] d)
+  PhpWhile c b -> Just ([ c ] <> b)
   PhpContinue -> Just []
-  PhpReturn e -> Just [e]
-  PhpThrow e -> Just [e]
+  PhpReturn e -> Just [ e ]
+  PhpThrow e -> Just [ e ]
   PhpLabel _ -> Just []
   PhpGoto _ -> Just []
   _ -> Nothing
@@ -73,7 +74,8 @@ inspect body = go 0 Nil (push 0 body Nil)
   go count result (Cons (Tuple depth e) rest)
     | count >= nodeBudget || depth > depthBudget = Nothing
     | otherwise = case supportedChildren e of
-        Just cs | A.length cs <= widthBudget -> go (count + 1) (Cons e result) (push (depth + 1) cs rest)
+        Just cs | A.length cs <= widthBudget -> go (count + 1) (Cons e result)
+          (push (depth + 1) cs rest)
         _ -> Nothing
 
 -- Generated constructors have no user code/destructors; field reads refer to
@@ -117,8 +119,8 @@ terminalCopies constructors = go
   step stmt rest = case stmt, A.uncons rest of
     PhpAssign name (PhpVar source), Just { head: PhpReturn e, tail }
       | pureResult constructors e && mentions name e ->
-          [PhpReturn (replaceLocal name source e)] <> tail
-    _, _ -> [stmt] <> rest
+          [ PhpReturn (replaceLocal name source e) ] <> tail
+    _, _ -> [ stmt ] <> rest
 
 -- Recognize an entry round-trip by its use/definition counts, not its generated
 -- name. Real loop backedges/labels, permutations, later uses and captures keep
@@ -130,24 +132,34 @@ entryCopies args body =
       PhpAssign tmp (PhpVar arg) -> A.elem arg args && not (A.elem tmp args)
       _ -> false
     initial = A.takeWhile copy body
-    pairs = A.mapMaybe (case _ of
-      PhpAssign tmp (PhpVar arg) -> Just (Tuple tmp arg)
-      _ -> Nothing) initial
+    pairs = A.mapMaybe
+      ( case _ of
+          PhpAssign tmp (PhpVar arg) -> Just (Tuple tmp arg)
+          _ -> Nothing
+      )
+      initial
     n = A.length pairs
     reversed = map (\(Tuple tmp arg) -> PhpAssign arg (PhpVar tmp)) pairs
     rest = A.drop n body
     unique = Set.size (Set.fromFoldable (map (\(Tuple tmp _) -> tmp) pairs)) == n
       && Set.size (Set.fromFoldable (map (\(Tuple _ arg) -> arg) pairs)) == n
-    counts ns = foldl (\acc e -> case e of
-      PhpVar v -> Map.insertWith (+) v 1 acc
-      PhpAssign v _ -> Map.insertWith (+) v 1 acc
-      _ -> acc) Map.empty ns
-  in case inspect body of
-    Just ns | n > 0 && unique && A.take n rest == reversed ->
-      let uses = counts ns
-      in if all (\(Tuple tmp _) -> Map.lookup tmp uses == Just 2) pairs
-        then A.drop n rest else body
-    _ -> body
+    counts ns = foldl
+      ( \acc e -> case e of
+          PhpVar v -> Map.insertWith (+) v 1 acc
+          PhpAssign v _ -> Map.insertWith (+) v 1 acc
+          _ -> acc
+      )
+      Map.empty
+      ns
+  in
+    case inspect body of
+      Just ns | n > 0 && unique && A.take n rest == reversed ->
+        let
+          uses = counts ns
+        in
+          if all (\(Tuple tmp _) -> Map.lookup tmp uses == Just 2) pairs then A.drop n rest
+          else body
+      _ -> body
 
 optimize :: { workers :: Set String, constructors :: Set String } -> PhpFile -> PhpFile
 optimize proof file = file { decls = map clean file.decls }
@@ -161,5 +173,6 @@ optimize proof file = file { decls = map clean file.decls }
             threaded = simplifyReturns body
             compact = terminalCopies proof.constructors threaded
             result = entryCopies (map _.name args) (simplifyReturns compact)
-          in d { expression = PhpPrivateFunction name args ret result }
+          in
+            d { expression = PhpPrivateFunction name args ret result }
     _ -> d

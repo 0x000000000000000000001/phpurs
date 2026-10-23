@@ -19,8 +19,10 @@ countNodes root = go 0 (Cons root Nil)
     -- The syntax Foldable visits every immediate child. Collect into a List
     -- rather than foldlDefault's composed functions, which can overflow on a
     -- wide node. This tail-recursive worklist also handles deep expressions.
-    let children = foldMap List.singleton syntax
-    in go (total + 1) (foldl (flip Cons) remaining children)
+    let
+      children = foldMap List.singleton syntax
+    in
+      go (total + 1) (foldl (flip Cons) remaining children)
 
 countModuleNodes :: BackendModule -> Int
 countModuleNodes backend = foldl countGroup 0 backend.bindings

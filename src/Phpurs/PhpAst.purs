@@ -15,7 +15,8 @@ import Data.Show.Generic (genericShow)
 -- | Represents a PHP expression or statement.
 data PhpExpr
   = PhpFunction (Array String) (Array { name :: String, type_ :: String }) String (Array PhpExpr)
-  | PhpCompactFunction (Array String) (Array { name :: String, type_ :: String }) String (Array PhpExpr)
+  | PhpCompactFunction (Array String) (Array { name :: String, type_ :: String }) String
+      (Array PhpExpr)
   | PhpCompactLoop String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
   | PhpNativeFunction String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
   | PhpPrivateFunction String (Array { name :: String, type_ :: String }) String (Array PhpExpr)
@@ -34,7 +35,8 @@ data PhpExpr
   | PhpPropertyAccess PhpExpr String
   | PhpRecordAccess PhpExpr String
   | PhpArrayIndex PhpExpr PhpExpr
-  | PhpAssign String PhpExpr | PhpAssignExpr PhpExpr PhpExpr
+  | PhpAssign String PhpExpr
+  | PhpAssignExpr PhpExpr PhpExpr
   | PhpIf PhpExpr (Array PhpExpr) (Array PhpExpr) -- cond, then, else
   | PhpMatch PhpExpr (Array { val :: PhpExpr, body :: PhpExpr }) PhpExpr -- subject, cases, default
   | PhpThrow PhpExpr
@@ -46,14 +48,16 @@ data PhpExpr
   | PhpRaw String
   | PhpNew String (Array PhpExpr)
   | PhpClone PhpExpr
-  | PhpSwitch PhpExpr (Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr }) (Maybe (Array PhpExpr))
+  | PhpSwitch PhpExpr (Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr })
+      (Maybe (Array PhpExpr))
   | PhpGoto String
   | PhpLabel String
   | PhpInstanceOf PhpExpr String
 
 derive instance eqPhpExpr :: Eq PhpExpr
 derive instance genericPhpExpr :: Generic PhpExpr _
-instance showPhpExpr :: Show PhpExpr where show x = genericShow x
+instance showPhpExpr :: Show PhpExpr where
+  show x = genericShow x
 
 type PhpDecl =
   { identifier :: String

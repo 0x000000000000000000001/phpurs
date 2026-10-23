@@ -42,7 +42,8 @@ foreign import saveModuleStateImpl :: String -> String -> ModuleState -> Effect 
 -- | the complete entry before allowing the driver to publish any of its state.
 loadModuleState :: CacheRequest -> Effect (Maybe ModuleState)
 loadModuleState request = do
-  result <- loadModuleStateImpl Just Nothing request.directory (fingerprintString request.key) (unwrap request.moduleName)
+  result <- loadModuleStateImpl Just Nothing request.directory (fingerprintString request.key)
+    (unwrap request.moduleName)
   pure case result of
     Just state | supportsEmission request.emission state -> Just state
     _ -> Nothing

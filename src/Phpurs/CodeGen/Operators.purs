@@ -14,7 +14,12 @@ import Data.String as String
 import Data.String.Pattern (Pattern(..), Replacement(..))
 import Phpurs.PhpAst (PhpExpr(..))
 import PureScript.Backend.Optimizer.CoreFn (Ident(..), ModuleName(..), Qualified(..))
-import PureScript.Backend.Optimizer.Syntax (BackendOperator1(..), BackendOperator2(..), BackendOperatorNum(..), BackendOperatorOrd(..))
+import PureScript.Backend.Optimizer.Syntax
+  ( BackendOperator1(..)
+  , BackendOperator2(..)
+  , BackendOperatorNum(..)
+  , BackendOperatorOrd(..)
+  )
 
 isLogicalShortCircuit :: BackendOperator2 -> Boolean
 isLogicalShortCircuit = case _ of
@@ -35,7 +40,10 @@ translateOperator1 operator expr = case operator of
       className = case mbMod of
         Just (ModuleName name) ->
           "\\" <> String.replaceAll (Pattern ".") (Replacement "\\") name
-            <> "\\" <> String.replaceAll (Pattern ".") (Replacement "_") name <> "_" <> safeTag
+            <> "\\"
+            <> String.replaceAll (Pattern ".") (Replacement "_") name
+            <> "_"
+            <> safeTag
         Nothing -> safeTag
     in
       PhpInstanceOf expr className

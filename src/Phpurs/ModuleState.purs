@@ -22,7 +22,6 @@ import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), isJust)
 import Data.Newtype (unwrap)
-import Data.Set (Set)
 import Data.Set as Set
 import Effect (Effect)
 import Effect.Aff (Aff, attempt, throwError)
@@ -40,7 +39,7 @@ import Phpurs.NativeCallbacks (Callbacks)
 import Phpurs.OutputManifest (OutputKind(..), OutputTracker, newOutputTracker, writeOutput)
 import Phpurs.PhpAst (PhpFile)
 import Phpurs.Printer (printPhpFile)
-import PureScript.Backend.Optimizer.Convert (BackendImplementations, BackendModule)
+import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ModuleName)
 
 type Emission = { emitModules :: Boolean, emitBundle :: Boolean }
@@ -57,7 +56,6 @@ type BuildRefs =
   , bundleModulesRef :: Ref (Array { name :: ModuleName, code :: String })
   , outputs :: OutputTracker
   , globalAritiesRef :: Ref (Map String Int)
-  , backendModulesRef :: Ref (Map ModuleName { imports :: Set ModuleName, implementations :: BackendImplementations })
   }
 
 newBuildRefs :: Effect BuildRefs
@@ -66,10 +64,10 @@ newBuildRefs = do
   bundleContentRef <- Ref.new Runtime.bundleHeader
   bundleModulesRef <- Ref.new []
   globalAritiesRef <- Ref.new Map.empty
-  backendModulesRef <- Ref.new Map.empty
-  pure { bundleContentRef, bundleModulesRef, globalAritiesRef, backendModulesRef, outputs }
+  pure { bundleContentRef, bundleModulesRef, globalAritiesRef, outputs }
 
-renderModuleState :: Emission -> Array (Array String) -> String -> Map String Int -> BackendModule -> ModuleState
+renderModuleState
+  :: Emission -> Array (Array String) -> String -> Map String Int -> BackendModule -> ModuleState
 renderModuleState modes imports foreignSource currentArities backend =
   printModuleState modes (translateModuleState imports foreignSource currentArities backend)
 
@@ -81,17 +79,32 @@ type TranslatedModule =
   , allArities :: Map String Int
   }
 
-translateModuleState :: Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
+translateModuleState
+  :: Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
 translateModuleState = translateModuleStateWithCallbacks Set.empty
 
-translateModuleStateWithCallbacks :: Callbacks -> Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
+translateModuleStateWithCallbacks
+  :: Callbacks
+  -> Array (Array String)
+  -> String
+  -> Map String Int
+  -> BackendModule
+  -> TranslatedModule
 translateModuleStateWithCallbacks callbacks = translateModuleStateWithContracts callbacks Set.empty
 
-translateModuleStateWithContracts :: Callbacks -> Traversals -> Array (Array String) -> String -> Map String Int -> BackendModule -> TranslatedModule
+translateModuleStateWithContracts
+  :: Callbacks
+  -> Traversals
+  -> Array (Array String)
+  -> String
+  -> Map String Int
+  -> BackendModule
+  -> TranslatedModule
 translateModuleStateWithContracts callbacks traversals imports foreignSource currentArities backend =
   let
     phpFile = translateWithContracts callbacks traversals imports backend
-    foreignModule = genForeignModule { moduleName: backend.name, bindings: backend.foreign, source: foreignSource }
+    foreignModule = genForeignModule
+      { moduleName: backend.name, bindings: backend.foreign, source: foreignSource }
     -- Store this module's contribution, not a copy of the preceding environment.
     arities = Map.union foreignModule.arities phpFile.arities
     allArities = Map.union arities currentArities
@@ -102,31 +115,36 @@ printModuleState :: Emission -> TranslatedModule -> ModuleState
 printModuleState modes { backend, phpFile, foreignCode, arities, allArities } =
   { backend
   , arities
-  , modularPhp: if modes.emitModules then Just (printPhpFile false foreignCode allArities phpFile) else Nothing
-  , bundlePhp: if modes.emitBundle then Just (printPhpFile true foreignCode allArities phpFile) else Nothing
+  , modularPhp:
+      if modes.emitModules then Just (printPhpFile false foreignCode allArities phpFile)
+      else Nothing
+  , bundlePhp:
+      if modes.emitBundle then Just (printPhpFile true foreignCode allArities phpFile) else Nothing
   }
 
 supportsEmission :: Emission -> ModuleState -> Boolean
 supportsEmission modes state =
-  (not modes.emitModules || isJust state.modularPhp) && (not modes.emitBundle || isJust state.bundlePhp)
+  (not modes.emitModules || isJust state.modularPhp) &&
+    (not modes.emitBundle || isJust state.bundlePhp)
 
 -- | Call exactly once, in builder order, on hits as well as misses. Output write
 -- | failures propagate; cache I/O must not catch them or turn them into misses.
 publishModuleState :: Emission -> String -> BuildRefs -> ModuleState -> Aff Unit
 publishModuleState = publishModuleStateWithProfile Profile.disabled
 
-publishModuleStateWithProfile :: Profile.Profile -> Emission -> String -> BuildRefs -> ModuleState -> Aff Unit
+publishModuleStateWithProfile
+  :: Profile.Profile -> Emission -> String -> BuildRefs -> ModuleState -> Aff Unit
 publishModuleStateWithProfile profile modes outputDir refs state = do
   unless (supportsEmission modes state) $ throwError $ error "Incomplete PHP module state"
   let name = state.backend.name
-  when modes.emitModules do
-    liftEffect $ Ref.modify_ (Map.insert name { imports: state.backend.imports, implementations: state.backend.implementations }) refs.backendModulesRef
-  _ <- Profile.measureAff profile "php.mkdir" (unwrap name) \_ -> attempt (FS.mkdir (outputDir <> "/" <> unwrap name))
+  _ <- Profile.measureAff profile "php.mkdir" (unwrap name) \_ -> attempt
+    (FS.mkdir (outputDir <> "/" <> unwrap name))
   liftEffect $ Ref.modify_ (Map.union state.arities) refs.globalAritiesRef
   when modes.emitBundle case state.bundlePhp of
     Just code -> liftEffect do
       Ref.modify_ (\previous -> previous <> code <> "\n") refs.bundleContentRef
-      Ref.modify_ (\previous -> Array.snoc previous { name: state.backend.name, code }) refs.bundleModulesRef
+      Ref.modify_ (\previous -> Array.snoc previous { name: state.backend.name, code })
+        refs.bundleModulesRef
     Nothing -> pure unit
   when modes.emitModules case state.modularPhp of
     Just code -> Profile.measureAff profile "php.write" (unwrap name) \_ ->

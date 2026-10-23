@@ -12,7 +12,13 @@ import Phpurs.PhpAst (PhpExpr, PhpFile)
 import Phpurs.Printer.Decl as Decl
 import Phpurs.Printer.Expr as Expr
 
-genCurry :: Map String Int -> Array { name :: String, type_ :: String } -> String -> Array String -> Array PhpExpr -> String
+genCurry
+  :: Map String Int
+  -> Array { name :: String, type_ :: String }
+  -> String
+  -> Array String
+  -> Array PhpExpr
+  -> String
 genCurry = Expr.genCurry
 
 printExpr :: Map String Int -> PhpExpr -> String

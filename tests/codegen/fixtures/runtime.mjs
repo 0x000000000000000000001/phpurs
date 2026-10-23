@@ -3,7 +3,8 @@
 import { sharedRuntime } from '../../../output/Phpurs.Printer.Runtime/index.js';
 
 export function withRuntime(php) {
-  const cleaned = php.replace(/^require_once __DIR__ \. '\/\.\.\/runtime\.php';\n?/m, '')
+  const cleaned = php
+    .replace(/^require_once __DIR__ \. '\/\.\.\/runtime\.php';\n?/m, '')
     .replace(/^if \(!\\function_exists\('phpurs_curry_fallback'\).*runtime\.php';\n?/m, '');
   const open = cleaned.indexOf('<?php');
   if (open < 0) return cleaned;

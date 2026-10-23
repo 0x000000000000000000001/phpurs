@@ -34,7 +34,9 @@ des frontières FFI et du cycle de vie des sorties, et
 | Main output lifecycle | [`Main/Outputs.purs`](../src/Main/Outputs.purs) | Write entrypoints and bundles, merge Composer roots and finalize owned outputs. |
 | Main options | [`Main/Options.purs`](../src/Main/Options.purs) | Parse CLI flags, budgets, output mode and directory. |
 | Main preparation | [`Main/Prepare.purs`](../src/Main/Prepare.purs) | Resolve package roots, capture FFI evidence, callbacks/traversals and prepare cache. |
-| Module and expression lowering | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate local passes, analyze TCO and lower bindings/expressions to PHP AST. |
+| Generation pipeline | [`CodeGen.purs`](../src/Phpurs/CodeGen.purs) | Coordinate proofs, local passes, declarations and final PHP AST rewrites. |
+| Expression lowering | [`CodeGen/Expr.purs`](../src/Phpurs/CodeGen/Expr.purs) | Recursively translate TAST expressions with lexical scopes, effects and TCO state. |
+| Declaration lowering | [`CodeGen/Declarations.purs`](../src/Phpurs/CodeGen/Declarations.purs) | Generate ADT constructors, module functions and initialized values from analyzed binding groups. |
 | Translation context | [`CodeGen/Context.purs`](../src/Phpurs/CodeGen/Context.purs) | Shared translation state, loop context and lexical/evaluation position. |
 | TCO helpers | [`CodeGen/Tco.purs`](../src/Phpurs/CodeGen/Tco.purs) | Detect nested loops, select tail targets and emit loop jumps/entry slots. |
 | Effect classification | [`CodeGen/Effects.purs`](../src/Phpurs/CodeGen/Effects.purs) | Recognize explicit effect syntax and defer execution through the runtime helper. |
@@ -43,12 +45,16 @@ des frontières FFI et du cycle de vie des sorties, et
 | Foreign callback contracts | [`NativeCallbacks.purs`](../src/Phpurs/NativeCallbacks.purs) | Tie native callback evidence to captured FFI source bytes and signatures. |
 | FFI traversal specialization | [`ArrayCallbacks.purs`](../src/Phpurs/ArrayCallbacks.purs) | Select bounded private Array folds/filters with proven callbacks. |
 | FFI traversal contracts | [`ForeignTraversals.purs`](../src/Phpurs/ForeignTraversals.purs) | Check exact source bytes, calling convention and polymorphic signatures for Array traversal templates. |
+| Shared optimizer expressions | [`Optimize/NeutralExpr.purs`](../src/Phpurs/Optimize/NeutralExpr.purs) | Inspect and construct typed neutral expressions, signatures and bounded traversals. |
+| Private optimizer names | [`Optimize/Names.purs`](../src/Phpurs/Optimize/Names.purs) | Choose private-name prefixes without case-insensitive PHP collisions. |
+| Scalar worker construction | [`Optimize/ScalarWorker.purs`](../src/Phpurs/Optimize/ScalarWorker.purs) | Emit the shared scalar loop after each fusion pass proves its own preconditions. |
 | Free-variable reuse | [`FreeVars.purs`](../src/Phpurs/FreeVars.purs) | Memoize PBO's scope-aware free-variable sets by immutable TCO-node identity. |
 | Primitive operators | [`CodeGen/Operators.purs`](../src/Phpurs/CodeGen/Operators.purs) | Choose PHP operators and runtime calls such as `intdiv`. |
 | Signatures and arity | [`CodeGen/Types.purs`](../src/Phpurs/CodeGen/Types.purs) | Extract annotated function types, select scalar PHP types, calculate remaining application arity. |
 | Ownership rewrite | [`ArrayRefs/Rebuild.purs`](../src/Phpurs/ArrayRefs/Rebuild.purs) | Rewrite owned-node rebuilds into in-place field writes. |
-| Ownership helpers | [`ArrayRefs/Support.purs`](../src/Phpurs/ArrayRefs/Support.purs) | Shared expression traversal and field-accessor helpers. |
-| Ownership analysis | [`ArrayRefs/Analysis.purs`](../src/Phpurs/ArrayRefs/Analysis.purs) | Scan passability, TCO carriers, call sites and ownership fixpoint. |
+| Ownership helpers | [`ArrayRefs/Support.purs`](../src/Phpurs/ArrayRefs/Support.purs) | Share expression traversal, variable reads, call heads and field accessors. |
+| Ownership analysis | [`ArrayRefs/Analysis.purs`](../src/Phpurs/ArrayRefs/Analysis.purs) | Select promotion through call sites, TCO carriers and a conservative fixpoint. |
+| Owner-use scan | [`ArrayRefs/Ownership.purs`](../src/Phpurs/ArrayRefs/Ownership.purs) | Track aliases and field reads through a function; reject unsafe observations after mutation. |
 | PHP representation | [`PhpAst.purs`](../src/Phpurs/PhpAst.purs) | Expression, statement, declaration and file types, including named `PhpNull`. |
 | PHP AST traversal | [`PhpAst/Traversal.purs`](../src/Phpurs/PhpAst/Traversal.purs) | Enumerate children with explicit scope boundaries and map expression children or statement blocks. |
 | PHP printing API | [`Printer.purs`](../src/Phpurs/Printer.purs) | Public facade for expression, declaration and module printing. |
@@ -56,7 +62,7 @@ des frontières FFI et du cycle de vie des sorties, et
 | PHP declarations | [`Printer/Decl.purs`](../src/Phpurs/Printer/Decl.purs) | Render declarations, exact bodies and complete module layout. |
 | Runtime names | [`RuntimeNames.purs`](../src/Phpurs/RuntimeNames.purs) | Canonical PHP helper names used by code generation and printing. |
 | Embedded PHP runtime | [`Printer/Runtime.purs`](../src/Phpurs/Printer/Runtime.purs) | Assemble data classes and the global runtime from canonical helper names. |
-| FFI assembly | [`GenNativeForeign.purs`](../src/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
+| FFI assembly | [`GenNativeForeign.purs`](../src/Phpurs/GenNativeForeign.purs) | Prepare foreign export tables, arities and public calling wrappers from FFI source. |
 | JS/PureScript boundaries | [`ffi-boundaries.md`](ffi-boundaries.md) | Contracts for JavaScript FFI modules, errors and data ownership. |
 | Executable entrypoints | [`EntryPoint.purs`](../src/Phpurs/EntryPoint.purs) | Render shared startup, module loading, the main call and Revolt execution for modular files and bundles. |
 | PHP file writes | [`FileEmission.purs`](../src/Phpurs/FileEmission.purs) | Compare generated UTF-8 bytes with existing output and write only missing or different files. |
@@ -70,7 +76,7 @@ des frontières FFI et du cycle de vie des sorties, et
 | Optimized AST metrics | [`AstMetrics.purs`](../src/Phpurs/AstMetrics.purs) | Count every expression occurrence via PBO's syntax traversal and a stack-safe worklist. |
 | Rewrite-limit option | [`RewriteLimit.purs`](../src/Phpurs/RewriteLimit.purs) | Validate the positive iteration guard before loading inputs; share it between PBO and cache keys. |
 | Package and FFI paths | [`PackagePaths.purs`](../src/Phpurs/PackagePaths.purs) | Prepare shared package roots once per build and resolve PHP files within ordered, explicit roots. |
-| Composer integration | [`ComposerMerge.js`](../src/ComposerMerge.js) | Collect package requirements for the generated application. |
+| Composer integration | [`ComposerMerge.js`](../src/Phpurs/ComposerMerge.js) | Collect package requirements for the generated application. |
 
 ## Pass order
 
@@ -121,7 +127,7 @@ only flattened consumers, so repeated scans cannot fuse their own fallback.
 The PHP emitter may flatten these calls after this pass. Any extension of the
 candidate application shapes must preserve that idempotence contract. See the
 [captured-seed audit](../audit/2026-10-05/scalar-seeds/report.md) and
-[`thunk-fusion.mjs`](../tests/codegen/thunk-fusion.mjs).
+[`thunk-fusion.mjs`](../tests/codegen/direct/thunk-fusion.mjs).
 
 `StateFusion` derives the two-field `Unit`/`Int` layout from the constructor's
 flattened signature, while requiring its actual runtime arity to be one. The
@@ -143,7 +149,7 @@ nodes and generated workers to 32 plus at most one guard per worker.
 Dynamic depth uses a private guard with the original constructor and projection
 as its negative fallback. As in `ThunkFusion`, this fallback uses nested
 applications, preserving idempotence on rescans. Public functions, closures and
-records are unchanged. See [`state-fusion.mjs`](../tests/codegen/state-fusion.mjs),
+records are unchanged. See [`state-fusion.mjs`](../tests/codegen/direct/state-fusion.mjs),
 the executable `ImmediateStateFusion` fixture and the
 [integration measurements](../audit/2026-10-06/state-fusion/report.md).
 
@@ -179,7 +185,7 @@ also caps binding groups at 256, bindings per group at 64 and declarations at 12
 Nested consumers are visited within the same scan; the generated copy's direct
 callback call prevents it from matching the generic fold proof on a rescan.
 FFI Array traversals are handled separately by the contracted pass below.
-See [`callback-specialization.mjs`](../tests/codegen/callback-specialization.mjs),
+See [`callback-specialization.mjs`](../tests/codegen/direct/callback-specialization.mjs),
 the executable `NativeFoldCallbacks` fixture and the
 [integration audit](../audit/2026-10-06/callback-specialization/report.md).
 
@@ -215,7 +221,7 @@ Predicate proofs are capped at 128 nodes; callers at 8,192; depth at 96; width a
 callback or normalized predicate, with fresh case-insensitive names and no public
 exports. The fixed `foreach` template contains only printer-rendered closed scalar
 code and is appended after ownership/inlining passes, which must not interpret it
-as a partially modeled loop. See [`array-callbacks.mjs`](../tests/codegen/array-callbacks.mjs),
+as a partially modeled loop. See [`array-callbacks.mjs`](../tests/codegen/direct/array-callbacks.mjs),
 `NativeArrayCallbacks` and the [Array integration audit](../audit/2026-10-06/array-callbacks/report.md).
 
 ## Expression translation contracts
@@ -381,7 +387,7 @@ An initializer that actually reads a missing value counts as a demand whenever
 its module is selected. This does not suppress errors or effects in supplied FFI
 initialization code. Handwritten PHP that directly accesses `$GLOBALS` bypasses
 generated value-read checks; present-value interoperability is unchanged.
-See [`missing-ffi.mjs`](../tests/codegen/missing-ffi.mjs) and the
+See [`missing-ffi.mjs`](../tests/codegen/ffi/missing-ffi.mjs) and the
 [missing-FFI validation](../audit/2026-10-06/missing-ffi/report.md).
 
 After loading all CoreFn inputs, `Main` selects the union of CoreFn import

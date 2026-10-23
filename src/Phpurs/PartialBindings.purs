@@ -1,7 +1,7 @@
 -- Reuse a closure binding inside a closed, immediately consumed chain.
 -- Types alone do not prove that partial application is pure or terminating:
 -- prove the producer grammar and the scalar callback before copying any code.
-module Phpurs.PartialBindings where
+module Phpurs.PartialBindings (optimize, workerBudget) where
 
 import Prelude
 
@@ -15,16 +15,31 @@ import Data.Maybe (Maybe(..))
 import Data.Newtype (unwrap)
 import Data.Set (Set)
 import Data.Set as Set
-import Data.String as String
-import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
-import Phpurs.EnumRegions (signature)
-import Phpurs.ThunkFusion (bounded, hasType, integer, local, peel, require, typed)
+import Phpurs.Optimize.Names (freshPrefixFor)
+import Phpurs.Optimize.NeutralExpr
+  ( bounded
+  , hasType
+  , integer
+  , local
+  , peel
+  , require
+  , signature
+  , typed
+  )
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), ModuleName, Qualified(..))
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
-import PureScript.Backend.Optimizer.Syntax (BackendOperator(..), BackendOperator2(..), BackendOperatorNum(..), BackendOperatorOrd(..), BackendSyntax(..), Level(..), Pair(..))
+import PureScript.Backend.Optimizer.Syntax
+  ( BackendOperator(..)
+  , BackendOperator2(..)
+  , BackendOperatorNum(..)
+  , BackendOperatorOrd(..)
+  , BackendSyntax(..)
+  , Level(..)
+  , Pair(..)
+  )
 
 workerBudget :: Int
 workerBudget = 32
@@ -73,7 +88,8 @@ callArgs expr = case peel expr of
 
 localCall :: Level -> Array Level -> NeutralExpr -> Boolean
 localCall fn levels expr = case callArgs expr of
-  Just call -> local fn call.fn && A.length levels == A.length call.args && all identity (A.zipWith local levels call.args)
+  Just call -> local fn call.fn && A.length levels == A.length call.args && all identity
+    (A.zipWith local levels call.args)
   _ -> false
 
 sameModuleVar :: Context -> NeutralExpr -> Maybe Ident
@@ -105,7 +121,8 @@ proveSuccessor ctx name expr = do
     Branch branches fallback | NEA.length branches == 1 -> do
       let Pair condition base = NEA.head branches
       case peel condition of
-        PrimOp (Op2 (OpIntOrd OpEq) a b) -> require (local (level outer.binder) a && integer b == Just 0)
+        PrimOp (Op2 (OpIntOrd OpEq) a b) -> require
+          (local (level outer.binder) a && integer b == Just 0)
         _ -> Nothing
       neutral ctx base
       case peel fallback of
@@ -115,14 +132,19 @@ proveSuccessor ctx name expr = do
           require (target == name)
           case call.args of
             [ next ] -> case peel next of
-              PrimOp (Op2 (OpIntNum OpSubtract) a b) -> require (local (level outer.binder) a && integer b == Just 1)
+              PrimOp (Op2 (OpIntNum OpSubtract) a b) -> require
+                (local (level outer.binder) a && integer b == Just 1)
               _ -> Nothing
             _ -> Nothing
           fn <- oneAbs rest
           value <- oneAbs fn.body
           let levels = [ level outer.binder, accLevel, level fn.binder, level value.binder ]
           require (all (\n -> unwrap n >= 0 && unwrap n < 8192) levels)
-          require (A.length (A.nub levels) == 4 && hasType chain rest && hasType unary fn.body && hasType Int value.body)
+          require
+            ( A.length (A.nub levels) == 4 && hasType chain rest && hasType unary fn.body && hasType
+                Int
+                value.body
+            )
           forced <- callArgs value.body
           require (local (level fn.binder) forced.fn)
           case forced.args of
@@ -135,12 +157,24 @@ proveSuccessor ctx name expr = do
           invoke <- makeApp Int (ref unary fresh) [ ref Int value.binder ]
           result <- makeApp Int (ref unary fn.binder) [ invoke ]
           let
-            successor = lambda chain fn.binder (typed unary (NeutralExpr (Let (Just (Ident "bound")) (level fresh) bound
-              (lambda unary value.binder result))))
+            successor = lambda chain fn.binder
+              ( typed unary
+                  ( NeutralExpr
+                      ( Let (Just (Ident "bound")) (level fresh) bound
+                          (lambda unary value.binder result)
+                      )
+                  )
+              )
             zero = lambda chain fn.binder (lambda unary value.binder (ref Int value.binder))
-            body = lambda privateType outer.binder (typed chain (NeutralExpr (Branch
-              (NEA.singleton (Pair condition zero))
-              (typed chain (NeutralExpr (Let accName accLevel recurse successor))))))
+            body = lambda privateType outer.binder
+              ( typed chain
+                  ( NeutralExpr
+                      ( Branch
+                          (NEA.singleton (Pair condition zero))
+                          (typed chain (NeutralExpr (Let accName accLevel recurse successor)))
+                      )
+                  )
+              )
           pure { body, dependencies: Set.singleton name }
         _ -> Nothing
     _ -> Nothing
@@ -158,14 +192,21 @@ proveComposition ctx known expr = do
         right <- dependency outer.binder rightCall
         fn <- oneAbs inner
         value <- oneAbs fn.body
-        require (A.length (A.nub [ level outer.binder, leftLevel, rightLevel, level fn.binder, level value.binder ]) == 5)
+        require
+          ( A.length
+              ( A.nub
+                  [ level outer.binder, leftLevel, rightLevel, level fn.binder, level value.binder ]
+              ) == 5
+          )
         require (hasType chain inner && hasType unary fn.body && hasType Int value.body)
         call <- callArgs value.body
         require (local leftLevel call.fn)
         case call.args of
-          [ binding, input ] -> require (local (level value.binder) input && localCall rightLevel [ level fn.binder ] binding)
+          [ binding, input ] -> require
+            (local (level value.binder) input && localCall rightLevel [ level fn.binder ] binding)
           _ -> Nothing
-        pure { body: lambda privateType outer.binder outer.body, dependencies: Set.union left right }
+        pure
+          { body: lambda privateType outer.binder outer.body, dependencies: Set.union left right }
       _ -> Nothing
     _ -> Nothing
   where
@@ -229,18 +270,10 @@ scan ctx prefix producers expr@(NeutralExpr syntax) = do
     name <- sameModuleVar ctx call.fn
     producer <- Map.lookup name producers
     case call.args of
-      [ count, callback, seed ] -> require (scalarInput count && scalarCallback callback && scalarInput seed)
+      [ count, callback, seed ] -> require
+        (scalarInput count && scalarCallback callback && scalarInput seed)
       _ -> Nothing
     pure (Set.insert name producer.dependencies)
-
-freshPrefix :: BackendModule -> String
-freshPrefix mod = go 0
-  where
-  names = map (String.toLower <<< unwrap) (A.concatMap (map (\(Tuple k _) -> k) <<< _.bindings) mod.bindings)
-    <> map String.toLower (A.concatMap (map _.name <<< _.constructors) mod.dataDecls)
-    <> map (String.toLower <<< unwrap) (Set.toUnfoldable (Map.keys mod.foreign) :: Array Ident)
-  go n = let prefix = "__phpurs_bind_" <> show n <> "_"
-    in if A.any (String.contains (Pattern prefix)) names then go (n + 1) else prefix
 
 optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident }
 optimize mod
@@ -251,22 +284,51 @@ optimize mod
         ctx = { name: mod.name, originals: Map.fromFoldable (A.concatMap _.bindings mod.bindings) }
         -- PBO emits dependencies before their consumers. Forward references and
         -- mutual recursion deliberately remain on the original path.
-        discover known group = foldl (\acc (Tuple name expr) ->
-          let proof = if group.recursive then case group.bindings of
-                [ _ ] -> proveSuccessor ctx name expr
-                _ -> Nothing
-                else proveComposition ctx acc expr
-          in case proof of
-            Just producer | Map.size acc < workerBudget -> Map.insert name producer acc
-            _ -> acc) known group.bindings
+        discover known group = foldl
+          ( \acc (Tuple name expr) ->
+              let
+                proof =
+                  if group.recursive then case group.bindings of
+                    [ _ ] -> proveSuccessor ctx name expr
+                    _ -> Nothing
+                  else proveComposition ctx acc expr
+              in
+                case proof of
+                  Just producer | Map.size acc < workerBudget -> Map.insert name producer acc
+                  _ -> acc
+          )
+          known
+          group.bindings
         producers = foldl discover Map.empty mod.bindings
-        prefix = freshPrefix mod
-        Tuple bindings final = runState (traverse (\g -> do
-          bs <- traverse (\(Tuple name expr) -> Tuple name <$> if bounded 8192 expr then scan ctx prefix producers expr else pure expr) g.bindings
-          pure (g { bindings = bs })) mod.bindings) { fuel: 32768, selected: Set.empty }
-        copies = A.mapMaybe (\name -> do
-          producer <- Map.lookup name producers
-          pure { recursive: Set.member name producer.dependencies, bindings: [ Tuple (Ident (prefix <> unwrap name))
-            (rename mod.name prefix final.selected producer.body) ] }) (Set.toUnfoldable final.selected :: Array Ident)
-      in if Map.isEmpty producers then { module_: mod, privateNames: Set.empty }
-        else { module_: mod { bindings = bindings <> copies }, privateNames: Set.map (\name -> Ident (prefix <> unwrap name)) final.selected }
+        prefix = freshPrefixFor "__phpurs_bind_" mod
+        Tuple bindings final = runState
+          ( traverse
+              ( \g -> do
+                  bs <- traverse
+                    ( \(Tuple name expr) -> Tuple name <$>
+                        if bounded 8192 expr then scan ctx prefix producers expr else pure expr
+                    )
+                    g.bindings
+                  pure (g { bindings = bs })
+              )
+              mod.bindings
+          )
+          { fuel: 32768, selected: Set.empty }
+        copies = A.mapMaybe
+          ( \name -> do
+              producer <- Map.lookup name producers
+              pure
+                { recursive: Set.member name producer.dependencies
+                , bindings:
+                    [ Tuple (Ident (prefix <> unwrap name))
+                        (rename mod.name prefix final.selected producer.body)
+                    ]
+                }
+          )
+          (Set.toUnfoldable final.selected :: Array Ident)
+      in
+        if Map.isEmpty producers then { module_: mod, privateNames: Set.empty }
+        else
+          { module_: mod { bindings = bindings <> copies }
+          , privateNames: Set.map (\name -> Ident (prefix <> unwrap name)) final.selected
+          }

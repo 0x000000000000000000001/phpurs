@@ -17,9 +17,6 @@ import PureScript.Backend.Optimizer.App (CLIArgs, parseCLIArgs)
 type Options =
   { args :: CLIArgs
   , verbose :: Boolean
-  , bundleOnly :: Boolean
-  , emitBundle :: Boolean
-  , emitModules :: Boolean
   , emission :: Emission
   , outputDir :: String
   , purmetaBudget :: Maybe Number
@@ -40,9 +37,6 @@ parseOptions cliArgs = do
   pure
     { args
     , verbose: Array.elem "--verbose" cliArgs
-    , bundleOnly
-    , emitBundle
-    , emitModules
     , emission: { emitModules, emitBundle }
     , outputDir: fromMaybe "output" args.mbOutputDir
     , purmetaBudget

@@ -26,78 +26,98 @@ scalar = case _ of
 
 -- Closures have a separate lexical scope, inspected explicitly below.
 nodes :: PhpExpr -> Array PhpExpr
-nodes e = [e] <> Array.concatMap nodes (localChildren e)
+nodes e = [ e ] <> Array.concatMap nodes (localChildren e)
 
 optimize :: String -> Maybe Signature -> PhpExpr -> PhpExpr
 optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret body)
-  | [input] <- Array.drop (Array.length args) signature.fArgs
+  | [ input ] <- Array.drop (Array.length args) signature.fArgs
   , scalar input && scalar signature.fRet
-  , [seed] <- Array.mapMaybe identity (Array.zipWith
-      (\arg ty -> if ty == Func [input] signature.fRet then Just arg.name else Nothing)
-      args signature.fArgs)
+  , [ seed ] <-
+      Array.mapMaybe identity
+        ( Array.zipWith
+            (\arg ty -> if ty == Func [ input ] signature.fRet then Just arg.name else Nothing)
+            args
+            signature.fArgs
+        )
   , Array.length (Array.concatMap nodes body) <= 4096 =
-    let
-      ns = Array.concatMap nodes body
-      -- Propagate through local copies, phi slots and captures until fixed point.
-      -- The cap is conservative: failure to converge keeps the original code.
-      mentions tracked = case _ of
-        PhpVar v -> Array.elem v tracked
-        PhpFunction caps _ _ _ -> any (\v -> Array.elem (stripRef v) tracked) caps
-        e -> any (mentions tracked) (localChildren e)
-      stripRef v = if String.take 1 v == "&" then String.drop 1 v else v
-      close 0 _ = Nothing
-      close n tracked =
-        let next = Array.nub $ tracked <> Array.mapMaybe (case _ of
-              PhpAssign v e | mentions tracked e -> Just v
-              _ -> Nothing) ns
-        in if next == tracked then Just tracked else close (n - 1) next
-      rewrite tracked =
-        let
-          tainted = mentions tracked
-          isTracked v = Array.elem v tracked
-          -- A candidate captures the previous function by value; its body may
-          -- invoke it but cannot inspect, return or pass that function onwards.
-          candidate fn = case fn of
-            PhpFunction caps params _ stmts ->
-              Array.length params == 1 && any isTracked caps
-                && all (\v -> String.take 1 v /= "&") caps
-                && all (\a -> not (isTracked a.name)) params
-                && all (safeInner tracked) stmts
-            _ -> false
-          safeValue = case _ of
-            PhpVar v | isTracked v -> true
-            fn@(PhpFunction _ _ _ _) | tainted fn -> candidate fn
-            e -> not (tainted e) && safeOuter e
-          safeOuter = case _ of
-            PhpAssign _ e -> safeValue e
-            PhpReturn e -> safeValue e
-            PhpIf c t e -> clean c && all safeOuter t && all safeOuter e
-            PhpSwitch s cs d -> clean s && all (\c -> all clean c.matchCases && all safeOuter c.stmts) cs && all safeOuter (fromMaybe [] d)
-            PhpGoto _ -> true
-            PhpLabel _ -> true
-            PhpNull -> true
-            PhpRaw "null" -> true
-            PhpRaw "" -> true
-            e -> clean e
-          clean e = not (tainted e) && safeInner [] e
-          -- Requiring a back edge ensures this pass is confined to loop code.
-          hasLoop = any (case _ of
-            PhpGoto l -> l == loopLabel
-            _ -> false) ns
-          count = Array.length $ Array.filter candidate $ Array.concatMap localChildren ns
-          convert = case _ of
-            fn@(PhpFunction caps params r stmts) | candidate fn -> PhpCompactFunction caps params r stmts
-            e -> e
-          go = map (case _ of
-            PhpAssign v e -> PhpAssign v (convert e)
-            PhpReturn e -> PhpReturn (convert e)
-            e -> mapBranches go e)
-        in if hasLoop && count > 0 && all safeOuter body
-          then PhpCompactLoop name args ret (go body)
-          else original
-    in case close 64 [seed] of
-      Just tracked -> rewrite tracked
-      Nothing -> original
+      let
+        ns = Array.concatMap nodes body
+        -- Propagate through local copies, phi slots and captures until fixed point.
+        -- The cap is conservative: failure to converge keeps the original code.
+        mentions tracked = case _ of
+          PhpVar v -> Array.elem v tracked
+          PhpFunction caps _ _ _ -> any (\v -> Array.elem (stripRef v) tracked) caps
+          e -> any (mentions tracked) (localChildren e)
+        stripRef v = if String.take 1 v == "&" then String.drop 1 v else v
+        close 0 _ = Nothing
+        close n tracked =
+          let
+            next = Array.nub $ tracked <> Array.mapMaybe
+              ( case _ of
+                  PhpAssign v e | mentions tracked e -> Just v
+                  _ -> Nothing
+              )
+              ns
+          in
+            if next == tracked then Just tracked else close (n - 1) next
+        rewrite tracked =
+          let
+            tainted = mentions tracked
+            isTracked v = Array.elem v tracked
+            -- A candidate captures the previous function by value; its body may
+            -- invoke it but cannot inspect, return or pass that function onwards.
+            candidate fn = case fn of
+              PhpFunction caps params _ stmts ->
+                Array.length params == 1 && any isTracked caps
+                  && all (\v -> String.take 1 v /= "&") caps
+                  && all (\a -> not (isTracked a.name)) params
+                  && all (safeInner tracked) stmts
+              _ -> false
+            safeValue = case _ of
+              PhpVar v | isTracked v -> true
+              fn@(PhpFunction _ _ _ _) | tainted fn -> candidate fn
+              e -> not (tainted e) && safeOuter e
+            safeOuter = case _ of
+              PhpAssign _ e -> safeValue e
+              PhpReturn e -> safeValue e
+              PhpIf c t e -> clean c && all safeOuter t && all safeOuter e
+              PhpSwitch s cs d -> clean s
+                && all (\c -> all clean c.matchCases && all safeOuter c.stmts) cs
+                && all safeOuter (fromMaybe [] d)
+              PhpGoto _ -> true
+              PhpLabel _ -> true
+              PhpNull -> true
+              PhpRaw "null" -> true
+              PhpRaw "" -> true
+              e -> clean e
+            clean e = not (tainted e) && safeInner [] e
+            -- Requiring a back edge ensures this pass is confined to loop code.
+            hasLoop = any
+              ( case _ of
+                  PhpGoto l -> l == loopLabel
+                  _ -> false
+              )
+              ns
+            count = Array.length $ Array.filter candidate $ Array.concatMap localChildren ns
+            convert = case _ of
+              fn@(PhpFunction caps params r stmts) | candidate fn -> PhpCompactFunction caps params
+                r
+                stmts
+              e -> e
+            go = map
+              ( case _ of
+                  PhpAssign v e -> PhpAssign v (convert e)
+                  PhpReturn e -> PhpReturn (convert e)
+                  e -> mapBranches go e
+              )
+          in
+            if hasLoop && count > 0 && all safeOuter body then PhpCompactLoop name args ret
+              (go body)
+            else original
+      in
+        case close 64 [ seed ] of
+          Just tracked -> rewrite tracked
+          Nothing -> original
 optimize _ _ original = original
 
 -- All raw code and nested closures are excluded from a compact capture body.
@@ -138,5 +158,6 @@ safeInner tracked = go
     PhpNew _ xs -> all go xs
     PhpInstanceOf e _ -> go e
     PhpThrow e -> go e
-    PhpSwitch s cs d -> go s && all (\c -> all go c.matchCases && all go c.stmts) cs && all go (fromMaybe [] d)
+    PhpSwitch s cs d -> go s && all (\c -> all go c.matchCases && all go c.stmts) cs && all go
+      (fromMaybe [] d)
     _ -> false

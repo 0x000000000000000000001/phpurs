@@ -23,7 +23,15 @@ module Phpurs.ArrayRefs (optimize) where
 import Prelude
 
 import Data.Array as A
-import Phpurs.ArrayRefs.Analysis (callsIn, fixpoint, functionParts, hasSharedConstruction, paramIndex, setFunction, tcoCarrier)
+import Phpurs.ArrayRefs.Analysis
+  ( callsIn
+  , fixpoint
+  , functionParts
+  , hasSharedConstruction
+  , paramIndex
+  , setFunction
+  , tcoCarrier
+  )
 import Phpurs.ArrayRefs.Rebuild (mutateRebuilds)
 import Data.Map (Map)
 import Data.Map as Map
@@ -45,7 +53,8 @@ optimize candidates privateClasses file =
     Just fn | Just ours <- Map.lookup decl.identifier refs, not (Set.isEmpty ours) ->
       let
         ownNames = map _.name fn.args
-        promoted = A.mapMaybe identity (A.mapWithIndex (\i a -> if Set.member i ours then Just a.name else Nothing) fn.args)
+        promoted = A.mapMaybe identity
+          (A.mapWithIndex (\i a -> if Set.member i ours then Just a.name else Nothing) fn.args)
         body' = mutateRebuilds privateClasses promoted fn.body
         body'' = rewriteBody refs ownNames ours body'
         args' = A.mapWithIndex (\i a -> if Set.member i ours then a { type_ = "&" } else a) fn.args
@@ -54,7 +63,8 @@ optimize candidates privateClasses file =
     _ -> decl
 
 rewriteBody :: Map String (Set Int) -> Array String -> Set Int -> Array PhpExpr -> Array PhpExpr
-rewriteBody byRef ownNames ownByRef body = A.concatMap (\(Tuple i st) -> step i st) (A.mapWithIndex Tuple body)
+rewriteBody byRef ownNames ownByRef body = A.concatMap (\(Tuple i st) -> step i st)
+  (A.mapWithIndex Tuple body)
   where
   step i st =
     let
@@ -65,7 +75,8 @@ rewriteBody byRef ownNames ownByRef body = A.concatMap (\(Tuple i st) -> step i 
                 ( \ix -> case A.index call.args ix of
                     Just (PhpVar reg)
                       | not (ownedParam ownNames ownByRef reg) ->
-                          map (\carrier -> PhpRaw ("unset($" <> carrier <> ")")) (tcoCarrier body i reg)
+                          map (\carrier -> PhpRaw ("unset($" <> carrier <> ")"))
+                            (tcoCarrier body i reg)
                     _ -> Nothing
                 )
                 (Set.toUnfoldable targets :: Array Int)

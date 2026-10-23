@@ -13,13 +13,13 @@ import { printPhpFile } from '../../../output/Phpurs.Printer/index.js';
 import { withRuntime } from '../fixtures/runtime.mjs';
 
 const local = (name, level) => new S.Local(new Just(name), level);
-const global = name => new S.Var(new T.Qualified(new Just('EffectResults'), name));
-const string = value => new S.Lit(new T.LitString(value));
-const typed = value => new S.Typed(T.Any.value, value);
-const typeApplied = value => new S.TypeApp(value, T.Any.value);
-const mark = label => new S.UncurriedEffectApp(global('mark'), [string(label)]);
+const global = (name) => new S.Var(new T.Qualified(new Just('EffectResults'), name));
+const string = (value) => new S.Lit(new T.LitString(value));
+const typed = (value) => new S.Typed(T.Any.value, value);
+const typeApplied = (value) => new S.TypeApp(value, T.Any.value);
+const mark = (label) => new S.UncurriedEffectApp(global('mark'), [string(label)]);
 const innerEffect = new S.EffectDefer(mark('inner'));
-const sequence = result => new S.EffectBind(new Just('ignored'), 1, mark('outer'), result);
+const sequence = (result) => new S.EffectBind(new Just('ignored'), 1, mark('outer'), result);
 const source = local('source', 0);
 const callback = local('callback', 1);
 
@@ -32,23 +32,41 @@ const bodies = [
   ['typedOpaque', typed(source)],
   ['deferred', new S.EffectDefer(sequence(new S.EffectPure(innerEffect)))],
   ['uncurriedCall', new S.UncurriedEffectApp(source, [])],
-  ['typedBind', new S.EffectBind(new Just('callback'), 1,
-    typed(new S.UncurriedEffectApp(source, [])), typed(new S.EffectPure(callback)))],
+  [
+    'typedBind',
+    new S.EffectBind(
+      new Just('callback'),
+      1,
+      typed(new S.UncurriedEffectApp(source, [])),
+      typed(new S.EffectPure(callback)),
+    ),
+  ],
 ];
 
-const bindings = bodies.map(([name, body]) => new Tuple(name,
-  new S.UncurriedEffectAbs([new Tuple(new Just('source'), 0)], body)));
+const bindings = bodies.map(
+  ([name, body]) =>
+    new Tuple(name, new S.UncurriedEffectAbs([new Tuple(new Just('source'), 0)], body)),
+);
 // Ordinary effect construction also stays lazy when its body carries a type.
 bindings.push(new Tuple('ordinaryEffect', typed(sequence(typed(new S.EffectPure(innerEffect))))));
 // A pure callable result need not be a Closure: PHP also accepts function names.
-bindings.push(new Tuple('callableString', new S.UncurriedEffectAbs([], new S.EffectPure(string('strlen')))));
+bindings.push(
+  new Tuple('callableString', new S.UncurriedEffectAbs([], new S.EffectPure(string('strlen')))),
+);
 
 const file = translate([])({
   name: 'EffectResults',
   bindings: [{ recursive: false, bindings }],
-  dataDecls: [], foreign: emptyMap, exports: emptySet, imports: emptySet,
-  dataTypes: emptyMap, comments: [], reExports: emptySet, classDecls: [],
-  implementations: emptyMap, directives: emptyMap,
+  dataDecls: [],
+  foreign: emptyMap,
+  exports: emptySet,
+  imports: emptySet,
+  dataTypes: emptyMap,
+  comments: [],
+  reExports: emptySet,
+  classDecls: [],
+  implementations: emptyMap,
+  directives: emptyMap,
 });
 const ffi = `
 $GLOBALS['Data_Unit_unit'] = null;
@@ -61,7 +79,9 @@ $GLOBALS['EffectResults_mark'] = function($label) {
 const php = printPhpFile(false)(ffi)(file.arities)(file);
 const names = JSON.stringify(bodies.map(([name]) => name));
 const run = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {
-  input: withRuntime(php + `
+  input: withRuntime(
+    php +
+      `
 error_reporting(E_ALL);
 function check($condition, $message) {
   if (!$condition) throw new \\Exception($message);
@@ -91,10 +111,13 @@ check($first() === 41 && $second() === 41, 'ordinary effect can be run repeatedl
 check($GLOBALS['effectEvents'] === ['outer', 'outer', 'inner', 'inner'], 'ordinary effect order');
 check($GLOBALS['EffectResults_callableString']() === 'strlen', 'callable string is a value');
 echo "Done\n";
-`),
+`,
+  ),
   encoding: 'utf8',
 });
 assert.equal(run.status, 0, run.stdout + run.stderr);
 assert.equal(run.stderr, '');
 assert.equal(run.stdout, 'Done\n');
-console.log('effect-results: delayed construction, callable results, annotations and repeated execution passed');
+console.log(
+  'effect-results: delayed construction, callable results, annotations and repeated execution passed',
+);

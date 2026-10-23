@@ -275,7 +275,7 @@ Install the Aff package's Composer dependencies and load the autoloader before r
 
 ## Development and testing
 
-See the [compiler maintenance guide](docs/compiler.md) for the source map, pass order and translation invariants. `npm run build` selects the upstream host compiler through npm's local `PATH`; fixture and package builds need the TAST fork on their own `PATH`.
+See the [development guide](docs/development.md) for formatting and verification commands, and the [compiler maintenance guide](docs/compiler.md) for the source map, pass order and translation invariants. `npm run build` selects the upstream host compiler through npm's local `PATH`; fixture and package builds need the TAST fork on their own `PATH`.
 
 ### Library checkouts
 
@@ -297,10 +297,10 @@ This script skips directories that already exist. It prepares PHP library forks,
 ./bin/test FunctionFFIBoundary -c
 
 # Run a code-generation regression after npm run build:
-node tests/codegen/enum-regions.mjs
+node --test tests/codegen/direct/enum-regions.mjs
 ```
 
-`bin/test` accepts fixture names or paths, several fixtures, and `--skip-before=<Name>`. `-c` / `--clean` rebuilds the compiler and clears runner caches. The runner replaces files under `tests/runner/src` and generates output there; it is a scratch project, not a place to keep application sources.
+`bin/test` accepts fixture names or paths, several fixtures, and `--skip-before=<Name>`. Invalid selections fail before a build starts. `-c` / `--clean` rebuilds the compiler and clears runner caches, including `output-test`. Each fixture stops on the first compilation, generation or execution failure and prints that stage's diagnostic. The runner replaces files under `tests/runner/src` and generates output there; it is a scratch project, not a place to keep application sources.
 
 Only `tests/runner/spago.yaml` and `spago.lock` are retained in that scratch project. Sources copied from `tests/passing`, compiled output and caches are recreated by `bin/test` and ignored by Git. Historical audit reports, scripts and compact results are retained; their generated `audit/**/raw` workspaces are disposable and ignored.
 
@@ -311,6 +311,11 @@ npm run test:codegen
 ```
 
 Package-level tests live in sibling repositories. `./bin/modtest` runs the siblings that provide an executable `bin/test`; `./bin/modtest -c` rebuilds the backend first. Install each package's declared runtime dependencies before those tests, especially Composer dependencies for Aff.
+
+Sibling wrappers share `bin/test-package`, which preserves their configuration
+and lockfiles while rebuilding only their own output. See the
+[PHP library development guide](docs/libraries.md) for FFI conventions, direct
+PHP tests and the `format:packages` commands.
 
 ### Nix environment
 
@@ -327,8 +332,8 @@ It currently selects upstream PureScript `0.15.15`. That can serve as a host com
 1. **Typed input:** the optimizer fork's `App` loader reads and sorts the enriched `corefn.json` modules. TAST preserves structural types, declaration layouts and polymorphic instantiations.
 2. **Optimization:** `buildModules` applies the shared optimizer's analysis, directives and rewrites to produce `BackendModule` values.
 3. **PHP lowering:** [Phpurs.CodeGen](src/Phpurs/CodeGen.purs) applies PHP-specific transformations and TCO analysis, then constructs [PhpAst](src/Phpurs/PhpAst.purs). Specialized representations are used where proven; unsupported shapes retain the general representation.
-4. **FFI and printing:** [GenNativeForeign](src/GenNativeForeign.purs) prepares foreign export tables, typed calling wrappers and arities together; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source using the shared [runtime preamble](src/Phpurs/Printer/Runtime.purs).
-5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [Phpurs.EntryPoint](src/Phpurs/EntryPoint.purs) renders their shared startup and Revolt execution. [Phpurs.PackagePaths](src/Phpurs/PackagePaths.purs) prepares the package roots shared by FFI lookup and [ComposerMerge](src/ComposerMerge.js), which collects PHP package requirements.
+4. **FFI and printing:** [GenNativeForeign](src/Phpurs/GenNativeForeign.purs) prepares foreign export tables, typed calling wrappers and arities together; [Phpurs.Printer](src/Phpurs/Printer.purs) emits PHP source using the shared [runtime preamble](src/Phpurs/Printer/Runtime.purs).
+5. **Application integration:** [Main](src/Main.purs) writes module files, entrypoints and optional bundles. [Phpurs.EntryPoint](src/Phpurs/EntryPoint.purs) renders their shared startup and Revolt execution. [Phpurs.PackagePaths](src/Phpurs/PackagePaths.purs) prepares the package roots shared by FFI lookup and [ComposerMerge](src/Phpurs/ComposerMerge.js), which collects PHP package requirements.
 
 Spago provides incremental compilation of the backend itself. PHPurs's persistent module cache skips optimization, translation and module printing on validated hits; `--no-cache` exercises the full path. Emission compares generated bytes to avoid rewriting identical PHP. Rebuild the compiler bundle after changing its source.
 

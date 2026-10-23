@@ -1,5 +1,5 @@
--- | Ownership analysis for promoting private parameters and detecting unsafe
--- | aliases, calls and TCO registers.
+-- | Find call-site and TCO transfers, then solve private-parameter promotion.
+-- | Per-owner alias and mutation checks live in ArrayRefs.Ownership.
 module Phpurs.ArrayRefs.Analysis
   ( Call
   , Worker
@@ -15,7 +15,6 @@ module Phpurs.ArrayRefs.Analysis
 import Prelude
 
 import Data.Array as A
-import Data.Int as Int
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -23,7 +22,8 @@ import Data.Set (Set)
 import Data.Set as Set
 import Data.String as String
 import Data.Tuple (Tuple(..))
-import Phpurs.ArrayRefs.Support (exprChildren)
+import Phpurs.ArrayRefs.Ownership as Ownership
+import Phpurs.ArrayRefs.Support (callHead, exprChildren, fieldIndexOf, usesVar, varsIn)
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..))
 
 type Worker =
@@ -42,7 +42,8 @@ declShared :: Set String -> PhpDecl -> Boolean
 declShared privateClasses decl = go decl.expression
   where
   go e = case e of
-    PhpNew cls args | Set.member cls privateClasses -> hasDuplicate (A.filter retainedChild args) || A.any go args
+    PhpNew cls args | Set.member cls privateClasses -> hasDuplicate (A.filter retainedChild args) ||
+      A.any go args
     _ -> A.any go (exprChildren e)
 
   retainedChild = case _ of
@@ -76,48 +77,19 @@ setFunction e args body = case e of
   PhpPrivateFunction name _ ret _ -> PhpPrivateFunction name args ret body
   _ -> e
 
-varsIn :: PhpExpr -> Array String
-varsIn e = case e of
-  PhpVar v -> [ v ]
-  PhpFunction captures _ _ _ -> captures <> A.concatMap varsIn (exprChildren e)
-  PhpCompactFunction captures _ _ _ -> captures <> A.concatMap varsIn (exprChildren e)
-  _ -> A.concatMap varsIn (exprChildren e)
-
-usesVar :: String -> PhpExpr -> Boolean
-usesVar name e = A.elem name (varsIn e)
-
 type Call = { target :: String, args :: Array PhpExpr }
-
--- | Curried applications are nested calls: `((f a) b)` is one call with two
--- | arguments. Flatten them before checking passability.
-callHead :: PhpExpr -> Maybe { target :: String, args :: Array PhpExpr }
-callHead = case _ of
-  PhpGlobalVar mbMod ident -> Just { target: modKey mbMod ident, args: [] }
-  PhpCall f args -> case callHead f of
-    Just head -> Just { target: head.target, args: head.args <> args }
-    Nothing -> Nothing
-  _ -> Nothing
 
 callsIn :: PhpExpr -> Array Call
 callsIn e = case e of
   PhpDirectCall target args -> A.cons { target, args } (A.concatMap callsIn args)
   PhpCall f args -> case callHead f of
-    Just head -> A.cons { target: head.target, args: head.args <> args } (A.concatMap callsIn (A.cons f args))
+    Just head -> A.cons { target: head.target, args: head.args <> args }
+      (A.concatMap callsIn (A.cons f args))
     Nothing -> A.concatMap callsIn (A.cons f args)
   _ -> A.concatMap callsIn (exprChildren e)
 
-modKey :: Maybe (Array String) -> String -> String
-modKey mbMod ident = case mbMod of
-  Just parts -> String.joinWith "_" parts <> "_" <> ident
-  Nothing -> ident
-
 paramIndex :: Array String -> String -> Maybe Int
 paramIndex names name = A.findIndex (_ == name) names
-
-fieldIndexOf :: String -> Maybe Int
-fieldIndexOf f = case String.stripPrefix (String.Pattern "value") f of
-  Just digits -> Int.fromString digits
-  Nothing -> Nothing
 
 -- Other-field reads of the parent stay allowed; re-reading the mutated field
 -- or aliasing the parent would observe the update and is refused.
@@ -179,23 +151,6 @@ type SiteCtx =
   , body :: Array PhpExpr
   }
 
-type ScanCtx =
-  { owner :: String
-  , byRef :: Map String (Set Int)
-  , candidates :: Map String (Set Int)
-  , privateClasses :: Set String
-  }
-
-type ScanState =
-  { bad :: Boolean
-  , mutated :: Set Int
-  , slots :: Map String Int
-  }
-
--- | Sentinel field for "the whole node is consumed, every field may change".
-allFields :: Int
-allFields = -1
-
 -- | The caller hands `arg` over; the owner of the value must not be reachable
 -- | from any other binding of the calling function.
 passable :: SiteCtx -> Array PhpExpr -> Int -> PhpExpr -> Boolean
@@ -205,7 +160,7 @@ passable ctx tail tcoIndex arg = case arg of
         Just ix ->
           Set.member ix ctx.ownByRef
             && not (A.any (usesVar v) tail)
-            && not (scanOwnerBad ctx v)
+            && not (hasUnsafeOwnerUse ctx v)
         Nothing -> false
     )
       || case tcoCarrier ctx.body tcoIndex v of
@@ -217,7 +172,7 @@ passable ctx tail tcoIndex arg = case arg of
         Just ix ->
           Set.member ix ctx.ownByRef
             && parentReadsOk tail p field
-            && not (scanOwnerBad ctx p)
+            && not (hasUnsafeOwnerUse ctx p)
         Nothing -> false
     Nothing -> false
   PhpArrayIndex (PhpVar p) (PhpInt field) ->
@@ -225,216 +180,18 @@ passable ctx tail tcoIndex arg = case arg of
       Just ix ->
         Set.member ix ctx.ownByRef
           && parentReadsOk tail p field
-          && not (scanOwnerBad ctx p)
+          && not (hasUnsafeOwnerUse ctx p)
       Nothing -> false
   _ -> false
 
-scanCtxOf :: SiteCtx -> String -> ScanCtx
-scanCtxOf site owner =
+hasUnsafeOwnerUse :: SiteCtx -> String -> Boolean
+hasUnsafeOwnerUse site owner = Ownership.hasUnsafeUse
   { owner
   , byRef: site.byRef
   , candidates: site.candidates
   , privateClasses: site.privateClasses
   }
-
-scanOwnerBad :: SiteCtx -> String -> Boolean
-scanOwnerBad site owner = (A.foldl (scanStatement (scanCtxOf site owner)) initial site.body).bad
-  where
-  initial = { bad: false, mutated: Set.empty, slots: Map.empty }
-
-scanStatements :: ScanCtx -> ScanState -> Array PhpExpr -> ScanState
-scanStatements ctx = A.foldl (scanStatement ctx)
-
-scanStatement :: ScanCtx -> ScanState -> PhpExpr -> ScanState
-scanStatement ctx st e = case e of
-  PhpAssign name value ->
-    let
-      st1 = scanAssignValue ctx st name value
-    in
-      case value of
-        PhpPropertyAccess (PhpVar v) f | v == ctx.owner -> case fieldIndexOf f of
-          Just field -> st1 { slots = Map.insert name field st1.slots }
-          Nothing -> st1
-        PhpArrayIndex (PhpVar v) (PhpInt field) | v == ctx.owner -> st1 { slots = Map.insert name field st1.slots }
-        _ -> st1
-  PhpIf c t el -> scanStatements ctx (scanStatements ctx (scanRead ctx st c) t) el
-  PhpSwitch s cases d ->
-    let
-      st1 = scanRead ctx st s
-      st2 = A.foldl (\acc c -> scanStatements ctx acc c.stmts) st1 cases
-    in
-      case d of
-        Just stmts -> scanStatements ctx st2 stmts
-        Nothing -> st2
-  PhpWhile c b -> scanStatements ctx (scanRead ctx st c) b
-  PhpReturn value -> scanReturn ctx st value
-  _ -> scanExpression ctx st e
-
-scanAssignValue :: ScanCtx -> ScanState -> String -> PhpExpr -> ScanState
-scanAssignValue ctx st name value
-  | name == ctx.owner = case value of
-      PhpVar c | String.take 10 c == "__tco_var_" -> st
-      _ -> st { bad = true }
-  | otherwise = case value of
-      PhpVar v | v == ctx.owner && String.take 10 name == "__tco_var_" -> st
-      PhpVar v | v == ctx.owner -> st { bad = true }
-      _ -> scanExpression ctx st value
-
-scanReturn :: ScanCtx -> ScanState -> PhpExpr -> ScanState
-scanReturn ctx st e = case e of
-  PhpVar v | v == ctx.owner -> st
-  PhpPropertyAccess (PhpVar v) _ | v == ctx.owner -> st { bad = true }
-  PhpArrayIndex (PhpVar v) (PhpInt _) | v == ctx.owner -> st { bad = true }
-  _ -> scanExpression ctx st e
-
--- | A read position may mention the owner directly: reading it cannot create
--- | an alias.
-scanRead :: ScanCtx -> ScanState -> PhpExpr -> ScanState
-scanRead ctx st e = case e of
-  PhpVar v | v == ctx.owner -> st
-  _ -> scanExpression ctx st e
-
-isOwnerVar :: ScanCtx -> PhpExpr -> Boolean
-isOwnerVar ctx e = case e of
-  PhpVar v -> v == ctx.owner
-  _ -> false
-
-scanExpression :: ScanCtx -> ScanState -> PhpExpr -> ScanState
-scanExpression ctx st e = case e of
-  PhpVar v
-    | v == ctx.owner -> st { bad = true }
-    | otherwise -> case Map.lookup v st.slots of
-        Just field | Set.member allFields st.mutated || Set.member field st.mutated -> st { bad = true }
-        _ -> st
-  PhpPropertyAccess base _
-    | isOwnerVar ctx base -> st
-    | usesVar ctx.owner base -> st { bad = true }
-    | otherwise -> scanExpression ctx st base
-  PhpRecordAccess base _
-    | isOwnerVar ctx base -> st
-    | usesVar ctx.owner base -> st { bad = true }
-    | otherwise -> scanExpression ctx st base
-  PhpArrayIndex base idx
-    | isOwnerVar ctx base -> st
-    | usesVar ctx.owner base -> st { bad = true }
-    | otherwise -> scanExpression ctx (scanRead ctx st idx) base
-  PhpBinOp _ l r -> scanRead ctx (scanRead ctx st l) r
-  PhpInstanceOf v _ -> scanRead ctx st v
-  PhpTernary c t el -> scanRead ctx (scanExpression ctx (scanExpression ctx st t) el) c
-  PhpIf c t el -> scanStatements ctx (scanStatements ctx (scanRead ctx st c) t) el
-  PhpSwitch s cases d -> scanSwitch ctx st s cases d
-  PhpWhile c b -> scanStatements ctx (scanRead ctx st c) b
-  PhpAssign _ _ -> scanStatement ctx st e
-  PhpAssignExpr lhs rhs ->
-    if usesVar ctx.owner lhs || usesVar ctx.owner rhs then st { bad = true }
-    else scanExpression ctx st rhs
-  PhpReturn v -> scanReturn ctx st v
-  PhpNew cls args ->
-    if Set.member cls ctx.privateClasses then A.foldl (scanConstructionArg ctx) st args
-    else if A.any (usesVar ctx.owner) args then st { bad = true }
-    else A.foldl (scanExpression ctx) st args
-  PhpDirectCall name args -> scanCall ctx st name args
-  PhpCall _ _ -> scanCallExpr ctx st e
-  PhpArray es ->
-    if A.any (usesVar ctx.owner) es then st { bad = true }
-    else A.foldl (scanExpression ctx) st es
-  PhpAssocArray items ->
-    if A.any (\item -> usesVar ctx.owner item.value) items then st { bad = true }
-    else A.foldl (\acc item -> scanExpression ctx acc item.value) st items
-  PhpFunction captures _ _ body -> scanClosure ctx st captures body
-  PhpCompactFunction captures _ _ body -> scanClosure ctx st captures body
-  PhpClone v ->
-    if usesVar ctx.owner v then st { bad = true }
-    else scanExpression ctx st v
-  PhpGlobalAssign _ v ->
-    if usesVar ctx.owner v then st { bad = true }
-    else scanExpression ctx st v
-  PhpThrow v -> scanExpression ctx st v
-  PhpMatch s cases d ->
-    let
-      st1 = scanRead ctx st s
-      st2 = A.foldl (\acc c -> scanExpression ctx acc c.body) st1 cases
-    in
-      scanExpression ctx st2 d
-  PhpRaw raw ->
-    let
-      mentionsOwner = String.contains (String.Pattern ("$" <> ctx.owner)) raw
-      mentionsSlot = A.any (\(Tuple name _) -> String.contains (String.Pattern ("$" <> name)) raw) (Map.toUnfoldable st.slots :: Array (Tuple String Int))
-    in
-      if mentionsOwner || mentionsSlot then st { bad = true } else st
-  _ -> st
-
-scanSwitch :: ScanCtx -> ScanState -> PhpExpr -> Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr } -> Maybe (Array PhpExpr) -> ScanState
-scanSwitch ctx st s cases d =
-  let
-    st1 = scanRead ctx st s
-    st2 = A.foldl (\acc c -> scanStatements ctx acc c.stmts) st1 cases
-  in
-    case d of
-      Just stmts -> scanStatements ctx st2 stmts
-      Nothing -> st2
-
-scanClosure :: ScanCtx -> ScanState -> Array String -> Array PhpExpr -> ScanState
-scanClosure ctx st captures body =
-  let
-    slotNames = map (\(Tuple name _) -> name) (Map.toUnfoldable st.slots :: Array (Tuple String Int))
-    bodyVars = A.concatMap varsIn body
-  in
-    if A.elem ctx.owner captures || A.any (usesVar ctx.owner) body || A.any (\name -> A.elem name captures || A.elem name bodyVars) slotNames
-      then st { bad = true }
-      else st
-
--- | A value stored as a field of a freshly built private node stays inside the
--- | update; a nested private construction built from the owner's fields is
--- | refused because it would share them into a second structure the scan
--- | cannot follow.
-scanConstructionArg :: ScanCtx -> ScanState -> PhpExpr -> ScanState
-scanConstructionArg ctx st a = case a of
-  PhpVar v | v == ctx.owner -> st { bad = true }
-  PhpPropertyAccess (PhpVar v) _ | v == ctx.owner -> st
-  PhpArrayIndex (PhpVar v) (PhpInt _) | v == ctx.owner -> st
-  _ ->
-    if usesVar ctx.owner a then case callHead a of
-      Just head -> scanCall ctx st head.target head.args
-      Nothing -> st { bad = true }
-    else scanExpression ctx st a
-
-scanCallExpr :: ScanCtx -> ScanState -> PhpExpr -> ScanState
-scanCallExpr ctx st e = case callHead e of
-  Just head -> scanCall ctx st head.target head.args
-  Nothing -> case e of
-    PhpCall f args ->
-      let
-        st1 = if usesVar ctx.owner f then st { bad = true } else scanExpression ctx st f
-      in
-        A.foldl (\acc a -> if usesVar ctx.owner a then acc { bad = true } else scanExpression ctx acc a) st1 args
-    _ -> st
-
-scanCall :: ScanCtx -> ScanState -> String -> Array PhpExpr -> ScanState
-scanCall ctx st target args =
-  A.foldl (\acc (Tuple i a) -> scanCallArg ctx acc target i a) st (A.mapWithIndex Tuple args)
-
-scanCallArg :: ScanCtx -> ScanState -> String -> Int -> PhpExpr -> ScanState
-scanCallArg ctx st target i a = case a of
-  PhpVar v | v == ctx.owner ->
-    if Set.member i promoted then st { mutated = Set.insert allFields st.mutated }
-    else st { bad = true }
-  PhpPropertyAccess (PhpVar v) f | v == ctx.owner -> case fieldIndexOf f of
-    Just field -> fieldArg field
-    Nothing -> st { bad = true }
-  PhpArrayIndex (PhpVar v) (PhpInt field) | v == ctx.owner -> fieldArg field
-  _ ->
-    if usesVar ctx.owner a then case callHead a of
-      Just head -> scanCall ctx st head.target head.args
-      Nothing -> st { bad = true }
-    else scanExpression ctx st a
-  where
-  promoted = fromMaybe Set.empty (Map.lookup target ctx.byRef)
-
-  fieldArg field =
-    if Map.member target ctx.candidates then
-      if Set.member i promoted then st { mutated = Set.insert field st.mutated } else st
-    else st { bad = true }
+  site.body
 
 -- | TCO registers are only allowed to move through the loop pattern: entry
 -- | carrier initialization, loop-head binding, the consuming call, the
@@ -459,7 +216,10 @@ consumesReg ctx reg carrier v = case callHead v of
   Just head ->
     let
       promoted = fromMaybe Set.empty (Map.lookup head.target ctx.byRef)
-      direct = A.length (A.filter (\(Tuple i a) -> a == PhpVar reg && Set.member i promoted) (A.mapWithIndex Tuple head.args))
+      direct = A.length
+        ( A.filter (\(Tuple i a) -> a == PhpVar reg && Set.member i promoted)
+            (A.mapWithIndex Tuple head.args)
+        )
       total = A.length (A.filter (_ == reg) (varsIn v))
     in
       direct > 0 && total == direct && not (A.elem carrier (varsIn v))
@@ -502,7 +262,8 @@ statementsIn ss = A.concatMap stmtsOf ss
   where
   stmtsOf st = A.cons st case st of
     PhpIf _ t e -> statementsIn t <> statementsIn e
-    PhpSwitch _ cases d -> A.concatMap (\c -> statementsIn c.stmts) cases <> statementsIn (fromMaybe [] d)
+    PhpSwitch _ cases d -> A.concatMap (\c -> statementsIn c.stmts) cases <> statementsIn
+      (fromMaybe [] d)
     PhpWhile _ b -> statementsIn b
     _ -> []
 
@@ -531,18 +292,21 @@ isGoto = case _ of
   _ -> false
 
 sitesIn :: Array PhpExpr -> Array Site
-sitesIn body = A.concatMap (\(Tuple i st) -> sitesOf i (branchTail (A.drop (i + 1) body) []) st) (A.mapWithIndex Tuple body)
+sitesIn body = A.concatMap (\(Tuple i st) -> sitesOf i (branchTail (A.drop (i + 1) body) []) st)
+  (A.mapWithIndex Tuple body)
   where
   sitesOf topIndex rest st = case st of
     PhpIf _ t e -> sitesOfList topIndex rest t <> sitesOfList topIndex rest e
-    PhpSwitch _ cases d -> A.concatMap (sitesOfList topIndex rest) (map _.stmts cases) <> sitesOfList topIndex rest (fromMaybe [] d)
+    PhpSwitch _ cases d -> A.concatMap (sitesOfList topIndex rest) (map _.stmts cases) <>
+      sitesOfList topIndex rest (fromMaybe [] d)
     PhpWhile _ b -> sitesOfList topIndex rest b
     PhpReturn _ -> map (\c -> { statement: topIndex, call: c, tail: [] }) (callsIn st)
     PhpThrow _ -> map (\c -> { statement: topIndex, call: c, tail: [] }) (callsIn st)
     _ -> map (\c -> { statement: topIndex, call: c, tail: rest }) (callsIn st)
 
   sitesOfList topIndex outerTail stmts =
-    A.concatMap (\(Tuple j b) -> sitesOf topIndex (branchTail (A.drop (j + 1) stmts) outerTail) b) (A.mapWithIndex Tuple stmts)
+    A.concatMap (\(Tuple j b) -> sitesOf topIndex (branchTail (A.drop (j + 1) stmts) outerTail) b)
+      (A.mapWithIndex Tuple stmts)
 
 fixpoint :: Map String (Set Int) -> Set String -> Array PhpDecl -> Map String (Set Int)
 fixpoint candidates privateClasses decls = go candidates
@@ -553,7 +317,13 @@ fixpoint candidates privateClasses decls = go candidates
     in
       if next == current then current else go next
 
-violations :: Map String (Set Int) -> Set String -> Map String (Set Int) -> Map String (Set Int) -> PhpDecl -> Map String (Set Int)
+violations
+  :: Map String (Set Int)
+  -> Set String
+  -> Map String (Set Int)
+  -> Map String (Set Int)
+  -> PhpDecl
+  -> Map String (Set Int)
 violations candidates privateClasses current acc decl = case functionParts decl.expression of
   Just fn ->
     let
@@ -572,19 +342,22 @@ violations candidates privateClasses current acc decl = case functionParts decl.
             A.mapMaybe
               ( \ix -> case A.index site.call.args ix of
                   Just arg
-                    | not (passable ctx site.tail site.statement arg) -> Just (Tuple site.call.target ix)
+                    | not (passable ctx site.tail site.statement arg) -> Just
+                        (Tuple site.call.target ix)
                   _ -> Nothing
               )
-              (Set.toUnfoldable (fromMaybe Set.empty (Map.lookup site.call.target current)) :: Array Int)
+              ( Set.toUnfoldable (fromMaybe Set.empty (Map.lookup site.call.target current))
+                  :: Array Int
+              )
         )
         (sitesIn fn.body)
       acc1 = A.foldl (\m (Tuple target ix) -> Map.update (Just <<< Set.delete ix) target m) acc bad
       escaped = A.mapMaybe
         ( \(Tuple ix name) ->
-            if Set.member ix ours && scanOwnerBad ctx name then Just (Tuple decl.identifier ix) else Nothing
+            if Set.member ix ours && hasUnsafeOwnerUse ctx name then Just (Tuple decl.identifier ix)
+            else Nothing
         )
         (A.mapWithIndex Tuple ownNames)
     in
       A.foldl (\m (Tuple target ix) -> Map.update (Just <<< Set.delete ix) target m) acc1 escaped
   Nothing -> acc
-

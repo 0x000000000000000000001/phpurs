@@ -104,21 +104,29 @@ foreign import planKeysImpl
   :: (String -> Either String KeyPlan)
   -> (KeyPlan -> Either String KeyPlan)
   -> { toolchain :: Toolchain, options :: OptionsImpl, directives :: Fingerprint }
-  -> Array { name :: String, coreFn :: Fingerprint, foreignInput :: ForeignImpl, dependencies :: Array String }
+  -> Array
+       { name :: String
+       , coreFn :: Fingerprint
+       , foreignInput :: ForeignImpl
+       , dependencies :: Array String
+       }
   -> Either String KeyPlan
 
 -- | Require unique modules in dependency order. An unsupported plan is a Left,
 -- | so the caller can use the ordinary build rather than a partial key set.
 planKeys :: BuildContext -> Array ModuleInput -> Either String KeyPlan
 planKeys context modules = planKeysImpl Left Right
-  (context { options = context.options
-    { mainModule = toNullable context.options.mainModule
-    , autoloadPath = toNullable context.options.autoloadPath
-    }
-  })
+  ( context
+      { options = context.options
+          { mainModule = toNullable context.options.mainModule
+          , autoloadPath = toNullable context.options.autoloadPath
+          }
+      }
+  )
   (map (\input -> input { foreignInput = foreignImpl input.foreignInput }) modules)
   where
   foreignImpl = case _ of
     NoForeign -> { kind: "none", path: toNullable Nothing, content: toNullable Nothing }
     MissingForeign -> { kind: "missing", path: toNullable Nothing, content: toNullable Nothing }
-    ForeignSource path content -> { kind: "source", path: toNullable (Just path), content: toNullable (Just content) }
+    ForeignSource path content ->
+      { kind: "source", path: toNullable (Just path), content: toNullable (Just content) }

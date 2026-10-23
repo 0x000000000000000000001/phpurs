@@ -82,12 +82,12 @@ specific loaded graphs; they are not a general upper bound for other programs.
 
 ## Validation
 
-- `tests/codegen/ast-metrics.mjs`: every syntax form, nested literal/update/branch
+- `tests/codegen/direct/ast-metrics.mjs`: every syntax form, nested literal/update/branch
   children, type-metadata exclusion, repeated occurrences, recursive module
   groups, and deep/wide worklists.
-- `tests/codegen/build-profile.mjs`: exact optimized counts through the CLI in
+- `tests/codegen/cli/build-profile.mjs`: exact optimized counts through the CLI in
   all three emission modes, with the existing optional-diagnostics checks.
-- `tests/codegen/rewrite-limit.mjs`: numeric validation and precedence; grouped
+- `tests/codegen/cli/rewrite-limit.mjs`: numeric validation and precedence; grouped
   CLI arguments; cache partitioning and equivalent spellings; unchanged PHP
   bytes/mtimes and runtime; invalid values before I/O; a real multi-pass binding
   that fails at limit 1 after a warm build and succeeds at a sufficient limit.

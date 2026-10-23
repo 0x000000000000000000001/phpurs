@@ -24,9 +24,10 @@ withBudget :: forall a. Maybe Number -> Aff a -> Aff a
 withBudget Nothing action = action
 withBudget (Just bytes) action = bracket
   (liftEffect $ setPurmetaCacheBudgetBytes bytes)
-  (\previous -> liftEffect do
-    void $ setPurmetaCacheBudgetBytes previous
-    -- The invocation has ended: release any excess retained under a larger
-    -- override before returning to another caller in the same process.
-    trimPurmetaCache)
+  ( \previous -> liftEffect do
+      void $ setPurmetaCacheBudgetBytes previous
+      -- The invocation has ended: release any excess retained under a larger
+      -- override before returning to another caller in the same process.
+      trimPurmetaCache
+  )
   (\_ -> action)

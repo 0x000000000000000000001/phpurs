@@ -1,6 +1,7 @@
 # Architecture du backend PHPurs
 
-PHPurs transforme des modules CoreFn optimisés par PBO en PHP, puis publie des
+PHPurs transforme le CoreFn typé (TAST / `tcorefn`) du fork PureScript,
+optimisé par PBO, en PHP, puis publie des
 modules, des entrypoints et des bundles. Ce document donne la vue d’ensemble ;
 les contrats détaillés restent dans `compiler.md`, `ffi-boundaries.md` et les
 audits.
@@ -8,7 +9,7 @@ audits.
 ## Pipeline
 
 ```text
-CoreFn (output/*/corefn.json)
+TAST / CoreFn typé (output/*/corefn.json)
   -> PBO, directives et contrats FFI
   -> BackendModule optimisé
   -> CodeGen (analyse TCO, bindings, expressions)
@@ -30,6 +31,9 @@ CoreFn (output/*/corefn.json)
 
 ## Génération PHP
 
+- `CodeGen` ordonne les passes et les preuves qui autorisent les spécialisations.
+- `CodeGen.Expr` traduit récursivement les expressions ; `CodeGen.Declarations`
+  produit les constructeurs, fonctions et valeurs du module.
 - `CodeGen.Context` porte l’état lexical, les boucles et la position d’effet.
 - `CodeGen.Tco` gère les labels, les sauts terminaux et les registres directs.
 - `CodeGen.Effects` distingue une action différée d’une valeur déjà exécutée.
@@ -38,8 +42,14 @@ CoreFn (output/*/corefn.json)
   `ArrayCallbacks`, `EnumRegions`, `TailInline`, `CopyCleanup`, `ArrayRefs`)
   transforment l’AST PHP avant l’impression.
 
-`ArrayRefs` est volontairement séparé en `Analysis`, `Rebuild` et `Support` :
-l’analyse d’ownership ne dépend pas de la réécriture.
+`Optimize.NeutralExpr`, `Optimize.Names` et `Optimize.ScalarWorker` partagent
+les constructions communes. Chaque passe conserve ses propres preuves et
+conditions de repli.
+
+`ArrayRefs.Analysis` décide les promotions avec les sites d’appel, le TCO et
+un point fixe. `Ownership` suit les alias et les lectures de champs d’un
+propriétaire ; `Rebuild` applique la réécriture autorisée. `Support` fournit les
+parcours et accesseurs partagés.
 
 ## Impression et runtime
 

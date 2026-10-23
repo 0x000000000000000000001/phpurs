@@ -17,23 +17,27 @@ import { withRuntime } from '../fixtures/runtime.mjs';
 const int = T.Int.value;
 const any = T.Any.value;
 const string = T.String.value;
-const record = fields => new T.Record(new T.Row(fields, Nothing.value));
+const record = (fields) => new T.Record(new T.Row(fields, Nothing.value));
 const foreign = new T.ADT('Foreign.Foreign', ['Foreign', 'Foreign'], []);
-const promiseOf = inner => new T.ADT('Promise.Internal.Promise', ['Promise', 'Internal', 'Promise'], [inner]);
-const effectOf = inner => new T.ADT('Effect.Effect', ['Effect', 'Effect'], [inner]);
-const objectOf = inner => new T.ADT('Foreign.Object.Object', ['Foreign', 'Object', 'Object'], [inner]);
+const promiseOf = (inner) =>
+  new T.ADT('Promise.Internal.Promise', ['Promise', 'Internal', 'Promise'], [inner]);
+const effectOf = (inner) => new T.ADT('Effect.Effect', ['Effect', 'Effect'], [inner]);
+const objectOf = (inner) =>
+  new T.ADT('Foreign.Object.Object', ['Foreign', 'Object', 'Object'], [inner]);
 
-const bindings = fromFoldable(T.ordIdent)(foldableArray)([
-  ['recordValue', new Just(any)],
-  ['recordTyped', new Just(record([new Tuple('a', int)]))],
-  ['nestedRecord', new Just(record([new Tuple('inner', record([new Tuple('a', int)]))]))],
-  ['foreignValue', new Just(foreign)],
-  ['foreignRows', new Just(new T.Array(foreign))],
-  ['arrayAny', new Just(new T.Array(any))],
-  ['objectValue', new Just(objectOf(string))],
-  ['promiseRecord', new Just(promiseOf(record([new Tuple('a', int)])))],
-  ['effectPromise', new Just(effectOf(promiseOf(any)))],
-].map(([name, type]) => new Tuple(name, type)));
+const bindings = fromFoldable(T.ordIdent)(foldableArray)(
+  [
+    ['recordValue', new Just(any)],
+    ['recordTyped', new Just(record([new Tuple('a', int)]))],
+    ['nestedRecord', new Just(record([new Tuple('inner', record([new Tuple('a', int)]))]))],
+    ['foreignValue', new Just(foreign)],
+    ['foreignRows', new Just(new T.Array(foreign))],
+    ['arrayAny', new Just(new T.Array(any))],
+    ['objectValue', new Just(objectOf(string))],
+    ['promiseRecord', new Just(promiseOf(record([new Tuple('a', int)])))],
+    ['effectPromise', new Just(effectOf(promiseOf(any)))],
+  ].map(([name, type]) => new Tuple(name, type)),
+);
 
 const ffi = genForeignModule({
   moduleName: 'Adapt',
@@ -89,7 +93,11 @@ namespace Adapt {
 }
 `;
 
-const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], { input: withRuntime(code), encoding: 'utf8', timeout: 10000 });
+const result = spawnSync('php', ['-d', 'opcache.enable_cli=0'], {
+  input: withRuntime(code),
+  encoding: 'utf8',
+  timeout: 10000,
+});
 assert.equal(result.status, 0, result.stdout + result.stderr);
 assert.equal(result.stderr, '');
 assert.equal(result.stdout, 'ok\n');

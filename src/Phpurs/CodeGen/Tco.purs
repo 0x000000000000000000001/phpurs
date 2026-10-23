@@ -47,7 +47,8 @@ translateTailJump loop args =
           let
             param = fromMaybe "" (Array.index loop.params index)
           in
-            PhpAssign (if loop.direct then param else loop.varPrefix <> param) (PhpVar (tempName index))
+            PhpAssign (if loop.direct then param else loop.varPrefix <> param)
+              (PhpVar (tempName index))
       )
       args.exprs
   in
@@ -63,6 +64,8 @@ wrapLoopBody loop result =
   let
     initVars = map (\param -> PhpAssign (loop.varPrefix <> param) (PhpVar param)) loop.params
     bindParams = map (\param -> PhpAssign param (PhpVar (loop.varPrefix <> param))) loop.params
-    prologue = if loop.direct then [ PhpLabel loop.labelName ] else initVars <> [ PhpLabel loop.labelName ] <> bindParams
+    prologue =
+      if loop.direct then [ PhpLabel loop.labelName ]
+      else initVars <> [ PhpLabel loop.labelName ] <> bindParams
   in
     prologue <> result.stmts <> [ PhpReturn result.expr ]

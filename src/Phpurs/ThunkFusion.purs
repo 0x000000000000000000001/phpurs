@@ -1,30 +1,43 @@
 -- Fuse an immediately forced, closed chain into a scalar TCO worker. This is
 -- deliberately narrower than a type-only escape analysis: a foreign callback
 -- can observe the removed stack frames even with a Unit -> Int signature.
-module Phpurs.ThunkFusion where
+module Phpurs.ThunkFusion (optimize, workerBudget) where
 
 import Prelude
 
 import Control.Monad.State (State, get, modify_, runState)
 import Data.Array as A
 import Data.Array.NonEmpty as NEA
-import Data.Foldable (foldl, foldr)
-import Data.List (List(..))
+import Data.Foldable (foldl)
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Data.Newtype (unwrap)
 import Data.Set (Set)
 import Data.Set as Set
-import Data.String as String
-import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
+import Phpurs.Optimize.Names (freshPrefixFor)
+import Phpurs.Optimize.NeutralExpr (bounded, hasType, int, integer, local, peel, require, typed)
+import Phpurs.Optimize.ScalarWorker (Step, call, makeWorker)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
-import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Literal(..), ModuleName(..), Qualified(..))
+import PureScript.Backend.Optimizer.CoreFn
+  ( ExprType(..)
+  , Ident(..)
+  , Literal(..)
+  , ModuleName(..)
+  , Qualified(..)
+  )
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
-import PureScript.Backend.Optimizer.Syntax (BackendOperator(..), BackendOperator2(..), BackendOperatorNum(..), BackendOperatorOrd(..), BackendSyntax(..), Level(..), Pair(..))
-import PureScript.Backend.Optimizer.Syntax as Syn
+import PureScript.Backend.Optimizer.Syntax
+  ( BackendOperator(..)
+  , BackendOperator2(..)
+  , BackendOperatorNum(..)
+  , BackendOperatorOrd(..)
+  , BackendSyntax(..)
+  , Level(..)
+  , Pair(..)
+  )
 
 nodeBudget :: Int
 nodeBudget = 1024
@@ -35,47 +48,14 @@ workerBudget = 32
 thunkType :: ExprType
 thunkType = Func [ Unit ] Int
 
-type Step = { op :: BackendOperatorNum, amount :: Int }
-
-require :: Boolean -> Maybe Unit
-require true = Just unit
-require false = Nothing
-
--- All recursive walks below run only after this stack-safe size/depth check.
-bounded :: Int -> NeutralExpr -> Boolean
-bounded cap expr = go 0 (Cons (Tuple 0 expr) Nil)
-  where
-  go count _ | count > cap = false
-  go _ Nil = true
-  go count (Cons (Tuple depth (NeutralExpr syntax)) rest)
-    | depth > 96 || foldl (\n _ -> n + 1) 0 syntax > 64 = false
-    | otherwise = go (count + 1) (foldr (\child acc -> Cons (Tuple (depth + 1) child) acc) rest syntax)
-
-peel :: NeutralExpr -> BackendSyntax NeutralExpr
-peel (NeutralExpr (Typed _ e)) = peel e
-peel (NeutralExpr (Syn.TypeApp e _)) = peel e
-peel (NeutralExpr syntax) = syntax
-
-hasType :: ExprType -> NeutralExpr -> Boolean
-hasType ty (NeutralExpr (Typed actual _)) = ty == actual
-hasType ty (NeutralExpr (Syn.TypeApp e _)) = hasType ty e
-hasType _ _ = false
-
 paramsAndBody :: NeutralExpr -> { params :: Array Level, body :: NeutralExpr }
 paramsAndBody expr = case peel expr of
-  Abs args body -> let rest = paramsAndBody body
-    in rest { params = map (\(Tuple _ level) -> level) (NEA.toArray args) <> rest.params }
+  Abs args body ->
+    let
+      rest = paramsAndBody body
+    in
+      rest { params = map (\(Tuple _ level) -> level) (NEA.toArray args) <> rest.params }
   _ -> { params: [], body: expr }
-
-local :: Level -> NeutralExpr -> Boolean
-local level expr = case peel expr of
-  Local _ actual -> level == actual
-  _ -> false
-
-integer :: NeutralExpr -> Maybe Int
-integer expr = case peel expr of
-  Lit (LitInt n) -> Just n
-  _ -> Nothing
 
 -- Only the canonical pure Unit value is erased. An arbitrary Unit expression
 -- could evaluate foreign code, throw, or inspect the surrounding stack.
@@ -116,13 +96,17 @@ proveBuilder name expr = do
             _ -> Nothing
           require (hasType thunkType nextAcc)
           let thunk = paramsAndBody nextAcc
-          require (A.length thunk.params == 1 && not (A.elem depth thunk.params) && not (A.elem acc thunk.params))
+          require
+            ( A.length thunk.params == 1 && not (A.elem depth thunk.params) && not
+                (A.elem acc thunk.params)
+            )
           require (hasType Int thunk.body)
           case peel thunk.body of
             PrimOp (Op2 (OpIntNum op) forced amount) -> do
               require (op == OpAdd || op == OpSubtract || op == OpMultiply)
               case peel forced of
-                App callee inputs -> require (local acc callee && NEA.length inputs == 1 && pureUnit (NEA.head inputs))
+                App callee inputs -> require
+                  (local acc callee && NEA.length inputs == 1 && pureUnit (NEA.head inputs))
                 _ -> Nothing
               n <- integer amount
               pure { op, amount: n }
@@ -147,30 +131,6 @@ seedValue available expr = do
       (not (A.elem level fn.params) && Set.member (Tuple ident level) available)
     _ -> Nothing
 
-typed :: ExprType -> NeutralExpr -> NeutralExpr
-typed ty = NeutralExpr <<< Typed ty
-
-int :: Int -> NeutralExpr
-int = typed Int <<< NeutralExpr <<< Lit <<< LitInt
-
-call :: Qualified Ident -> NeutralExpr -> NeutralExpr -> NeutralExpr
-call name depth value = NeutralExpr (App (NeutralExpr (Var name)) (NEA.cons' depth [ value ]))
-
--- Keep one arithmetic operation per original thunk, including PHP's overflow
--- and floating-point rounding behavior. No multiplication by the chain length.
-makeWorker :: Qualified Ident -> Step -> NeutralExpr
-makeWorker name step = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
-  (NEA.cons' (Tuple (Just (Ident "remaining")) (Level 0)) [ Tuple (Just (Ident "value")) (Level 1) ])
-  (typed Int (NeutralExpr (Branch
-    (NEA.singleton (Pair (binary (OpIntOrd OpEq) remaining (int 0)) value))
-    (typed Int (call name
-      (binary (OpIntNum OpSubtract) remaining (int 1))
-      (binary (OpIntNum step.op) value (int step.amount)))))))
-  where
-  remaining = typed Int (NeutralExpr (Local (Just (Ident "remaining")) (Level 0)))
-  value = typed Int (NeutralExpr (Local (Just (Ident "value")) (Level 1)))
-  binary op left right = NeutralExpr (PrimOp (Op2 op left right))
-
 -- Guard once at the consumer boundary, leaving the arithmetic worker intact.
 -- The fallback still constructs the original lazy chain. Its seed only reads
 -- the scalar passed by the selected consumer; unknown seeds never enter here.
@@ -183,38 +143,68 @@ makeGuard builder worker = typed (Func [ Int, Int ] Int) $ NeutralExpr $ Abs
   where
   body = typed Int $ NeutralExpr $ Branch
     (NEA.singleton (Pair nonNegative (typed Int (call worker depth seed))))
-    (typed Int (NeutralExpr (App (typed thunkType (call builder depth initial)) (NEA.singleton unitInput))))
+    ( typed Int
+        (NeutralExpr (App (typed thunkType (call builder depth initial)) (NEA.singleton unitInput)))
+    )
   depth = typed Int (NeutralExpr (Local (Just (Ident "depth")) (Level 0)))
   seed = typed Int (NeutralExpr (Local (Just (Ident "seed")) (Level 1)))
   nonNegative = typed Boolean (NeutralExpr (PrimOp (Op2 (OpIntOrd OpGte) depth (int 0))))
   initial = typed thunkType (NeutralExpr (Abs (NEA.singleton (Tuple Nothing (Level 2))) seed))
-  unitInput = typed Unit (NeutralExpr (Var (Qualified (Just (ModuleName "Data.Unit")) (Ident "unit"))))
+  unitInput = typed Unit
+    (NeutralExpr (Var (Qualified (Just (ModuleName "Data.Unit")) (Ident "unit"))))
 
 type ScanState = { fuel :: Int, workers :: Set Ident, guards :: Set Ident }
 
-scan :: ModuleName -> String -> String -> Map Ident Step -> Locals -> NeutralExpr -> State ScanState NeutralExpr
+scan
+  :: ModuleName
+  -> String
+  -> String
+  -> Map Ident Step
+  -> Locals
+  -> NeutralExpr
+  -> State ScanState NeutralExpr
 scan moduleName prefix guardPrefix builders available expr@(NeutralExpr syntax) = do
   state <- get
   if state.fuel <= 0 then pure expr
   else do
     modify_ (\s -> s { fuel = s.fuel - 1 })
     case candidate of
-      Just { ident, count, seed, dynamic } | Set.member ident state.workers || Set.size state.workers < workerBudget -> do
-        modify_ (\s -> s
-          { workers = Set.insert ident s.workers
-          , guards = if dynamic then Set.insert ident s.guards else s.guards
-          })
-        let selectedPrefix = if dynamic then guardPrefix else prefix
-        pure (typed Int (call (Qualified (Just moduleName) (Ident (selectedPrefix <> unwrap ident))) count seed))
+      Just { ident, count, seed, dynamic }
+        | Set.member ident state.workers || Set.size state.workers < workerBudget -> do
+            modify_
+              ( \s -> s
+                  { workers = Set.insert ident s.workers
+                  , guards = if dynamic then Set.insert ident s.guards else s.guards
+                  }
+              )
+            let selectedPrefix = if dynamic then guardPrefix else prefix
+            pure
+              ( typed Int
+                  ( call (Qualified (Just moduleName) (Ident (selectedPrefix <> unwrap ident)))
+                      count
+                      seed
+                  )
+              )
       _ -> NeutralExpr <$> case syntax of
         Abs args body -> Abs args <$> recur (Set.union available (Set.fromFoldable args)) body
-        UncurriedAbs args body -> UncurriedAbs args <$> recur (Set.union available (Set.fromFoldable args)) body
-        UncurriedEffectAbs args body -> UncurriedEffectAbs args <$> recur (Set.union available (Set.fromFoldable args)) body
-        Let ident level value body -> Let ident level <$> recur available value <*> recur (Set.insert (Tuple ident level) available) body
-        EffectBind ident level value body -> EffectBind ident level <$> recur available value <*> recur (Set.insert (Tuple ident level) available) body
+        UncurriedAbs args body -> UncurriedAbs args <$> recur
+          (Set.union available (Set.fromFoldable args))
+          body
+        UncurriedEffectAbs args body -> UncurriedEffectAbs args <$> recur
+          (Set.union available (Set.fromFoldable args))
+          body
+        Let ident level value body -> Let ident level <$> recur available value <*> recur
+          (Set.insert (Tuple ident level) available)
+          body
+        EffectBind ident level value body -> EffectBind ident level <$> recur available value <*>
+          recur (Set.insert (Tuple ident level) available) body
         LetRec level bindings body ->
-          let outside = foldl (\s (Tuple ident _) -> Set.delete (Tuple (Just ident) level) s) available bindings
-          in LetRec level <$> traverse (traverse (recur outside)) bindings <*> recur outside body
+          let
+            outside = foldl (\s (Tuple ident _) -> Set.delete (Tuple (Just ident) level) s)
+              available
+              bindings
+          in
+            LetRec level <$> traverse (traverse (recur outside)) bindings <*> recur outside body
         _ -> traverse (recur available) syntax
   where
   recur = scan moduleName prefix guardPrefix builders
@@ -239,50 +229,71 @@ scan moduleName prefix guardPrefix builders available expr@(NeutralExpr syntax) 
 freshPrefix :: BackendModule -> String
 freshPrefix = freshPrefixFor "__phpurs_fuse_"
 
-freshPrefixFor :: String -> BackendModule -> String
-freshPrefixFor family mod = go 0
-  where
-  names = map (String.toLower <<< unwrap) (A.concatMap (map (\(Tuple k _) -> k) <<< _.bindings) mod.bindings)
-    <> map String.toLower (A.concatMap (map _.name <<< _.constructors) mod.dataDecls)
-    <> map (String.toLower <<< unwrap) (Set.toUnfoldable (Map.keys mod.foreign) :: Array Ident)
-  go n = let prefix = family <> show n <> "_"
-    in if A.any (String.contains (Pattern prefix)) names then go (n + 1) else prefix
-
 optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident }
 optimize mod
   | A.length mod.bindings > 256 || A.any (\g -> A.length g.bindings > 64) mod.bindings =
       { module_: mod, privateNames: Set.empty }
   | otherwise =
       let
-        builders = Map.fromFoldable (A.mapMaybe (\g -> case g.recursive, g.bindings of
-          true, [ Tuple ident expr ] -> Tuple ident <$> proveBuilder (Qualified (Just mod.name) ident) expr
-          _, _ -> Nothing) mod.bindings)
-      in if Map.isEmpty builders then { module_: mod, privateNames: Set.empty }
+        builders = Map.fromFoldable
+          ( A.mapMaybe
+              ( \g -> case g.recursive, g.bindings of
+                  true, [ Tuple ident expr ] -> Tuple ident <$> proveBuilder
+                    (Qualified (Just mod.name) ident)
+                    expr
+                  _, _ -> Nothing
+              )
+              mod.bindings
+          )
+      in
+        if Map.isEmpty builders then { module_: mod, privateNames: Set.empty }
         else fuseModule mod builders
 
-fuseModule :: BackendModule -> Map Ident Step -> { module_ :: BackendModule, privateNames :: Set Ident }
+fuseModule
+  :: BackendModule -> Map Ident Step -> { module_ :: BackendModule, privateNames :: Set Ident }
 fuseModule mod builders =
   let
     prefix = freshPrefix mod
     guardPrefix = freshPrefixFor "__phpurs_force_" mod
     Tuple bindings selected = runState
-      (traverse (\g -> do
-        bs <- traverse (\(Tuple k e) -> Tuple k <$> if bounded 8192 e then scan mod.name prefix guardPrefix builders Set.empty e else pure e) g.bindings
-        pure (g { bindings = bs })) mod.bindings)
+      ( traverse
+          ( \g -> do
+              bs <- traverse
+                ( \(Tuple k e) -> Tuple k <$>
+                    if bounded 8192 e then scan mod.name prefix guardPrefix builders Set.empty e
+                    else pure e
+                )
+                g.bindings
+              pure (g { bindings = bs })
+          )
+          mod.bindings
+      )
       { fuel: 32768, workers: Set.empty, guards: Set.empty }
     renamed ident = Ident (prefix <> unwrap ident)
-    copies = A.mapMaybe (\ident -> do
-      step <- Map.lookup ident builders
-      let name = renamed ident
-      pure { recursive: true, bindings: [ Tuple name (makeWorker (Qualified (Just mod.name) name) step) ] })
+    copies = A.mapMaybe
+      ( \ident -> do
+          step <- Map.lookup ident builders
+          let name = renamed ident
+          pure
+            { recursive: true
+            , bindings: [ Tuple name (makeWorker (Qualified (Just mod.name) name) step) ]
+            }
+      )
       (Set.toUnfoldable selected.workers :: Array Ident)
     guarded ident = Ident (guardPrefix <> unwrap ident)
-    guards = map (\ident ->
-      { recursive: false
-      , bindings: [ Tuple (guarded ident) (makeGuard
-          (Qualified (Just mod.name) ident)
-          (Qualified (Just mod.name) (renamed ident))) ]
-      }) (Set.toUnfoldable selected.guards :: Array Ident)
+    guards = map
+      ( \ident ->
+          { recursive: false
+          , bindings:
+              [ Tuple (guarded ident)
+                  ( makeGuard
+                      (Qualified (Just mod.name) ident)
+                      (Qualified (Just mod.name) (renamed ident))
+                  )
+              ]
+          }
+      )
+      (Set.toUnfoldable selected.guards :: Array Ident)
   in
     { module_: mod { bindings = bindings <> copies <> guards }
     , privateNames: Set.union (Set.map renamed selected.workers) (Set.map guarded selected.guards)

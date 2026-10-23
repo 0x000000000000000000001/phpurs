@@ -285,7 +285,7 @@ from the current graph, including on full cache hits.
 
 ## Validation
 
-`tests/codegen/module-cache.mjs` checks constructor/sharing round trips, a
+`tests/codegen/cli/module-cache.mjs` checks constructor/sharing round trips, a
 20,000-level expression, arity precedence, emission completeness, damaged entries
 and atomic publication failure. Fresh Node processes run the actual driver with
 disabled, cold, full-hit and mixed hooks in all three emission modes. A cached
@@ -299,7 +299,7 @@ The [b8x state assay](../audit/2026-10-01/module-state/report.md) round-trips al
 repair of missing/damaged outputs against 5,371 uncached files. It uses explicit
 hooks on frozen inputs.
 
-`tests/codegen/cache-cli.mjs` additionally exercises the packaged executable with
+`tests/codegen/cli/cache-cli.mjs` additionally exercises the packaged executable with
 default caching and `--no-cache`: all emission modes, grouped arguments, bounded
 parallel reads, exact-byte/dependency/directive/FFI invalidation, effective
 options, compiler and host identities, missing/corrupt entries, unavailable

@@ -1,5 +1,11 @@
 -- | Capture each input once: the key and decoder/codegen consume the same bytes.
-module Phpurs.BuildInputs (LoadedInputs, ForeignCapture, loadInputs, loadInputsWithProfile, captureForeign) where
+module Phpurs.BuildInputs
+  ( LoadedInputs
+  , ForeignCapture
+  , loadInputs
+  , loadInputsWithProfile
+  , captureForeign
+  ) where
 
 import Prelude
 
@@ -84,11 +90,14 @@ loadInputsWithProfile profile outputDir = do
           batch <- parTraverse readDirectory before
           rest <- loadBatches after
           pure (List.Cons batch rest)
-  results <- if jobs == 1 then traverse readDirectory files
+  results <-
+    if jobs == 1 then traverse readDirectory files
     else Array.concat <<< Array.fromFoldable <$> loadBatches files
   let
     captured = Array.mapMaybe _.captured results
-    fingerprints = Map.fromFoldable $ map (\{ mod: Module m, fingerprint } -> Tuple (unwrap m.name) fingerprint) captured
+    fingerprints = Map.fromFoldable $ map
+      (\{ mod: Module m, fingerprint } -> Tuple (unwrap m.name) fingerprint)
+      captured
   modules <- liftEffect $ Profile.measurePure profile "corefn.sort" "" \_ ->
     sortModules (List.fromFoldable (map _.mod captured))
   pure
@@ -107,4 +116,7 @@ captureForeign roots (Module m)
         Just file -> do
           buffer <- FS.readFile file
           bytes <- liftEffect (Buffer.unsafeFreeze buffer)
-          pure { input: ForeignSource file (fingerprintBytes bytes), source: Bytes.toString UTF8 bytes }
+          pure
+            { input: ForeignSource file (fingerprintBytes bytes)
+            , source: Bytes.toString UTF8 bytes
+            }

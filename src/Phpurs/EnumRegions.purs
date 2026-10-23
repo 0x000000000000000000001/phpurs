@@ -1,6 +1,6 @@
 -- Closed scalar computations can use private ADT layouts. Work on the typed
 -- optimizer AST so the proof and the rewritten call sites cannot drift apart.
-module Phpurs.EnumRegions where
+module Phpurs.EnumRegions (optimize, nodeBudget, workerBudget) where
 
 import Prelude
 
@@ -21,10 +21,30 @@ import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..), snd)
 import Phpurs.NullableConstructors as Nullable
+import Phpurs.Optimize.Names (freshPrefixFor)
+import Phpurs.Optimize.NeutralExpr (peel, signature)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
-import PureScript.Backend.Optimizer.CoreFn (ConstructorType(..), DataDecl, ExprType(..), Ident(..), Literal(..), ModuleName, ProperName(..), Qualified(..))
+import PureScript.Backend.Optimizer.CoreFn
+  ( ConstructorType(..)
+  , DataDecl
+  , ExprType(..)
+  , Ident(..)
+  , Literal(..)
+  , ModuleName
+  , ProperName(..)
+  , Qualified(..)
+  )
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
-import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendOperator(..), BackendOperator1(..), BackendOperator2(..), BackendOperatorOrd(..), BackendSyntax(..), Level, Pair(..))
+import PureScript.Backend.Optimizer.Syntax
+  ( BackendAccessor(..)
+  , BackendOperator(..)
+  , BackendOperator1(..)
+  , BackendOperator2(..)
+  , BackendOperatorOrd(..)
+  , BackendSyntax(..)
+  , Level
+  , Pair(..)
+  )
 import PureScript.Backend.Optimizer.Syntax as Syn
 
 nodeBudget :: Int
@@ -41,15 +61,26 @@ type Context =
   }
 
 type Constructor =
-  { type_ :: ExprType, fields :: Array ExprType, tag :: Maybe Int
-  , constructorType :: ConstructorType, typeName :: ProperName
+  { type_ :: ExprType
+  , fields :: Array ExprType
+  , tag :: Maybe Int
+  , constructorType :: ConstructorType
+  , typeName :: ProperName
   }
 
-type CheckState = { fuel :: Int, depth :: Int, workers :: Set Ident, layouts :: Set String, usesCompactLayout :: Boolean }
+type CheckState =
+  { fuel :: Int
+  , depth :: Int
+  , workers :: Set Ident
+  , layouts :: Set String
+  , usesCompactLayout :: Boolean
+  }
+
 type Check a = StateT CheckState Maybe a
 
 initial :: CheckState
-initial = { fuel: nodeBudget, depth: 0, workers: Set.empty, layouts: Set.empty, usesCompactLayout: false }
+initial =
+  { fuel: nodeBudget, depth: 0, workers: Set.empty, layouts: Set.empty, usesCompactLayout: false }
 
 require :: Boolean -> Check Unit
 require b = lift if b then Just unit else Nothing
@@ -86,20 +117,14 @@ valueType ctx (ADT name _ args) = do
   s <- get
   unless (Set.member name s.layouts) do
     tick
-    modify_ (\v -> v { layouts = Set.insert name v.layouts, usesCompactLayout = v.usesCompactLayout || compactLayout d })
+    modify_
+      ( \v -> v
+          { layouts = Set.insert name v.layouts
+          , usesCompactLayout = v.usesCompactLayout || compactLayout d
+          }
+      )
     traverse_ (traverse_ (valueType ctx) <<< _.fields) d.constructors
 valueType _ _ = require false
-
-peel :: NeutralExpr -> BackendSyntax NeutralExpr
-peel (NeutralExpr (Typed _ e)) = peel e
-peel (NeutralExpr (Syn.TypeApp e _)) = peel e
-peel (NeutralExpr s) = s
-
-signature :: NeutralExpr -> Maybe { args :: Array ExprType, ret :: ExprType }
-signature (NeutralExpr (Typed (Func args ret) _)) = Just { args, ret }
-signature (NeutralExpr (Typed _ e)) = signature e
-signature (NeutralExpr (Syn.TypeApp e _)) = signature e
-signature _ = Nothing
 
 functionBody :: NeutralExpr -> { params :: Array (Tuple (Maybe Ident) Level), body :: NeutralExpr }
 functionBody expr = case peel expr of
@@ -126,7 +151,8 @@ worker ctx (Qualified mn ident) = do
     require (Set.size s.workers < workerBudget)
     require (size (nodeBudget + 1) expr <= s.fuel)
     modify_ (\v -> v { workers = Set.insert ident v.workers })
-    let env = Map.fromFoldable (A.zipWith (\(Tuple _ level) ty -> Tuple level ty) fn.params sig.args)
+    let
+      env = Map.fromFoldable (A.zipWith (\(Tuple _ level) ty -> Tuple level ty) fn.params sig.args)
     result <- infer ctx env false (Just sig.ret) fn.body
     require (result == sig.ret)
   pure sig
@@ -178,7 +204,8 @@ infer ctx env freeScalar expected (NeutralExpr syntax) = do
       let Pair cond first = NEA.head branches
       checkAs Boolean cond
       result <- infer ctx env freeScalar expected first
-      traverse_ (\(Pair c b) -> checkAs Boolean c *> checkAs result b) (A.drop 1 (NEA.toArray branches))
+      traverse_ (\(Pair c b) -> checkAs Boolean c *> checkAs result b)
+        (A.drop 1 (NEA.toArray branches))
       checkAs result fallback
       pure result
     PrimOp (Op1 (OpIsTag q) value) -> do
@@ -242,24 +269,41 @@ context mod =
   { name: mod.name
   , bindings: Map.fromFoldable (A.concatMap _.bindings mod.bindings)
   , layouts: Map.fromFoldable (map (\d -> Tuple (full d.name) d) mod.dataDecls)
-  , constructors: Map.fromFoldable (A.concatMap (\d -> A.mapWithIndex (\i c ->
-      Tuple (Qualified (Just mod.name) (Ident c.name))
-        { type_: ADT (full d.name) (String.split (Pattern ".") (full d.name)) []
-        , fields: c.fields
-        , tag: if isEnum d then Just i else Nothing
-        , constructorType: if A.length d.constructors == 1 then ProductType else SumType
-        , typeName: ProperName d.name
-        }) d.constructors) mod.dataDecls)
+  , constructors: Map.fromFoldable
+      ( A.concatMap
+          ( \d -> A.mapWithIndex
+              ( \i c ->
+                  Tuple (Qualified (Just mod.name) (Ident c.name))
+                    { type_: ADT (full d.name) (String.split (Pattern ".") (full d.name)) []
+                    , fields: c.fields
+                    , tag: if isEnum d then Just i else Nothing
+                    , constructorType: if A.length d.constructors == 1 then ProductType else SumType
+                    , typeName: ProperName d.name
+                    }
+              )
+              d.constructors
+          )
+          mod.dataDecls
+      )
   }
   where
   full name = unwrap mod.name <> "." <> name
 
-renameType :: forall r. Context -> String -> { workers :: Set Ident, layouts :: Set String | r } -> ExprType -> ExprType
+renameType
+  :: forall r
+   . Context
+  -> String
+  -> { workers :: Set Ident, layouts :: Set String | r }
+  -> ExprType
+  -> ExprType
 renameType ctx prefix selected ty = case ty of
   ADT name _ args | Set.member name selected.layouts -> case Map.lookup name ctx.layouts of
     Just d | isEnum d -> Int
-    Just d -> let full = unwrap ctx.name <> "." <> prefix <> d.name
-      in ADT full (String.split (Pattern ".") full) (map recur args)
+    Just d ->
+      let
+        full = unwrap ctx.name <> "." <> prefix <> d.name
+      in
+        ADT full (String.split (Pattern ".") full) (map recur args)
     _ -> ty
   Func args ret -> Func (map recur args) (recur ret)
   _ -> ty
@@ -268,7 +312,13 @@ renameType ctx prefix selected ty = case ty of
 
 -- This same structural rewrite applies to a proven entry expression and to
 -- copies of its complete call graph. Original workers/layouts are kept intact.
-rewrite :: forall r. Context -> String -> { workers :: Set Ident, layouts :: Set String | r } -> NeutralExpr -> NeutralExpr
+rewrite
+  :: forall r
+   . Context
+  -> String
+  -> { workers :: Set Ident, layouts :: Set String | r }
+  -> NeutralExpr
+  -> NeutralExpr
 rewrite ctx prefix selected (NeutralExpr syntax) = NeutralExpr case map recur syntax of
   Typed ty inner -> Typed (renameType ctx prefix selected ty) inner
   Syn.TypeApp inner ty -> Syn.TypeApp inner (renameType ctx prefix selected ty)
@@ -277,8 +327,11 @@ rewrite ctx prefix selected (NeutralExpr syntax) = NeutralExpr case map recur sy
   Var q -> case Map.lookup q ctx.constructors of
     Just c | A.null c.fields -> case c.tag of
       Just tag -> Lit (LitInt tag)
-      _ -> let renamed@(Qualified _ ident) = renameCtor q
-        in CtorSaturated renamed c.constructorType (renameProper c.typeName) ident []
+      _ ->
+        let
+          renamed@(Qualified _ ident) = renameCtor q
+        in
+          CtorSaturated renamed c.constructorType (renameProper c.typeName) ident []
     _ -> Var q
   CtorSaturated q ct pn ident fields -> case Map.lookup q ctx.constructors >>= _.tag of
     Just tag -> Lit (LitInt tag)
@@ -287,14 +340,16 @@ rewrite ctx prefix selected (NeutralExpr syntax) = NeutralExpr case map recur sy
     Just tag -> PrimOp (Op2 (OpIntOrd OpEq) value (NeutralExpr (Lit (LitInt tag))))
     _ -> PrimOp (Op1 (OpIsTag (renameCtor q)) value)
   Accessor value (GetCtorField q ct pn ident field index) ->
-    Accessor value (GetCtorField (renameCtor q) ct (renameProper pn) (renameIdent ident) field index)
+    Accessor value
+      (GetCtorField (renameCtor q) ct (renameProper pn) (renameIdent ident) field index)
   other -> other
   where
   recur = rewrite ctx prefix selected
   renameIdent (Ident name) = Ident (prefix <> name)
   renameProper (ProperName name) = ProperName (prefix <> name)
   renameCtor q@(Qualified mn ident) = case Map.lookup q ctx.constructors of
-    Just { type_: ADT name _ _ } | Set.member name selected.layouts -> Qualified mn (renameIdent ident)
+    Just { type_: ADT name _ _ } | Set.member name selected.layouts -> Qualified mn
+      (renameIdent ident)
     _ -> q
 
 type ScanState =
@@ -309,7 +364,8 @@ size cap expr = go 0 (Cons (Tuple 0 expr) Nil)
   go count Nil = count
   go count (Cons (Tuple depth (NeutralExpr syntax)) rest)
     | depth > 128 || foldl (\n _ -> n + 1) 0 syntax > 64 = cap
-    | otherwise = go (count + 1) (foldr (\child acc -> Cons (Tuple (depth + 1) child) acc) rest syntax)
+    | otherwise = go (count + 1)
+        (foldr (\child acc -> Cons (Tuple (depth + 1) child) acc) rest syntax)
 
 -- A region may start at any saturated call to a local monomorphic worker that
 -- returns a scalar. The optimizer does not always keep a `Typed` annotation on
@@ -329,74 +385,132 @@ scan ctx prefix expr@(NeutralExpr syntax) = do
   if s.fuel <= 0 then pure expr
   else do
     modify_ (\v -> v { fuel = v.fuel - 1 })
-    let candidate = case syntax of
-          App fn _ -> candidateCall ctx fn
-          UncurriedApp fn _ -> candidateCall ctx fn
-          _ -> false
-    result <- if candidate && s.attempts > 0 then do
-      modify_ (\v -> v { attempts = v.attempts - 1 })
-      pure (runStateT (infer ctx Map.empty true Nothing expr) initial)
+    let
+      candidate = case syntax of
+        App fn _ -> candidateCall ctx fn
+        UncurriedApp fn _ -> candidateCall ctx fn
+        _ -> false
+    result <-
+      if candidate && s.attempts > 0 then do
+        modify_ (\v -> v { attempts = v.attempts - 1 })
+        pure (runStateT (infer ctx Map.empty true Nothing expr) initial)
       else pure Nothing
     case result of
-      Just (Tuple ty proof) | scalar ty && proof.usesCompactLayout && not (Set.isEmpty proof.workers) -> do
-        let added = Set.difference proof.workers s.workers
-        let copied = s.copied + foldl (\n ident -> n + fromMaybe 0 (size (nodeBudget + 1) <$> Map.lookup ident ctx.bindings)) 0 added
-        let workers = Set.union s.workers proof.workers
-        let layouts = Set.union s.layouts proof.layouts
-        if copied <= nodeBudget && Set.size workers <= workerBudget then do
-          modify_ (\v -> v { workers = workers, layouts = layouts, copied = copied })
-          pure (rewrite ctx prefix proof expr)
-        else descend
+      Just (Tuple ty proof)
+        | scalar ty && proof.usesCompactLayout && not (Set.isEmpty proof.workers) -> do
+            let added = Set.difference proof.workers s.workers
+            let
+              copied = s.copied + foldl
+                ( \n ident -> n + fromMaybe 0
+                    (size (nodeBudget + 1) <$> Map.lookup ident ctx.bindings)
+                )
+                0
+                added
+            let workers = Set.union s.workers proof.workers
+            let layouts = Set.union s.layouts proof.layouts
+            if copied <= nodeBudget && Set.size workers <= workerBudget then do
+              modify_ (\v -> v { workers = workers, layouts = layouts, copied = copied })
+              pure (rewrite ctx prefix proof expr)
+            else descend
       _ -> descend
   where
   descend = NeutralExpr <$> traverse (scan ctx prefix) syntax
 
-freshPrefix :: BackendModule -> String
-freshPrefix mod = go 0
-  where
-  names = map (String.toLower <<< unwrap) (A.concatMap (map (\(Tuple k _) -> k) <<< _.bindings) mod.bindings)
-    <> map String.toLower (A.concatMap (map _.name <<< _.constructors) mod.dataDecls)
-    <> map (String.toLower <<< unwrap) (Set.toUnfoldable (Map.keys mod.foreign) :: Array Ident)
-  go n = let prefix = "__phpurs_enum_" <> show n <> "_"
-    in if A.any (String.contains (Pattern prefix)) names then go (n + 1) else prefix
-
-optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident, privateConstructors :: Set String, nullableConstructors :: Map String Boolean, arrayLayouts :: Set String }
+optimize
+  :: BackendModule
+  -> { module_ :: BackendModule
+     , privateNames :: Set Ident
+     , privateConstructors :: Set String
+     , nullableConstructors :: Map String Boolean
+     , arrayLayouts :: Set String
+     }
 optimize mod
   | not (A.any compactLayout mod.dataDecls)
       || A.length mod.dataDecls > 64
       || A.length mod.bindings > 256
-      || A.any (\d -> A.length d.constructors > 64 || A.any (\c -> A.length c.fields > 64) d.constructors) mod.dataDecls =
-      { module_: mod, privateNames: Set.empty, privateConstructors: Set.empty, nullableConstructors: Map.empty, arrayLayouts: Set.empty }
+      || A.any
+        (\d -> A.length d.constructors > 64 || A.any (\c -> A.length c.fields > 64) d.constructors)
+        mod.dataDecls =
+      { module_: mod
+      , privateNames: Set.empty
+      , privateConstructors: Set.empty
+      , nullableConstructors: Map.empty
+      , arrayLayouts: Set.empty
+      }
   | otherwise =
       let
         ctx = context mod
-        prefix = freshPrefix mod
+        prefix = freshPrefixFor "__phpurs_enum_" mod
         Tuple bindings selected = runState
-          (traverse (\g -> do
-            bs <- traverse (\(Tuple k e) -> Tuple k <$> if size (nodeBudget + 1) e <= nodeBudget then scan ctx prefix e else pure e) g.bindings
-            pure (g { bindings = bs })) mod.bindings)
+          ( traverse
+              ( \g -> do
+                  bs <- traverse
+                    ( \(Tuple k e) -> Tuple k <$>
+                        if size (nodeBudget + 1) e <= nodeBudget then scan ctx prefix e else pure e
+                    )
+                    g.bindings
+                  pure (g { bindings = bs })
+              )
+              mod.bindings
+          )
           { fuel: 32768, attempts: 64, workers: Set.empty, layouts: Set.empty, copied: 0 }
         renamed ident = Ident (prefix <> unwrap ident)
-        copies = A.mapMaybe (\g ->
-          let bs = A.mapMaybe (\(Tuple k e) -> if Set.member k selected.workers
-                then Just (Tuple (renamed k) (rewrite ctx prefix selected e)) else Nothing) g.bindings
-          in if A.null bs then Nothing else Just (g { bindings = bs })) mod.bindings
-        layouts = A.mapMaybe (\d -> if Set.member (unwrap mod.name <> "." <> d.name) selected.layouts && not (isEnum d)
-          then Just (d { name = prefix <> d.name, constructors = map (\c -> c { name = prefix <> c.name, fields = map (renameType ctx prefix selected) c.fields }) d.constructors })
-          else Nothing) mod.dataDecls
+        copies = A.mapMaybe
+          ( \g ->
+              let
+                bs = A.mapMaybe
+                  ( \(Tuple k e) ->
+                      if Set.member k selected.workers then Just
+                        (Tuple (renamed k) (rewrite ctx prefix selected e))
+                      else Nothing
+                  )
+                  g.bindings
+              in
+                if A.null bs then Nothing else Just (g { bindings = bs })
+          )
+          mod.bindings
+        layouts = A.mapMaybe
+          ( \d ->
+              if Set.member (unwrap mod.name <> "." <> d.name) selected.layouts && not (isEnum d) then
+                Just
+                  ( d
+                      { name = prefix <> d.name
+                      , constructors = map
+                          ( \c -> c
+                              { name = prefix <> c.name
+                              , fields = map (renameType ctx prefix selected) c.fields
+                              }
+                          )
+                          d.constructors
+                      }
+                  )
+              else Nothing
+          )
+          mod.dataDecls
         -- Private nullable-product layouts (objects). Their full names let
         -- CodeGen identify the worker parameters that may be updated in place.
-        arrayLayouts = Set.fromFoldable (A.mapMaybe (\d -> case Nullable.layout d of
-          Just _ -> Just (unwrap mod.name <> "." <> d.name)
-          Nothing -> Nothing) layouts)
+        arrayLayouts = Set.fromFoldable
+          ( A.mapMaybe
+              ( \d -> case Nullable.layout d of
+                  Just _ -> Just (unwrap mod.name <> "." <> d.name)
+                  Nothing -> Nothing
+              )
+              layouts
+          )
       in
         { module_: mod { bindings = bindings <> copies, dataDecls = mod.dataDecls <> layouts }
         , privateNames: Set.map renamed selected.workers
-        , privateConstructors: Set.fromFoldable (A.concatMap (map _.name <<< _.constructors) layouts)
+        , privateConstructors: Set.fromFoldable
+            (A.concatMap (map _.name <<< _.constructors) layouts)
         -- These names belong only to copied layouts whose complete uses passed
         -- infer. The public layouts and arbitrary PHP values are never tagged.
-        , nullableConstructors: Map.fromFoldable (A.concatMap (\d -> case Nullable.layout d of
-            Just l -> [ Tuple l.empty true, Tuple l.boxed false ]
-            Nothing -> []) layouts)
+        , nullableConstructors: Map.fromFoldable
+            ( A.concatMap
+                ( \d -> case Nullable.layout d of
+                    Just l -> [ Tuple l.empty true, Tuple l.boxed false ]
+                    Nothing -> []
+                )
+                layouts
+            )
         , arrayLayouts
         }

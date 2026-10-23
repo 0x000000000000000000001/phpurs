@@ -8,6 +8,11 @@
   },
   "scripts": {
     "build": "spago build && node tools/bundle.mjs",
+    "check": "npm run format:check && npm run build && npm run test:codegen",
+    "format": "purs-tidy format-in-place 'src/**/*.purs' && prettier --write 'src/**/*.js' 'tests/codegen/**/*.mjs' 'tools/*.mjs' '*.json' spago.yaml",
+    "format:check": "purs-tidy check 'src/**/*.purs' && prettier --check 'src/**/*.js' 'tests/codegen/**/*.mjs' 'tools/*.mjs' '*.json' spago.yaml",
+    "format:packages": "node tools/format-packages.mjs --write",
+    "format:packages:check": "node tools/format-packages.mjs",
     "test:codegen": "node --test --test-concurrency=1 tests/codegen/direct/*.mjs tests/codegen/cli/*.mjs tests/codegen/ffi/*.mjs",
     "prepare": "npm run build"
   },
@@ -16,7 +21,10 @@
     "purs-backend-es": "^1.4.3"
   },
   "devDependencies": {
+    "@prettier/plugin-php": "0.25.0",
+    "prettier": "3.9.4",
     "purescript": "0.15.16",
+    "purs-tidy": "0.11.1",
     "spago": "1.0.4"
   }
 }

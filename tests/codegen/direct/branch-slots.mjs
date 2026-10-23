@@ -13,10 +13,14 @@ import { ordString } from '../../../output/Data.Ord/index.js';
 import { Nothing, Just } from '../../../output/Data.Maybe/index.js';
 
 const none = Nothing.value;
-const int = n => new Syn.Lit(new Core.LitInt(n));
-const binding = n => new Syn.Let(none, 1, int(n), new Syn.Local(none, 1));
-const subtract = (left, right) => new Syn.PrimOp(new Syn.Op2(new Syn.OpIntNum(Syn.OpSubtract.value), left, right));
-const branch = new Syn.Branch([new Syn.Pair(new Syn.Local(new Just('flag'), 0), binding(11))], binding(22));
+const int = (n) => new Syn.Lit(new Core.LitInt(n));
+const binding = (n) => new Syn.Let(none, 1, int(n), new Syn.Local(none, 1));
+const subtract = (left, right) =>
+  new Syn.PrimOp(new Syn.Op2(new Syn.OpIntNum(Syn.OpSubtract.value), left, right));
+const branch = new Syn.Branch(
+  [new Syn.Pair(new Syn.Local(new Just('flag'), 0), binding(11))],
+  binding(22),
+);
 
 function generate(expr, isTail = true, loops = [], bound = empty) {
   const context = { ...initialContext('Test'), boundVars: bound, loops, isTail };

@@ -1,6 +1,6 @@
 -- Immediately execute a proven State chain in a private scalar loop. The
 -- record layout, helpers and callback bodies are evidence, never their names.
-module Phpurs.StateFusion where
+module Phpurs.StateFusion (Result, optimize, workerBudget) where
 
 import Prelude
 
@@ -16,13 +16,40 @@ import Data.Set (Set)
 import Data.Set as Set
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
-import Phpurs.ThunkFusion (Step, bounded, call, freshPrefixFor, hasType, int, integer, makeWorker, peel, require, typed)
+import Phpurs.Optimize.Names (freshPrefixFor)
+import Phpurs.Optimize.NeutralExpr
+  ( Binder
+  , bounded
+  , hasType
+  , int
+  , integer
+  , isLocalBinder
+  , peel
+  , require
+  , typed
+  )
+import Phpurs.Optimize.ScalarWorker (Step, call, makeWorker)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
-import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), Literal(..), ModuleName(..), Prop(..), Qualified(..))
+import PureScript.Backend.Optimizer.CoreFn
+  ( ExprType(..)
+  , Ident(..)
+  , Literal(..)
+  , ModuleName(..)
+  , Prop(..)
+  , Qualified(..)
+  )
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
-import PureScript.Backend.Optimizer.Syntax (BackendAccessor(..), BackendOperator(..), BackendOperator2(..), BackendOperatorNum(..), BackendOperatorOrd(..), BackendSyntax(..), Level(..), Pair(..))
+import PureScript.Backend.Optimizer.Syntax
+  ( BackendAccessor(..)
+  , BackendOperator(..)
+  , BackendOperator2(..)
+  , BackendOperatorNum(..)
+  , BackendOperatorOrd(..)
+  , BackendSyntax(..)
+  , Level(..)
+  , Pair(..)
+  )
 
-type Binder = Tuple (Maybe Ident) Level
 type Layout = { value :: String, state :: String }
 type Builder = { layout :: Layout, step :: Step }
 type Locals = Set Binder
@@ -34,18 +61,16 @@ nodeBudget = 1024
 workerBudget :: Int
 workerBudget = 32
 
-local :: Binder -> NeutralExpr -> Boolean
-local binder expr = case peel expr of
-  Local ident level -> binder == Tuple ident level
-  _ -> false
-
 distinct :: Array Binder -> Boolean
 distinct binders = A.length (A.nub (map (\(Tuple _ level) -> level) binders)) == A.length binders
 
 function :: NeutralExpr -> { params :: Array Binder, body :: NeutralExpr }
 function expr = case peel expr of
-  Abs args body -> let rest = function body
-    in rest { params = NEA.toArray args <> rest.params }
+  Abs args body ->
+    let
+      rest = function body
+    in
+      rest { params = NEA.toArray args <> rest.params }
   _ -> { params: [], body: expr }
 
 -- Internal annotations may still contain a polymorphic variable around Unit.
@@ -74,12 +99,14 @@ layoutOf (NeutralExpr (Typed (Func [ Int, Int ] (Record (Row fields Nothing))) _
 layoutOf _ = Nothing
 
 recordType :: Layout -> ExprType -> ExprType -> ExprType
-recordType layout value state = Record (Row [ Tuple layout.value value, Tuple layout.state state ] Nothing)
+recordType layout value state = Record
+  (Row [ Tuple layout.value value, Tuple layout.state state ] Nothing)
 
 -- A monomorphic helper could add a PHP scalar parameter/return check. Only
 -- these genuinely polymorphic signatures may be erased by this first pass.
 polymorphic :: NeutralExpr -> Maybe { variable :: ExprType, body :: ExprType }
-polymorphic (NeutralExpr (Typed (ForAll [ variable ] body) _)) = Just { variable: TypeVar variable, body }
+polymorphic (NeutralExpr (Typed (ForAll [ variable ] body) _)) = Just
+  { variable: TypeVar variable, body }
 polymorphic _ = Nothing
 
 -- Inspect the annotation the native emitter will actually use as well as the
@@ -121,32 +148,39 @@ proveGet layout expr = case proof of
   proof = do
     require (uncheckedHelper expr)
     signature <- polymorphic expr
-    require (signature.body == Func [ signature.variable ] (recordType layout signature.variable signature.variable))
+    require
+      ( signature.body == Func [ signature.variable ]
+          (recordType layout signature.variable signature.variable)
+      )
     case function expr of
       { params: [ state ], body } -> do
         fields <- record layout body
-        require (local state fields.value && local state fields.state)
+        require (isLocalBinder state fields.value && isLocalBinder state fields.state)
       _ -> Nothing
 
 proveModify :: ModuleName -> Map Ident NeutralExpr -> Layout -> NeutralExpr -> Maybe Unit
 proveModify moduleName helpers layout expr = do
   require (uncheckedHelper expr)
   signature <- polymorphic expr
-  require (signature.body == Func [ Func [ signature.variable ] signature.variable, signature.variable ] (recordType layout Unit signature.variable))
+  require
+    ( signature.body == Func [ Func [ signature.variable ] signature.variable, signature.variable ]
+        (recordType layout Unit signature.variable)
+    )
   case function expr of
     { params: [ callback, state ], body } -> do
       require (distinct [ callback, state ])
       fields <- record layout body
       require (canonicalUnit fields.value)
       case peel fields.state of
-        App callee args | NEA.length args == 1 && local callback callee ->
+        App callee args | NEA.length args == 1 && isLocalBinder callback callee ->
           case peel (NEA.head args) of
             -- Also accept a helper whose get/record projection was inlined.
-            Local _ _ -> require (local state (NEA.head args))
+            Local _ _ -> require (isLocalBinder state (NEA.head args))
             Accessor result (GetProp key) | key == layout.value -> case peel result of
-              App getter inputs | NEA.length inputs == 1 && local state (NEA.head inputs) -> do
-                getBody <- helper moduleName helpers getter
-                require (proveGet layout getBody)
+              App getter inputs | NEA.length inputs == 1 && isLocalBinder state (NEA.head inputs) ->
+                do
+                  getBody <- helper moduleName helpers getter
+                  require (proveGet layout getBody)
               _ -> Nothing
             _ -> Nothing
         _ -> Nothing
@@ -160,7 +194,8 @@ proveStep depth expr = do
       require (distinct [ depth, value ])
       case peel body of
         PrimOp (Op2 (OpIntNum op) left right) -> do
-          require (local value left && (op == OpAdd || op == OpSubtract || op == OpMultiply))
+          require
+            (isLocalBinder value left && (op == OpAdd || op == OpSubtract || op == OpMultiply))
           amount <- integer right
           pure { op, amount }
         _ -> Nothing
@@ -175,13 +210,14 @@ proveBuilder moduleName helpers ident expr = do
       Branch branches fallback | NEA.length branches == 1 -> do
         let Pair condition base = NEA.head branches
         case peel condition of
-          PrimOp (Op2 (OpIntOrd OpEq) left right) -> require (local depth left && integer right == Just 0)
+          PrimOp (Op2 (OpIntOrd OpEq) left right) -> require
+            (isLocalBinder depth left && integer right == Just 0)
           _ -> Nothing
         case function base of
           { params: [ state ], body: baseBody } -> do
             require (distinct [ depth, state ])
             fields <- record layout baseBody
-            require (canonicalUnit fields.value && local state fields.state)
+            require (canonicalUnit fields.value && isLocalBinder state fields.state)
           _ -> Nothing
         case peel fallback of
           Let name level prepared continuation -> do
@@ -200,11 +236,16 @@ proveBuilder moduleName helpers ident expr = do
                 case inputs of
                   [ nextDepth, nextState ] -> do
                     case peel nextDepth of
-                      PrimOp (Op2 (OpIntNum OpSubtract) left right) -> require (local depth left && integer right == Just 1)
+                      PrimOp (Op2 (OpIntNum OpSubtract) left right) -> require
+                        (isLocalBinder depth left && integer right == Just 1)
                       _ -> Nothing
                     case peel nextState of
                       Accessor result (GetProp key) | key == layout.state -> case peel result of
-                        App callee args -> require (local bound callee && NEA.length args == 1 && local state (NEA.head args))
+                        App callee args -> require
+                          ( isLocalBinder bound callee && NEA.length args == 1 && isLocalBinder
+                              state
+                              (NEA.head args)
+                          )
                         _ -> Nothing
                       _ -> Nothing
                     pure { layout, step }
@@ -234,34 +275,62 @@ makeGuard builder worker layout = typed (Func [ Int, Int ] Any) $ NeutralExpr $ 
   state = typed Int (NeutralExpr (Local (Just (Ident "state")) (Level 1)))
   nonNegative = typed Boolean (NeutralExpr (PrimOp (Op2 (OpIntOrd OpGte) depth (int 0))))
   -- A nested application is deliberately not a candidate on a later scan.
-  original = NeutralExpr (App (NeutralExpr (App (NeutralExpr (Var builder)) (NEA.singleton depth))) (NEA.singleton state))
+  original = NeutralExpr
+    ( App (NeutralExpr (App (NeutralExpr (Var builder)) (NEA.singleton depth)))
+        (NEA.singleton state)
+    )
   fallback = NeutralExpr (Accessor original (GetProp layout.state))
 
 type ScanState = { fuel :: Int, workers :: Set Ident, guards :: Set Ident }
 
-scan :: ModuleName -> String -> String -> Map Ident Builder -> Locals -> NeutralExpr -> State ScanState NeutralExpr
+scan
+  :: ModuleName
+  -> String
+  -> String
+  -> Map Ident Builder
+  -> Locals
+  -> NeutralExpr
+  -> State ScanState NeutralExpr
 scan moduleName prefix guardPrefix builders available expr@(NeutralExpr syntax) = do
   state <- get
   if state.fuel <= 0 then pure expr
   else do
     modify_ (\s -> s { fuel = s.fuel - 1 })
     case candidate of
-      Just { ident, depth, initial, dynamic } | Set.member ident state.workers || Set.size state.workers < workerBudget -> do
-        modify_ (\s -> s
-          { workers = Set.insert ident s.workers
-          , guards = if dynamic then Set.insert ident s.guards else s.guards
-          })
-        let family = if dynamic then guardPrefix else prefix
-        pure (typed Int (call (Qualified (Just moduleName) (Ident (family <> unwrap ident))) depth initial))
+      Just { ident, depth, initial, dynamic }
+        | Set.member ident state.workers || Set.size state.workers < workerBudget -> do
+            modify_
+              ( \s -> s
+                  { workers = Set.insert ident s.workers
+                  , guards = if dynamic then Set.insert ident s.guards else s.guards
+                  }
+              )
+            let family = if dynamic then guardPrefix else prefix
+            pure
+              ( typed Int
+                  ( call (Qualified (Just moduleName) (Ident (family <> unwrap ident))) depth
+                      initial
+                  )
+              )
       _ -> NeutralExpr <$> case syntax of
         Abs args body -> Abs args <$> recur (Set.union available (Set.fromFoldable args)) body
-        UncurriedAbs args body -> UncurriedAbs args <$> recur (Set.union available (Set.fromFoldable args)) body
-        UncurriedEffectAbs args body -> UncurriedEffectAbs args <$> recur (Set.union available (Set.fromFoldable args)) body
-        Let name level value body -> Let name level <$> recur available value <*> recur (Set.insert (Tuple name level) available) body
-        EffectBind name level value body -> EffectBind name level <$> recur available value <*> recur (Set.insert (Tuple name level) available) body
+        UncurriedAbs args body -> UncurriedAbs args <$> recur
+          (Set.union available (Set.fromFoldable args))
+          body
+        UncurriedEffectAbs args body -> UncurriedEffectAbs args <$> recur
+          (Set.union available (Set.fromFoldable args))
+          body
+        Let name level value body -> Let name level <$> recur available value <*> recur
+          (Set.insert (Tuple name level) available)
+          body
+        EffectBind name level value body -> EffectBind name level <$> recur available value <*>
+          recur (Set.insert (Tuple name level) available) body
         LetRec level bindings body ->
-          let outside = foldl (\s (Tuple name _) -> Set.delete (Tuple (Just name) level) s) available bindings
-          in LetRec level <$> traverse (traverse (recur outside)) bindings <*> recur outside body
+          let
+            outside = foldl (\s (Tuple name _) -> Set.delete (Tuple (Just name) level) s) available
+              bindings
+          in
+            LetRec level <$> traverse (traverse (recur outside)) bindings <*> recur outside body
         _ -> traverse (recur available) syntax
   where
   recur = scan moduleName prefix guardPrefix builders
@@ -270,7 +339,8 @@ scan moduleName prefix guardPrefix builders available expr@(NeutralExpr syntax) 
       App callee args -> case peel callee, NEA.toArray args of
         Var (Qualified (Just mn) ident), [ depth, initial ] | mn == moduleName -> do
           builder <- Map.lookup ident builders
-          require (key == builder.layout.state && scalar available depth && scalar available initial)
+          require
+            (key == builder.layout.state && scalar available depth && scalar available initial)
           dynamic <- case integer depth of
             Just n -> false <$ require (n >= 0)
             Nothing -> Just true
@@ -285,13 +355,27 @@ optimize mod
       { module_: mod, privateNames: Set.empty, checkedDepths: Set.empty }
   | otherwise =
       let
-        helpers = Map.fromFoldable (A.concatMap (\g -> if g.recursive then [] else A.filter (\(Tuple _ e) -> bounded nodeBudget e) g.bindings) mod.bindings)
-        builders = Map.fromFoldable (A.mapMaybe (\g -> case g.recursive, g.bindings of
-          true, [ Tuple ident expr ] -> Tuple ident <$> proveBuilder mod.name helpers ident expr
-          _, _ -> Nothing) mod.bindings)
-      in if Map.isEmpty builders then unchanged else fuseModule mod builders
-  where
-  unchanged = { module_: mod, privateNames: Set.empty, checkedDepths: Set.empty }
+        helpers = Map.fromFoldable
+          ( A.concatMap
+              ( \g ->
+                  if g.recursive then []
+                  else A.filter (\(Tuple _ e) -> bounded nodeBudget e) g.bindings
+              )
+              mod.bindings
+          )
+        builders = Map.fromFoldable
+          ( A.mapMaybe
+              ( \g -> case g.recursive, g.bindings of
+                  true, [ Tuple ident expr ] -> Tuple ident <$> proveBuilder mod.name helpers ident
+                    expr
+                  _, _ -> Nothing
+              )
+              mod.bindings
+          )
+      in
+        if Map.isEmpty builders then unchanged else fuseModule mod builders
+      where
+      unchanged = { module_: mod, privateNames: Set.empty, checkedDepths: Set.empty }
 
 fuseModule :: BackendModule -> Map Ident Builder -> Result
 fuseModule mod builders =
@@ -299,19 +383,47 @@ fuseModule mod builders =
     prefix = freshPrefixFor "__phpurs_state_" mod
     guardPrefix = freshPrefixFor "__phpurs_runstate_" mod
     Tuple bindings selected = runState
-      (traverse (\g -> do
-        bs <- traverse (\(Tuple k e) -> Tuple k <$> if bounded 8192 e then scan mod.name prefix guardPrefix builders Set.empty e else pure e) g.bindings
-        pure (g { bindings = bs })) mod.bindings)
+      ( traverse
+          ( \g -> do
+              bs <- traverse
+                ( \(Tuple k e) -> Tuple k <$>
+                    if bounded 8192 e then scan mod.name prefix guardPrefix builders Set.empty e
+                    else pure e
+                )
+                g.bindings
+              pure (g { bindings = bs })
+          )
+          mod.bindings
+      )
       { fuel: 32768, workers: Set.empty, guards: Set.empty }
     renamed ident = Ident (prefix <> unwrap ident)
     guarded ident = Ident (guardPrefix <> unwrap ident)
-    workers = A.mapMaybe (\ident -> do
-      builder <- Map.lookup ident builders
-      pure { recursive: true, bindings: [ Tuple (renamed ident) (makeWorker (Qualified (Just mod.name) (renamed ident)) builder.step) ] })
+    workers = A.mapMaybe
+      ( \ident -> do
+          builder <- Map.lookup ident builders
+          pure
+            { recursive: true
+            , bindings:
+                [ Tuple (renamed ident)
+                    (makeWorker (Qualified (Just mod.name) (renamed ident)) builder.step)
+                ]
+            }
+      )
       (Set.toUnfoldable selected.workers :: Array Ident)
-    guards = A.mapMaybe (\ident -> do
-      builder <- Map.lookup ident builders
-      pure { recursive: false, bindings: [ Tuple (guarded ident) (makeGuard (Qualified (Just mod.name) ident) (Qualified (Just mod.name) (renamed ident)) builder.layout) ] })
+    guards = A.mapMaybe
+      ( \ident -> do
+          builder <- Map.lookup ident builders
+          pure
+            { recursive: false
+            , bindings:
+                [ Tuple (guarded ident)
+                    ( makeGuard (Qualified (Just mod.name) ident)
+                        (Qualified (Just mod.name) (renamed ident))
+                        builder.layout
+                    )
+                ]
+            }
+      )
       (Set.toUnfoldable selected.guards :: Array Ident)
   in
     { module_: mod { bindings = bindings <> workers <> guards }

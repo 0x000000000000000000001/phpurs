@@ -91,7 +91,16 @@ jobs:
         run: npm run test:golden
 
       - name: Codegen tests
-        run: npm run test:codegen
+        run: |
+          set -o pipefail
+          npm run test:codegen 2>&1 | tee codegen-tests.log
+
+      - name: Report failing codegen tests
+        if: failure()
+        run: |
+          grep -E '^✖|^not ok|failing tests' codegen-tests.log | head -20 | while IFS= read -r line; do
+            echo "::error title=codegen-test::$line"
+          done
 
       - name: Coverage report (non-blocking)
         continue-on-error: true

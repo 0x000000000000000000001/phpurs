@@ -1,3 +1,4 @@
+-- | Measure named build phases and return the measured result.
 module Phpurs.Metrics (measure) where
 
 import Prelude

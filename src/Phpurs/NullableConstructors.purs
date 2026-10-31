@@ -1,4 +1,4 @@
--- Layout selection is consumed by the typed region proof. Lowering receives
+-- | Layout selection is consumed by the typed region proof. Lowering receives
 -- only the fresh private constructor names emitted for those proven regions.
 module Phpurs.NullableConstructors (Layout, layout, lower, nodeBudget, depthBudget) where
 
@@ -11,6 +11,7 @@ import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
+import Phpurs.Budget as Budget
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import Phpurs.PhpAst.Traversal (children, mapChildren)
 import PureScript.Backend.Optimizer.CoreFn (DataDecl)
@@ -28,16 +29,17 @@ layout d = case d.constructors of
   _ -> Nothing
 
 nodeBudget :: Int
-nodeBudget = 131072
+nodeBudget = Budget.identityNodes
 
 depthBudget :: Int
-depthBudget = 256
+depthBudget = Budget.identityDepth
 
 -- This decision is atomic for the whole module. Skipping just one oversized
 -- worker could mix object E and null within the same private call graph.
 -- The traversal includes function bodies: the scalar entry may be an Effect.
-bounded :: Array PhpExpr -> Boolean
-bounded exprs = go 0 (foldr (\e xs -> Cons (Tuple 0 e) xs) Nil exprs)
+-- | PHP-AST counterpart of `Optimize.NeutralExpr.bounded`.
+boundedPhp :: Array PhpExpr -> Boolean
+boundedPhp exprs = go 0 (foldr (\e xs -> Cons (Tuple 0 e) xs) Nil exprs)
   where
   go count _ | count > nodeBudget = false
   go _ Nil = true
@@ -45,14 +47,14 @@ bounded exprs = go 0 (foldr (\e xs -> Cons (Tuple 0 e) xs) Nil exprs)
     let
       cs = children e
     in
-      if depth > depthBudget || A.length cs > 8192 then false
+      if depth > depthBudget || A.length cs > Budget.identityWidth then false
       else go (count + 1) (foldr (\child xs -> Cons (Tuple (depth + 1) child) xs) rest cs)
 
 -- True denotes the empty constructor; false denotes its boxed alternative.
 -- No untyped expression is inferred to be nullable here: the map is the proof.
 lower :: Map String Boolean -> PhpFile -> PhpFile
 lower names file
-  | Map.isEmpty names || not (bounded (map _.expression file.decls)) = file
+  | Map.isEmpty names || not (boundedPhp (map _.expression file.decls)) = file
   | otherwise = file { decls = map (\d -> d { expression = go d.expression }) file.decls }
       where
       go expr = case mapChildren go expr of

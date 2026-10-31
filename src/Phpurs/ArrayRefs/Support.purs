@@ -30,6 +30,7 @@ fieldAccessor p i = PhpPropertyAccess (PhpVar p) ("value" <> show i)
 varsIn :: PhpExpr -> Array String
 varsIn e = case e of
   PhpVar v -> [ v ]
+  PhpUnset v -> [ v ]
   PhpFunction captures _ _ _ -> captures <> Array.concatMap varsIn (exprChildren e)
   PhpCompactFunction captures _ _ _ -> captures <> Array.concatMap varsIn (exprChildren e)
   _ -> Array.concatMap varsIn (exprChildren e)

@@ -22,23 +22,26 @@ import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident, Literal(..))
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
+import Phpurs.Budget as Budget
 import PureScript.Backend.Optimizer.Syntax (BackendSyntax(..), Level)
 import PureScript.Backend.Optimizer.Syntax as Syn
 
 type Binder = Tuple (Maybe Ident) Level
 
+-- | `Maybe`-based proof guard used by passes that cannot fail softly.
 require :: Boolean -> Maybe Unit
 require true = Just unit
 require false = Nothing
 
--- | Check size, depth and immediate width before a pass walks recursively.
+-- | Check `NeutralExpr` size, depth and immediate width before a pass walks
+-- | recursively. The PHP-AST counterpart is local to its pass.
 bounded :: Int -> NeutralExpr -> Boolean
 bounded cap expr = go 0 (Cons (Tuple 0 expr) Nil)
   where
   go count _ | count > cap = false
   go _ Nil = true
   go count (Cons (Tuple depth (NeutralExpr syntax)) rest)
-    | depth > 96 || foldl (\n _ -> n + 1) 0 syntax > 64 = false
+    | depth > Budget.boundedDepth || foldl (\n _ -> n + 1) 0 syntax > Budget.boundedWidth = false
     | otherwise = go (count + 1)
         (foldr (\child acc -> Cons (Tuple (depth + 1) child) acc) rest syntax)
 

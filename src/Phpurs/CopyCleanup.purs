@@ -1,4 +1,4 @@
--- Local copy elimination after terminal inlining. The caller supplies the
+-- | Local copy elimination after terminal inlining. The caller supplies the
 -- workers and constructors of closed regions proved on the typed AST.
 module Phpurs.CopyCleanup (optimize, nodeBudget, depthBudget, widthBudget) where
 
@@ -13,18 +13,19 @@ import Data.Set (Set)
 import Data.Set as Set
 import Data.String as String
 import Data.Tuple (Tuple(..))
+import Phpurs.Budget as Budget
 import Phpurs.PhpAst (PhpExpr(..), PhpFile)
 import Phpurs.PhpAst.Traversal (mapBlocks)
 import Phpurs.TailInline (simplifyReturns)
 
 nodeBudget :: Int
-nodeBudget = 8192
+nodeBudget = Budget.copyNodes
 
 depthBudget :: Int
-depthBudget = 128
+depthBudget = Budget.copyDepth
 
 widthBudget :: Int
-widthBudget = 512
+widthBudget = Budget.copyWidth
 
 -- Decline the whole worker on opaque code, nested functions, mutations through
 -- aliases, or dynamic callbacks. This also protects return-threading from
@@ -39,12 +40,15 @@ supportedChildren = case _ of
   PhpBoolean _ -> Just []
   PhpNull -> Just []
   PhpRaw "null" -> Just []
-  PhpRaw "" -> Just []
   -- This exact CodeGen diagnostic reads no locals and executes no user code.
   PhpRaw "\"Failed pattern match at \" . __FILE__ . \":\" . __LINE__" -> Just []
   PhpAssign _ e -> Just [ e ]
   PhpPropertyAccess e _ -> Just [ e ]
   PhpBinOp _ a b -> Just [ a, b ]
+  PhpUnaryOp _ e -> Just [ e ]
+  PhpNamedCall _ args -> Just args
+  PhpGlobalSlot _ -> Just []
+  PhpUnset _ -> Just []
   PhpInstanceOf e _ -> Just [ e ]
   PhpNew _ args -> Just args
   PhpCall f@(PhpGlobalVar _ _) args -> Just ([ f ] <> args)
@@ -94,6 +98,7 @@ pureResult constructors = go
     PhpRaw "null" -> true
     PhpPropertyAccess e _ -> go e
     PhpBinOp _ a b -> go a && go b
+    PhpUnaryOp _ e -> go e
     PhpNew name args -> Set.member name constructors && all go args
     _ -> false
 
@@ -105,6 +110,10 @@ replaceLocal name source = go
     PhpVar v -> PhpVar (if v == name then source else v)
     PhpPropertyAccess e p -> PhpPropertyAccess (go e) p
     PhpBinOp op a b -> PhpBinOp op (go a) (go b)
+    PhpUnaryOp op e -> PhpUnaryOp op (go e)
+    PhpNamedCall callee args -> PhpNamedCall callee (map go args)
+    PhpGlobalSlot key -> PhpGlobalSlot key
+    PhpUnset v -> PhpUnset (if v == name then source else v)
     PhpNew cls args -> PhpNew cls (map go args)
     e -> e
 

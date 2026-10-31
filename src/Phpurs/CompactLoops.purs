@@ -1,4 +1,4 @@
--- Compact captured functions only in a proven local flow through one TCO loop.
+-- | Compact captured functions only in a proven local flow through one TCO loop.
 module Phpurs.CompactLoops (optimize) where
 
 import Prelude
@@ -7,6 +7,7 @@ import Data.Array as Array
 import Data.Foldable (all, any)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String as String
+import Phpurs.Budget as Budget
 import Phpurs.PhpAst (PhpExpr(..))
 import Phpurs.PhpAst.Traversal (localChildren, mapBranches)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..))
@@ -39,7 +40,7 @@ optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret bo
             args
             signature.fArgs
         )
-  , Array.length (Array.concatMap nodes body) <= 4096 =
+  , Array.length (Array.concatMap nodes body) <= Budget.compactBodyNodes =
       let
         ns = Array.concatMap nodes body
         -- Propagate through local copies, phi slots and captures until fixed point.
@@ -88,7 +89,6 @@ optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret bo
               PhpLabel _ -> true
               PhpNull -> true
               PhpRaw "null" -> true
-              PhpRaw "" -> true
               e -> clean e
             clean e = not (tainted e) && safeInner [] e
             -- Requiring a back edge ensures this pass is confined to loop code.
@@ -115,7 +115,7 @@ optimize loopLabel (Just signature) original@(PhpNativeFunction name args ret bo
               (go body)
             else original
       in
-        case close 64 [ seed ] of
+        case close Budget.compactCaptures [ seed ] of
           Just tracked -> rewrite tracked
           Nothing -> original
 optimize _ _ original = original
@@ -140,7 +140,6 @@ safeInner tracked = go
     PhpBoolean _ -> true
     PhpNull -> true
     PhpRaw "null" -> true
-    PhpRaw "" -> true
     PhpCall (PhpVar v) xs | Array.elem v tracked -> all (\e -> not (tainted e) && go e) xs
     PhpCall f xs -> go f && all go xs
     PhpDirectCall _ xs -> all go xs
@@ -149,6 +148,9 @@ safeInner tracked = go
     PhpMatch s cs d -> go s && all (\c -> go c.val && go c.body) cs && go d
     PhpReturn e -> go e
     PhpBinOp _ a b -> go a && go b
+    PhpUnaryOp _ e -> go e
+    PhpGlobalSlot _ -> true
+    PhpNamedCall _ xs -> all go xs
     PhpTernary c t e -> go c && go t && go e
     PhpArray xs -> all go xs
     PhpAssocArray xs -> all (go <<< _.value) xs

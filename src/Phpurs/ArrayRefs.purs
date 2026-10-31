@@ -1,4 +1,4 @@
--- Promote private worker parameters to PHP references when every call site
+-- | Promote private worker parameters to PHP references when every call site
 -- can hand over ownership of the argument: last use of an owned parameter, a
 -- field of an owned parameter, or a consumed TCO loop register. A rebuild of
 -- the owned node from its own fields (one field replaced by a recursive
@@ -75,7 +75,7 @@ rewriteBody byRef ownNames ownByRef body = A.concatMap (\(Tuple i st) -> step i 
                 ( \ix -> case A.index call.args ix of
                     Just (PhpVar reg)
                       | not (ownedParam ownNames ownByRef reg) ->
-                          map (\carrier -> PhpRaw ("unset($" <> carrier <> ")"))
+                          map PhpUnset
                             (tcoCarrier body i reg)
                     _ -> Nothing
                 )

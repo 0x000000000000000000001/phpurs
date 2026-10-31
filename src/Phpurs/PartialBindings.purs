@@ -1,4 +1,4 @@
--- Reuse a closure binding inside a closed, immediately consumed chain.
+-- | Reuse a closure binding inside a closed, immediately consumed chain.
 -- Types alone do not prove that partial application is pure or terminating:
 -- prove the producer grammar and the scalar callback before copying any code.
 module Phpurs.PartialBindings (optimize, workerBudget) where
@@ -17,6 +17,7 @@ import Data.Set (Set)
 import Data.Set as Set
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
+import Phpurs.Budget as Budget
 import Phpurs.Optimize.Names (freshPrefixFor)
 import Phpurs.Optimize.NeutralExpr
   ( bounded
@@ -28,6 +29,7 @@ import Phpurs.Optimize.NeutralExpr
   , signature
   , typed
   )
+import Phpurs.Pass (Result, privateName, scanGroups, smallModule, unchanged)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), ModuleName, Qualified(..))
 import PureScript.Backend.Optimizer.Semantics (NeutralExpr(..))
@@ -42,7 +44,7 @@ import PureScript.Backend.Optimizer.Syntax
   )
 
 workerBudget :: Int
-workerBudget = 32
+workerBudget = Budget.workerLimit
 
 unary :: ExprType
 unary = Func [ Int ] Int
@@ -103,7 +105,7 @@ neutral :: Context -> NeutralExpr -> Maybe Unit
 neutral ctx expr = do
   name <- sameModuleVar ctx expr
   original <- Map.lookup name ctx.originals
-  require (bounded 128 original)
+  require (bounded Budget.inputNodes original)
   sig <- signature original
   require (sig.args == [ Func [ sig.ret ] sig.ret, sig.ret ])
   first <- oneAbs original
@@ -115,7 +117,7 @@ neutral ctx expr = do
 -- shape moves a partial call. Compositions below merely preserve provenance.
 proveSuccessor :: Context -> Ident -> NeutralExpr -> Maybe Producer
 proveSuccessor ctx name expr = do
-  require (bounded 512 expr && hasType builderType expr)
+  require (bounded Budget.successorNodes expr && hasType builderType expr)
   outer <- oneAbs expr
   case peel outer.body of
     Branch branches fallback | NEA.length branches == 1 -> do
@@ -139,7 +141,7 @@ proveSuccessor ctx name expr = do
           fn <- oneAbs rest
           value <- oneAbs fn.body
           let levels = [ level outer.binder, accLevel, level fn.binder, level value.binder ]
-          require (all (\n -> unwrap n >= 0 && unwrap n < 8192) levels)
+          require (all (\n -> unwrap n >= 0 && unwrap n < Budget.levelBound) levels)
           require
             ( A.length (A.nub levels) == 4 && hasType chain rest && hasType unary fn.body && hasType
                 Int
@@ -183,7 +185,7 @@ proveSuccessor ctx name expr = do
 -- operand order and allocation of the composition closures stay in place.
 proveComposition :: Context -> Map Ident Producer -> NeutralExpr -> Maybe Producer
 proveComposition ctx known expr = do
-  require (bounded 512 expr && hasType builderType expr)
+  require (bounded Budget.compositionNodes expr && hasType builderType expr)
   outer <- oneAbs expr
   case peel outer.body of
     Let _ leftLevel leftCall rest -> case peel rest of
@@ -275,10 +277,9 @@ scan ctx prefix producers expr@(NeutralExpr syntax) = do
       _ -> Nothing
     pure (Set.insert name producer.dependencies)
 
-optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident }
+optimize :: BackendModule -> Result
 optimize mod
-  | A.length mod.bindings > 256 || A.any (\g -> A.length g.bindings > 64) mod.bindings =
-      { module_: mod, privateNames: Set.empty }
+  | not (smallModule mod) = unchanged mod
   | otherwise =
       let
         ctx = { name: mod.name, originals: Map.fromFoldable (A.concatMap _.bindings mod.bindings) }
@@ -302,33 +303,23 @@ optimize mod
         producers = foldl discover Map.empty mod.bindings
         prefix = freshPrefixFor "__phpurs_bind_" mod
         Tuple bindings final = runState
-          ( traverse
-              ( \g -> do
-                  bs <- traverse
-                    ( \(Tuple name expr) -> Tuple name <$>
-                        if bounded 8192 expr then scan ctx prefix producers expr else pure expr
-                    )
-                    g.bindings
-                  pure (g { bindings = bs })
-              )
-              mod.bindings
-          )
-          { fuel: 32768, selected: Set.empty }
+          (scanGroups (scan ctx prefix producers) mod)
+          { fuel: Budget.stateFuel, selected: Set.empty }
         copies = A.mapMaybe
           ( \name -> do
               producer <- Map.lookup name producers
               pure
                 { recursive: Set.member name producer.dependencies
                 , bindings:
-                    [ Tuple (Ident (prefix <> unwrap name))
+                    [ Tuple (privateName prefix name)
                         (rename mod.name prefix final.selected producer.body)
                     ]
                 }
           )
           (Set.toUnfoldable final.selected :: Array Ident)
       in
-        if Map.isEmpty producers then { module_: mod, privateNames: Set.empty }
+        if Map.isEmpty producers then unchanged mod
         else
           { module_: mod { bindings = bindings <> copies }
-          , privateNames: Set.map (\name -> Ident (prefix <> unwrap name)) final.selected
+          , privateNames: Set.map (privateName prefix) final.selected
           }

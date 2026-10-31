@@ -1,4 +1,4 @@
--- Fuse an immediately forced, closed chain into a scalar TCO worker. This is
+-- | Fuse an immediately forced, closed chain into a scalar TCO worker. This is
 -- deliberately narrower than a type-only escape analysis: a foreign callback
 -- can observe the removed stack frames even with a Unit -> Int signature.
 module Phpurs.ThunkFusion (optimize, workerBudget) where
@@ -17,9 +17,11 @@ import Data.Set (Set)
 import Data.Set as Set
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
+import Phpurs.Budget as Budget
 import Phpurs.Optimize.Names (freshPrefixFor)
 import Phpurs.Optimize.NeutralExpr (bounded, hasType, int, integer, local, peel, require, typed)
 import Phpurs.Optimize.ScalarWorker (Step, call, makeWorker)
+import Phpurs.Pass (Result, privateName, scanGroups, smallModule, unchanged)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn
   ( ExprType(..)
@@ -40,10 +42,10 @@ import PureScript.Backend.Optimizer.Syntax
   )
 
 nodeBudget :: Int
-nodeBudget = 1024
+nodeBudget = Budget.proofNodes
 
 workerBudget :: Int
-workerBudget = 32
+workerBudget = Budget.workerLimit
 
 thunkType :: ExprType
 thunkType = Func [ Unit ] Int
@@ -229,10 +231,9 @@ scan moduleName prefix guardPrefix builders available expr@(NeutralExpr syntax) 
 freshPrefix :: BackendModule -> String
 freshPrefix = freshPrefixFor "__phpurs_fuse_"
 
-optimize :: BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident }
+optimize :: BackendModule -> Result
 optimize mod
-  | A.length mod.bindings > 256 || A.any (\g -> A.length g.bindings > 64) mod.bindings =
-      { module_: mod, privateNames: Set.empty }
+  | not (smallModule mod) = unchanged mod
   | otherwise =
       let
         builders = Map.fromFoldable
@@ -246,30 +247,18 @@ optimize mod
               mod.bindings
           )
       in
-        if Map.isEmpty builders then { module_: mod, privateNames: Set.empty }
+        if Map.isEmpty builders then unchanged mod
         else fuseModule mod builders
 
-fuseModule
-  :: BackendModule -> Map Ident Step -> { module_ :: BackendModule, privateNames :: Set Ident }
+fuseModule :: BackendModule -> Map Ident Step -> Result
 fuseModule mod builders =
   let
     prefix = freshPrefix mod
     guardPrefix = freshPrefixFor "__phpurs_force_" mod
     Tuple bindings selected = runState
-      ( traverse
-          ( \g -> do
-              bs <- traverse
-                ( \(Tuple k e) -> Tuple k <$>
-                    if bounded 8192 e then scan mod.name prefix guardPrefix builders Set.empty e
-                    else pure e
-                )
-                g.bindings
-              pure (g { bindings = bs })
-          )
-          mod.bindings
-      )
-      { fuel: 32768, workers: Set.empty, guards: Set.empty }
-    renamed ident = Ident (prefix <> unwrap ident)
+      (scanGroups (scan mod.name prefix guardPrefix builders Set.empty) mod)
+      { fuel: Budget.stateFuel, workers: Set.empty, guards: Set.empty }
+    renamed = privateName prefix
     copies = A.mapMaybe
       ( \ident -> do
           step <- Map.lookup ident builders
@@ -280,7 +269,7 @@ fuseModule mod builders =
             }
       )
       (Set.toUnfoldable selected.workers :: Array Ident)
-    guarded ident = Ident (guardPrefix <> unwrap ident)
+    guarded = privateName guardPrefix
     guards = map
       ( \ident ->
           { recursive: false

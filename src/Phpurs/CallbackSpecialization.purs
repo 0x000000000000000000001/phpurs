@@ -1,4 +1,4 @@
--- Specialize a proven list fold at a known native binary Int callback. Keep
+-- | Specialize a proven list fold at a known native binary Int callback. Keep
 -- the public fold, its callback expression and every native numeric check.
 module Phpurs.CallbackSpecialization (nativeCallback, optimize, workerBudget) where
 
@@ -11,15 +11,16 @@ import Data.Map (Map)
 import Data.Map as Map
 import Data.Maybe (Maybe(..))
 import Data.Newtype (unwrap)
-import Data.Set (Set)
 import Data.Set as Set
 import Data.String as String
 import Data.String.Pattern (Pattern(..))
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..))
 import Phpurs.NativeCallbacks (Callbacks)
+import Phpurs.Budget as Budget
 import Phpurs.Optimize.Names (freshPrefixFor)
 import Phpurs.Optimize.NeutralExpr (Binder, bounded, hasType, integer, isLocalBinder, peel, require)
+import Phpurs.Pass (Result, scanGroups, smallModule, unchanged)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn
   ( ConstructorType(..)
@@ -54,10 +55,10 @@ type Layout =
 type Selection = Tuple Ident (Qualified Ident)
 
 nodeBudget :: Int
-nodeBudget = 1024
+nodeBudget = Budget.proofNodes
 
 workerBudget :: Int
-workerBudget = 32
+workerBudget = Budget.workerLimit
 
 distinct :: Array Binder -> Boolean
 distinct args = A.length (A.nub (map (\(Tuple _ level) -> level) args)) == A.length args
@@ -272,11 +273,9 @@ scan mn prefix folds callbacks expr@(NeutralExpr syntax) = do
       _, _ -> Nothing
     _ -> Nothing
 
-optimize :: Callbacks -> BackendModule -> { module_ :: BackendModule, privateNames :: Set Ident }
+optimize :: Callbacks -> BackendModule -> Result
 optimize foreignCallbacks mod
-  | A.length mod.bindings > 256 || A.any (\g -> A.length g.bindings > 64) mod.bindings ||
-      A.length mod.dataDecls > 128 =
-      { module_: mod, privateNames: Set.empty }
+  | not (smallModule mod) || A.length mod.dataDecls > Budget.dataDecls = unchanged mod
   | otherwise =
       let
         callbacks = Set.union foreignCallbacks
@@ -303,31 +302,20 @@ optimize foreignCallbacks mod
               mod.bindings
           )
       in
-        if Set.isEmpty callbacks || Map.isEmpty folds then { module_: mod, privateNames: Set.empty }
+        if Set.isEmpty callbacks || Map.isEmpty folds then unchanged mod
         else specialize mod folds callbacks
 
 specialize
   :: BackendModule
   -> Map Ident Fold
   -> Callbacks
-  -> { module_ :: BackendModule, privateNames :: Set Ident }
+  -> Result
 specialize mod folds callbacks =
   let
     prefix = freshPrefixFor "__phpurs_foldcb_" mod
     Tuple bindings selected = runState
-      ( traverse
-          ( \g -> do
-              bs <- traverse
-                ( \(Tuple ident expr) -> Tuple ident <$>
-                    if bounded 8192 expr then scan mod.name prefix folds callbacks expr
-                    else pure expr
-                )
-                g.bindings
-              pure (g { bindings = bs })
-          )
-          mod.bindings
-      )
-      { fuel: 32768, copies: Map.empty }
+      (scanGroups (scan mod.name prefix folds callbacks) mod)
+      { fuel: Budget.stateFuel, copies: Map.empty }
     copies = A.mapMaybe
       ( \(Tuple (Tuple original callback) worker) -> do
           proof <- Map.lookup original folds

@@ -1,4 +1,4 @@
--- Specialize only explicitly contracted FFI traversals. The generated PHP
+-- | Specialize only explicitly contracted FFI traversals. The generated PHP
 -- templates keep their index/foreach protocols, collections and native checks.
 module Phpurs.ArrayCallbacks (optimize, workerBudget) where
 
@@ -22,8 +22,10 @@ import Phpurs.ForeignTraversals (Traversal(..), Traversals)
 import Phpurs.NativeCallbacks (Callbacks)
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..))
 import Phpurs.Printer (printExpr, safeFuncName)
+import Phpurs.Budget as Budget
 import Phpurs.Optimize.Names (freshPrefixFor)
 import Phpurs.Optimize.NeutralExpr (Binder, bounded, hasType, integer, isLocalBinder, peel, require)
+import Phpurs.Pass (scanGroups, smallModule)
 import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn
   ( ExprType(..)
@@ -47,7 +49,7 @@ derive instance eqSelection :: Eq Selection
 derive instance ordSelection :: Ord Selection
 
 workerBudget :: Int
-workerBudget = 32
+workerBudget = Budget.workerLimit
 
 qualified :: String -> String -> Qualified Ident
 qualified mn ident = Qualified (Just (ModuleName mn)) (Ident ident)
@@ -56,7 +58,7 @@ qualified mn ident = Qualified (Just (ModuleName mn)) (Ident ident)
 -- the closure itself as a worker argument for all non-Int element fallbacks.
 predicate :: NeutralExpr -> Maybe String
 predicate expr = do
-  require (bounded 128 expr)
+  require (bounded Budget.inputNodes expr)
   Tuple binder body <- lambda expr
   printExpr Map.empty <$> boolean binder body
   where
@@ -163,17 +165,17 @@ worker name selection = { identifier: name, expression: PhpPrivateFunction name 
     FoldCallback target ->
       [ PhpIf (PhpRaw "(!\\is_array($xs) || !\\array_is_list($xs))")
           [ PhpReturn
-              ( PhpCall (PhpRaw (nativeName (qualified "Data.Foldable" "foldlArray")))
+              ( PhpNamedCall (nativeName (qualified "Data.Foldable" "foldlArray"))
                   [ callback, PhpVar "initial", xs ]
               )
           ]
           []
       , PhpAssign "acc" (PhpVar "initial")
       , PhpAssign "i" (PhpInt 0)
-      , PhpAssign "len" (PhpCall (PhpRaw "\\count") [ xs ])
+      , PhpAssign "len" (PhpNamedCall "\\count" [ xs ])
       , PhpWhile (PhpBinOp "<" (PhpVar "i") (PhpVar "len"))
           [ PhpAssign "acc"
-              (PhpCall (PhpRaw (nativeName target)) [ PhpVar "acc", PhpArrayIndex xs (PhpVar "i") ])
+              (PhpNamedCall (nativeName target) [ PhpVar "acc", PhpArrayIndex xs (PhpVar "i") ])
           , PhpAssign "i" (PhpBinOp "+" (PhpVar "i") (PhpInt 1))
           ]
       , PhpReturn (PhpVar "acc")
@@ -198,9 +200,7 @@ optimize
   -> BackendModule
   -> { module_ :: BackendModule, workers :: Array PhpDecl, arities :: Map String Int }
 optimize contracts foreignCallbacks mod
-  | Set.isEmpty contracts || A.length mod.bindings > 256
-      || A.any (\g -> A.length g.bindings > 64) mod.bindings
-      || A.length mod.dataDecls > 128 =
+  | Set.isEmpty contracts || not (smallModule mod) || A.length mod.dataDecls > Budget.dataDecls =
       { module_: mod, workers: [], arities: Map.empty }
   | otherwise =
       let
@@ -221,19 +221,8 @@ optimize contracts foreignCallbacks mod
           )
         prefix = freshPrefixFor "__phpurs_arraycb_" mod
         Tuple bindings state = runState
-          ( traverse
-              ( \g -> do
-                  bs <- traverse
-                    ( \(Tuple ident expr) -> Tuple ident <$>
-                        if bounded 8192 expr then scan contracts callbacks mod.name prefix expr
-                        else pure expr
-                    )
-                    g.bindings
-                  pure (g { bindings = bs })
-              )
-              mod.bindings
-          )
-          { fuel: 32768, selected: Map.empty }
+          (scanGroups (scan contracts callbacks mod.name prefix) mod)
+          { fuel: Budget.stateFuel, selected: Map.empty }
         fullName ident = String.joinWith "_" (String.split (Pattern ".") (unwrap mod.name)) <> "_"
           <> unwrap ident
         selected = Map.toUnfoldable state.selected :: Array (Tuple Selection Ident)

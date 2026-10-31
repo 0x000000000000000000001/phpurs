@@ -114,6 +114,10 @@ scanExpression ctx st e = case e of
     | usesVar ctx.owner base -> st { bad = true }
     | otherwise -> scanExpression ctx (scanRead ctx st idx) base
   PhpBinOp _ l r -> scanRead ctx (scanRead ctx st l) r
+  PhpUnaryOp _ value -> scanRead ctx st value
+  PhpNamedCall _ args -> A.foldl (\acc arg -> scanRead ctx acc arg) st args
+  PhpGlobalSlot _ -> st
+  PhpUnset name | name == ctx.owner -> st { bad = true }
   PhpInstanceOf v _ -> scanRead ctx st v
   PhpTernary c t el -> scanRead ctx (scanExpression ctx (scanExpression ctx st t) el) c
   PhpIf c t el -> scanStatements ctx (scanStatements ctx (scanRead ctx st c) t) el

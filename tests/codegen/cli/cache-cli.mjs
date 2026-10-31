@@ -207,7 +207,11 @@ test('CLI cache: FFI edits, UTF-8 bytes, missing/empty sources and winning paths
   build(root);
   write(root, 'Z.Missing.php', '');
   assert.deepEqual(build(root).generated, ['Z.Missing']);
-  write(root, 'Z.Missing.php', '<?php $exports["add"] = function($a, $b) { return $a + $b; };');
+  write(
+    root,
+    'Z.Missing.php',
+    '<?php if (getenv("PHPURS_NEVER") === "1") $exports["main"] = function() {}; $exports["add"] = function($a, $b) { return $a + $b; };',
+  );
   assert.deepEqual(build(root).generated, ['Z.Missing']);
   write(root, 'src/Z.Missing.php', fs.readFileSync(path.join(root, 'Z.Missing.php')));
   assert.deepEqual(

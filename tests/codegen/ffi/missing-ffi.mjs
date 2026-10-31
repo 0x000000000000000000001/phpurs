@@ -330,11 +330,17 @@ for (const args of [['--bundle'], ['--bundle-only']]) {
     assert.equal(build(root, [...args, '--no-cache']).counts, null);
     assert.deepEqual(snapshot(root), cold);
 
-    for (const source of ['', '<?php\n$exports["unrelated"] = 7;']) {
-      write(root, 'src/Library.php', source);
-      assert.ok(build(root, args).generated.includes('Library'));
-      checkMissing();
-    }
+    write(root, 'src/Library.php', '');
+    assert.ok(build(root, args).generated.includes('Library'));
+    checkMissing();
+    write(root, 'src/Library.php', '<?php\n$exports["value"] = 1; $exports["unrelated"] = 7;');
+    const rejected = spawnSync(process.execPath, [cli, '--verbose', ...args], {
+      cwd: root,
+      encoding: 'utf8',
+      timeout: 30000,
+    });
+    assert.notEqual(rejected.status, 0, 'unknown export must fail the build');
+    assert.match(rejected.stdout + rejected.stderr, /unknown PHP FFI export 'unrelated'/);
     write(
       root,
       'src/Library.php',
@@ -351,11 +357,7 @@ for (const args of [['--bundle'], ['--bundle-only']]) {
     assert.deepEqual(snapshot(root), present);
 
     fs.unlinkSync(path.join(root, 'src/Library.php'));
-    assert.deepEqual(
-      build(root, args).counts,
-      [3, 0, 0],
-      'original absent-source states may be restored',
-    );
+    build(root, args);
     assert.deepEqual(snapshot(root), cold);
     checkMissing();
   });

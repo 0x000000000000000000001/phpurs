@@ -10,6 +10,14 @@ import {
   curryFallback,
   effectMap,
   executeEffect,
+  phpursAbiVersion,
+  phpursAffFromOperation,
+  phpursApply,
+  phpursNonCancellable,
+  phpursRecordGet,
+  phpursRoot,
+  phpursVariantTag,
+  phpursVariantValue,
   promise,
   promiseMap,
   record,
@@ -19,6 +27,7 @@ import {
   value,
 } from '../../../output/Phpurs.RuntimeNames/index.js';
 
+assert.match(sharedRuntime, /define\('PHPURS_ROOT'/);
 for (const name of [
   curryFallback,
   executeEffect,
@@ -27,14 +36,58 @@ for (const name of [
   refWrite,
   value,
   record,
+  phpursRoot,
   promise,
   promiseMap,
   effectMap,
+  phpursRoot,
+  phpursAbiVersion,
+  phpursAffFromOperation,
+  phpursApply,
+  phpursNonCancellable,
+  phpursRecordGet,
+  phpursVariantTag,
+  phpursVariantValue,
 ]) {
   assert.match(sharedRuntime, new RegExp(`function ${name}`), `runtime defines ${name}`);
 }
 
 const helperProbe = `${sharedRuntime}
+if (\phpurs_root() !== __DIR__) exit(20);
+if (\PHPURS_ROOT !== __DIR__) exit(21);
+$probeVariant = (object) ['tag' => 'Just', 'value0' => 42];
+if (\phpurs_variant_tag($probeVariant) !== 'Just') exit(22);
+if (\phpurs_variant_value($probeVariant, 0) !== 42) exit(23);
+$probeRecord = (object) ['x' => 7];
+if (\phpurs_record_get($probeRecord, 'x') !== 7) exit(24);
+if (\phpurs_abi_version() !== 1 || \PHPURS_ABI_VERSION !== 1) exit(25);
+if (\phpurs_apply(function($a, $b) { return $a + $b; }, [2, 3]) !== 5) exit(26);
+try {
+  \phpurs_apply(function($a) { return $a; }, [1, 2]);
+  exit(27);
+} catch (\TypeError $e) {
+  if (strpos($e->getMessage(), 'expected 1 arguments') === false) exit(28);
+}
+$runs = 0;
+$aff = \phpurs_aff_from_operation(function($resolve, $reject) use (&$runs) {
+  $runs++;
+  $resolve($runs);
+  return \phpurs_non_cancellable();
+});
+$seen = [];
+$aff->then(function($value) use (&$seen) { $seen[] = $value; }, function($error) {});
+$aff->then(function($value) use (&$seen) { $seen[] = $value; }, function($error) {});
+if ($seen !== [1, 2]) exit(29);
+$cancel = \phpurs_non_cancellable();
+$cancel();
+$cancel();
+$failedValue = null;
+$failed = \phpurs_aff_from_operation(function($resolve, $reject) {
+  $reject('boom');
+  return \phpurs_non_cancellable();
+});
+$failed->then(function($value) {}, function($error) use (&$failedValue) { $failedValue = $error; });
+if ($failedValue !== 'boom') exit(30);
 $value = \\phpurs_record([
   'a' => 1,
   'b' => ['x' => 2, 'y' => [3, 4]],

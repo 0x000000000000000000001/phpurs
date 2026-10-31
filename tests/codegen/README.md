@@ -47,3 +47,36 @@ npm découvre tous les fichiers `.mjs` de ces trois répertoires.
 Le formatage de ces scripts fait partie de `npm run format` et
 `npm run format:check`. Les fixtures de `tests/passing` et les audits historiques
 ne font pas partie de ce périmètre.
+
+## Propriétés, couverture et smoke
+
+- `direct/properties.mjs` : cinq suites `fast-check` (identité
+  `children`/`mapChildren`, monotonie des variables libres, composition du
+  renommage, déterminisme/sensibilité des clés de cache, imprimante sans
+  marqueur d’erreur et parenthèses équilibrées).
+- `npm run test:coverage` : `c8` sur `output/Phpurs.*`; rapport texte et JSON.
+  La CI l’exécute sans blocage ; cible 70 % de statements sur les modules cœur.
+- `npm run test:tast-smoke` : compile et exécute une fixture avec le fork TAST
+  et les paquets `phpurs-*` voisins. Si l’un manque, le script affiche un skip
+  explicite et se termine avec succès ; la CI le marque non bloquant.
+
+## Contrats par passe
+
+Chaque passe a un test direct qui couvre au minimum sa preuve, son repli et ses
+budgets. Le golden fige la sortie imprimée ; `pass-protocol.mjs` couvre les
+gardes et le parcours partagés ; `ast-traversal.mjs` couvre la traversée de
+chaque constructeur `PhpExpr`.
+
+| Passe | Contrats couverts | Test |
+| --- | --- | --- |
+| `PartialBindings` | grammaire des producteurs, callback scalaire, idempotence, budgets | `direct/partial-bindings.mjs` |
+| `ThunkFusion` | graines littérales/capturées, portée lexicale, ordre d’évaluation, garde négative, budgets | `direct/thunk-fusion.mjs` |
+| `StateFusion` | layout, helpers, projections, refus, comparaisons numériques, budgets | `direct/state-fusion.mjs` |
+| `CallbackSpecialization` | forme du fold, callback natif, arité, contrats publics, budgets | `direct/callback-specialization.mjs` |
+| `ArrayCallbacks` | contrats de source, folds/filtres, ordre, replis, budgets | `direct/array-callbacks.mjs` |
+| `EnumRegions` | preuve de région, refus, layouts scalaires/nullable, budgets | `direct/enum-regions.mjs`, golden `adt` |
+| `TailInline` | ordre d’évaluation, scopes, joins, arités, budgets | `direct/tail-inline.mjs` |
+| `NullableConstructors` | sélection de layout, usages publics, profondeur/largeur | `direct/nullable-constructors.mjs` |
+| `CopyCleanup` | `pureResult`, enfants supportés, largeur/profondeur, opacité | `direct/copy-cleanup.mjs` |
+| `ArrayRefs` | sites d’appel, alias, mutations, TCO, point fixe | `direct/array-refs.mjs`, `direct/array-refs-ownership.mjs` |
+| `CompactLoops` | convergence des captures, code brut, budgets | `direct/compact-loops.mjs` |

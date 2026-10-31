@@ -169,10 +169,10 @@ Chaque friction est datée et reliée à un chantier.
 | F4 | Helpers dupliqués | `require` dans `Optimize.NeutralExpr` et `EnumRegions` ; `bounded` pour `NeutralExpr` et pour `PhpExpr` ; `size` vs `countNodes` | Mêmes noms, sémantiques différentes ; unification déplacée en M3 avec les découpages | M3 |
 | F5 | Invariant AST violé | Résolu le 31/10 : `PhpUnaryOp` remplace les 4 encodages `PhpBinOp "op" (PhpRaw "") expr` | Plus d’enfant fantôme ; les traversées voient un seul opérande | M4-01 |
 | F6 | `PhpRaw` polymorphe | Résolu le 31/10 : 4 `PhpRaw` documentés (gardes et template Array, message d’erreur) ; appels, `$GLOBALS` et `unset` ont des constructeurs typés | La règle est écrite dans `docs/compiler.md` | M4-03 |
-| F7 | Docs non maintenables | Résolu le 31/10 : docs en anglais, source map générée ; reste `compiler.md` à 595 l. | Découpe du hub en M5-02 | M5 |
-| F8 | Couverture inégale | Aucun test direct de `PhpAst.Traversal`, `Printer`, des sous-modules `CodeGen.*` et `ArrayRefs.*`, de `Main.*`, `BuildCache`, `BuildInputs`, `OutputManifest`, `FileEmission` | Les contrats critiques ne sont vérifiés qu’indirectement, par chance | M6 |
-| F9 | CI non activée | Workflow ajouté, aucun run ; pas de protection de branche | Rien n’empêche encore un merge rouge tant que la CI n’est pas requise | M1 |
-| F10 | Dépendance PBO par chemin relatif | Résolu le 31/10 : `tools/toolchain.json`, `check:toolchain`, `bin/setup` clone la révision épinglée | Reste à valider par le premier run CI | M8-02 |
+| F7 | Docs non maintenables | Résolu le 31/10 : docs en anglais, source map générée, hub `compiler.md` à 116 l. et sous-pages `docs/compiler/*`. | Le hub et la source map sont vérifiés en CI | M5 |
+| F8 | Couverture inégale | Résolu le 31/10 : tests directs consolidés (M6-02), 5 suites de propriétés et couverture `c8` à 98,6 %. | Les contrats critiques sont testés et mesurés | M6 |
+| F9 | CI non activée | Résolu le 31/10 : workflow `check` vert sur `main` ; protection de branche non requise par décision du mainteneur. | La CI tourne sur chaque push, sans blocage de merge | M1 |
+| F10 | Dépendance PBO par chemin relatif | Résolu le 31/10 : `tools/toolchain.json`, `check:toolchain`, `bin/setup` clone la révision épinglée ; premier run CI vert. | Dépendance reproductible | M8-02 |
 | F11 | Hygiène du dépôt | Résolu le 31/10 : `CONTRIBUTING`, `CHANGELOG`, `engines`, `prepublishOnly`, `npm run clean`, rétention des audits ; reste Nix (M8-05) | Release outillée | M8 |
 | F12 | Décisions non écrites | Résolu le 31/10 : ADR-001 à 007 dans `docs/decisions/` | Le « pourquoi » est consultable | M9 |
 
@@ -192,10 +192,9 @@ Objectif : rendre l’état « vert » vérifiable par une machine, sur chaque P
   dans `tools/toolchain.json` en M8-02), puis `npm run check`
   (format → build + bundle → tests). Cache npm et cache Spago (chemin selon
   l’OS). Journaux et répertoires temporaires publiés en cas d’échec.
-  _Fait (31/10) : workflow ajouté, layout miroir
-  (`phpurs/phpurs` + `purescript-backend-optimizer-phpurs`), caches npm/Spago,
-  `check:toolchain`. Reste : premier run sur GitHub, puis M1-08 (protection de
-  branche)._
+  _Fait (31/10) : layout miroir (`phpurs/phpurs` +
+  `purescript-backend-optimizer-phpurs` + paquets `phpurs-*`), caches
+  npm/Spago, `check:toolchain`, premier run vert et étapes nommées._
 - [x] **M1-02** — `npm run check` complet (P0, 0,5 j).
   Ajouter `check:conventions`, `check:docs`, `test:golden` au fur et à mesure
   que M1-03/M1-04/M1-05 existent. Les scripts ne doivent jamais masquer un code
@@ -240,9 +239,10 @@ Objectif : rendre l’état « vert » vérifiable par une machine, sur chaque P
   PR (checklist : invariant, golden, test, doc, ADR si décision), issues
   (bug de passe, contrat FFI, documentation), `CODEOWNERS` si plusieurs
   mainteneurs.
-- [!] **M1-08** — Protection de branche (P1, 0,2 j, manuel). _Bloqué : réglage GitHub._
-  Checks requis (`check`), revue obligatoire, squash merge, message de commit
-  conventionnel.
+- [-] **M1-08** — Protection de branche (P1, 0,2 j, manuel). _Abandonné (31/10)._
+  Décision du mainteneur : pas de protection de branche pour l’instant. La CI
+  reste informative sur chaque push ; à rouvrir si une revue obligatoire ou un
+  merge protégé devient nécessaire.
 
 **Acceptation** : une PR ouvre la CI en moins de 20 minutes ; un module de
 450 lignes, un module sans en-tête ou une sortie PHP modifiée échouent ; le

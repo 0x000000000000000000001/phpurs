@@ -11,6 +11,7 @@ import Data.Map (Map)
 import Phpurs.PhpAst (PhpExpr, PhpFile)
 import Phpurs.Printer.Decl as Decl
 import Phpurs.Printer.Expr as Expr
+import Phpurs.Printer.Names as Names
 
 genCurry
   :: Map String Int
@@ -28,7 +29,7 @@ printPhpFile :: Boolean -> String -> Map String Int -> PhpFile -> String
 printPhpFile = Decl.printPhpFile
 
 safeFuncName :: String -> String
-safeFuncName = Expr.safeFuncName
+safeFuncName = Names.safeFuncName
 
 safeName :: String -> String
-safeName = Expr.safeName
+safeName = Names.safeName

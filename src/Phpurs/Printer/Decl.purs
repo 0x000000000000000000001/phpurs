@@ -17,17 +17,14 @@ import Data.Array as Array
 import Phpurs.PhpAst (PhpDecl, PhpExpr(..), PhpFile)
 import Phpurs.PhpAst.Traversal (children)
 import Phpurs.RuntimeNames as RuntimeNames
+import Phpurs.Printer.Context (PrinterContext, exactSuffix)
 import Phpurs.Printer.Expr
-  ( PrinterContext
-  , exactSuffix
-  , genNativeCurry
+  ( genNativeCurry
   , genNativeCurryWithRoot
   , printExprWith
-  , printReturnType
-  , resolveContinues
-  , safeFuncName
-  , safeName
   )
+import Phpurs.Printer.Names (safeFuncName, safeName)
+import Phpurs.Printer.Support (printReturnType, resolveContinues)
 import Phpurs.Printer.Runtime as Runtime
 
 -- | The exact body has the same first-parameter check as the public wrapper,

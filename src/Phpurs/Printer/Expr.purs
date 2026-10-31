@@ -1,109 +1,34 @@
 -- | Render PHP expressions, calls and currying forms.
 module Phpurs.Printer.Expr
-  ( PrinterContext
-  , exactSuffix
-  , genCurry
+  ( genCurry
   , genNativeCurry
   , genNativeCurryWithRoot
   , printExpr
   , printExprWith
-  , printReturnType
-  , resolveContinues
-  , safeFuncName
-  , safeName
   ) where
 
 import Prelude
 
 import Data.Map (Map)
-import Data.Map as Map
-import Data.Set (Set)
-import Data.Set as Set
-import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..), take, drop)
+import Data.String (joinWith, replaceAll, Pattern(..), Replacement(..))
 import Data.Maybe (Maybe(..))
-import Data.Array (length, mapWithIndex, concatMap)
+import Data.Array (length, mapWithIndex)
 import Data.Array as Array
-import Data.Tuple (Tuple(..))
-import Data.Foldable (foldl)
-import Phpurs.PhpAst (PhpExpr(..), foreignValueArity)
+import Phpurs.PhpAst (PhpExpr(..))
 import Phpurs.RuntimeNames as RuntimeNames
-import Phpurs.PhpAst.Traversal (mapBlocks)
+import Phpurs.Printer.Context (PrinterContext, emptyContext)
+import Phpurs.Printer.Names (printGlobal, safeName)
+import Phpurs.Printer.Support
+  ( extractSwitch
+  , printCall
+  , printCaptures
+  , printReturnType
+  , replaceReturn
+  )
 
 foreign import showInt32Impl :: Int -> String
 
-flattenUnaryCalls :: PhpExpr -> Tuple PhpExpr (Array PhpExpr)
-flattenUnaryCalls (PhpCall fn args) | length args == 1 =
-  let
-    Tuple innerFn innerArgs = flattenUnaryCalls fn
-  in
-    Tuple innerFn (innerArgs <> args)
-flattenUnaryCalls other = Tuple other []
-
-foreign import safeNameImpl :: String -> String
-foreign import safeFuncNameImpl :: String -> String
 foreign import escapePhpStringImpl :: String -> String
-
--- | Exact bodies are private implementation functions. The public wrapper keeps
--- | currying and overapplication; only calls with the proven runtime arity use
--- | the body directly.
-type PrinterContext = { arities :: Map String Int, exacts :: Set String }
-
-exactSuffix :: String
-exactSuffix = "__phpurs_exact"
-
-emptyContext :: Map String Int -> PrinterContext
-emptyContext arities = { arities, exacts: Set.empty }
-
-safeName :: String -> String
-safeName = safeNameImpl
-  <<< replaceAll (Pattern "'") (Replacement "__prime__")
-
-safeFuncName :: String -> String
-safeFuncName = safeFuncNameImpl
-  <<< replaceAll (Pattern "'") (Replacement "__prime__")
-
-printReturnType :: String -> String
-printReturnType retType =
-  if retType == "mixed" || retType == "" then ""
-  else if retType == "\\Closure" then ": \\Closure"
-  else ": " <> retType <> "|\\Closure"
-
--- | A loop can contribute a by-reference capture for the same variable that
--- | ordinary free-variable collection contributes by value. PHP rejects
--- | `use (&$x, $x)`, so keep one entry per base name and prefer the reference.
-dedupeCaptures :: Array String -> Array String
-dedupeCaptures = foldl step []
-  where
-  step acc name =
-    let
-      isRef = take 1 name == "&"
-      base = captureBase name
-    in
-      case Array.findIndex (\existing -> captureBase existing == base) acc of
-        Nothing -> Array.snoc acc name
-        Just index ->
-          if isRef then
-            Array.mapWithIndex
-              (\i existing -> if i == index && take 1 existing /= "&" then name else existing)
-              acc
-          else acc
-
-  captureBase name = if take 1 name == "&" then drop 1 name else name
-
-printCaptures :: Array String -> String
-printCaptures [] = ""
-printCaptures captures = " use (" <> joinWith ", " (map printCapture (dedupeCaptures captures)) <>
-  ")"
-  where
-  printCapture name =
-    if take 1 name == "&" then "&$" <> safeName (drop 1 name) else "$" <> safeName name
-
-replaceReturn :: Array PhpExpr -> Array PhpExpr
-replaceReturn = concatMap replaceExpr
-  where
-  replaceExpr :: PhpExpr -> Array PhpExpr
-  replaceExpr (PhpReturn e) = [ PhpAssign "__res" e, PhpGoto "__end" ]
-  replaceExpr other = [ mapBlocks replaceReturn other ]
 
 genNativeCurry
   :: PrinterContext
@@ -301,65 +226,8 @@ genCompactFunction ctx captures args stmts =
       <> curryBody ctx (length args) stmts
       <> "  }\n}"
 
-globalIdentifier :: Maybe (Array String) -> String -> String
-globalIdentifier moduleName ident = case moduleName of
-  Just parts -> joinWith "_" parts <> "_" <> ident
-  Nothing -> ident
-
-nativeName :: Maybe (Array String) -> String -> String
-nativeName moduleName ident =
-  ( case moduleName of
-      Just parts -> "\\" <> joinWith "\\" parts <> "\\"
-      Nothing -> ""
-  ) <> safeFuncName (globalIdentifier moduleName ident)
-
-printGlobal :: Map String Int -> Maybe (Array String) -> String -> String
-printGlobal allArities moduleName ident =
-  let
-    key = safeName (globalIdentifier moduleName ident)
-    value = "$GLOBALS['" <> key <> "']"
-  in
-    if Map.lookup key allArities == Just foreignValueArity then
-      "(" <> value <> " ?? " <> nativeName moduleName ident <> "())"
-    else value
-
 printExpr :: Map String Int -> PhpExpr -> String
 printExpr allArities = printExprWith (emptyContext allArities)
-
--- | Recognize one subject tested against literal alternatives. Normalize it
--- | to PhpSwitch at the call site so explicit and inferred switches share their
--- | rendering and continue-level handling.
-extractSwitch
-  :: PhpExpr
-  -> Maybe
-       { subject :: PhpExpr
-       , cases :: Array { val :: PhpExpr, body :: Array PhpExpr }
-       , defaultBody :: Array PhpExpr
-       }
-extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [ PhpIf (PhpBoolean true) tDefault _ ])
-  | isLiteral litExpr =
-      Just { subject: subj, cases: [ { val: litExpr, body: tBody } ], defaultBody: tDefault }
-extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody [ eBody@(PhpIf _ _ _) ])
-  | isLiteral litExpr =
-      case extractSwitch eBody of
-        Just rest ->
-          if subj == rest.subject then
-            Just
-              { subject: subj
-              , cases: [ { val: litExpr, body: tBody } ] <> rest.cases
-              , defaultBody: rest.defaultBody
-              }
-          else Nothing
-        Nothing -> Nothing
-extractSwitch (PhpIf (PhpBinOp "===" subj litExpr) tBody eBodyArray) | isLiteral litExpr =
-  Just { subject: subj, cases: [ { val: litExpr, body: tBody } ], defaultBody: eBodyArray }
-extractSwitch _ = Nothing
-
-isLiteral :: PhpExpr -> Boolean
-isLiteral (PhpString _) = true
-isLiteral (PhpInt _) = true
-isLiteral (PhpNumber _) = true
-isLiteral _ = false
 
 printExprWith :: PrinterContext -> PhpExpr -> String
 printExprWith ctx expr = case expr of
@@ -372,53 +240,14 @@ printExprWith ctx expr = case expr of
     genCurryWith ctx args retType captures stmts
   PhpVar ident -> "$" <> safeName ident
   PhpGlobalVar mbMod ident -> printGlobal ctx.arities mbMod ident
+  PhpGlobalSlot key -> "$GLOBALS['" <> key <> "']"
   PhpDirectCall name args ->
     let
       argsStr = joinWith ", " (map (printExprWith ctx) args)
     in
       printGlobal ctx.arities Nothing name <> "(" <> argsStr <> ")"
-  PhpCall _ _ ->
-    let
-      Tuple flatFn flatArgs = flattenUnaryCalls expr
-      nativeTarget = case flatFn of
-        PhpGlobalVar mbMod ident ->
-          let
-            fullName = globalIdentifier mbMod ident
-            idStr = safeName fullName
-            funcName = nativeName mbMod ident
-          in
-            case Map.lookup idStr ctx.arities of
-              Just arity | arity > 0 && length flatArgs >= arity -> Just { funcName, arity, idStr }
-              _ -> Nothing
-        _ -> Nothing
-    in
-      case nativeTarget of
-        Just { funcName, arity, idStr } ->
-          let
-            directArgs = Array.take arity flatArgs
-            remainingArgs = Array.drop arity flatArgs
-            callStr = funcName <> "(" <> joinWith ", " (map (printExprWith ctx) directArgs) <> ")"
-          in
-            if Set.member idStr ctx.exacts && length flatArgs == arity then
-              funcName <> exactSuffix <> "(" <> joinWith ", " (map (printExprWith ctx) flatArgs) <>
-                ")"
-            else if length remainingArgs > 0 then
-              foldl (\acc a -> "(" <> acc <> ")(" <> printExprWith ctx a <> ")") callStr
-                remainingArgs
-            else
-              callStr
-        Nothing ->
-          case expr of
-            PhpCall (PhpGlobalVar mbMod ident) args ->
-              "(" <> printGlobal ctx.arities mbMod ident <> ")("
-                <> joinWith ", " (map (printExprWith ctx) args)
-                <> ")"
-            PhpCall (PhpRaw raw) args -> raw <> "(" <> joinWith ", " (map (printExprWith ctx) args)
-              <> ")"
-            PhpCall abs args -> "(" <> printExprWith ctx abs <> ")("
-              <> joinWith ", " (map (printExprWith ctx) args)
-              <> ")"
-            _ -> "/* ERROR: Impossible PhpCall match */"
+  PhpNamedCall name args -> name <> "(" <> joinWith ", " (map (printExprWith ctx) args) <> ")"
+  PhpCall _ _ -> printCall ctx (printExprWith ctx) expr
   PhpInt i -> showInt32Impl i
   PhpNumber n -> case show n of
     "Infinity" -> "\\INF"
@@ -459,16 +288,7 @@ printExprWith ctx expr = case expr of
 
   PhpThrow v -> "throw new \\Exception(" <> printExprWith ctx v <> ")"
   PhpInstanceOf v cls -> printExprWith ctx v <> " instanceof " <> cls
-  PhpMatch subj cases defExpr ->
-    let
-      printCase { val, body } = printExprWith ctx val <> " => " <> printExprWith ctx body
-      casesStr = joinWith ", " (map printCase cases)
-      defStr = "default => " <> printExprWith ctx defExpr
-    in
-      "match (" <> printExprWith ctx subj <> ") { " <> casesStr
-        <> (if length cases > 0 then ", " else "")
-        <> defStr
-        <> " }"
+  PhpMatch subj cases defExpr -> printMatch ctx subj cases defExpr
   PhpTernary cond t e -> "(" <> printExprWith ctx cond <> " ? " <> printExprWith ctx t <> " : "
     <> printExprWith ctx e
     <> ")"
@@ -476,38 +296,58 @@ printExprWith ctx expr = case expr of
   PhpBinOp op left right -> "(" <> printExprWith ctx left <> " " <> op <> " "
     <> printExprWith ctx right
     <> ")"
+  -- Preserve the historical spacing of the former empty-left `PhpBinOp` form.
+  PhpUnaryOp op value -> "(" <> " " <> op <> " " <> printExprWith ctx value <> ")"
   PhpWhile cond stmts -> "while (" <> printExprWith ctx cond <> ") {\n"
     <> joinWith ";\n" (map (printExprWith ctx) stmts)
     <> ";\n}"
   PhpContinue -> "continue /*__LVL__*/"
   PhpRaw raw -> raw
+  PhpUnset name -> "unset($" <> name <> ")"
   PhpNew cls args -> "new " <> cls <> "(" <> joinWith ", " (map (printExprWith ctx) args) <> ")"
   PhpGoto lbl -> "goto " <> safeName lbl <> ";"
   PhpLabel lbl -> safeName lbl <> ":"
-  PhpSwitch subject cases defaultStmts ->
-    let
-      printCase c = joinWith "\n" (map (\m -> "case " <> printExprWith ctx m <> ":") c.matchCases)
-        <> "\n"
-        <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/")
-          (joinWith ";\n" (map (printExprWith ctx) c.stmts) <> ";")
-        <> "\nbreak;"
-      casesStr = joinWith "\n" (map printCase cases)
-      defaultStr = case defaultStmts of
-        Just stmts -> "default:\n"
-          <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/")
-            (joinWith ";\n" (map (printExprWith ctx) stmts) <> ";")
-          <> "\nbreak;"
-        Nothing -> ""
-    in
-      "switch (" <> printExprWith ctx subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
+  PhpSwitch subject cases defaultStmts -> printSwitch ctx subject cases defaultStmts
 
 -- | Preserve the printer's existing support for up to fifteen nested switches.
 -- | A switch adds one I marker to continue; the enclosing loop adds one level.
-resolveContinues :: String -> String
-resolveContinues str = foldl replaceLevel withoutMarkers (Array.range 1 15)
-  where
-  withoutMarkers = replaceAll (Pattern "/*__LVL__*/") (Replacement "") str
-  replaceLevel rendered depth = replaceAll
-    (Pattern ("continue " <> joinWith "" (Array.replicate depth "I") <> ";"))
-    (Replacement ("continue " <> show (depth + 1) <> ";"))
-    rendered
+
+printSwitch
+  :: PrinterContext
+  -> PhpExpr
+  -> Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr }
+  -> Maybe (Array PhpExpr)
+  -> String
+printSwitch ctx subject cases defaultStmts =
+  let
+    printCase c = joinWith "\n" (map (\m -> "case " <> printExprWith ctx m <> ":") c.matchCases)
+      <> "\n"
+      <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/")
+        (joinWith ";\n" (map (printExprWith ctx) c.stmts) <> ";")
+      <> "\nbreak;"
+    casesStr = joinWith "\n" (map printCase cases)
+    defaultStr = case defaultStmts of
+      Just stmts -> "default:\n"
+        <> replaceAll (Pattern "/*__LVL__*/") (Replacement "I/*__LVL__*/")
+          (joinWith ";\n" (map (printExprWith ctx) stmts) <> ";")
+        <> "\nbreak;"
+      Nothing -> ""
+  in
+    "switch (" <> printExprWith ctx subject <> ") {\n" <> casesStr <> "\n" <> defaultStr <> "\n}"
+
+printMatch
+  :: PrinterContext
+  -> PhpExpr
+  -> Array { val :: PhpExpr, body :: PhpExpr }
+  -> PhpExpr
+  -> String
+printMatch ctx subj cases defExpr =
+  let
+    printCase { val, body } = printExprWith ctx val <> " => " <> printExprWith ctx body
+    casesStr = joinWith ", " (map printCase cases)
+    defStr = "default => " <> printExprWith ctx defExpr
+  in
+    "match (" <> printExprWith ctx subj <> ") { " <> casesStr
+      <> (if length cases > 0 then ", " else "")
+      <> defStr
+      <> " }"

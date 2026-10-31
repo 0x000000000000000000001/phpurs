@@ -32,9 +32,15 @@
       url = "github:0x000000000000000000001/purescript-backend-optimizer/ef2fdae421ff998352a77407d861540d6b287928";
       flake = false;
     };
+
+    # TAST compiler fork (same revision as gopurs): phpurs emits typed CoreFn.
+    purs-tast = {
+      url = "github:0x000000000000000000001/purescript/105f5752b39cc0f6c99a40064295338bf57ad223";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, pbo, ... }@inputs:
+  outputs = { self, nixpkgs, pbo, purs-tast, ... }@inputs:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 
@@ -46,9 +52,8 @@
           overlays = builtins.attrValues self.overlays;
         });
 
-      # Match the npm toolchain (purs 0.15.16). 0.15.15 produces a bundle that
-      # crashes at startup under purs-backend-es.
-      pursFor = pkgs: pkgs.purs-bin.purs-0_15_16;
+      # The backend consumes typed CoreFn: use the TAST fork, not upstream.
+      pursFor = pkgs: import ./nix/purs-tast.nix { inherit pkgs; src = purs-tast; };
     in
     {
       overlays = {

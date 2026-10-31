@@ -554,10 +554,11 @@ est en [annexe A](#annexe-a--backlog-ffi-constats-b8x).
   archivage au-delà de 6 mois dans un tag ; `audit/README.md` mis à jour.
 - [x] **M8-05** — Nix (P2, 1 j). _Fait (31/10)._
   `nix build .#default` et `nix flake check` passent sur `aarch64-darwin` ;
-  `nix develop` fournit PureScript 0.15.16, Spago 1.0.4, PHP 8.4 et Node 24.
-  Le flake épingle le fork PBO (`pbo`) et compile avec `purs` 0.15.16 ; le
-  bundle Nix utilise `esbuild` (le bundle `purs-backend-es` crashait au
-  démarrage). Job CI `nix` ajouté, non bloquant.
+  `nix develop` fournit le compilateur TAST `purs` 0.15.16 (fork `105f5752`),
+  Spago 1.0.4, PHP 8.4 et Node 24. Le flake épingle le fork PBO (`pbo`) et
+  exige le fork TAST (`purs-tast`) ; le bundle Nix utilise `esbuild` (le
+  bundle `purs-backend-es` crashait au démarrage). Job CI `nix` ajouté,
+  non bloquant.
 - [x] **M8-06** — Convention de commit (P2, 0,5 j). _Fait (31/10)._
   `tools/check-commit-msg.mjs`, script `check:commit`, étape CI sur le titre de
   PR, règle écrite dans `docs/conventions.md`._

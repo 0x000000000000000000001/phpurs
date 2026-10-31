@@ -12,7 +12,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       SHELLCHECK_REQUIRED: '1'
     defaults:
@@ -135,7 +135,7 @@ jobs:
   nix:
     runs-on: ubuntu-latest
     continue-on-error: true
-    timeout-minutes: 30
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: phpurs/phpurs

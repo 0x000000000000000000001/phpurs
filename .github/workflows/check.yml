@@ -33,6 +33,27 @@ jobs:
           ref: ef2fdae421ff998352a77407d861540d6b287928
           path: purescript-backend-optimizer-phpurs
 
+      - name: Checkout phpurs-prelude
+        uses: actions/checkout@v4
+        with:
+          repository: 0x000000000000000000001/phpurs-prelude
+          ref: 57f5292e8f108bba68c8e608576d55b59bbc1e0f
+          path: phpurs/phpurs-prelude
+
+      - name: Checkout phpurs-foldable-traversable
+        uses: actions/checkout@v4
+        with:
+          repository: 0x000000000000000000001/phpurs-foldable-traversable
+          ref: a9a7dc535a9f4a07d7293e8741520dbbd9dc46b6
+          path: phpurs/phpurs-foldable-traversable
+
+      - name: Checkout phpurs-arrays
+        uses: actions/checkout@v4
+        with:
+          repository: 0x000000000000000000001/phpurs-arrays
+          ref: 6f7f72e54c42163b596eecdb6f43e38154e929a9
+          path: phpurs/phpurs-arrays
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

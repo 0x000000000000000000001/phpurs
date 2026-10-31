@@ -99,8 +99,8 @@ jobs:
         if: failure()
         run: |
           for n in 15 21; do
-            grep -A60 "^not ok $n " codegen-tests.log || true
-          done | while IFS= read -r line; do
+            grep -A120 "^not ok $n " codegen-tests.log || true
+          done | grep -E "message:|expected:|actual:|operator:|stack:|failureType" | head -30 | while IFS= read -r line; do
             echo "::error title=codegen-log::$line"
           done
 

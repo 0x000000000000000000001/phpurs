@@ -164,25 +164,26 @@ validate name bindings source =
       exports = Array.concatMap exportsOfLine (String.split (Pattern "\n") source)
       keys = map _.key exports
       expected = map _.identName bindings
+      matched = Array.any (\key -> Array.elem key expected) keys
+      -- Loop-generated tables (`$exports["mkEffectFn$i"]`) cannot be checked
+      -- key by key; the runtime wrapper still reports missing exports.
+      dynamic = Array.any (\entry -> String.contains (Pattern "$") entry.key) exports
       missing = Array.mapMaybe
         ( \binding ->
             if Array.elem binding.identName keys then Nothing
             else Just (name <> ": missing PHP FFI export '" <> binding.identName <> "'")
         )
         bindings
-      extra = Array.mapMaybe
-        ( \key ->
-            if Array.elem key expected then Nothing
-            else Just (name <> ": unknown PHP FFI export '" <> key <> "'")
-        )
-        (Array.nub keys)
       arityError binding =
         case Array.find (\entry -> entry.key == binding.identName) exports of
           Just entry
             | not (Array.null binding.signature.args) ->
                 case entry.arity of
+                  -- Curried PHP FFI functions legitimately declare fewer
+                  -- parameters than the flattened PureScript type; only an
+                  -- over-arity literal is a certain mismatch.
                   Just found
-                    | found /= Array.length binding.signature.args ->
+                    | found > Array.length binding.signature.args ->
                         Just
                           ( name <> "." <> binding.identName <> ": expected "
                               <> show (Array.length binding.signature.args)
@@ -192,8 +193,8 @@ validate name bindings source =
                   _ -> Nothing
           _ -> Nothing
     in
-      if Array.null exports then forbidden
-      else forbidden <> missing <> extra <> Array.mapMaybe arityError bindings
+      if dynamic || not matched then forbidden
+      else forbidden <> Array.mapMaybe arityError bindings
 
 type ExportEntry = { key :: String, arity :: Maybe Int }
 
@@ -218,7 +219,9 @@ arityOf :: String -> Maybe Int
 arityOf line
   | String.contains (Pattern "if (") line = Nothing
   | otherwise = case String.indexOf (Pattern "function") line of
-      Nothing -> Just 0
+      -- The export may alias a variable or a constant; arity is only
+      -- checkable when the assignment contains a function literal.
+      Nothing -> Nothing
       Just index ->
         let
           rest = String.drop (index + 8) line

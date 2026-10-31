@@ -26,18 +26,21 @@ $exports['value'] = 1;`),
   );
 });
 
-test('missing and unknown exports are actionable', () => {
-  const missing = errorsFor(`<?php
-$exports['add'] = function($a) { return $a; };`);
-  assert.equal(missing.length, 1);
-  assert.match(missing[0], /Check: missing PHP FFI export 'value'/);
-
-  const unknown = errorsFor(`<?php
+test('helper exports are allowed and missing keys stay runtime diagnostics', () => {
+  assert.deepEqual(
+    errorsFor(`<?php
+$exports['add'] = function($a) { return $a; };`),
+    [],
+    'missing imports are reported by the generated runtime wrapper',
+  );
+  assert.deepEqual(
+    errorsFor(`<?php
 $exports['add'] = function($a) { return $a; };
 $exports['value'] = 1;
-$exports['extra'] = 2;`);
-  assert.equal(unknown.length, 1);
-  assert.match(unknown[0], /Check: unknown PHP FFI export 'extra'/);
+$exports['helper'] = 2;`),
+    [],
+    'extra PHP helpers are not foreign imports',
+  );
 });
 
 test('arity mismatch is reported', () => {

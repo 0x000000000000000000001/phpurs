@@ -69,10 +69,10 @@ helpers do not make blocking I/O asynchronous.
 
 An inline FFI fragment returns an array from `$exports`. Each `foreign import`
 must have a key with the same name; values are callables or constants allowed
-by the foreign type. The compiler validates the fragment before emission: keys must match
-`foreign import` names, callables must declare the expected parameter count,
-and `declare(strict_types=1)`/`namespace` are rejected. A fragment whose keys
-match none of the module's foreign imports is treated as a shared/dynamic
-source and keeps runtime demand-driven diagnostics. Conditional assignments
-(`if (...) $exports[...] = ...`) are accepted and keep the runtime
-`Missing PHP FFI export: <Module>.<name>` check.
+by the foreign type. The compiler validates the fragment before emission: a callable literal with
+more parameters than the flattened foreign signature and
+`declare(strict_types=1)`/`namespace` are rejected. Keys are checked on a
+best-effort basis only: loop-generated tables, aliases and partial fragments
+keep runtime demand-driven diagnostics, and extra helper exports are allowed.
+A missing key therefore still reports `Missing PHP FFI export:
+<Module>.<name>` when the wrapper is first demanded.

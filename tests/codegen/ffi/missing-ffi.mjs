@@ -333,14 +333,9 @@ for (const args of [['--bundle'], ['--bundle-only']]) {
     write(root, 'src/Library.php', '');
     assert.ok(build(root, args).generated.includes('Library'));
     checkMissing();
-    write(root, 'src/Library.php', '<?php\n$exports["value"] = 1; $exports["unrelated"] = 7;');
-    const rejected = spawnSync(process.execPath, [cli, '--verbose', ...args], {
-      cwd: root,
-      encoding: 'utf8',
-      timeout: 30000,
-    });
-    assert.notEqual(rejected.status, 0, 'unknown export must fail the build');
-    assert.match(rejected.stdout + rejected.stderr, /unknown PHP FFI export 'unrelated'/);
+    write(root, 'src/Library.php', '<?php\n$exports["unrelated"] = 7;');
+    assert.ok(build(root, args).generated.includes('Library'));
+    checkMissing();
     write(
       root,
       'src/Library.php',

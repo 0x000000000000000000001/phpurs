@@ -486,16 +486,18 @@ est en [annexe A](#annexe-a--backlog-ffi-constats-b8x).
   `__DIR__` du fichier runtime) ; sémantique du layout généré documentée dans
   `docs/ffi-boundaries.md` et testée par `tests/codegen/ffi/runtime-preamble.mjs`.
 - [x] **M7-03** — Forme de `$exports` (P1, 1,5 j). _Fait (31/10)._
-  `GenNativeForeign.validate` analyse le fragment : clés = `foreign import`,
-  arité des fonctions = signature aplatie, clé inconnue rejetée. Messages
-  `Module.clé: expected N parameters, found M` / `missing|unknown PHP FFI
-  export 'clé'`. Les exports conditionnels restent dynamiques ; un fragment
-  sans clé commune est traité comme source partagée.
+  `GenNativeForeign.validate` analyse le fragment : arité des littéraux
+  `function` (seule une sur-arité est certaine), `declare(strict_types=1)` et
+  `namespace` rejetés. Les tables générées en boucle, alias, exports
+  conditionnels, clés manquantes et helpers supplémentaires restent acceptés ;
+  le wrapper runtime fournit le diagnostic de clé manquante.
 - [x] **M7-04** — Validation des exports au build (P1, 2 j). _Fait (31/10)._
-  Les erreurs remontent dans `TranslatedModule.foreignErrors` et `Main` échoue
-  avant toute émission. `declare(strict_types=1)` et `namespace` sont refusés
-  dans un fragment. Tests : `export-validation.mjs` (clé, arité, interdit),
-  `missing-ffi.mjs` (export inconnu = build en échec) et `cache-cli.mjs`.
+  Les erreurs **structurelles** remontent dans `TranslatedModule.foreignErrors`
+  et `Main` échoue avant émission : sur-arité d’un littéral,
+  `declare(strict_types=1)` ou `namespace`. Les clés manquantes restent des
+  diagnostics runtime, car les paquets réels utilisent aliases, tables
+  générées et helpers. Tests : `export-validation.mjs`, `missing-ffi.mjs`,
+  `cache-cli.mjs`; `bin/test -c` et `bin/modtest` valident les paquets voisins.
   Clé manquante et arité incohérente détectées **avant** l’exécution, y compris
   pour une application partielle au top-level (`_parseParisTime`). Diagnostic
   clair pour `declare(strict_types=1)` ou `namespace` dans un fragment.

@@ -69,8 +69,29 @@ jobs:
       - name: Check toolchain
         run: npm run check:toolchain
 
-      - name: Check, build and test
-        run: npm run check
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Check conventions
+        run: npm run check:conventions
+
+      - name: Check source map
+        run: npm run check:source-map
+
+      - name: Check docs
+        run: npm run check:docs
+
+      - name: Check shell
+        run: npm run check:shell
+
+      - name: Build
+        run: npm run build
+
+      - name: Golden
+        run: npm run test:golden
+
+      - name: Codegen tests
+        run: npm run test:codegen
 
       - name: Coverage report (non-blocking)
         continue-on-error: true

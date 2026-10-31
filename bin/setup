@@ -17,6 +17,7 @@ read_toolchain() {
 PBO_REPOSITORY=$(read_toolchain repository)
 PBO_REVISION=$(read_toolchain revision)
 
+# shellcheck disable=SC1091
 source "$(dirname "$0")/pkg"
 
 echo "=> Cloning phpurs-* sibling repositories into $SIBLING_DIR..."

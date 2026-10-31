@@ -319,13 +319,19 @@ PHP tests and the `format:packages` commands.
 
 ### Nix environment
 
-A [Nix flake](flake.nix) supplies a development shell:
+A [Nix flake](flake.nix) supplies a development shell and builds the backend:
 
 ```bash
 nix develop
+nix build .#default
+nix flake check
 ```
 
-It currently selects upstream PureScript `0.15.15`. That can serve as a host compiler, but application generation still needs the TAST fork, and the local optimizer dependency must resolve. Treat the flake as development tooling; the file alone does not establish a portable, fully pinned build of this local checkout.
+The flake pins the TAST compiler fork (`105f5752`), the optimizer fork and
+PureScript `0.15.16`. `nix build` produces a working `phpurs` binary;
+`nix flake check` builds it and runs the outside-project smoke test. The Nix
+bundle uses esbuild because `purs-backend-es` output crashes at startup on
+this compiler/Node pair.
 
 ## Architecture
 

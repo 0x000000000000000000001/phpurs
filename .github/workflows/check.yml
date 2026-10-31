@@ -98,10 +98,9 @@ jobs:
       - name: Report failing codegen tests
         if: failure()
         run: |
-          for n in 15 21; do
-            grep -A120 "^not ok $n " codegen-tests.log || true
-          done | grep -E "message:|expected:|actual:|operator:|stack:|failureType" | head -30 | while IFS= read -r line; do
-            echo "::error title=codegen-log::$line"
+          node --test --test-reporter=spec tests/codegen/direct/array-callbacks.mjs tests/codegen/direct/callback-specialization.mjs > rerun.log 2>&1 || true
+          grep -E -A8 "AssertionError|Error:" rerun.log | head -80 | while IFS= read -r line; do
+            echo "::error title=codegen-assert::$line"
           done
 
       - name: Coverage report (non-blocking)

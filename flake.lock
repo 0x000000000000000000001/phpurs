@@ -90,6 +90,23 @@
         "type": "github"
       }
     },
+    "pbo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792753861,
+        "narHash": "sha256-pEXuSsBEtS0jhGGuHXR9PYkn54peMITiIxRnAVjCc9k=",
+        "owner": "0x000000000000000000001",
+        "repo": "purescript-backend-optimizer",
+        "rev": "ef2fdae421ff998352a77407d861540d6b287928",
+        "type": "github"
+      },
+      "original": {
+        "owner": "0x000000000000000000001",
+        "repo": "purescript-backend-optimizer",
+        "rev": "ef2fdae421ff998352a77407d861540d6b287928",
+        "type": "github"
+      }
+    },
     "purescript-overlay": {
       "inputs": {
         "flake-compat": "flake-compat_3",
@@ -148,6 +165,7 @@
         "flake-compat": "flake-compat",
         "mkSpagoDerivation": "mkSpagoDerivation",
         "nixpkgs": "nixpkgs",
+        "pbo": "pbo",
         "purescript-overlay": "purescript-overlay"
       }
     }

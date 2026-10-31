@@ -25,9 +25,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.ps-overlay.follows = "purescript-overlay";
     };
+
+    # Local backend source is a relative-path package in spago.lock; supply
+    # the pinned fork so `spago build` can resolve it in the Nix sandbox.
+    pbo = {
+      url = "github:0x000000000000000000001/purescript-backend-optimizer/ef2fdae421ff998352a77407d861540d6b287928";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs = { self, nixpkgs, pbo, ... }@inputs:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 
@@ -39,9 +46,9 @@
           overlays = builtins.attrValues self.overlays;
         });
 
-      # spago.lock declares the compiler bound `>=0.15.15 <0.16.0`, so pin the
-      # compiler explicitly instead of floating on the overlay's `purs`.
-      pursFor = pkgs: pkgs.purs-bin.purs-0_15_15;
+      # Match the npm toolchain (purs 0.15.16). 0.15.15 produces a bundle that
+      # crashes at startup under purs-backend-es.
+      pursFor = pkgs: pkgs.purs-bin.purs-0_15_16;
     in
     {
       overlays = {
@@ -61,30 +68,37 @@
             spagoYaml = ./spago.yaml;
             spagoLock = ./spago.lock;
 
+            preBuild = ''
+              sed -i "s|path: '../../purescript-backend-optimizer-phpurs'|path: '${pbo}'|" spago.yaml
+              sed -i "s|\"path\": \"../../purescript-backend-optimizer-phpurs\"|\"path\": \"${pbo}\"|" spago.lock
+            '';
+
             nativeBuildInputs = [
               purs
               pkgs.spago-unstable
-              pkgs.purs-backend-es
               pkgs.esbuild
               pkgs.makeWrapper
             ];
 
-            # Mirrors the npm "build" script, minus npm/npx. purs-backend-es
-            # reads corefn from output/ and shells out to esbuild from PATH.
+            # Mirror tools/bundle.mjs with the Nix esbuild: the npm wrapper
+            # embeds the CJS bundle and installs a tiny launcher. This avoids
+            # purs-backend-es output, which crashes on this compiler/Node pair.
             buildPhase = ''
               runHook preBuild
               spago build
-              purs-backend-es bundle-app --platform node --main Main --to bin/phpurs.js
+              ${pkgs.esbuild}/bin/esbuild output/Main/index.js \
+                --bundle --platform=node --format=cjs --outfile=phpurs-backend.cjs
               runHook postBuild
             '';
 
-            # nodejs-slim: node runtime only, no npm/npx/corepack. The bundle
-            # is fully self-contained so the bare interpreter is all we need,
-            # and it keeps the runtime closure of `nix run` minimal.
             installPhase = ''
               runHook preInstall
               mkdir -p $out/libexec/phpurs $out/bin
-              cp bin/phpurs.js $out/libexec/phpurs/phpurs.js
+              cp phpurs-backend.cjs $out/libexec/phpurs/phpurs-backend.cjs
+              cat > $out/libexec/phpurs/phpurs.js <<'EOF'
+              #!/usr/bin/env node
+              require('./phpurs-backend.cjs').main();
+              EOF
               makeWrapper ${pkgs.nodejs-slim}/bin/node $out/bin/phpurs \
                 --add-flags "$out/libexec/phpurs/phpurs.js"
               runHook postInstall

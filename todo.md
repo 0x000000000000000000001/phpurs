@@ -173,7 +173,7 @@ Chaque friction est datée et reliée à un chantier.
 | F8 | Couverture inégale | Résolu le 31/10 : tests directs consolidés (M6-02), 5 suites de propriétés et couverture `c8` à 98,6 %. | Les contrats critiques sont testés et mesurés | M6 |
 | F9 | CI non activée | Résolu le 31/10 : workflow `check` vert sur `main` ; protection de branche non requise par décision du mainteneur. | La CI tourne sur chaque push, sans blocage de merge | M1 |
 | F10 | Dépendance PBO par chemin relatif | Résolu le 31/10 : `tools/toolchain.json`, `check:toolchain`, `bin/setup` clone la révision épinglée ; premier run CI vert. | Dépendance reproductible | M8-02 |
-| F11 | Hygiène du dépôt | Résolu le 31/10 : `CONTRIBUTING`, `CHANGELOG`, `engines`, `prepublishOnly`, `npm run clean`, rétention des audits ; reste Nix (M8-05) | Release outillée | M8 |
+| F11 | Hygiène du dépôt | Résolu le 31/10 : `CONTRIBUTING`, `CHANGELOG`, `engines`, `prepublishOnly`, `npm run clean`, rétention des audits et flake Nix vérifié | Release outillée | M8 |
 | F12 | Décisions non écrites | Résolu le 31/10 : ADR-001 à 007 dans `docs/decisions/` | Le « pourquoi » est consultable | M9 |
 
 ## 7. Chantiers
@@ -552,8 +552,12 @@ est en [annexe A](#annexe-a--backlog-ffi-constats-b8x).
   `raw/`, revue à chaque release, archivage > 6 mois.
   Politique : rapports immuables, pas de `raw/`, revue à chaque release,
   archivage au-delà de 6 mois dans un tag ; `audit/README.md` mis à jour.
-- [!] **M8-05** — Nix (P2, 1 j). _Bloqué : `nix` absent de l’environnement._
-  Vérifier `nix build` et `nix develop` ; job CI non bloquant ; documenter.
+- [x] **M8-05** — Nix (P2, 1 j). _Fait (31/10)._
+  `nix build .#default` et `nix flake check` passent sur `aarch64-darwin` ;
+  `nix develop` fournit PureScript 0.15.16, Spago 1.0.4, PHP 8.4 et Node 24.
+  Le flake épingle le fork PBO (`pbo`) et compile avec `purs` 0.15.16 ; le
+  bundle Nix utilise `esbuild` (le bundle `purs-backend-es` crashait au
+  démarrage). Job CI `nix` ajouté, non bloquant.
 - [x] **M8-06** — Convention de commit (P2, 0,5 j). _Fait (31/10)._
   `tools/check-commit-msg.mjs`, script `check:commit`, étape CI sur le titre de
   PR, règle écrite dans `docs/conventions.md`._

@@ -131,3 +131,31 @@ jobs:
       - name: TAST smoke (non-blocking, skipped without the fork)
         continue-on-error: true
         run: npm run test:tast-smoke
+
+  nix:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: phpurs/phpurs
+    steps:
+      - name: Checkout phpurs
+        uses: actions/checkout@v4
+        with:
+          path: phpurs/phpurs
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Nix flake check
+        run: nix flake check --print-build-logs
+
+      - name: Nix build
+        run: nix build .#default --print-build-logs
+
+      - name: Nix dev shell
+        run: nix develop .#default --command purs --version

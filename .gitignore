@@ -10,6 +10,7 @@ purs_files.txt
 .DS_Store
 .tmp-home/
 .tmp-cache/
+.tmp-nix-cache/
 .phpurs-cache.json
 .phpurs-cache/
 .purmeta/

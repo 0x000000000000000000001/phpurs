@@ -1,121 +1,171 @@
-# Développement
+# Development
 
 ## Build
 
-Le chemin canonique est :
+The canonical path is:
 
 ```sh
 npm run build
 ```
 
-Il exécute `spago build` puis `tools/bundle.mjs`, qui produit
-`bin/phpurs.js` avec l’identité de toolchain et le cache de modules activés.
-`bin/phpurs.js` est ignoré par Git et reconstruit à la demande.
+It runs `spago build` and then `tools/bundle.mjs`, which produces
+`bin/phpurs.js` with the toolchain identity and the module cache enabled.
+`bin/phpurs.js` is ignored by Git and rebuilt on demand.
 
-Le runner benchmark `altbak.pub-phpurs/bin/php/run -c` utilise le même
-`tools/bundle.mjs` après son `spago build` épinglé au compilateur hôte.
+The benchmark runner `altbak.pub-phpurs/bin/php/run -c` uses the same
+`tools/bundle.mjs` after its `spago build` pinned to the host compiler.
 
-## Formatage et organisation
+## PBO toolchain
+
+`spago.yaml` resolves the optimizer from
+`../../purescript-backend-optimizer-phpurs`. The expected revision is pinned in
+`tools/toolchain.json`; `npm run check:toolchain` verifies the checkout and the
+path declared in `spago.yaml`. `./bin/setup` clones the repository at that
+revision when missing.
+
+## CI
+
+`.github/workflows/check.yml` replays on every PR: formatting, conventions,
+source map, docs, shell, build, golden and tests. The workflow recreates the
+local layout (`phpurs/phpurs` and `purescript-backend-optimizer-phpurs` side by
+side under the workspace), installs Node 22 and PHP 8.4, installs shellcheck,
+checks the PBO revision and the PR title, then runs `npm run check`. npm and
+Spago caches are shared between runs.
+
+## Formatting and organization
 
 ```sh
-npm run format        # applique purs-tidy et Prettier
-npm run format:check  # vérifie sans modifier
+npm run format        # apply purs-tidy and Prettier
+npm run format:check  # check without modifying
 ```
 
-Les versions sont épinglées dans `package.json`. `.editorconfig` fixe les fins
-de ligne et l’indentation ; `.tidyrc.json` et `.prettierrc.json` portent les
-options des formateurs, dont une largeur cible de 100 colonnes.
+Versions are pinned in `package.json`. `.editorconfig` fixes line endings and
+indentation; `.tidyrc.json` and `.prettierrc.json` carry the formatter options,
+including a 100-column target width.
 
-Le périmètre est le code maintenu ici : `src/**/*.purs`, `src/**/*.js`,
-`tests/codegen/**/*.mjs`, `tools/*.mjs`, les fichiers JSON racine et
-`spago.yaml`. Conserver les fixtures importées de `tests/passing` et les audits
-historiques dans leur forme d’origine.
+The scope is the code maintained here: `src/**/*.purs`, `src/**/*.js`,
+`tests/**/*.mjs`, `tools/*.mjs`, the root JSON files and `spago.yaml`. Keep the
+fixtures imported from `tests/passing` and the historical audits in their
+original form.
 
-- Placer chaque module PureScript selon son nom (`Phpurs.X` dans
-  `src/Phpurs/X.purs`) et sa FFI JavaScript à côté.
-- Nommer les fonctions selon leur rôle et extraire les étapes ayant une
-  responsabilité propre, sans créer de façade ou d’abstraction sans usage.
-- Garder les contrats publics et les invariants près du code qui les applique ;
-  mettre à jour les liens de la documentation lors d’un déplacement.
+- Put each PureScript module at its name (`Phpurs.X` in `src/Phpurs/X.purs`) and
+  its JavaScript FFI next to it.
+- Name functions after their role and extract steps with a distinct
+  responsibility, without adding a facade or an unused abstraction.
+- Keep public contracts and invariants near the code that applies them; update
+  documentation links when moving a module.
+
+## Checked conventions
+
+`npm run check:conventions` checks the rules the compiler and the formatters do
+not cover: one `-- |` header per module, maximum module size (400 lines) and
+declaration size (60 lines), no `PhpRaw ""`, and the allowed dependency
+direction between layers (`PhpAst`, `Optimize`, `ArrayRefs`, `Printer`,
+`CodeGen`, `Main`).
+
+Accepted debt lives in `tools/conventions-baseline.json`: an entry allows the
+current size, and any growth fails. After reducing debt, run
+`npm run conventions:update` and review the diff.
+
+The detailed rules (sizes, names, `PhpRaw`, budgets, tests, commits) are in
+[conventions.md](conventions.md); structural decisions are in
+[decisions/](decisions/README.md).
 
 ## Tests
 
-Vérification complète, avec compilation fraîche :
+Full verification, with a fresh build:
 
 ```sh
-npm run check  # format:check, build, puis test:codegen
+npm run check  # format:check, conventions, source map, docs, shell, build, golden, tests
 ```
 
-Après un build à jour, `npm run test:codegen` relance uniquement les tests.
+After an up-to-date build, `npm run test:codegen` reruns only the tests.
 
-Test ciblé :
+The golden corpus freezes the printed PHP of representative cases:
 
 ```sh
-node --test tests/codegen/direct/<fichier>.mjs
-node --test tests/codegen/cli/<fichier>.mjs
-node --test tests/codegen/ffi/<fichier>.mjs
+npm run test:golden    # compare byte for byte
+npm run golden:update  # rewrite expected/ after an intentional change
 ```
 
-Les familles et conventions sont décrites dans
-[`tests/codegen/README.md`](../tests/codegen/README.md). Les helpers communs
-sont dans `tests/codegen/fixtures/cli.mjs` (`temporaryRoot`, `runPhp`,
-`snapshotFiles`, `snapshotText`).
+An intentional output change updates `tests/golden/expected/` in the same PR;
+the diff is reviewed. How it works and how to add a case are described in
+[`tests/golden/README.md`](../tests/golden/README.md).
 
-Les tests CLI utilisent `bin/phpurs.js` par défaut et peuvent le remplacer via
-`PHPURS_TEST_CLI`. Les tests d’exécution PHP désactivent OPcache CLI.
-
-Les fixtures du langage et les packages PHP ont leurs propres runners :
+Targeted test:
 
 ```sh
-./bin/test FunctionFFIBoundary     # fixture ciblée, bundle existant
-./bin/test --skip-before=TCO      # suite à partir de TCO
-./bin/test -c                    # rebuild et suite avec caches vidés
-./bin/modtest                    # suites des bibliothèques sœurs
+node --test tests/codegen/direct/<file>.mjs
+node --test tests/codegen/cli/<file>.mjs
+node --test tests/codegen/ffi/<file>.mjs
 ```
 
-`bin/test` valide les sélections avant de préparer le projet et distingue les
-échecs de compilation PureScript, génération PHP et exécution. Il affiche le
-diagnostic du premier échec et s’arrête. Les tests isolés de son contrôle de flux
-sont dans `tests/codegen/cli/language-runner.mjs` ; ils simulent les exécutables
-sans compiler les fixtures. `tests/runner` est un espace jetable : ne pas y
-conserver de sources personnelles.
+Families and conventions are described in
+[`tests/codegen/README.md`](../tests/codegen/README.md). Shared helpers live in
+`tests/codegen/fixtures/cli.mjs` (`temporaryRoot`, `runPhp`, `snapshotFiles`,
+`snapshotText`).
 
-`bin/modtest` compte les suites exécutables trouvées dans les packages frères,
-signale leur absence et s’arrête au premier échec. Ses tests isolés vivent dans
+CLI tests use `bin/phpurs.js` by default and can replace it through
+`PHPURS_TEST_CLI`. PHP execution tests disable the CLI OPcache.
+
+Language fixtures and PHP packages have their own runners:
+
+```sh
+./bin/test FunctionFFIBoundary     # targeted fixture, existing bundle
+./bin/test --skip-before=TCO      # suite starting at TCO
+./bin/test -c                    # rebuild and run with cleared caches
+./bin/modtest                    # sibling package suites
+```
+
+`bin/test` validates selections before preparing the project and distinguishes
+PureScript compilation, PHP generation and execution failures. It prints the
+first failure's diagnostic and stops. Isolated tests of its control flow live in
+`tests/codegen/cli/language-runner.mjs`; they simulate executables without
+compiling fixtures. `tests/runner` is scratch space: do not keep personal
+sources there.
+
+`bin/modtest` counts executable suites in the sibling packages, reports their
+absence and stops at the first failure. Its isolated tests live in
 `tests/codegen/cli/sibling-runner.mjs`.
 
-Les wrappers des bibliothèques partagent `bin/test-package`, couvert par
-`tests/codegen/cli/package-runner.mjs`. Le [guide des bibliothèques](libraries.md)
-décrit la sélection/restauration de configuration, les tests FFI et les
-commandes `format:packages` et `format:packages:check`.
+Library wrappers share `bin/test-package`, covered by
+`tests/codegen/cli/package-runner.mjs`. The
+[library guide](libraries.md) describes configuration selection/restoration,
+FFI tests and the `format:packages` and `format:packages:check` commands.
 
 ## Benchmarks
 
-Le runner et les fixtures de performance vivent dans `altbak.pub-phpurs` ; ils
-ne font pas partie de `npm run test:codegen`.
+The runner and performance fixtures live in `altbak.pub-phpurs`; they are not
+part of `npm run test:codegen`.
 
 ```sh
 cd ../../altbak.pub-phpurs
 bin/php/run -c          # rebuild + 14 benchmarks
-bin/php/run --run-only  # benchmarks sur la sortie existante
+bin/php/run --run-only  # benchmarks on the existing output
 ```
 
-Comparer toute mesure de performance aux baselines officielles du
-`README.md` d’altbak.pub, avec les mêmes workloads et options PHP. Pour un
-refactor, vérifier aussi le comportement et les sorties PHP à entrées figées.
+Compare every measurement with the official baselines in altbak.pub's
+`README.md`, using the same workloads and PHP options. For a refactor, also
+check behaviour and PHP output for frozen inputs.
 
-## Sorties générées
+## Cleaning
 
-- `output/`, `.spago/`, `.purmeta/`, les caches et `bin/phpurs.js` sont ignorés.
-- Le paquet npm est filtré par `.npmignore` ; ne pas y réintroduire les audits,
-  tests ou caches.
-- Les audits historiques restent dans `audit/` et sont indexés dans
-  `audit/README.md`.
+`npm run clean` removes local outputs and caches (`output`, `.spago`,
+`.purmeta`, `bin/phpurs.js`, the `tests/runner` scratch space and `.tmp-*`).
+`npm run clean -- --dry-run` lists the targets without deleting anything. No
+target outside the repository is accepted.
 
-## Règles de refactor
+## Generated outputs
 
-- Un module extrait doit conserver l’API publique et les sorties PHP.
-- Compiler et tests ciblés après chaque extraction.
-- Vérifier une sortie PHP identique pour `--main App --no-cache` quand le
-  générateur est touché.
-- Ne pas mélanger déplacement de code et changement d’algorithme.
+- `output/`, `.spago/`, `.purmeta/`, caches and `bin/phpurs.js` are ignored.
+- The npm package is filtered by `.npmignore`; do not reintroduce audits, tests
+  or caches there.
+- Historical audits stay in `audit/` and are indexed by `audit/README.md`.
+
+## Refactor rules
+
+- An extracted module keeps the public API and the PHP output.
+- Build and run targeted tests after each extraction.
+- Check identical PHP output for `--main App --no-cache` when touching the
+  generator.
+- Do not mix a code move with an algorithm change.

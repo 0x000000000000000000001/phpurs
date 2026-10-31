@@ -100,3 +100,8 @@ For a refactor, run `php -l`, the relevant direct FFI regression, and the
 package/consumer suite. Compare observable results and failures before and
 after when restructuring stateful or asynchronous code. Performance claims
 need the official baselines in `altbak.pub/README.md`.
+
+## Runtime ABI
+
+Generated PHP relies on the versioned helpers documented in
+[ffi-contract.md](ffi-contract.md).

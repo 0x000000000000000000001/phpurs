@@ -98,7 +98,9 @@ jobs:
       - name: Report failing codegen tests
         if: failure()
         run: |
-          tail -120 codegen-tests.log | while IFS= read -r line; do
+          for n in 15 21; do
+            grep -A60 "^not ok $n " codegen-tests.log || true
+          done | while IFS= read -r line; do
             echo "::error title=codegen-log::$line"
           done
 

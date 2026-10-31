@@ -31,4 +31,4 @@ isEffectNode (TcoExpr _ syntax) = case syntax of
 executeIfOpaque :: TcoExpr -> PhpExpr -> PhpExpr
 executeIfOpaque expr phpExpr =
   if isEffectNode expr then phpExpr
-  else PhpCall (PhpRaw (RuntimeNames.qualified RuntimeNames.executeEffect)) [ phpExpr ]
+  else PhpNamedCall (RuntimeNames.qualified RuntimeNames.executeEffect) [ phpExpr ]

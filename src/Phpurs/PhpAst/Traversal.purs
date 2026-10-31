@@ -38,8 +38,10 @@ childrenWithScope scope = case _ of
   PhpGlobalAssign _ e -> scoped [ e ]
   PhpVar _ -> []
   PhpGlobalVar _ _ -> []
+  PhpGlobalSlot _ -> []
   PhpDirectCall _ args -> args
   PhpCall fn args -> [ fn ] <> args
+  PhpNamedCall _ args -> args
   PhpInt _ -> []
   PhpNumber _ -> []
   PhpString _ -> []
@@ -58,9 +60,11 @@ childrenWithScope scope = case _ of
   PhpTernary condition yes no -> [ condition, yes, no ]
   PhpReturn e -> [ e ]
   PhpBinOp _ a b -> [ a, b ]
+  PhpUnaryOp _ e -> [ e ]
   PhpWhile condition body -> [ condition ] <> body
   PhpContinue -> []
   PhpRaw _ -> []
+  PhpUnset _ -> []
   PhpNew _ args -> args
   PhpClone e -> [ e ]
   PhpSwitch e cases fallback -> [ e ] <> Array.concatMap (\c -> c.matchCases <> c.stmts) cases <>
@@ -85,8 +89,10 @@ mapChildren f = case _ of
   PhpGlobalAssign name e -> PhpGlobalAssign name (f e)
   PhpVar name -> PhpVar name
   PhpGlobalVar ns name -> PhpGlobalVar ns name
+  PhpGlobalSlot key -> PhpGlobalSlot key
   PhpDirectCall name args -> PhpDirectCall name (map f args)
   PhpCall e args -> PhpCall (f e) (map f args)
+  PhpNamedCall name args -> PhpNamedCall name (map f args)
   PhpInt n -> PhpInt n
   PhpNumber n -> PhpNumber n
   PhpString s -> PhpString s
@@ -106,9 +112,11 @@ mapChildren f = case _ of
   PhpTernary condition yes no -> PhpTernary (f condition) (f yes) (f no)
   PhpReturn e -> PhpReturn (f e)
   PhpBinOp op a b -> PhpBinOp op (f a) (f b)
+  PhpUnaryOp op e -> PhpUnaryOp op (f e)
   PhpWhile condition body -> PhpWhile (f condition) (map f body)
   PhpContinue -> PhpContinue
   PhpRaw s -> PhpRaw s
+  PhpUnset name -> PhpUnset name
   PhpNew name args -> PhpNew name (map f args)
   PhpClone e -> PhpClone (f e)
   PhpSwitch e cases fallback -> PhpSwitch (f e)

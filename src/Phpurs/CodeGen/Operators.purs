@@ -29,11 +29,11 @@ isLogicalShortCircuit = case _ of
 
 translateOperator1 :: BackendOperator1 -> PhpExpr -> PhpExpr
 translateOperator1 operator expr = case operator of
-  OpBooleanNot -> PhpBinOp "!" (PhpRaw "") expr
-  OpIntBitNot -> PhpBinOp "~" (PhpRaw "") expr
-  OpIntNegate -> PhpBinOp "-" (PhpRaw "") expr
-  OpNumberNegate -> PhpBinOp "-" (PhpRaw "") expr
-  OpArrayLength -> PhpCall (PhpRaw "count") [ expr ]
+  OpBooleanNot -> PhpUnaryOp "!" expr
+  OpIntBitNot -> PhpUnaryOp "~" expr
+  OpIntNegate -> PhpUnaryOp "-" expr
+  OpNumberNegate -> PhpUnaryOp "-" expr
+  OpArrayLength -> PhpNamedCall "count" [ expr ]
   OpIsTag (Qualified mbMod (Ident tag)) ->
     let
       safeTag = String.replaceAll (Pattern "'") (Replacement "_prime_") tag
@@ -65,14 +65,14 @@ translateOperator2 operator left right = case operator of
   OpIntNum OpSubtract -> binary "-"
   OpIntNum OpMultiply -> binary "*"
   -- PHP's `/` can return a float for integer operands.
-  OpIntNum OpDivide -> PhpCall (PhpRaw "\\intdiv") [ left, right ]
+  OpIntNum OpDivide -> PhpNamedCall "\\intdiv" [ left, right ]
   OpIntNum OpMod -> binary "%"
   OpIntOrd comparison -> translateComparison comparison left right
   OpNumberNum OpAdd -> binary "+"
   OpNumberNum OpSubtract -> binary "-"
   OpNumberNum OpMultiply -> binary "*"
   OpNumberNum OpDivide -> binary "/"
-  OpNumberNum OpMod -> PhpCall (PhpRaw "\\fmod") [ left, right ]
+  OpNumberNum OpMod -> PhpNamedCall "\\fmod" [ left, right ]
   OpNumberOrd comparison -> translateComparison comparison left right
   OpStringAppend -> binary "."
   OpStringOrd comparison -> translateComparison comparison left right

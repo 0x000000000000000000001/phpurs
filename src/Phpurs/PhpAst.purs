@@ -23,8 +23,10 @@ data PhpExpr
   | PhpGlobalAssign String PhpExpr
   | PhpVar String
   | PhpGlobalVar (Maybe (Array String)) String
+  | PhpGlobalSlot String
   | PhpDirectCall String (Array PhpExpr)
   | PhpCall PhpExpr (Array PhpExpr)
+  | PhpNamedCall String (Array PhpExpr)
   | PhpInt Int
   | PhpNumber Number
   | PhpString String
@@ -43,9 +45,11 @@ data PhpExpr
   | PhpTernary PhpExpr PhpExpr PhpExpr
   | PhpReturn PhpExpr
   | PhpBinOp String PhpExpr PhpExpr
+  | PhpUnaryOp String PhpExpr
   | PhpWhile PhpExpr (Array PhpExpr)
   | PhpContinue
   | PhpRaw String
+  | PhpUnset String
   | PhpNew String (Array PhpExpr)
   | PhpClone PhpExpr
   | PhpSwitch PhpExpr (Array { matchCases :: Array PhpExpr, stmts :: Array PhpExpr })

@@ -8,6 +8,8 @@ output.php
 .purs-repl
 purs_files.txt
 .DS_Store
+.tmp-home/
+.tmp-cache/
 .phpurs-cache.json
 .phpurs-cache/
 .purmeta/

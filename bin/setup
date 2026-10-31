@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Clones all core phpurs-* repositories as siblings of the phpurs directory.
+# Clones all core phpurs-* repositories as siblings of the phpurs directory,
+# plus the pinned PBO fork two levels up (the path spago.yaml expects).
 # Useful for setting up the local development and testing environment.
 
 ROOT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 SIBLING_DIR="$ROOT_DIR/.."
+PBO_DIR="$ROOT_DIR/../../purescript-backend-optimizer-phpurs"
+TOOLCHAIN="$ROOT_DIR/tools/toolchain.json"
+
+read_toolchain() {
+  node -e "process.stdout.write(JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8')).pbo.$1)" "$TOOLCHAIN"
+}
+
+PBO_REPOSITORY=$(read_toolchain repository)
+PBO_REVISION=$(read_toolchain revision)
 
 source "$(dirname "$0")/pkg"
 
@@ -21,4 +31,14 @@ for pkg in "${CORE_PACKAGES[@]}"; do
   fi
 done
 
-echo "=> Done! You can now run ./bin/test"
+echo "=> Checking the pinned PBO checkout at $PBO_DIR..."
+
+if [ -d "$PBO_DIR/.git" ]; then
+  echo "[SKIP] PBO checkout already exists; run npm run check:toolchain to verify its revision."
+else
+  echo "[CLONE] purescript-backend-optimizer at $PBO_REVISION..."
+  git clone "https://github.com/$PBO_REPOSITORY.git" "$PBO_DIR"
+  git -C "$PBO_DIR" checkout "$PBO_REVISION"
+fi
+
+echo "=> Done! You can now run npm run check:toolchain, then ./bin/test"

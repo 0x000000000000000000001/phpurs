@@ -7,6 +7,15 @@ dans les dossiers d’audit correspondants.
 Le backlog de performance complet est archivé dans
 [`2026-10-20/todo-archive/performance-backlog-2026-10-20.md`](2026-10-20/todo-archive/performance-backlog-2026-10-20.md).
 
+## Rétention
+
+- Les rapports sont immuables : une correction crée un nouveau rapport, elle ne
+  réécrit pas l’ancien.
+- Les sorties brutes (`raw/`, profils, journaux volumineux) ne sont pas suivies.
+- À chaque release : vérifier l’index et les liens, puis archiver dans un tag
+  les dossiers de plus de six mois. Aucune suppression sans décision écrite.
+- Un rapport remplacé reste dans l’index avec le statut « historique ».
+
 ## 2026-09-08
 
 | Rapport | Statut | Sujet |

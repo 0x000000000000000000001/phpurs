@@ -9,3 +9,6 @@
 /audit
 /tests
 /todo.md
+/.tmp-cache
+/.tmp-home
+/.github

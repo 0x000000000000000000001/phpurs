@@ -26,9 +26,56 @@ replaceNames text =
 
 -- | Global helpers shared by every module. Generated calls use the fully
 -- | qualified names (`\phpurs_*`); the runtime itself is emitted once.
+rootHelpers :: String
+rootHelpers =
+  "if (!defined('PHPURS_ROOT')) { define('PHPURS_ROOT', __DIR__); }\n"
+    <> "if (!defined('PHPURS_ABI_VERSION')) { define('PHPURS_ABI_VERSION', 1); }\n"
+    <> "if (!function_exists('phpurs_root')) {\n"
+    <> "  function phpurs_root(): string { return PHPURS_ROOT; }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_abi_version')) {\n"
+    <> "  function phpurs_abi_version(): int { return PHPURS_ABI_VERSION; }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_variant_tag')) {\n"
+    <> "  function phpurs_variant_tag($value) { return $value->tag; }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_variant_value')) {\n"
+    <>
+      "  function phpurs_variant_value($value, int $index) { $field = 'value' . $index; return $value->$field; }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_record_get')) {\n"
+    <> "  function phpurs_record_get($record, string $key) { return $record->$key; }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_aff_from_operation')) {\n"
+    <> "  function phpurs_aff_from_operation($operation) {\n"
+    <> "    return new \\PhpursThenable(function($resolve, $reject) use ($operation) {\n"
+    <> "      return $operation($resolve, $reject);\n"
+    <> "    });\n"
+    <> "  }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_non_cancellable')) {\n"
+    <> "  function phpurs_non_cancellable() { return function() {}; }\n"
+    <> "}\n"
+    <> "if (!function_exists('phpurs_apply')) {\n"
+    <> "  function phpurs_apply($fn, array $args) {\n"
+    <>
+      "    if (!\\is_callable($fn)) { throw new \\TypeError('phpurs_apply: expected a callable'); }\n"
+    <> "    $closure = \\Closure::fromCallable($fn);\n"
+    <> "    $ref = new \\ReflectionFunction($closure);\n"
+    <> "    $expected = $ref->getNumberOfParameters();\n"
+    <> "    if (!$ref->isVariadic() && $expected !== \\count($args)) {\n"
+    <>
+      "      throw new \\TypeError('phpurs_apply: expected ' . $expected . ' arguments, got ' . \\count($args));\n"
+    <> "    }\n"
+    <> "    return $closure(...$args);\n"
+    <> "  }\n"
+    <> "}\n\n"
+
 sharedRuntime :: String
-sharedRuntime = curryFallback <> effectHelpers <> referenceHelpers <> conversionHelpers <>
-  promiseHelpers
+sharedRuntime = rootHelpers <> curryFallback <> effectHelpers <> referenceHelpers
+  <> conversionHelpers
+  <>
+    promiseHelpers
 
 sharedRuntimeFile :: String
 sharedRuntimeFile = "<?php\n\n" <> sharedRuntime

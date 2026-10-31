@@ -27,16 +27,22 @@ import Phpurs.BuildInputs (loadInputsWithProfile)
 import Phpurs.BuildProfile as Profile
 import Phpurs.CacheKey (Toolchain)
 import Phpurs.Metrics as Metrics
+import Phpurs.ForeignTraversals (Traversals)
 import Phpurs.ModuleCache (CacheHooks)
 import Phpurs.ModuleState
   ( publishModuleStateWithProfile
+  , Emission
+  , ModuleState
+  , TranslatedModule
   , printModuleState
   , translateModuleStateWithContracts
   , supportsEmission
   )
+import Phpurs.NativeCallbacks (Callbacks)
 import Phpurs.PurmetaBudget as PurmetaBudget
 import Phpurs.PurmetaProfile (withProfile)
 import PureScript.Backend.Optimizer.Builder (buildModules)
+import PureScript.Backend.Optimizer.Convert (BackendModule)
 import PureScript.Backend.Optimizer.CoreFn (Module(..), importName)
 import PureScript.Backend.Optimizer.Semantics.Foreign (coreForeignSemantics)
 
@@ -59,6 +65,38 @@ run toolchain override = launchAff_ do
   Metrics.measure "backend total" \_ ->
     Profile.withProfile (Array.elem "--profile-build" cliArgs) \profile ->
       compile toolchain override cliArgs profile
+
+translateAndCheck
+  :: Profile.Profile
+  -> String
+  -> Callbacks
+  -> Traversals
+  -> Array (Array String)
+  -> String
+  -> Map.Map String Int
+  -> BackendModule
+  -> Aff TranslatedModule
+translateAndCheck
+  profile
+  modNameStr
+  nativeCallbacks
+  traversals
+  importsArray
+  foreignSource
+  currentArities
+  backendMod = do
+  translated <- liftEffect $ Profile.measurePure profile "translate" modNameStr \_ ->
+    translateModuleStateWithContracts nativeCallbacks traversals importsArray foreignSource
+      currentArities
+      backendMod
+  when (not (Array.null translated.foreignErrors)) $
+    throwError (error (String.joinWith "\n" translated.foreignErrors))
+  pure translated
+
+emitTranslated
+  :: Profile.Profile -> Emission -> String -> TranslatedModule -> Effect ModuleState
+emitTranslated profile emission modNameStr translated =
+  Profile.measurePure profile "print" modNameStr \_ -> printModuleState emission translated
 
 compile :: Maybe Toolchain -> Maybe CacheHooks -> Array String -> Profile.Profile -> Aff Unit
 compile toolchain override cliArgs profile = do
@@ -134,13 +172,12 @@ compile toolchain override cliArgs profile = do
                   coreFnMod.imports
               let foreignSource = fromMaybe "" (Map.lookup backendMod.name foreignSources)
               currentArities <- liftEffect $ Ref.read refs.globalAritiesRef
-              translated <- liftEffect $ Profile.measurePure profile "translate" modNameStr \_ ->
-                translateModuleStateWithContracts nativeCallbacks traversals importsArray
-                  foreignSource
-                  currentArities
-                  backendMod
-              state <- liftEffect $ Profile.measurePure profile "print" modNameStr \_ ->
-                printModuleState emission translated
+              translated <- translateAndCheck profile modNameStr nativeCallbacks traversals
+                importsArray
+                foreignSource
+                currentArities
+                backendMod
+              state <- liftEffect $ emitTranslated profile emission modNameStr translated
               publishModuleStateWithProfile profile emission outputDir refs state
               Profile.measureAff profile "cache.store" modNameStr \_ -> cache.hooks.store state
           }

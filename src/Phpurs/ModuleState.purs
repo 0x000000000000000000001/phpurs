@@ -32,7 +32,8 @@ import Effect.Ref as Ref
 import Node.FS.Aff as FS
 import Phpurs.BuildProfile as Profile
 import Phpurs.Printer.Runtime as Runtime
-import Phpurs.CodeGen (translateWithContracts)
+import Phpurs.CodeGen (translateWithStats)
+import Phpurs.CodeGen.Pipeline (PassStats)
 import Phpurs.ForeignTraversals (Traversals)
 import Phpurs.GenNativeForeign (genForeignModule)
 import Phpurs.NativeCallbacks (Callbacks)
@@ -75,8 +76,10 @@ type TranslatedModule =
   { backend :: BackendModule
   , phpFile :: PhpFile
   , foreignCode :: String
+  , foreignErrors :: Array String
   , arities :: Map String Int
   , allArities :: Map String Int
+  , passStats :: PassStats
   }
 
 translateModuleState
@@ -102,14 +105,22 @@ translateModuleStateWithContracts
   -> TranslatedModule
 translateModuleStateWithContracts callbacks traversals imports foreignSource currentArities backend =
   let
-    phpFile = translateWithContracts callbacks traversals imports backend
+    translated = translateWithStats callbacks traversals imports backend
+    phpFile = translated.file
     foreignModule = genForeignModule
       { moduleName: backend.name, bindings: backend.foreign, source: foreignSource }
     -- Store this module's contribution, not a copy of the preceding environment.
     arities = Map.union foreignModule.arities phpFile.arities
     allArities = Map.union arities currentArities
   in
-    { backend, phpFile, foreignCode: foreignModule.code, arities, allArities }
+    { backend
+    , phpFile
+    , foreignCode: foreignModule.code
+    , foreignErrors: foreignModule.errors
+    , arities
+    , allArities
+    , passStats: translated.passStats
+    }
 
 printModuleState :: Emission -> TranslatedModule -> ModuleState
 printModuleState modes { backend, phpFile, foreignCode, arities, allArities } =

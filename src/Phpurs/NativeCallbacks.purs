@@ -1,4 +1,4 @@
--- Evidence about native callback wrappers, separate from flattened type arity.
+-- | Evidence about native callback wrappers, separate from flattened type arity.
 -- Foreign evidence is tied to the exact captured PHP bytes used for emission.
 module Phpurs.NativeCallbacks (Callbacks, binaryInt, fromForeign) where
 

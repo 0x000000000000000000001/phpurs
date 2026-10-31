@@ -4,6 +4,15 @@ module Phpurs.RuntimeNames
   , effectMap
   , executeEffect
   , promise
+  , phpursAbiVersion
+  , phpursAffFromOperation
+  , phpursApply
+  , phpursNonCancellable
+  , phpursRecordGet
+  , phpursRoot
+  , phpursRootConst
+  , phpursVariantTag
+  , phpursVariantValue
   , promiseMap
   , qualified
   , record
@@ -14,6 +23,34 @@ module Phpurs.RuntimeNames
   ) where
 
 import Prelude
+
+-- | Generated-output root, resolved once from the runtime file.
+phpursRoot :: String
+phpursRoot = "phpurs_root"
+
+phpursRootConst :: String
+phpursRootConst = "PHPURS_ROOT"
+
+phpursAffFromOperation :: String
+phpursAffFromOperation = "phpurs_aff_from_operation"
+
+phpursNonCancellable :: String
+phpursNonCancellable = "phpurs_non_cancellable"
+
+phpursApply :: String
+phpursApply = "phpurs_apply"
+
+phpursAbiVersion :: String
+phpursAbiVersion = "phpurs_abi_version"
+
+phpursVariantTag :: String
+phpursVariantTag = "phpurs_variant_tag"
+
+phpursVariantValue :: String
+phpursVariantValue = "phpurs_variant_value"
+
+phpursRecordGet :: String
+phpursRecordGet = "phpurs_record_get"
 
 curryFallback :: String
 curryFallback = "phpurs_curry_fallback"

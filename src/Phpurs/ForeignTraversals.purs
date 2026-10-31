@@ -1,4 +1,4 @@
--- Exact contracts for the PHP traversal bodies consumed by ArrayCallbacks.
+-- | Exact contracts for the PHP traversal bodies consumed by ArrayCallbacks.
 -- Evidence is derived from the same source/signature captures as FFI emission.
 module Phpurs.ForeignTraversals (Traversal(..), Traversals, fromForeign) where
 

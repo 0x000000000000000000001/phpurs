@@ -19,14 +19,15 @@ import Phpurs.PhpAst (PhpExpr(..), foreignValueArity)
 import Phpurs.Printer (printExpr, safeFuncName, safeName)
 import PureScript.Backend.Optimizer.CoreFn (ExprType(..), Ident(..), ModuleName(..))
 
-type ForeignModule = { arities :: Map String Int, code :: String }
+type ForeignModule = { arities :: Map String Int, code :: String, errors :: Array String }
 
 type ForeignSignature = { args :: Array ExprType, ret :: ExprType }
 
 -- | The export key and native function name have different PHP escaping rules.
 -- | A missing FFI base means the wrapper has no export table to capture.
 type ForeignBinding =
-  { globalKey :: String
+  { identName :: String
+  , globalKey :: String
   , funcName :: String
   , ffiBaseVar :: Maybe String
   , exportKey :: String
@@ -52,7 +53,8 @@ genForeignModule { moduleName: ModuleName name, bindings, source } =
       let
         fullName = phpModName <> "_" <> ident
       in
-        { globalKey: safeName fullName
+        { identName: ident
+        , globalKey: safeName fullName
         , funcName: safeFuncName fullName
         , ffiBaseVar: if hasSource then Just ffiBase else Nothing
         , exportKey: printExpr Map.empty (PhpString ident)
@@ -72,7 +74,8 @@ genForeignModule { moduleName: ModuleName name, bindings, source } =
           <> "\n"
       else mappings <> (if mappings /= "" then "\n" else "")
   in
-    { arities: Map.fromFoldable
+    { errors: validate name prepared source
+    , arities: Map.fromFoldable
         ( map
             ( \binding -> Tuple binding.globalKey
                 ( if Array.null binding.signature.args then foreignValueArity
@@ -137,6 +140,106 @@ flattenFuncType ty = case stripForAll ty of
     in
       { args: args <> inner.args, ret: inner.ret }
   other -> { args: [], ret: other }
+
+-- | Check the inline fragment's `$exports` table before emission. Conditional
+-- | assignments keep runtime demand-driven semantics and are reported as
+-- | dynamic: the key is accepted, arity is not checked.
+validate
+  :: String
+  -> Array ForeignBinding
+  -> String
+  -> Array String
+validate name bindings source =
+  if String.trim source == "" then []
+  else
+    let
+      forbidden = Array.concat
+        [ if String.contains (Pattern "declare(strict_types=1)") source then
+            [ name <> ": FFI fragment must not contain `declare(strict_types=1)`" ]
+          else []
+        , if String.contains (Pattern "namespace ") source then
+            [ name <> ": FFI fragment must not contain `namespace`" ]
+          else []
+        ]
+      exports = Array.concatMap exportsOfLine (String.split (Pattern "\n") source)
+      keys = map _.key exports
+      expected = map _.identName bindings
+      missing = Array.mapMaybe
+        ( \binding ->
+            if Array.elem binding.identName keys then Nothing
+            else Just (name <> ": missing PHP FFI export '" <> binding.identName <> "'")
+        )
+        bindings
+      extra = Array.mapMaybe
+        ( \key ->
+            if Array.elem key expected then Nothing
+            else Just (name <> ": unknown PHP FFI export '" <> key <> "'")
+        )
+        (Array.nub keys)
+      arityError binding =
+        case Array.find (\entry -> entry.key == binding.identName) exports of
+          Just entry
+            | not (Array.null binding.signature.args) ->
+                case entry.arity of
+                  Just found
+                    | found /= Array.length binding.signature.args ->
+                        Just
+                          ( name <> "." <> binding.identName <> ": expected "
+                              <> show (Array.length binding.signature.args)
+                              <> " parameters, found "
+                              <> show found
+                          )
+                  _ -> Nothing
+          _ -> Nothing
+    in
+      if Array.null exports then forbidden
+      else forbidden <> missing <> extra <> Array.mapMaybe arityError bindings
+
+type ExportEntry = { key :: String, arity :: Maybe Int }
+
+exportsOfLine :: String -> Array ExportEntry
+exportsOfLine line =
+  let
+    parts = String.split (Pattern "$exports[") line
+  in
+    if Array.length parts <= 1 then []
+    else Array.mapMaybe parsePart (Array.drop 1 parts)
+  where
+  parsePart part =
+    let
+      quote = String.take 1 part
+    in
+      if quote /= "'" && quote /= "\"" then Nothing
+      else do
+        end <- String.indexOf (Pattern quote) (String.drop 1 part)
+        pure { key: String.take end (String.drop 1 part), arity: arityOf part }
+
+arityOf :: String -> Maybe Int
+arityOf line
+  | String.contains (Pattern "if (") line = Nothing
+  | otherwise = case String.indexOf (Pattern "function") line of
+      Nothing -> Just 0
+      Just index ->
+        let
+          rest = String.drop (index + 8) line
+        in
+          case String.indexOf (Pattern "(") rest of
+            Nothing -> Nothing
+            Just open ->
+              let
+                afterOpen = String.drop (open + 1) rest
+              in
+                case String.indexOf (Pattern ")") afterOpen of
+                  Nothing -> Nothing
+                  Just close ->
+                    let
+                      params = String.take close afterOpen
+                    in
+                      if String.contains (Pattern "...") params then Nothing
+                      else Just
+                        ( if String.trim params == "" then 0
+                          else Array.length (String.split (Pattern ",") params)
+                        )
 
 genNativeWrapper :: ForeignBinding -> String
 genNativeWrapper { globalKey, funcName, ffiBaseVar, exportKey, missingForeign, signature: flat } =

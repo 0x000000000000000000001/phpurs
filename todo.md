@@ -182,7 +182,11 @@ Chaque friction est datée et reliée à un chantier.
 
 Objectif : rendre l’état « vert » vérifiable par une machine, sur chaque PR.
 
-- [!] **M1-01** — CI `check` (P0, 1–2 j). _Bloqué : exécution GitHub._
+- [x] **M1-01** — CI `check` (P0, 1–2 j). _Fait (31/10)._
+  Workflow vert sur `main` (badge `check: passing`) après checkout du fork PBO
+  et des paquets `phpurs-prelude`/`phpurs-foldable-traversable`/`phpurs-arrays`
+  aux révisions épinglées, `npm ci`, build et tests. Échec éventuel : étapes
+  nommées, log `codegen-tests.log` publié en artefact.
   `.github/workflows/check.yml` : Node 22, PHP 8.4, `npm ci`, checkout du fork
   PBO au chemin attendu à une révision épinglée (dans le workflow d’abord, puis
   dans `tools/toolchain.json` en M8-02), puis `npm run check`

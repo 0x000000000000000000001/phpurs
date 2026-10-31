@@ -116,13 +116,13 @@ jobs:
           set -o pipefail
           npm run test:codegen 2>&1 | tee codegen-tests.log
 
-      - name: Report failing codegen tests
+      - name: Upload codegen failure log
         if: failure()
-        run: |
-          node --test --test-reporter=spec tests/codegen/direct/array-callbacks.mjs tests/codegen/direct/callback-specialization.mjs > rerun.log 2>&1 || true
-          grep -E -A8 "AssertionError|Error:" rerun.log | head -80 | while IFS= read -r line; do
-            echo "::error title=codegen-assert::$line"
-          done
+        uses: actions/upload-artifact@v4
+        with:
+          name: codegen-tests
+          path: codegen-tests.log
+          if-no-files-found: ignore
 
       - name: Coverage report (non-blocking)
         continue-on-error: true

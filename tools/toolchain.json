@@ -1,0 +1,7 @@
+{
+  "pbo": {
+    "repository": "0x000000000000000000001/purescript-backend-optimizer",
+    "path": "../../purescript-backend-optimizer-phpurs",
+    "revision": "ef2fdae421ff998352a77407d861540d6b287928"
+  }
+}

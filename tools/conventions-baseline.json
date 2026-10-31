@@ -1,0 +1,26 @@
+{
+  "reviewed": "2026-10-31",
+  "note": "Accepted maintainability debt. Ratchet down: remove an entry when the file no longer violates the limit.",
+  "modules": {},
+  "functions": {
+    "src/Main.purs::compile": 100,
+    "src/Main/Prepare.purs::prepare": 73,
+    "src/Phpurs/ArrayRefs/Ownership.purs::scanExpression": 69,
+    "src/Phpurs/CodeGen.purs::translateWithStats": 135,
+    "src/Phpurs/CodeGen/Expr/Statements.purs::translateBranch": 69,
+    "src/Phpurs/CodeGen/Expr/Statements.purs::translateLetRec": 72,
+    "src/Phpurs/CodeGen/Expr/Update.purs::tryFusedUpdate": 68,
+    "src/Phpurs/CompactLoops.purs::optimize": 88,
+    "src/Phpurs/EnumRegions/Proof.purs::infer": 81,
+    "src/Phpurs/EnumRegions/Rewrite.purs::optimize": 90,
+    "src/Phpurs/GenNativeForeign.purs::genNativeWrapper": 86,
+    "src/Phpurs/PartialBindings.purs::proveSuccessor": 64,
+    "src/Phpurs/Printer/Decl.purs::printPhpFile": 70,
+    "src/Phpurs/Printer/Expr.purs::printExprWith": 78,
+    "src/Phpurs/StateFusion/Rewrite.purs::scan": 64,
+    "src/Phpurs/TailInline.purs::optimize": 129,
+    "src/Phpurs/ThunkFusion.purs::scan": 69
+  },
+  "headers": [],
+  "rawSentinel": {}
+}

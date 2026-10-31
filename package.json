@@ -6,15 +6,33 @@
   "bin": {
     "phpurs": "bin/phpurs.js"
   },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "scripts": {
     "build": "spago build && node tools/bundle.mjs",
-    "check": "npm run format:check && npm run build && npm run test:codegen",
-    "format": "purs-tidy format-in-place 'src/**/*.purs' && prettier --write 'src/**/*.js' 'tests/codegen/**/*.mjs' 'tools/*.mjs' '*.json' spago.yaml",
-    "format:check": "purs-tidy check 'src/**/*.purs' && prettier --check 'src/**/*.js' 'tests/codegen/**/*.mjs' 'tools/*.mjs' '*.json' spago.yaml",
+    "check": "npm run format:check && npm run check:conventions && npm run check:source-map && npm run check:docs && npm run check:shell && npm run build && npm run test:golden && npm run test:codegen",
+    "check:conventions": "node tools/check-conventions.mjs",
+    "check:source-map": "node tools/docs-source-map.mjs --check",
+    "docs:source-map": "node tools/docs-source-map.mjs",
+    "check:docs": "node tools/check-docs.mjs",
+    "check:shell": "bash tools/check-shell.sh",
+    "check:commit": "node tools/check-commit-msg.mjs",
+    "clean": "node tools/clean.mjs",
+    "check:toolchain": "node tools/check-toolchain.mjs",
+    "conventions:update": "node tools/check-conventions.mjs --update-baseline",
+    "test:golden": "node tests/golden/run.mjs",
+    "golden:update": "node tests/golden/run.mjs --update",
+    "format": "purs-tidy format-in-place 'src/**/*.purs' && prettier --write 'src/**/*.js' 'tests/**/*.mjs' 'tools/*.mjs' '*.json' 'spago.yaml' '.github/**/*.yml'",
+    "format:check": "purs-tidy check 'src/**/*.purs' && prettier --check 'src/**/*.js' 'tests/**/*.mjs' 'tools/*.mjs' '*.json' 'spago.yaml' '.github/**/*.yml'",
     "format:packages": "node tools/format-packages.mjs --write",
     "format:packages:check": "node tools/format-packages.mjs",
     "test:codegen": "node --test --test-concurrency=1 tests/codegen/direct/*.mjs tests/codegen/cli/*.mjs tests/codegen/ffi/*.mjs",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run check",
+    "test:coverage": "c8 --include 'output/Phpurs.*/**/*.js' --reporter=text-summary --reporter=json-summary node --test --test-concurrency=1 tests/codegen/direct/*.mjs tests/codegen/cli/*.mjs tests/codegen/ffi/*.mjs",
+    "test:tast-smoke": "node tools/tast-smoke.mjs"
   },
   "dependencies": {
     "esbuild": "^0.28.1",
@@ -22,6 +40,8 @@
   },
   "devDependencies": {
     "@prettier/plugin-php": "0.25.0",
+    "c8": "^10.1.3",
+    "fast-check": "^3.23.2",
     "prettier": "3.9.4",
     "purescript": "0.15.16",
     "purs-tidy": "0.11.1",

@@ -6,6 +6,7 @@ module Phpurs.CodeGen
   , translate
   , translateWithCallbacks
   , translateWithContracts
+  , translateWithStats
   ) where
 
 import Prelude
@@ -32,6 +33,7 @@ import Phpurs.CodeGen.Context
   )
 import Phpurs.CodeGen.Declarations (translateBindingGroup, translateConstructors)
 import Phpurs.CodeGen.Expr (translateExpr) as Expr
+import Phpurs.CodeGen.Pipeline as Pipeline
 import Phpurs.CodeGen.Types (extractFuncType, remainingArity)
 import Phpurs.CopyCleanup as CopyCleanup
 import Phpurs.EnumRegions as EnumRegions
@@ -58,6 +60,15 @@ translateWithCallbacks callbacks = translateWithContracts callbacks Set.empty
 translateWithContracts
   :: Callbacks -> Traversals -> Array (Array String) -> BackendModule -> PhpFile
 translateWithContracts callbacks traversals imports input =
+  (translateWithStats callbacks traversals imports input).file
+
+translateWithStats
+  :: Callbacks
+  -> Traversals
+  -> Array (Array String)
+  -> BackendModule
+  -> { file :: PhpFile, passStats :: Pipeline.PassStats }
+translateWithStats callbacks traversals imports input =
   let
     partialBindings = PartialBindings.optimize input
     fusion = ThunkFusion.optimize partialBindings.module_
@@ -173,5 +184,17 @@ translateWithContracts callbacks traversals imports input =
     nullable = Nullable.lower nullableClasses privateWorkers
     cleaned = CopyCleanup.optimize { workers: regionWorkers, constructors: privateClasses } nullable
     owned = ArrayRefs.optimize arrayParams privateClasses cleaned
+    passStats = Pipeline.aggregate
+      [ { name: "PartialBindings", changed: not (Pipeline.refEq input partialBindings.module_) }
+      , { name: "ThunkFusion"
+        , changed: not (Pipeline.refEq partialBindings.module_ fusion.module_)
+        }
+      , { name: "StateFusion", changed: not (Pipeline.refEq fusion.module_ stateFusion.module_) }
+      , { name: "CallbackSpecialization"
+        , changed: not (Pipeline.refEq stateFusion.module_ specialized.module_)
+        }
+      , { name: "ArrayCallbacks", changed: not (Pipeline.refEq specialized.module_ arrays.module_) }
+      , { name: "EnumRegions", changed: not (Pipeline.refEq arrays.module_ regions.module_) }
+      ]
   in
-    owned { decls = owned.decls <> arrays.workers }
+    { file: owned { decls = owned.decls <> arrays.workers }, passStats }
